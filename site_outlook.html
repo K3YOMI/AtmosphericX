@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>AtmosphericX - NWS API</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+      <link rel="stylesheet" href="CSS/index.css">
+      <script src="JavaScript/Site.js"></script>
+      <script src="JavaScript/ActiveMessage.js"></script>
+   </head>
+   <body>
+      <nav class="navbar navbar bg p-3">
+         <div class="d-flex col-12 col-md-3 col-lg-2 mb-2 mb-lg-0 flex-wrap flex-md-nowrap justify-content-between">
+            <a class="navbar-brand" href="#"> AtmosphericX - NWS API </a>
+            <ul class="nav flex-column" style="display: inline-block;">
+               <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="site_dashboard.html">
+                  <span class="ml-2">Dashboard</span>
+                  </a>
+               </li>
+            </ul>
+            <ul class="nav flex-column" style="display: inline-block;">
+               <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="site_alerts.html">
+                  <span class="ml-2">Alerts</span>
+                  </a>
+               </li>
+            </ul>
+            <ul class="nav flex-column" style="display: inline-block;">
+               <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="site_outlook.html">
+                  <span class="ml-5">Outlook</span>
+                  </a>
+               </li>
+            </ul>
+            <ul class="nav flex-column" style="display: inline-block;">
+                <li class="nav-item">
+                   <a class="nav-link" aria-current="page" href="site_manual.html">
+                   <span class="ml-5">Manual</span>
+                   </a>
+                </li>
+             </ul>
+         </div>
+      </nav>
+      <main class="col-md-9 ml-sm-auto col-lg-12 px-md-4 py-4">
+         <h1 class="h2">SPC Day 1-2</h1>
+         <p class="card-text" id="last_updated">Last Updated: NaN</p>
+         <div class="card">
+            <h5 class="card-header">Latest Activated Message</h5>
+            <div class="card-body">
+               <h5 class="card-title" id="latest_message">No Alert Found</h5>
+               <p class="card-text text-success" id="latest_message_loco">N/A</p>
+            </div>
+         </div>
+         <br>
+         <hr>
+         <div class="card-body">
+            <div class="table-responsive">
+               <table class="tabssle">
+                  <thead>
+                     <tr>
+                        <th scope="col">  <iframe src="https://www.spc.noaa.gov/products/outlook/day1otlk_prt.html" style="width: 900px; height: 690px;">    </iframe></th>
+                        <th scope="col"><iframe src="https://www.spc.noaa.gov/products/outlook/day2otlk_prt.html" style="width: 900px; height: 690px;"></th>
+                     </tr>
+                  </thead>
+               </table>
+            </div>
+            <br>
+            <footer class="pt-5 d-flex justify-content-between">
+               <span>Copyright © 2023-2024 <a href="https://github.com/K3YOMI">K3YOMI</a></span>
+               <ul class="nav m-0">
+                  <li class="nav-item">
+                     <a class="nav-link text-secondary" href="https://discord.gg/kD2tYVcU">Discord Server</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link text-secondary" href="https://api.weather.gov/">API</a>
+                  </li>
+               </ul>
+            </footer>
+      </main>
+      </div>
+      </div>
+      </div>  
+   </body>
+   <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+</html>
