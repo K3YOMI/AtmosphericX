@@ -14,7 +14,7 @@ AtmosphericX is a custom-built hosted project designed to fetch weather-related 
  - **Animated Alerts**
  - **Location Based Priority Alerts**
  - **Integrated API**
- - **OBS Supported (Streaming web files for OBS)**
+ - **HTML Overlay**
 
 
 ### 🛠️ How AtmosphericX Works
