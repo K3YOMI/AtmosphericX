@@ -5,7 +5,7 @@
 AtmosphericX is a custom-built hosted project designed to fetch weather-related data from the National Weather Service (NWS) API. It is primarily used to provide weather information to users, whether they are individuals looking for local weather conditions or developers integrating weather data into their applications.
 
 ### 🔑 Key Features
-<img align="right" height="300vh" src="https://github.com/K3YOMI/AtmosphericX/assets/54733885/e6cdf44a-ea6e-4acb-9386-e19ed1506507">
+<img align="right" height="250vh" src="https://github.com/K3YOMI/AtmosphericX/assets/54733885/e6cdf44a-ea6e-4acb-9386-e19ed1506507">
 
  - **Real-time updates**
  - **Customizable Queries**
