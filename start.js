@@ -14,6 +14,7 @@ const global_header = { 'User-Agent': 'Any-UA-Here','Accept': 'application/geo+j
 const http = require('http');
 const fs = require('fs')
 const path = require('path')
+const req = require('request')
 
 
 
@@ -36,15 +37,19 @@ const fetch_latest = function () {
         // promise
         return new Promise((resolve, reject) => { 
             try {
-                fetch(`https://api.weather.gov/alerts`, {headers: global_header}).then(response => response.text()).then(text => {
+                let req1 = {url: `https://api.weather.gov/alerts`, method: 'GET',headers: global_header}
+                let req2 = {url: `https://api.weather.gov/alerts/active`, method: 'GET',headers: global_header}
+                req(req1, function(error, response, body) {
                     try{
+                        let text = body
                         let json = JSON.parse(text); fs.writeFile(`./archive.json`, JSON.stringify(json), function(err) {})
                     }catch(err) {
                         fs.writeFile(`./archive.json`, JSON.stringify({error: "No Active Alerts"}), function(err) {})
                     }    
                 })
-                fetch(`https://api.weather.gov/alerts/active`, {headers: global_header}).then(response => response.text()).then(text => {
+                req(req2, function (error, response, body) {
                     try {
+                        let text = body
                         let json = JSON.parse(text); fs.writeFile(`./active.json`, JSON.stringify(json), function(err) {})
                     }catch(err) {
                         fs.writeFile(`./active.json`, JSON.stringify({error: "No Active Alerts"}), function(err) {})
