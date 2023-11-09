@@ -236,4 +236,4 @@ const server = http.createServer((req, res) => {
     })
 })
 fetch_latest()
-server.listen(port, hostname, () => { console.log(`[AtmosphericX API] - Running at http://${hostname}:${port}/site_dashboard.html`); });
+server.listen(port, hostname, () => { console.log(`[AtmosphericX API] - Dashboard Running on http://${hostname}:${port}/site_dashboard.html`); });
