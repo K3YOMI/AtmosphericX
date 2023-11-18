@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////// Setup and Configurations /////////////////////////////////////////////////
-const hostname = "192.168.x.xx" // The Hosts IP Address
-const port = 420; // The Port to run the server on
-const location = "County, ST" // The location of you (The Host) , used to send private alerts to you during severe weather events.
-const api_access = [''] // IP Addresses that can access the API and dashboard. (You can also do a wildcard '*' to allow all IP Addresses to access the API and dashboard.)
-const dashboard_access = [''] // IP Addresses that can access the dashboard. (You can also do a wildcard '*' to allow all IP Addresses to access the dashboard.)
+const hostname = "192.168.X.XX" // IPv4 address of the host.
+const port = 8020; // Port.
+const location = "County, ST" // The county to check for warnings, watches, emergencies, etc. (This will play a tone)
+const api_access = [''] // IPv4's allowed to access the built-in api (use "*" to allow all)
+const dashboard_access = [''] //  IPv4's allowed to access the built-in dashboard (use "*" to allow all)
 const query_refresh = 8 // How often to refresh the query in seconds (Default: 8, seems to be the fastest without getting rate limited)
-const global_header = { 'User-Agent': 'Any-UA-Here','Accept': 'application/geo+json','Accept-Language': 'en-US'}
+const global_header = { 'User-Agent': 'SomeUserAgent','Accept': 'application/geo+json','Accept-Language': 'en-US'}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
