@@ -255,7 +255,7 @@ async function async_playQueue() {
             if (t_desc.includes(`tornado emergency`)) {
                 debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
                 notify(`Tornado Emergency`, t_location, t_message, t_tornado)
-            }else if (t_desc.includes(`particularly dangerous situation`))
+            }else if (t_desc.includes(`particularly dangerous situation`)) {
                 debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
                 notify(`PDS`, t_location, t_message, t_tornado)
             }else{
