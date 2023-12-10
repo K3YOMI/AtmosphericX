@@ -19,7 +19,6 @@ const ascii = fs.readFileSync('./ascii', 'utf8')
 
 ///// HTTP Variables /////
 let arr_checkManualQuery = []
-let time_left = 0
 const HTTP_OK = 200;
 const HTTP_FORBIDDEN = 403;
 const HTTP_NOT_FOUND = 404;
@@ -54,9 +53,6 @@ const fetch_latest = function () {
             } catch (error) {
                 console.log(`[INFO] [Error] - ${error}`)
             }
-            let current_unix_to_sync = Math.floor(Date.now() / 1000)
-            let add_9_seconds = current_unix_to_sync + 9
-            time_left = add_9_seconds
             resolve()
         })
     }
@@ -168,10 +164,6 @@ const server = http.createServer((req, res) => {
                     res.setHeader('Content-Type', 'application/json');
                     res.end(JSON.stringify(json, null, 4));
                 })
-            } else if (url == '/api/sync') {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'text/html');
-                res.end(( Math.floor(Date.now() / 1000) - time_left).toString());
             }else if (url == '/api/manual') {
                 res.statusCode = HTTP_OK;
                 res.setHeader('Content-Type', 'application/json');
