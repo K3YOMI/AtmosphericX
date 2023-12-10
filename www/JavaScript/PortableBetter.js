@@ -255,13 +255,13 @@ async function async_playQueue() {
             let t_tornado = t_currentAlert.tornado
             let t_location = t_currentAlert.locations
             let t_id = i 
-            if (t_desc.includes(`particulary dangerous situation`) && t_event == `Tornado Warning`) {
+            if (t_desc.includes(`tornado emergency`)) {
+                debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
+                notify(`Tornado Emergency`, t_location, t_message, t_tornado)
+            }else if (t_desc.includes(`particulary dangerous situation`) && t_event == `Tornado Warning`) {
                 // notify functions here
                 debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
                 notify(`PDS`, t_location, t_message, t_tornado)
-            }else if (t_desc.includes(`tornado emergency`)) {
-                debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
-                notify(`Tornado Emergency`, t_location, t_message, t_tornado)
             }else{
                 if (t_event == `Severe Thunderstorm Warning`) {
                     if (t_thunder == `CONSIDERABLE`) {
@@ -407,7 +407,7 @@ async function async_checkSyncing() {  // Syncing Clock
 
 
 
-////// Timeouts and Intervals //////
+//// Timeouts and Intervals //////
 setInterval(() => {
     async_checkSyncing();
     if (str_currentSyncStatus == -2 && boolean_syncingEnabled) {
