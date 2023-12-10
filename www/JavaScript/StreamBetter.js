@@ -421,24 +421,21 @@ async function async_checkSyncing() {  // Syncing Clock
 
 
 
-////// Timeouts and Intervals //////
-//setInterval(() => {
-//    async_checkSyncing();
-//    if (str_currentSyncStatus == -2 && boolean_syncingEnabled) {
-//        debug(`TIMER | Fetching is now disabled...`)
-//        boolean_syncingEnabled = false;
-//        if (boolean_canFetch == true) { 
-//            debug(`--------------------------------------------------------------`)
-//            async_fetchAlerts();
-//        }
-//    }else{
-//        async_checkSyncing();
-//        boolean_syncingEnabled = true;
-//    }
-//}, 500);
+//// Timeouts and Intervals //////
 setInterval(() => {
-    async_fetchAlerts();
-}, 8*1000);
+    async_checkSyncing();
+    if (str_currentSyncStatus == -2 && boolean_syncingEnabled) {
+        debug(`TIMER | Fetching is now disabled...`)
+        boolean_syncingEnabled = false;
+        if (boolean_canFetch == true) { 
+            debug(`--------------------------------------------------------------`)
+            async_fetchAlerts();
+        }
+    }else{
+        async_checkSyncing();
+        boolean_syncingEnabled = true;
+    }
+}, 500);
 setInterval(() => {
     update_time_cdt();
     let warnings = arr_ActiveWarnings
