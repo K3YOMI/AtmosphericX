@@ -10,21 +10,6 @@
             color: rgb(0, 0, 0);
             overflow: hidden;
         }
-        .panel {
-            height: 10vh;
-            width: 100vw;
-            background-color: #00000000;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            font-size: 2rem;
-            font-weight: bold;
-            left: 2230px;
-            overflow: hidden;
-        }
-      
-    
-
         #uialert {
             font-size: 21px;
             width: 500px;
@@ -34,33 +19,12 @@
 
  
         }
-        
-
-
-        @keyframes fade {
-            0% {
-                opacity: 0;
-            }
-            25% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 1;
-            }
-            75% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Make it where this paragpgh will only show this text on the center and the text cant escape the div -->
     <table id="uialert">
         <tr>
-          <th>Typesssss</th>
+          <th>Type</th>
           <th>Location</th>
           <th>Expires</th>
         </tr>
@@ -102,7 +66,6 @@
 
 
     function format_locations(locations) { 
-        // get rid of 2 letter words
         for (let i = 0; i < locations.length; i++) {
             if (locations[i] == ' ') {
                 if (locations[i + 1] == ' ') {
@@ -189,16 +152,10 @@
         if (event == 'Flash Flood Warning') {return 'FFW'}
         if (event == 'Severe Thunderstorm Watch') {return 'SVW'}
         if (event == 'Flash Flood Watch') {return 'FFA'}
-
-
     }
-
     function update_userinterface() { 
         let table = document.getElementById("uialert");
         table.innerHTML = "<tr><th>Type</th><th>Location</th><th>Expires</th></tr>"
-        // make it something like this
-        //Type    State    Counties    Expires
-        // organize total_storms by event
         organizer = {
             'Tornado Warning' : [],
             'Tornado Confirmed' : [],
@@ -221,10 +178,6 @@
                 total_storms.push(organizer[whitelisted_events[i]][y])
             }
         }
-        // make it so Tornado Warnings is on top, then Severe Thunderstorm Warnings, then Flash Flood Warnings, then Special Marine Warnings
-        // make it so it only shows the first 25 characters of the location
-
-        
         for (let i = 0; i < total_storms.length; i++) {
             if (total_storms[i].location.length > 25) {total_storms[i].location = total_storms[i].location.substring(0, 25) + "..." }
             let table = document.getElementById("uialert");
