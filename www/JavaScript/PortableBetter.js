@@ -15,7 +15,6 @@ let int_resetPeriod = 0
 
 ////// Strings //////
 let str_latestManualRequest = undefined
-let str_currentSyncStatus = undefined
 let str_latestAlert = undefined
 
 
@@ -23,8 +22,6 @@ let str_latestAlert = undefined
 let boolean_isActiveEmergency = false // Tornado Emergency Activiation...
 let boolean_inCard = false // If the stream is showing a notification card
 let boolean_inQueue = false // If the stream is showing a notification from the queue
-let boolean_canFetch = true // If the stream can fetch new data
-let boolean_syncingEnabled = true // If syncing has been enabled...
 
 
 
@@ -258,8 +255,7 @@ async function async_playQueue() {
             if (t_desc.includes(`tornado emergency`)) {
                 debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
                 notify(`Tornado Emergency`, t_location, t_message, t_tornado)
-            }else if (t_desc.includes(`particulary dangerous situation`) && t_event == `Tornado Warning`) {
-                // notify functions here
+            }else if (t_desc.includes(`particularly dangerous situation`))
                 debug(`NOTIFY | ${t_event} >> ${t_location} playing...`)
                 notify(`PDS`, t_location, t_message, t_tornado)
             }else{
@@ -285,7 +281,6 @@ async function async_playQueue() {
 }
 
 async function async_fetchAlerts() { 
-    boolean_canFetch = false 
     arr_ActiveWarnings = []
     // Manual Alerts //
     try {
@@ -385,40 +380,22 @@ async function async_fetchAlerts() {
                         debug(`CURRENT QUEUE | ${arr_currentQueue.length}`)
                         debug(`ACTIVE WARNINGS | ${arr_ActiveWarnings.length}`)
                         debug(`TIMER | Fetching is now enabled...`)
-                        boolean_canFetch = true
                     }, 1000)
                 })
             })
         })
     }catch(error) {
-        boolean_canFetch = true
         debug(`ERROR | ${error}`)
     }
 }
 
 
 
-async function async_checkSyncing() {  // Syncing Clock
-    fetch(`${home_ip_and_port}/api/sync`, {headers: global_header}).then(response => response.text()).then(data => {
-        str_currentSyncStatus = data
-    })
-}
 
 
 
 
 //// Timeouts and Intervals //////
 setInterval(() => {
-    async_checkSyncing();
-    if (str_currentSyncStatus == -2 && boolean_syncingEnabled) {
-        debug(`TIMER | Fetching is now disabled...`)
-        boolean_syncingEnabled = false;
-        if (boolean_canFetch == true) { 
-            debug(`--------------------------------------------------------------`)
-            async_fetchAlerts();
-        }
-    }else{
-        async_checkSyncing();
-        boolean_syncingEnabled = true;
-    }
-}, 500);
+    async_fetchAlerts()
+}, 8 * 1000);
