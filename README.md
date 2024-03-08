@@ -25,7 +25,7 @@
 
 
 # ⛈️ What is AtmosphericX? <a name = "doc_introduction"></a>
-> AtmosphericX is a custom-built hosted project designed to fetch weather-related data from the National Weather Service (NWS) API. It is primarily used to provide weather information to users, whether they are individuals looking for local weather conditions or developers integrating weather data into their applications. 
+> AtmosphericX is a web application that uses the National Weather Service API to provide real-time weather alerts and outlooks. The application is can be used by storm chasers, emergency management, and the general public to stay informed about severe weather. Please note that this application is still in development and may not be fully functional. Also please note that information provided by this application should not be used as the sole source of information for severe weather events. Always refer to the National Weather Service for the most accurate and up-to-date information or your NOAA Weather Radio. 
 
 
 # ⛈️ Current features and future updates <a name = "doc_features"></a>
