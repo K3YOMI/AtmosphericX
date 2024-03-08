@@ -63,6 +63,9 @@
 	git clone https://github.com/K3YOMI/AtmosphericX
 	cd AtmosphericX
 	bash install.sh
+ 	# if above fails, do the following below
+  	npm i request
+   	npm i discord.js
 	
 > Setup the env file... (Make sure hostname is the ipv4 of that device) You can also use wildcards for API_ACCESS (* = ALL)
 
