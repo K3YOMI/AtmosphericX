@@ -10,8 +10,6 @@
 #                                                                                                
                                                                                                 
 
-
-# Environment Configuration
 VERSION=3.0.0
 
 # HOST NAME AND ACCESS
