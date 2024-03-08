@@ -54,7 +54,7 @@ return new Promise(async (resolve, reject) => {
     console.log('\x1bc');
     console.log(`\x1b[90m`)
     console.log(ascii);
-    configurations = await toolsConstructor.env('.env')
+    configurations = await toolsConstructor.env('env')
     toolsConstructor.log('Environment variables loaded')
     toolsConstructor.log(`Attempting to start server on host ${configurations.HOSTNAME}:${configurations.PORT}`)
     const server = http.createServer((req, res) => {
