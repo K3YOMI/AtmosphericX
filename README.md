@@ -16,7 +16,6 @@
 	</div>
 </div>
 
-
 # ⛈️ Table of Contents
 - [Introduction](#doc_introduction)
 - [Features](#doc_features)
@@ -24,13 +23,9 @@
 - [How to install](#install_guides)
 - [Credits and Packages](#doc_credits)
 
-<br><br>
-
-
 
 # ⛈️ What is AtmosphericX? <a name = "doc_introduction"></a>
 > AtmosphericX is a custom-built hosted project designed to fetch weather-related data from the National Weather Service (NWS) API. It is primarily used to provide weather information to users, whether they are individuals looking for local weather conditions or developers integrating weather data into their applications. 
-
 
 
 # ⛈️ Current features and future updates <a name = "doc_features"></a>
