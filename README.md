@@ -7,7 +7,7 @@
 
 <div align="center">
   	<p align = "center">A custom-built hosted project designed to fetch weather-related data from the National Weather Service</p>
-  	<p align = "center">Documentation written by @k3yomi</p>
+  	<p align = "center">Documentation written by @k3yomi (This was README was slighly rushed - Ignore spelling and such)</p>
 	<div align="center" style="border: none;">
 		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/K3YOMI/AtmosphericX">
 		<img alt="GitHub forks" src="https://img.shields.io/github/forks/K3YOMI/AtmosphericX">
