@@ -7,7 +7,8 @@
 
 <div align="center">
   	<p align = "center">A custom-built hosted project designed to fetch weather-related data from the National Weather Service</p>
-  	<p align = "center">Documentation written by @k3yomi (This README was slighly rushed - Ignore spelling and such)</p>
+  	<p align = "center">Documentation written by @k3yomi</p>
+	<p align = "center">Documentation will be properly written later</p>
 	<div align="center" style="border: none;">
 		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/K3YOMI/AtmosphericX">
 		<img alt="GitHub forks" src="https://img.shields.io/github/forks/K3YOMI/AtmosphericX">
@@ -25,7 +26,7 @@
 
 
 # ⛈️ What is AtmosphericX? <a name = "doc_introduction"></a>
-> AtmosphericX is a web application that uses the National Weather Service API to provide real-time weather alerts and outlooks. The application can be used by storm chasers, emergency management, and the general public to stay informed about severe weather. Please note that this application is still in development and may not be fully functional. Also please note that information provided by this application should not be used as the sole source of information for severe weather events. Always refer to the National Weather Service for the most accurate and up-to-date information or your NOAA Weather Radio. 
+> AtmosphericX is a web application that utilizes the National Weather Service API to deliver real-time weather alerts and outlooks. The application caters to storm chasers, emergency management personnel, and the general public, enabling them to stay informed about severe weather conditions. It is important to note that this application is still in development and may not be fully functional. Additionally, users should be aware that the information provided by this application should not be relied upon as the sole source of information for severe weather events. It is always advisable to refer to the National Weather Service or your NOAA Weather Radio for the most accurate and up-to-date information.
 
 
 # ⛈️ Current features and future updates <a name = "doc_features"></a>
@@ -37,7 +38,6 @@
 	- Flash Flood Warnings/Watches
 	- Special Marine Warnings/Watches
 	- Snow Squall Warnings
-	- More!
 - [x] Alert Effects and Audio
 	- Animation Effect (Meant for OBS)
 	- Audio Effect (Meant for OBS)
@@ -62,7 +62,7 @@
   	npm i request
    	npm i discord.js
 	
-> Setup the env file... (Make sure hostname is the ipv4 of that device) You can also use wildcards for API_ACCESS (* = ALL)
+> Setup the env file... (Make sure hostname is the same address of device used for hosting) You can also use wildcards for API_ACCESS (* = ALL)
 
 
 	# Environment Configuration
