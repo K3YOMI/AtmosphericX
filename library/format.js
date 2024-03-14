@@ -169,9 +169,10 @@ class format {
         let indication = data['properties']['indiciated']
         let expires = data['properties']['expires']
         let issued = data['properties']['sent']
+        let eventLower = eventDescription.toLowerCase()
         let locations = this.formatLocations(data['properties']['areaDesc'])
-        if (eventDescription.includes(`tornado emegergency`) && eventName == `Tornado Warning`) { eventName = `Tornado Emergency` }
-        if (eventDescription.includes(`particularly dangerous situation`) && eventName == `Tornado Warning`) { eventName = `PDS` }
+        if (eventLower.includes(`tornado emegergency`) && eventName == `Tornado Warning`) { eventName = `Tornado Emergency` }
+        if (eventLower.includes(`particularly dangerous situation`) && eventName == `Tornado Warning`) { eventName = `PDS` }
         if (eventName == `Tornado Warning`) {
             if (tornadoThreat == `OBSERVED`) { tornadoThreat = `Confirmed`; eventName = `Confirmed Tornado Warning` }
             else if (tornadoThreat == `RADAR INDICATED`) { tornadoThreat = `Radar Indicated`; eventName = `Radar Indicated Tornado Warning` }
