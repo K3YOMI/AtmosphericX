@@ -252,7 +252,7 @@ async function request_active_alerts() {
             let findDuplicate = last_queries.find(x => x.eventName == eventName && x.eventDescription == eventDesc && x.messageType == messageType && x.issued == timeIssued && x.expires == timeExpires)
             let time = new Date().getTime() / 1000;
             let check = time - new Date(timeIssued).getTime() / 1000;
-            if (check > 8 && check < 100 && findDuplicate == undefined) {
+            if (check > 8 && check < 180 && findDuplicate == undefined) {
                 console.log(`Added ${eventName} to the queue with an expiration of ${timeExpires}`)
                 console.log(`Location: ${latestAlert.locations}`)
                 queue.push(latestAlert);
