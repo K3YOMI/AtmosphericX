@@ -3,12 +3,11 @@
 
 
 
-<h1 style='font-size: 65px'; align="center">AtmosphericX</h1>
+<h1 style='font-size: 65px'; align="center">🌩️ Project AtmosphericX 🌪️</h1>
 
 <div align="center">
-  	<p align = "center">A custom-built hosted project designed to fetch weather-related data from the National Weather Service</p>
+  	<p align = "center">AtmosphericX is a web application that uses the National Weather Service API to provide near real-time weather alerts and outlooks. The application can be used by storm chasers, emergency management, or the general public to stay informed about severe weather or special alerts. Please note that this application is still in development and may not be fully functional. Also please note that information provided by this application should not be used as the sole source of information for severe weather events. Always refer to the National Weather Service for the most accurate and up-to-date information or your NOAA Weather Radio. I do not claim responsibility for any damages that may occur as a result of using this application. </p>
   	<p align = "center">Documentation written by @k3yomi</p>
-	<p align = "center">Documentation will be properly written later</p>
 	<div align="center" style="border: none;">
 		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/K3YOMI/AtmosphericX">
 		<img alt="GitHub forks" src="https://img.shields.io/github/forks/K3YOMI/AtmosphericX">
@@ -18,83 +17,116 @@
 </div>
 
 # ⛈️ Table of Contents
-- [Introduction](#doc_introduction)
 - [Features](#doc_features)
 - [Install Guide](#doc_install)
-- [How to install](#install_guides)
+- [Cloning Project](#doc_clone)
+- [Configuration Guide](#doc_configure)
+- [Post Configuration](#doc_post)
+- [Endpoint Documentation](#doc_endoints)
 - [Credits and Packages](#doc_credits)
 
 
-# ⛈️ What is AtmosphericX? <a name = "doc_introduction"></a>
-> AtmosphericX is a web application that utilizes the National Weather Service API to deliver real-time weather alerts and outlooks. The application caters to storm chasers, emergency management personnel, and the general public, enabling them to stay informed about severe weather conditions. It is important to note that this application is still in development and may not be fully functional. Additionally, users should be aware that the information provided by this application should not be relied upon as the sole source of information for severe weather events. It is always advisable to refer to the National Weather Service or your NOAA Weather Radio for the most accurate and up-to-date information.
 
-
-# ⛈️ Current features and future updates <a name = "doc_features"></a>
-- [x] Near realtime updates
-	- Tornado Emergencies
-	- PDS Warnings
-	- Server Thunderstorm Warnings/Watches
-	- Tornado Warnings/Watches
-	- Flash Flood Warnings/Watches
-	- Special Marine Warnings/Watches
+# 🌪️ Support Features <a name="doc_features"></a>
+- [x] Support up to ≈130 unique alerts
+	- Tornado Alerts (Watches/Radar Indicated/Confirmed/PDS/Emergencies)
+	- Severe Thunderstorm Alerts (Watches/Considerable/Destructive)
+	- Flash Floods (Watches/Warnings/Emergencies)
+	- Special Marine Warnings
 	- Snow Squall Warnings
-- [x] Alert Effects and Audio
-	- Animation Effect (Meant for OBS)
-	- Audio Effect (Meant for OBS)
-- [x] County Warning Detection
-	- Detect a warning in a specified county (Special Alert)
-- [x] Full whitelist based dashboard
-- [x] OBS studio support
-- [x] Discord.js support (Discord Bot)
+	- Much much more (Customizable)
+- [x] Full dashboard
+	- Website Dashboard (HRRR, GSF, Nexlab, Mesoscale Analysis, and Live Chasers)
+	- Active warnings and watches
+	- Last notification send by the National Weather Service (Last Updated, Event Name, Locations, and Description)
+	- Active alerts table
+	- Custom notification system (Stream Support)
+	- Manual Override (Manual alerts)
+	- SPC Outlook Moduels (Day 1 & 2)
+	- County warning alerts (specified)
+- [x] Whitelist (network-wide)
+- [x] Portable (Supports audio and active warnings)
+- [x] Discord.js / Discord Bot support (Latest warning)
 
 
-# ⛈️ Installing and Requirements <a name = "doc_install"></a>
+# 🌧️ Install Guide <a name="doc_install"></a>
+To install Project AtmosphericX, you will need a few requirements. NodeJS / NPM and Git (optional)
+If you are not wanting to install git, you can also clone the repository by downloading it as a ZIP. If you do not know how to install any of the requirements, feel free to refer to their documentation.
 
-> The only requirement for this project to run properly is NodeJS. (https://nodejs.org/en)
+# 🌪 Cloning the project with Git <a name="doc_clone"></a>
+once finished install git, clone the project with the command below (terminal/command prompt)
 
+	git clone https://github.com/k3yomi/AtmosphericX
 
-## How to install <a name = "install_guides"></a>
+After cloning, navigate to the **AtmosphericX** directory. Inside, you'll find another directory titled **Project AtmosphericX**. This holds the main project itself. For better ease of access, feel free to drop the **Project AtmosphericX** directory into somewhere you'll remember.
 
-	git clone https://github.com/K3YOMI/AtmosphericX
-	cd AtmosphericX
-	bash install.sh
- 	# if above fails, do the following below
-  	npm i request
-   	npm i discord.js
-	
-> Setup the env file... (Make sure hostname is the same address of device used for hosting) You can also use wildcards for API_ACCESS (* = ALL)
+# 🌩️ Configuration <a name="doc_configure"></a>
+Configurating AtmosphericX is quite simple, the **env** holds all the configurations and warnings to whitelist as well as the discord bot support configuration. Here is a general template below of the configuration and what each configuration does. 
 
+**DO NOT COPY THE CONFIG AS THIS IS NOT A WORKING CONFIG**
+```conf
+# Environment Configuration
+VERSION=4.0.0 # Hold the version (do not touch)
 
-	# Environment Configuration
-	VERSION=3.0.0
+# HOST NAME AND ACCESS
+HOSTNAME=192.168.X.XXX # Your local network address (LAN) (ipconfig)
+PORT=3000 # Port you would like to host on your device
+API_ACCESS=[*] # Which IP's are allowed to access (* = wildcard/all)
 
-	# HOST NAME AND ACCESS
-	HOSTNAME=192.168.X.XX
-	PORT=3000
-	API_ACCESS=[*]
+# GENERAL INFORMATION
+YOUR_LOCATION=COUNTY_NAME, ST # Your county, state (abbreviated) - will be used to give you alerts in the dashboard for alerts in your area
+USER_AGENT=AtmosphericX-4.0 # Custom UserAgent to the national weather service
 
-	# GENERAL INFORMATION
-	YOUR_LOCATION=COUNTY, STATE
-	USER_AGENT=AtmosphericX-3.0
+# QUERY CONFIGURATION
+ACTIVE_ONLY=false # Active only alerts
+REFRESH_RATE=30 # How often your server queries the NWS API
+OUTBREAK_ONLY=true # (true = only looks for major_alerts) (false = targets all_alerts)
+MAJOR_ALERTS=[]
+ALL_ALERTS=[]
 
-	# QUERY CONFIGURATION
-	ACTIVE_ONLY=true
-	REFRESH_RATE=30
-
-	# DISCORD BOT CONFIGURATION (OPTIONAL)
-	ENABLE_DISCORD_BOT=false
-	DISCORD_TOKEN=DISCORD_TOKEN_HERE
-	DISCORD_UPDATE_CHANNEL=DISCORD_CHANNEL_ID
-	DISCORD_BOT_REFRESH_RATE=30
-
-> Once configured....
-
-	# node index.js
-
-> All done, you should now have a working version of AtmosphericX running on a NodeJS webserver. If you have any issues, feel free to send an issue into the repository. This documentation will be further improved when I have the time to do so. Thank you!
+# DISCORD BOT CONFIGURATION (OPTIONAL)
+ENABLE_DISCORD_BOT=false # Enable the discord bot functionality
+DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN # Discord bot token
+DISCORD_UPDATE_CHANNEL=YOUR_DISCORD_CHANNEL_ID # Channel ID
+DISCORD_BOT_REFRESH_RATE=30 # Refresh rate
+```
 
 
-# ⛈️ Contributors and Credits <a name = "doc_credits"></a>
+# ⛈️ Post Configuration <a name="doc_post"></a>
+Once you have configured your **env** file. You are now ready to start AtmosphericX! To simply start it up, you will need to run the command down below.
+
+	node index.js
+
+If you encounter an error regarding a **missing dependency**, you have two options to resolve it. You can either manually run npm install for the specified dependency, or for convenience, execute the shell file named **install.sh** to automatically install all necessary requirements.
+
+	npm install {package_name}
+
+
+# 🌪️ API / Endpoints <a name="doc_endoints"></a>
+
+**Dashboards and Overlays**
+> Dashboard: {ip}:{port} (ex. *http://192.168.1.92:3000*)
+
+> Stream Overlay: {ip}:{port}/stream/stream (ex. *http://192.168.1.92:3000/stream/stream*
+
+> Stream Portable: {ip}:{port}/stream/portable (ex. *http://192.168.1.92:3000/stream/portable*)
+
+> Stream Warnings: {ip}:{port}/stream/warnings (ex. *http://192.168.1.92:3000/stream/warnings*)
+
+
+**Backend Endpoints**
+
+> All Alerts: {ip}:{port}/api/alerts (ex. *http://192.168.1.92:3000/api/alerts*)
+
+> Manual Alerts: {ip}:{port}/api/active_manual (ex. *http://192.168.1.92:3000/api/active_manual*)
+
+> Active Warnings: {ip}:{port}/api/active_warnings (ex. *http://192.168.1.92:3000/api/active_warnings*)
+
+> Active Watches: {ip}:{port}/api/active_watches (ex. *http://192.168.1.92:3000/api/active_watches*)
+
+
+
+# 🌩️ Credits <a name="doc_credits"></a>
 > This project was made possible by the following people. Please make sure to check them out and support them! <3
 
 <table align="center" style="border-collapse: collapse; margin: 0 auto;">
