@@ -39,6 +39,7 @@
 	- Website Dashboard (HRRR, GSF, Nexlab, Mesoscale Analysis, and Live Chasers)
 	- Active warnings and watches
 	- Last notification send by the National Weather Service (Last Updated, Event Name, Locations, and Description)
+	- Force Request (Bypasses Refresh Rate)
 	- Active alerts table
 	- Custom notification system (Stream Support)
 	- Manual Override (Manual alerts)
