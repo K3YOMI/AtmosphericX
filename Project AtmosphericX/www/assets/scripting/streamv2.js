@@ -72,7 +72,7 @@ async function executeQuery() {
             let findDuplicate = lastQueries.find(x => x.eventName == eventName && x.eventDescription == eventDesc && x.messageType == messageType && x.issued == timeIssued && x.expires == timeExpires)
             let currentTime = new Date().getTime() / 1000
             let timeCheck = currentTime - new Date(timeIssued).getTime() / 1000;
-            if (timeCheck > 8 && timeCheck < 340 && findDuplicate == undefined) {
+            if (timeCheck > 8 && timeCheck < 180 && findDuplicate == undefined) {
                 queue.push(latestAlert)
                 lastQueries.push(latestAlert)
             } else { 
