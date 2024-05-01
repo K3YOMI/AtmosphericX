@@ -80,7 +80,7 @@ USER_AGENT=AtmosphericX-4.0 # Custom UserAgent to the national weather service
 
 # QUERY CONFIGURATION
 ACTIVE_ONLY=false # Active only alerts
-REFRESH_RATE=30 # How often your server queries the NWS API
+REFRESH_RATE=30 # How often your server queries the NWS API (Based on your system clock)
 OUTBREAK_ONLY=true # (true = only looks for major_alerts) (false = targets all_alerts)
 MAJOR_ALERTS=[]
 ALL_ALERTS=[]
