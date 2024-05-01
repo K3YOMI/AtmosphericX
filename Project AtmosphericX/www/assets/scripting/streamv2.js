@@ -10,6 +10,7 @@ let lastQueries = []
 let latestAlert = []
 let latestManual = []
 let queue = []
+let alreadyQuerying = false
 
 if (window.location.pathname.includes(`portable`)) {
     isStreaming = false;
@@ -91,9 +92,13 @@ async function executeQuery() {
     }
 }
 
-
-executeQuery()
 setTimeout(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 10)
 setInterval(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 1000)
-setInterval(() => {executeQuery()}, 8000)
-
+setInterval(() => {
+    if (new Date().getSeconds() % 10 == 0) { // Every 10 seconds
+        if (alreadyQuerying) {return}
+        alreadyQuerying = true
+        executeQuery();
+        setTimeout(() => {alreadyQuerying = false}, 1000)
+    }
+}, 200);
