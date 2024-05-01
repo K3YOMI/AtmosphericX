@@ -4,7 +4,7 @@ class api {
         console.log(`[AtmosphericX Library] >> Loaded API Manager`);
         this.api = "returned from api.js";
     }
-    requestActive(forced) {
+    requestActive() {
         return new Promise(async (resolve, reject) => {
             let active = {url: `https://api.weather.gov/alerts/active`, method: 'GET',headers: { 'User-Agent': configurations['USER_AGENT'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}
             await req(active, (error, response, body) => {
@@ -56,12 +56,9 @@ class api {
                     toolsConstructor.log(`Error: ${error.message}`)
                 }
             })
-            if (!forced) {
-                setTimeout(() => { this.requestActive() }, configurations['REFRESH_RATE'] * 1000)
-            }
         })
     }
-    requestArchive(forced) {
+    requestArchive() {
         return new Promise(async (resolve, reject) => {
             let archive = {url: `https://api.weather.gov/alerts`, method: 'GET',headers: { 'User-Agent': configurations['USER_AGENT'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}
             await req(archive, (error, response, body) => {
@@ -113,9 +110,6 @@ class api {
                     toolsConstructor.log(`Error: ${error.message}`)
                 }
             })
-            if (!forced) {
-                setTimeout(() => { this.requestArchive() }, configurations['REFRESH_RATE'] * 1000)
-            }
         })
     }
 }

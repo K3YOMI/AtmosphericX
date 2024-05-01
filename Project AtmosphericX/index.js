@@ -35,6 +35,7 @@ active_total_watches = []
 generic_data = []
 manual_data = []
 active_notifications = []
+alreadyQuerying = false
 
 
 
@@ -142,7 +143,7 @@ return new Promise(async (resolve, reject) => {
                             let newData = formatConstructor.registerEvent(jsonData)
                             if (newData['locations'] != "") {
                                 manual_data = newData
-                                res.statusCode = HTTP_CREATED;
+                                res.statusCode = HTTP_OK;
                                 res.setHeader('Content-Type', 'application/json');
                                 res.end(JSON.stringify({status: 'success', message: 'Data added to the system'}))
                             }else{
@@ -153,13 +154,13 @@ return new Promise(async (resolve, reject) => {
 
                     if (http_url == "/api/forcerequest") {
                         if (configurations.ACTIVE_ONLY == "true") { 
-                            apiConstructor.requestActive(true)
+                            apiConstructor.requestActive()
                             toolsConstructor.log('Requested latest active alerts...')
                         }else{
-                            apiConstructor.requestArchive(true)
+                            apiConstructor.requestArchive()
                             toolsConstructor.log('Requested latest alerts...')
                         }
-                        res.statusCode = HTTP_OK;
+                        res.statusCode = HTTP_CREATED;
                         res.setHeader('Content-Type', 'application/json');
                         res.end(JSON.stringify({status: 'success', message: 'Requested latest data from the system'}))
                     }
@@ -200,20 +201,32 @@ return new Promise(async (resolve, reject) => {
             res.end(fs.readFileSync(fs_path))
             return;
         }
-
-
-
-
     });
     server.listen(configurations.PORT, configurations.HOSTNAME, () => {
         toolsConstructor.log(`Dashboard: http://${configurations.HOSTNAME}:${configurations.PORT}`)
         toolsConstructor.log('Thank you for using AtmosphericX - Please stay safe and happy storm chasing!')
         toolsConstructor.log('[Warning] Data recieved from this service may be inaccurate or outdated. Use at your own risk and always rely on official sources for weather information. I do not take responsibility for any damages or losses caused by this service.')
         if (configurations.ACTIVE_ONLY == "true") { 
-            apiConstructor.requestActive(false)
+            apiConstructor.requestActive()
+            setInterval(() => {
+                if (new Date().getSeconds() % configurations['REFRESH_RATE'] == 0) {
+                    if (alreadyQuerying) {return}
+                    alreadyQuerying = true
+                    apiConstructor.requestActive()
+                    console.log(`[DEBUG] Getting Active Alerts At [:] ${new Date().getSeconds()} second(s)`)
+                    setTimeout(() => {alreadyQuerying = false}, 1000)}
+            }, 200);
             toolsConstructor.log('Active Only mode is enabled. Starting active alerts...')
         }else{
-            apiConstructor.requestArchive(false)
+            apiConstructor.requestArchive()
+            setInterval(() => {
+                if (new Date().getSeconds() % configurations['REFRESH_RATE'] == 0) {
+                    if (alreadyQuerying) {return}
+                    alreadyQuerying = true
+                    apiConstructor.requestArchive()
+                    console.log(`[DEBUG] Getting Archived Alerts At [:] ${new Date().getSeconds()} second(s)`)
+                    setTimeout(() => {alreadyQuerying = false}, 1000)}
+            }, 200);
             toolsConstructor.log('Archive mode is enabled. Starting all alerts...')
         }
         if (configurations.ENABLE_DISCORD_BOT == "true") {
