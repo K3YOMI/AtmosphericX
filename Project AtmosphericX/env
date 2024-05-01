@@ -12,7 +12,7 @@ YOUR_LOCATION=COUNTY_NAME, ST
 USER_AGENT=AtmosphericX-4.0
 
 # QUERY CONFIGURATION
-ACTIVE_ONLY=false
+ACTIVE_ONLY=true
 REFRESH_RATE=30
 OUTBREAK_ONLY=true
 MAJOR_ALERTS=["Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning"]
