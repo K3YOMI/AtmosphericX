@@ -1,21 +1,20 @@
+
 /*
+    $$$$$$\    $$\                                                 $$\                           $$\           $$\   $$\                  $$\   $$\ 
+    $$  __$$\   $$ |                                                $$ |                          \__|          $$ |  $$ |                 $$ |  $$ |
+    $$ /  $$ |$$$$$$\   $$$$$$\$$$$\   $$$$$$\   $$$$$$$\  $$$$$$\  $$$$$$$\   $$$$$$\   $$$$$$\  $$\  $$$$$$$\ \$$\ $$  |      $$\    $$\ $$ |  $$ |
+    $$$$$$$$ |\_$$  _|  $$  _$$  _$$\ $$  __$$\ $$  _____|$$  __$$\ $$  __$$\ $$  __$$\ $$  __$$\ $$ |$$  _____| \$$$$  /       \$$\  $$  |$$$$$$$$ |
+    $$  __$$ |  $$ |    $$ / $$ / $$ |$$ /  $$ |\$$$$$$\  $$ /  $$ |$$ |  $$ |$$$$$$$$ |$$ |  \__|$$ |$$ /       $$  $$<         \$$\$$  / \_____$$ |
+    $$ |  $$ |  $$ |$$\ $$ | $$ | $$ |$$ |  $$ | \____$$\ $$ |  $$ |$$ |  $$ |$$   ____|$$ |      $$ |$$ |      $$  /\$$\         \$$$  /        $$ |
+    $$ |  $$ |  \$$$$  |$$ | $$ | $$ |\$$$$$$  |$$$$$$$  |$$$$$$$  |$$ |  $$ |\$$$$$$$\ $$ |      $$ |\$$$$$$$\ $$ /  $$ |         \$  /         $$ |
+    \__|  \__|   \____/ \__| \__| \__| \______/ \_______/ $$  ____/ \__|  \__| \_______|\__|      \__| \_______|\__|  \__|          \_/          \__|
+                                                          $$ |                                                                                       
+                                                          $$ |                                                                                       
+                                                          \__|                                                                                       
 
-
-     █████  ████████ ███    ███  ██████  ███████ ██████  ██   ██ ███████ ██████  ██  ██████ ██   ██ 
-    ██   ██    ██    ████  ████ ██    ██ ██      ██   ██ ██   ██ ██      ██   ██ ██ ██       ██ ██  
-    ███████    ██    ██ ████ ██ ██    ██ ███████ ██████  ███████ █████   ██████  ██ ██        ███   
-    ██   ██    ██    ██  ██  ██ ██    ██      ██ ██      ██   ██ ██      ██   ██ ██ ██       ██ ██  
-    ██   ██    ██    ██      ██  ██████  ███████ ██      ██   ██ ███████ ██   ██ ██  ██████ ██   ██ 
-
-    Written by: k3yomi@GitHub                     API Credits: National Weather Service (NWS)
-    Version: 3.0                                  Endpoint: https://api.weather.gov/
-                                                                                                
-                                                                                                
-    This is a simple weather alert system that uses the National Weather Service API to provide
-    real-time weather alerts and warnings. 
-
-*/
-
+    Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
+    Version: 4.0                                  
+*/                                         
 
 const apiManager = require('./library/api.js');
 const formatManager = require('./library/format.js');
@@ -151,6 +150,20 @@ return new Promise(async (resolve, reject) => {
                             }
                         });
                     }
+
+                    if (http_url == "/api/forcerequest") {
+                        if (configurations.ACTIVE_ONLY == "true") { 
+                            apiConstructor.requestActive(true)
+                            toolsConstructor.log('Requested latest active alerts...')
+                        }else{
+                            apiConstructor.requestArchive(true)
+                            toolsConstructor.log('Requested latest alerts...')
+                        }
+                        res.statusCode = HTTP_CREATED;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.end(JSON.stringify({status: 'success', message: 'Requested latest data from the system'}))
+                    }
+
                     if (http_url == "/api/notification") {
                         let body = '';
                         req.on('data', chunk => {
@@ -197,10 +210,10 @@ return new Promise(async (resolve, reject) => {
         toolsConstructor.log('Thank you for using AtmosphericX - Please stay safe and happy storm chasing!')
         toolsConstructor.log('[Warning] Data recieved from this service may be inaccurate or outdated. Use at your own risk and always rely on official sources for weather information. I do not take responsibility for any damages or losses caused by this service.')
         if (configurations.ACTIVE_ONLY == "true") { 
-            apiConstructor.requestActive()
+            apiConstructor.requestActive(false)
             toolsConstructor.log('Active Only mode is enabled. Starting active alerts...')
         }else{
-            apiConstructor.requestArchive()
+            apiConstructor.requestArchive(false)
             toolsConstructor.log('Archive mode is enabled. Starting all alerts...')
         }
         if (configurations.ENABLE_DISCORD_BOT == "true") {

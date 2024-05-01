@@ -62,6 +62,20 @@ let state_conversion = [ // Holds all alerts based on state
 
 async function executeCustomAlert() {
     let submitButton = document.getElementById('submit_alert');
+    let submitForceButton = document.getElementById('submit_force');
+
+    submitForceButton.addEventListener('click', function(event) {
+
+        let ipAddress = lib.getAddress();
+        let url = ipAddress + "/api/forcerequest";
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    });
+
     submitButton.addEventListener('click', function(event) {
         let eventType = document.getElementById('eventType_sel').value;
         let eventAction = document.getElementById('eventAction_sel').value;
@@ -90,6 +104,9 @@ async function executeCustomAlert() {
         });
     });
 }
+
+
+
 async function executeCustomNotification() {
     let submitButtonNotification = document.getElementById('submit_alert_notification');
     submitButtonNotification.addEventListener('click', function(event) {
