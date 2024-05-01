@@ -213,7 +213,6 @@ return new Promise(async (resolve, reject) => {
                     if (alreadyQuerying) {return}
                     alreadyQuerying = true
                     apiConstructor.requestActive()
-                    console.log(`[DEBUG] Getting Active Alerts At [:] ${new Date().getSeconds()} second(s)`)
                     setTimeout(() => {alreadyQuerying = false}, 1000)}
             }, 200);
             toolsConstructor.log('Active Only mode is enabled. Starting active alerts...')
@@ -224,7 +223,6 @@ return new Promise(async (resolve, reject) => {
                     if (alreadyQuerying) {return}
                     alreadyQuerying = true
                     apiConstructor.requestArchive()
-                    console.log(`[DEBUG] Getting Archived Alerts At [:] ${new Date().getSeconds()} second(s)`)
                     setTimeout(() => {alreadyQuerying = false}, 1000)}
             }, 200);
             toolsConstructor.log('Archive mode is enabled. Starting all alerts...')

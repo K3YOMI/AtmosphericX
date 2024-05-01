@@ -92,6 +92,12 @@ async function executeQuery() {
     }
 }
 
+setTimeout(() => {
+    document.getElementById('random_alert').innerHTML = `<p>Syncing Streaming</p>`;
+    document.getElementById('random_alert_topic').innerHTML = `<p>Syncing Streaming</p>`;
+    document.getElementById('total_warnings').innerHTML = `<h2>Syncing Streaming</h2>`;
+}, 1)
+
 setTimeout(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 10)
 setInterval(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 1000)
 setInterval(() => {
@@ -102,3 +108,4 @@ setInterval(() => {
         setTimeout(() => {alreadyQuerying = false}, 1000)
     }
 }, 200);
+
