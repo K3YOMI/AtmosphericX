@@ -80,7 +80,8 @@ USER_AGENT=AtmosphericX-4.0 # Custom UserAgent to the national weather service
 
 # QUERY CONFIGURATION
 ACTIVE_ONLY=false # Active only alerts
-REFRESH_RATE=30 # How often your server queries the NWS API (Based on your system clock)
+REFRESH_RATE=30 # How often your server queries the NWS API (execute every 30 seconds, provided the seconds component of the current system time)
+QUERY_RATE=10 # How often your cleint queries the server API (execute every 10 seconds, provided the seconds component of the current system time)
 OUTBREAK_ONLY=true # (true = only looks for major_alerts) (false = targets all_alerts)
 MAJOR_ALERTS=[]
 ALL_ALERTS=[]
@@ -89,7 +90,7 @@ ALL_ALERTS=[]
 ENABLE_DISCORD_BOT=false # Enable the discord bot functionality
 DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN # Discord bot token
 DISCORD_UPDATE_CHANNEL=YOUR_DISCORD_CHANNEL_ID # Channel ID
-DISCORD_BOT_REFRESH_RATE=30 # Refresh rate
+DISCORD_BOT_REFRESH_RATE=30 # How often your server queries the NWS API (Based on your system clock)
 ```
 
 

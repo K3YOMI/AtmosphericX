@@ -103,6 +103,11 @@ return new Promise(async (resolve, reject) => {
                         res.setHeader('Content-Type', 'text/plain');
                         res.end(configurations['YOUR_LOCATION'])
                     }
+                    if (http_url == "/api/queryrate") {
+                        res.statusCode = HTTP_OK;
+                        res.setHeader('Content-Type', 'text/plain');
+                        res.end(configurations['QUERY_RATE'])
+                    }
                 }else {
                     if (http_url.includes('.')) { 
                         let file_path = path.resolve('./www' + http_url)

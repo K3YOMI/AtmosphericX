@@ -3,49 +3,10 @@
     <head>
         <title>AtmosphericX - Warnings</title>
         <script src="../assets/scripting/library.js"></script>
+        <script src="../assets/scripting/warning.js"></script>
         <link rel="stylesheet" href="../assets/styles/warnings.css">
     </head>
     <body>
         <table id="uialert"><tr><th>Type</th><th>Location</th></tr></table> 
     </body>
-    <script>
-        let list = []
-        let lib = new library()
-        async function executeQuery() {
-            list = []
-            let activeAlerts = await lib.getAlertAPI()
-            let activeManuals = await lib.getActiveManual()
-            activeManuals = JSON.parse(activeManuals)
-            activeAlerts = JSON.parse(activeAlerts)
-            for (let i = 0; i < activeAlerts.length; i++) {
-                let alert = activeAlerts[i]
-                list.push(alert)
-                console.log(alert)
-            }
-            if (activeManuals.length != 0) {list.push(activeManuals)}   
-            document.getElementById("uialert").innerHTML = `<tr><th>Type<hr></th><th>Location<hr></th></tr>`
-            list.sort((a, b) => a.eventName.localeCompare(b.eventName))
-            for (let i = 0; i < list.length; i++) {
-                // only allow 20 alerts to be displayed
-                if (i == 20) { break }
-                let alert = list[i]
-                let table = document.getElementById("uialert")
-                let row = table.insertRow(-1)
-                let cell1 = row.insertCell(0)
-                let cell2 = row.insertCell(1)
-                cell1.innerHTML = alert.eventName.substring(0, 30);
-                cell2.innerHTML = alert.locations.substring(0, 20);
-            }
-            if (list.length > 20) {
-                let table = document.getElementById("uialert")
-                let row = table.insertRow(-1)
-                let cell1 = row.insertCell(0)
-                let cell2 = row.insertCell(1)
-                cell1.innerHTML = "..."
-                cell2.innerHTML = `+${list.length - 20} more`
-            }
-        }
-        executeQuery()
-        setInterval(executeQuery, 8000)
-    </script>
 </html>

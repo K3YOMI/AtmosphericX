@@ -92,20 +92,27 @@ async function executeQuery() {
     }
 }
 
-setTimeout(() => {
-    document.getElementById('random_alert').innerHTML = `<p>Syncing Streaming</p>`;
-    document.getElementById('random_alert_topic').innerHTML = `<p>Syncing Streaming</p>`;
-    document.getElementById('total_warnings').innerHTML = `<h2>Syncing Streaming</h2>`;
-}, 1)
+async function configSetup() {
+    setTimeout(() => {
+        document.getElementById('random_alert').innerHTML = `<p>Syncing Stream</p>`;
+        document.getElementById('random_alert_topic').innerHTML = `<p>Syncing Stream</p>`;
+        document.getElementById('total_warnings').innerHTML = `<h2>Syncing Stream</h2>`;
+    }, 1)
+    let requestQueryRate = await lib.getQueryRate();
+    setTimeout(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 10)
+    setInterval(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 1000)
+    setInterval(() => {
+        if (new Date().getSeconds() % requestQueryRate == 0) { // Every 10 seconds
+            if (alreadyQuerying) {return}
+            alreadyQuerying = true
+            executeQuery();
+            setTimeout(() => {alreadyQuerying = false}, 1000)
+        }
+    }, 200);
+}
 
-setTimeout(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 10)
-setInterval(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 1000)
-setInterval(() => {
-    if (new Date().getSeconds() % 10 == 0) { // Every 10 seconds
-        if (alreadyQuerying) {return}
-        alreadyQuerying = true
-        executeQuery();
-        setTimeout(() => {alreadyQuerying = false}, 1000)
-    }
-}, 200);
+
+configSetup()
+
+
 

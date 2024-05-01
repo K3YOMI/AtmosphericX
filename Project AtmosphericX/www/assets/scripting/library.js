@@ -64,6 +64,14 @@ class library {
             });
         })
     }
+    async getQueryRate() {
+        let ipAddress = this.getAddress();
+        return new Promise(async (resolve, reject) => {
+            await fetch(`${ipAddress}/api/queryrate`).then(response => response.text()).then(data => {
+                resolve(data)
+            });
+        });
+    }
     async getNotificationAPI() {
         let ipAddress = this.getAddress();
         return new Promise(async (resolve, reject) => {
