@@ -159,7 +159,7 @@ return new Promise(async (resolve, reject) => {
                             apiConstructor.requestArchive(true)
                             toolsConstructor.log('Requested latest alerts...')
                         }
-                        res.statusCode = HTTP_CREATED;
+                        res.statusCode = HTTP_OK;
                         res.setHeader('Content-Type', 'application/json');
                         res.end(JSON.stringify({status: 'success', message: 'Requested latest data from the system'}))
                     }
