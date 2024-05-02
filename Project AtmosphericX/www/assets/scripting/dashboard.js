@@ -190,5 +190,5 @@ async function configSetup() {
         }
     }, 200);
 }
-
+executeQuery();
 configSetup()
