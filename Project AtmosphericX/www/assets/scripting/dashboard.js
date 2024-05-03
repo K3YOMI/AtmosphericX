@@ -138,6 +138,7 @@ async function executeQuery() {
     activeWarnings = JSON.parse(activeWarnings)
     activeWatches = JSON.parse(activeWatches)
     activeManuals = JSON.parse(activeManuals)
+    dash.importAlert(activeManuals);
     let activeLatest = activeAlerts[0]
     if (activeLatest != undefined) {
         let eventName = activeLatest.eventName
@@ -153,11 +154,12 @@ async function executeQuery() {
             document.getElementById("latest_description").innerHTML = `Note: ${eventDesc}`
             let mySpecifiedLocation = await lib.getLocationAPI();
             if ((locations).includes(mySpecifiedLocation)) {
+                let ipAddress = lib.getAddress();
+                await lib.delay(2000)
+                lib.playsoundlimited(`${ipAddress}/assets/media/audio/EASv2.mp3`)
                 setTimeout(() => {
                     alert(`Critical Information for ${mySpecifiedLocation} \n\n${eventName} (${messageType}) \n\n${eventDesc}`)
-                }, 1000)
-                let ipAddress = lib.getAddress();
-                lib.playsoundlimited(`${ipAddress}/assets/media/audio/EASv2.mp3`)
+                }, 500)
             }
         }
     }
@@ -167,7 +169,7 @@ async function executeQuery() {
     for (let i = 0; i < activeWatches.length; i++) {
         dash.importAlert(activeWatches[i]);
     }
-    dash.importAlert(activeManuals);
+
     total_warnings = activeWarnings.length
     total_watches = activeWatches.length
     document.getElementById("active_warnings").innerHTML = `${total_warnings} Active Warning(s) `;
