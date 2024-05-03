@@ -1,22 +1,91 @@
 let canPlay = true; // Audio rate limiter for the EAS tone
 let streamModeEnabled = true
+let usingMobileDevice = false
+let audioInteractionChannel1 = undefined
+let audioInteractionChannel2 = undefined
+let audioInteractionChannel3 = undefined
+let audioInteractionChannel4 = undefined
 
 class library {
     constructor() {
         this.init = `Library Initialized`
     }
+    isMobile() {
+        let isMobile = /iPhone|iPad|iPod|Android|Mac OS X|BlackBerry|IEMobile|WPDesktop/i.test(navigator.userAgent);
+        console.log(`Mobile Device: ${isMobile}`);
+        if (isMobile) { usingMobileDevice = true; }
+        if (isMobile) { 
+            // make a button to allow interaction with the audio
+            let audioInteractionBtn = document.createElement('button');
+            audioInteractionBtn.innerHTML = `Mobile devices have disabled audio interaction. Click here to enable.`;
+            audioInteractionBtn.style.position = `absolute`;
+            audioInteractionBtn.style.fontSize = `46px`;
+            audioInteractionBtn.style.padding = `120px`;
+            audioInteractionBtn.onclick = function() {
+                const audioInteractionChannels = [];
+                audioInteractionBtn.remove();
+                for (let i = 1; i <= 4; i++) {
+                    const audioInteractionChannel = new Audio();
+                    audioInteractionChannel.src = `../../assets/media/audio/BEEP-INTRO.mp3`;
+                    audioInteractionChannel.volume = 0.5;
+                    audioInteractionChannel.play();
+                    audioInteractionChannels.push(audioInteractionChannel);
+                    console.log(`Audio Channel ${i} Played`);
+                }
+                [audioInteractionChannel1, audioInteractionChannel2, audioInteractionChannel3, audioInteractionChannel4] = audioInteractionChannels;
+            }
+            document.body.appendChild(audioInteractionBtn);
+        }    
+    }
     playsound(url) {
-        let newAudio = new Audio(url);
-        newAudio.volume = url.includes('EAS') ? 0.5 : 1;
-        newAudio.play();
+        if (!usingMobileDevice) {
+            let audio = new Audio();
+            audio.src = url;
+            audio.autoplay = true;
+            audio.volume = url.includes('EAS') ? 0.5 : 1;
+            audio.play();
+            audio.onended = function() {
+                audio.remove();
+            }
+        }else{
+            let channels = [audioInteractionChannel1, audioInteractionChannel2, audioInteractionChannel3, audioInteractionChannel4];
+            for (let channel of channels) {
+                if (channel.ended) {
+                    channel.src = url;
+                    channel.autoplay = true;
+                    channel.volume = url.includes('EAS') ? 0.5 : 1;
+                    channel.play();
+                    return;
+                }
+            }
+        }
     }
     playsoundlimited(url) {
         if (canPlay === false) { return; }
         canPlay = false;
-        let newAudio = new Audio(url);
-        newAudio.volume = url.includes('EAS') ? 0.5 : 1;
-        newAudio.play();
-        setTimeout(() => {canPlay = true;}, 10000);
+        if (!usingMobileDevice) {
+            let newAudio = new Audio(url);
+            newAudio.volume = url.includes('EAS') ? 0.5 : 1;
+            newAudio.play();
+            newAudio.onended = function() {
+                newAudio.remove();
+                canPlay = true;
+            }
+        }else{
+            let channels = [audioInteractionChannel1];
+            for (let channel of channels) {
+                if (channel.ended) {
+                    channel.src = url;
+                    channel.autoplay = true;
+                    channel.volume = url.includes('EAS') ? 0.5 : 1;
+                    channel.play();
+                    // detect when the audio ends\
+                    channel.onended = function() {
+                        canPlay = true;
+                    }
+                }
+            }
+        }
     }
     async delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));

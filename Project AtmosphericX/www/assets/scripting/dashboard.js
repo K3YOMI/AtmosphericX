@@ -181,6 +181,7 @@ async function configSetup() {
     let requestQueryRate = await lib.getQueryRate();
     document.getElementById("active_warnings").innerHTML = `Syncing Stream`;
     document.getElementById("active_watches").innerHTML = `Syncing Stream`;
+    lib.isMobile()
     setInterval(() => {
         if (new Date().getSeconds() % requestQueryRate == 0) { // Every 10 seconds
             if (alreadyQuerying) {return}

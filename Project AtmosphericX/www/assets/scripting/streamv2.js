@@ -94,6 +94,7 @@ async function executeQuery() {
 
 async function configSetup() {
     setTimeout(() => {
+        lib.isMobile()
         document.getElementById('random_alert').innerHTML = `<p>Syncing Stream</p>`;
         document.getElementById('random_alert_topic').innerHTML = `<p>Syncing Stream</p>`;
         document.getElementById('total_warnings').innerHTML = `<h2>Syncing Stream</h2>`;
@@ -110,8 +111,6 @@ async function configSetup() {
         }
     }, 200);
 }
-
-
 configSetup()
 
 
