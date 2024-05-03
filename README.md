@@ -70,7 +70,7 @@ Configurating AtmosphericX is quite simple, the **env** holds all the configurat
 VERSION=4.0.0 # Hold the version (do not touch)
 
 # HOST NAME AND ACCESS
-HOSTNAME=192.168.X.XXX # Your local network address (LAN) (ipconfig)
+HOSTNAME=0.0.0.0 # Your local network address (LAN) (ipconfig) (keep for local)
 PORT=3000 # Port you would like to host on your device
 API_ACCESS=[*] # Which IP's are allowed to access (* = wildcard/all)
 
