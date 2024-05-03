@@ -18,7 +18,10 @@ class library {
             // make a button to allow interaction with the audio
             let audioInteractionBtn = document.createElement('button');
             audioInteractionBtn.innerHTML = `Mobile devices have disabled audio interaction. Click here to enable.`;
-            audioInteractionBtn.style.position = `absolute`;
+            audioInteractionBtn.style.position = `fixed`;
+            audioInteractionBtn.style.top = `50%`;
+            audioInteractionBtn.style.left = `50%`;
+            audioInteractionBtn.style.transform = `translate(-50%, -50%)`;
             audioInteractionBtn.style.fontSize = `46px`;
             audioInteractionBtn.style.padding = `120px`;
             audioInteractionBtn.onclick = function() {
@@ -26,7 +29,7 @@ class library {
                 audioInteractionBtn.remove();
                 for (let i = 1; i <= 4; i++) {
                     const audioInteractionChannel = new Audio();
-                    audioInteractionChannel.src = `../../assets/media/audio/BEEP-INTRO.mp3`;
+                    audioInteractionChannel.src = `data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV////////////////////////////////////////////AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQDkAAAAAAAAAGw9wrNaQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxHYAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV`;
                     audioInteractionChannel.volume = 0.5;
                     audioInteractionChannel.play();
                     audioInteractionChannels.push(audioInteractionChannel);
