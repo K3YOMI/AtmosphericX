@@ -1,0 +1,23 @@
+@font-face {
+    font-family: SofiaSansSemiCondensed-Bold;
+    src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf');
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background-color: #000000;
+    color: rgb(0, 0, 0);
+    overflow: hidden;
+}
+#uialert {
+    font-size: 21px;
+    width: 500px;
+    overflow: hidden;
+    color: white;
+    text-align: left; /* Center the text horizontally */
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    margin-left: auto; /* Center the element horizontally */
+    margin-right: auto; /* Center the element horizontally */
+}
