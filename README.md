@@ -115,7 +115,7 @@ ALL_ALERTS=[]
 ENABLE_DISCORD_BOT=false # Enable the discord bot functionality
 DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN # Discord bot token
 DISCORD_UPDATE_CHANNEL=YOUR_DISCORD_CHANNEL_ID # Channel ID
-DISCORD_BOT_REFRESH_RATE=30 # How often your server queries the NWS API (Based on your system clock)
+DISCORD_BOT_REFRESH_RATE=10 # How often your server queries the NWS API (Based on your system clock)
 ```
 
 

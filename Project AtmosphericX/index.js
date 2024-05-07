@@ -41,6 +41,7 @@ active_notifications = []
 ratelimitController = []
 loginAuthorization = []
 alreadyQuerying = false
+alreadyQueryingDiscord = false
 
 
 
@@ -245,7 +246,13 @@ return new Promise(async (resolve, reject) => {
                 let latest = generic_data[0]
                 let eventName = latest['eventName']
                 bot_client.user.setPresence({ activities: [{ name:`${eventName}`, type: discordjs.ActivityType.Watching }], status: 'online' });
-                discordConstructor.update()
+                setInterval(() => {
+                    if (new Date().getSeconds() % configurations['DISCORD_BOT_REFRESH_RATE'] == 0) {
+                        if (alreadyQueryingDiscord) {return}
+                        alreadyQueryingDiscord = true
+                        discordConstructor.update()
+                        setTimeout(() => {alreadyQueryingDiscord = false}, 1000)}
+                }, 200);
             });
             bot_client.login(configurations.DISCORD_TOKEN);
         }
