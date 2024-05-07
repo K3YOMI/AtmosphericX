@@ -9,7 +9,7 @@ class discord {
         bot_client.channels.fetch(channel_id).then(channel => {
             channel.messages.fetch({ limit: 1 }).then(messages => {
                 let lastMessage = messages.first();
-                let newDesc = generic_data[0]['eventDescription'].substring(0, 450) + '...';
+                let newDesc = generic_data[0]['eventDescription'].substring(0, 1000) + '...';
                     let newEmbed = new discordjs.EmbedBuilder()
                     .setColor('#0099ff')
                     .setTitle('AtmosphericX Weather Alert System')
