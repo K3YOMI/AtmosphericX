@@ -1,0 +1,8 @@
+{
+    "dependencies": {
+      "crypto": "^1.0.1",
+      "discord.js": "^14.14.1",
+      "request": "^2.88.2"
+    }
+  }
+  

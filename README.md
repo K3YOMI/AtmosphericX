@@ -22,6 +22,8 @@
 - [Cloning Project](#doc_clone)
 - [Configuration Guide](#doc_configure)
 - [Post Configuration](#doc_post)
+- [Dashboard Setup](#doc_dashboard)
+- [Registration Documentation](#doc_accountcreation)
 - [Endpoint Documentation](#doc_endoints)
 - [Credits and Packages](#doc_credits)
 
@@ -36,17 +38,40 @@
 	- Snow Squall Warnings
 	- Much much more (Customizable)
 - [x] Full dashboard
-	- Website Dashboard (HRRR, GSF, Nexlab, Mesoscale Analysis, and Live Chasers)
-	- Active warnings and watches
-	- Last notification send by the National Weather Service (Last Updated, Event Name, Locations, and Description)
-	- Force Request (Bypasses Refresh Rate)
-	- Active alerts table
-	- Custom notification system (Stream Support)
-	- Manual Override (Manual alerts)
-	- SPC Outlook Moduels (Day 1 & 2)
-	- County warning alerts (specified)
-- [x] Whitelist (network-wide)
+	- Login Page
+		- Account Creation
+		- Password Change Support
+		- SHA256 Encryption (users.json)
+	- Active Alerts & General Information
+		- Active Alerts, Warnings, and Watches
+		- Previous 3 Alerts (w/ interactable)
+		- Region Alerts
+	- External Services and Tools
+		- Live Storm Chasing Cam Service (https://livestormchasing.com)
+		- Hourly Mesoscale Analysis (https://www.spc.noaa.gov)
+		- NexLab (https://weather.cod.edu/#)
+		- GSF Model (https://www.tropicaltidbits.com/analysis/models/)
+		- HRRR Model (https://www.tropicaltidbits.com/analysis/models/?model=hrrr)
+		- Hodographs (https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3)
+	- SPC Day Risks and Outlooks (0600 and 1200)
+		- Categorial (Days: 1, 2, and 3)
+		- Tornado Risk (Days: 1 and 2)
+		- Hail Risk (Days: 1 and 2)
+		- Wind Risk (Days: 1 and 2)
+	- Query/Notification Information
+		- Force Request
+		- Notification Settings
+		- Debug Alerts
+	- County Based Alerts
+		- Red Warning Box (Previous 3 Alerts)
+		- Audio Support
+		- Notificiation Support
+	- Logout Page
+	- 404 Page
+	- IP Whitelisting
 - [x] Portable (Supports audio and active warnings)
+- [x] Mobile Phone Audio Support
+	- Requires at least once interaction
 - [x] Discord.js / Discord Bot support (Latest warning)
 
 
@@ -95,13 +120,49 @@ DISCORD_BOT_REFRESH_RATE=30 # How often your server queries the NWS API (Based o
 
 
 # ⛈️ Post Configuration <a name="doc_post"></a>
-Once you have configured your **env** file. You are now ready to start AtmosphericX! To simply start it up, you will need to run the command down below.
+Once you have configured your **env** file. You are now ready to install dependencies in AtmosphericX! To simply install, you will need to run the command down below.
+
+	npm install
+
+After completing the install process, you can now run AtmosphericX! 
 
 	node index.js
 
-If you encounter an error regarding a **missing dependency**, you have two options to resolve it. You can either manually run npm install for the specified dependency, or for convenience, execute the shell file named **install.sh** to automatically install all necessary requirements.
+If you encounter an error regarding a **missing dependency**, you have two options to resolve it. You can manually run npm install for the specified dependency.
 
 	npm install {package_name}
+
+
+# 🌧️ Dashboard Setup <a name="doc_dashboard"></a>
+To access the dashboard, which can be found at {ip}:{port} (e.g., http://192.168.1.92:3000), you will need to login. If you are unable to see the dashboard, ensure that the NodeJS web server is up and running. Additionally, verify that your IP address has been granted API access. If required, confirm that the wildcard (*) has been applied to API_ACCESS to allow access from all addresses.
+
+
+    Username: root
+    Password: root
+
+
+Ensuring the security of your webserver is of importance. It's vital to promptly change this default password. To do so, simply navigate back to the login screen and select the "Change password?" option. It's worth noting that access to AtmosphericX's API and streaming functionalities remains open to all users, even those without login credentials, unless specific address configurations have been applied to the API_ACCESS setting in the environment file.
+
+
+# 🌧️ Account Creation <a name="doc_accountcreation"></a>
+If a user wants to register a new username and password, the host must activate the account via the users.json file. Below is an example of how the users.json file might be structured. To activate an account, simply switch false to true on the account you would like to activate.
+
+
+```json
+{
+    "username": "root",
+    "hash": "SBNJTRN+FjG7owHVrKtue7eqdM4RhdRWVl71HXN2d7I=",
+    "activated": true
+  },
+  {
+    "username": "test",
+    "hash": "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg=",
+    "activated": false
+}
+```
+
+
+
 
 
 # 🌪️ API / Endpoints <a name="doc_endoints"></a>

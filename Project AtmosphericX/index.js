@@ -20,13 +20,16 @@ const apiManager = require('./library/api.js');
 const formatManager = require('./library/format.js');
 const toolsManager = require('./library/tools.js');
 const discordManager = require('./library/discord.js');
-const file_extensions = { '.html': 'text/html','.css': 'text/css','.js': 'text/javascript','.json': 'application/json','.png': 'image/png','.jpg': 'image/jpg','.gif': 'image/gif','.svg': 'image/svg+xml','.ico': 'image/x-icon','.wav': 'audio/wav','.mp4': 'video/mp4','.woff': 'application/font-woff','.ttf': 'application/font-ttf','.eot': 'application/vnd.ms-fontobject','.otf': 'application/font-otf','.wasm': 'application/wasm','.mp3': 'audio/mpeg','.webm': 'video/webm','.mp4': 'video/mp4',}
+const endpointManager = require('./library/endpoint.js');
 
 
-const HTTP_OK = 200;
-const HTTP_FORBIDDEN = 403;
-const HTTP_NOT_FOUND = 404;
-const HTTP_CREATED = 201;
+file_extensions = { '.html': 'text/html','.css': 'text/css','.js': 'text/javascript','.json': 'application/json','.png': 'image/png','.jpg': 'image/jpg','.gif': 'image/gif','.svg': 'image/svg+xml','.ico': 'image/x-icon','.wav': 'audio/wav','.mp4': 'video/mp4','.woff': 'application/font-woff','.ttf': 'application/font-ttf','.eot': 'application/vnd.ms-fontobject','.otf': 'application/font-otf','.wasm': 'application/wasm','.mp3': 'audio/mpeg','.webm': 'video/webm','.mp4': 'video/mp4',}
+
+
+HTTP_OK = 200;
+HTTP_FORBIDDEN = 403;
+HTTP_NOT_FOUND = 404;
+HTTP_CREATED = 201;
 
 
 configurations = undefined
@@ -35,11 +38,14 @@ active_total_watches = []
 generic_data = []
 manual_data = []
 active_notifications = []
+ratelimitController = []
+loginAuthorization = []
 alreadyQuerying = false
 
 
 
 http = require('http');
+crypto = require('crypto');
 fs = require('fs')
 path = require('path')
 req = require('request')
@@ -48,10 +54,12 @@ ascii = fs.readFileSync('./ascii', 'utf8')
 
 
 
+
 apiConstructor = new apiManager();
 formatConstructor = new formatManager();
 toolsConstructor = new toolsManager();
 discordConstructor = new discordManager();
+endpointConstructor = new endpointManager();
 
 return new Promise(async (resolve, reject) => {
     console.log('\x1bc');
@@ -61,54 +69,61 @@ return new Promise(async (resolve, reject) => {
     const server = http.createServer(async (req, res) => {
         let clientAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         configurations = await toolsConstructor.env('env')
+        let endpointRoutes = [ // Routing for API endpoints to return data
+            {url: "/api/alerts", data: JSON.stringify(generic_data, null, 2), requiredLogin: false},
+            {url: "/api/active_warnings", data: JSON.stringify(active_total_warnings, null, 2), requiredLogin: false},
+            {url: "/api/active_manual", data: JSON.stringify(manual_data, null, 2), requiredLogin: false},
+            {url: "/api/notifications", data: JSON.stringify(active_notifications, null, 2), requiredLogin: false},
+            {url: "/api/active_watches", data: JSON.stringify(active_total_watches, null, 2), requiredLogin: false},
+            {url: "/api/queryrate", data: configurations['QUERY_RATE'], requiredLogin: false},
+            {url: "/api/location", data: configurations['YOUR_LOCATION'], requiredLogin: true},
+            {url: "/api/manual", data: [], requiredLogin: true},
+            {url: "/api/forcerequest", data: [], requiredLogin: true},
+            {url: "/api/notification", data: [], requiredLogin: true},
+            {url: "/api/login", data: [], requiredLogin: false},
+            {url: "/api/register", data: [], requiredLogin: false},
+            {url: "/api/newpassword", data: [], requiredLogin: false},
+            {url: "/api/logout", data: [], requiredLogin: true}
+        ]
         if (toolsConstructor.canAccess(clientAddress, configurations)) {
             res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
             let http_method = req.method;
             let http_url = req.url;
+            let http_ip = req.connection.remoteAddress;
             if (http_method == "GET") {
                 if (http_url == "/") {
-                    res.statusCode = HTTP_OK;
-                    res.setHeader('Content-Type', 'text/html');
-                    res.end(fs.readFileSync(path.resolve('./www/redirect.html')))
+                    endpointConstructor.redirectDashboard(req, res)
                     return;
                 }
                 if (http_url.includes(`/api/`)) {
-                    if (http_url == "/api/alerts") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify(generic_data, null, 2))
-                    }
-                    if (http_url == "/api/active_warnings") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify(active_total_warnings, null, 2))
-                    }
-                    if (http_url == "/api/active_manual") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify(manual_data, null, 2))
-                    }
-                    if (http_url == "/api/notifications") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify(active_notifications, null, 2))
-                    }
-                    if (http_url == "/api/active_watches") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify(active_total_watches, null, 2))
-                    }
-                    if (http_url == "/api/location") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'text/plain');
-                        res.end(configurations['YOUR_LOCATION'])
-                    }
-                    if (http_url == "/api/queryrate") {
-                        res.statusCode = HTTP_OK;
-                        res.setHeader('Content-Type', 'text/plain');
-                        res.end(configurations['QUERY_RATE'])
+                    if (endpointRoutes.filter(e => e.url == http_url)[0] == undefined) {
+                        endpointConstructor.errorRedirect(req, res) 
+                        return
+                    }else{
+                        if (endpointRoutes.filter(e => e.url == http_url)[0].requiredLogin) {
+                            if (!loginAuthorization.includes(http_ip)) {
+                                endpointConstructor.loginRedirect(req, res)
+                                return;
+                            }else{
+                                res.statusCode = HTTP_OK;
+                                res.setHeader('Content-Type', 'application/json');
+                                res.end(endpointRoutes.filter(e => e.url == http_url)[0].data)
+                                return;
+                            }
+                        }else{
+                            res.statusCode = HTTP_OK;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.end(endpointRoutes.filter(e => e.url == http_url)[0].data)
+                            return;
+                        }
                     }
                 }else {
+                    if (http_url.includes('dashboard')) {
+                        if (!loginAuthorization.includes(http_ip)) {
+                            endpointConstructor.loginRedirect(req, res)
+                            return 
+                        }
+                    }
                     if (http_url.includes('.')) { 
                         let file_path = path.resolve('./www' + http_url)
                         let file_extension = path.extname(file_path)
@@ -117,9 +132,8 @@ return new Promise(async (resolve, reject) => {
                             res.setHeader('Content-Type', file_extensions[file_extension]);
                             res.end(fs.readFileSync(file_path))
                         }else{
-                            let fs_path = path.resolve('./www/404.html')
-                            res.statusCode = HTTP_NOT_FOUND;
-                            res.end(fs.readFileSync(fs_path))
+                            endpointConstructor.errorRedirect(req, res)
+                            return;
                         }
                     }else{
                         let file_path = path.resolve('./www' + http_url + '.html');
@@ -128,83 +142,62 @@ return new Promise(async (resolve, reject) => {
                             res.setHeader('Content-Type', file_extensions['.html']);
                             res.end(fs.readFileSync(file_path))
                         }else{
-                            let fs_path = path.resolve('./www/404.html')
-                            res.statusCode = HTTP_NOT_FOUND;
-                            res.end(fs.readFileSync(fs_path))
+                            endpointConstructor.errorRedirect(req, res)
+                            return;
                         }
                     }
                 }
             }
             if (http_method == "POST") {
                 if (toolsConstructor.canAccess(clientAddress, configurations)) {
-
-                    if (http_url == "/api/manual") {
-                        let body = '';
-                        req.on('data', chunk => {
-                            body += chunk.toString();
-                        });
-                        req.on('end', () => {
-                            let jsonData = JSON.parse(body);
-                            let newData = formatConstructor.registerEvent(jsonData)
-                            if (newData['locations'] != "") {
-                                manual_data = newData
-                                res.statusCode = HTTP_OK;
-                                res.setHeader('Content-Type', 'application/json');
-                                res.end(JSON.stringify({status: 'success', message: 'Data added to the system'}))
+                    if (endpointRoutes.filter(e => e.url == http_url)[0] == undefined) {
+                        endpointConstructor.errorRedirect(req, res)
+                        return;
+                    }else{
+                        if (endpointRoutes.filter(e => e.url == http_url)[0].requiredLogin) {
+                            if (!loginAuthorization.includes(http_ip)) {
+                                endpointConstructor.loginRedirect(req, res)
                             }else{
-                                manual_data = []
+                                if (http_url == "/api/manual") {
+                                    endpointConstructor.manualPost(req, res)
+                                    return
+                                }
+                                if (http_url == "/api/forcerequest") {
+                                    endpointConstructor.requestDataPost(req, res)
+                                    return
+                                }
+                                if (http_url == "/api/notification") {
+                                    endpointConstructor.notificationPost(req, res)
+                                    return
+                                }
+                                if (http_url == "/api/logout") {
+                                    endpointConstructor.requestLogoutPost(req, res, http_ip)
+                                    return
+                                }
                             }
-                        });
-                    }
-
-                    if (http_url == "/api/forcerequest") {
-                        if (configurations.ACTIVE_ONLY == "true") { 
-                            apiConstructor.requestActive()
-                            toolsConstructor.log('Requested latest active alerts...')
                         }else{
-                            apiConstructor.requestArchive()
-                            toolsConstructor.log('Requested latest alerts...')
-                        }
-                        res.statusCode = HTTP_CREATED;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.end(JSON.stringify({status: 'success', message: 'Requested latest data from the system'}))
-                    }
-
-                    if (http_url == "/api/notification") {
-                        let body = '';
-                        req.on('data', chunk => {
-                            body += chunk.toString();
-                        });
-                        req.on('end', () => {
-                            let jsonData = JSON.parse(body);
-                            let title = jsonData['title']
-                            let message = jsonData['message']
-                            if (message != "") {
-                                active_notifications = {title: title, message: message}
-                                res.statusCode = HTTP_CREATED;
-                                res.setHeader('Content-Type', 'application/json');
-                                res.end(JSON.stringify({status: 'success', message: 'Data added to the system'}))
-                            }else{
-                                active_notifications = []
+                            if (http_url == "/api/login") {
+                                endpointConstructor.loginPost(req, res, http_ip)
+                                return
                             }
-                        });
+                            if (http_url == "/api/register") {
+                                endpointConstructor.registerPost(req, res, http_ip)
+                                return
+                            }
+                            if (http_url == "/api/newpassword") {
+                                endpointConstructor.newPasswordPost(req, res, http_ip)
+                                return
+                            }
+                        }
                     }
-
-
                 }else{
-                    res.statusCode = HTTP_FORBIDDEN;
-                    let fs_path = path.resolve('./www/404.html')
-                    res.statusCode = HTTP_NOT_FOUND;
-                    res.end(fs.readFileSync(fs_path))
-                    return;
+                    endpointConstructor.errorRedirect(req, res)
+                    return
                 }
             }
         }else {
-            res.statusCode = HTTP_FORBIDDEN;
-            let fs_path = path.resolve('./www/404.html')
-            res.statusCode = HTTP_NOT_FOUND;
-            res.end(fs.readFileSync(fs_path))
-            return;
+            endpointConstructor.errorRedirect(req, res)
+            return
         }
     });
     server.listen(configurations.PORT, configurations.HOSTNAME, () => {
