@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtmosphericX - Registration</title>
+    <link rel="stylesheet" href="../assets/styles/portal.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>AtmosphericX Registration</h1>
+            <hr>
+            <div class="error-message"></div>
+            <div class="error-message2"></div>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Register</button>
+                <p>Already have an <a href="../login.html">account?</a></p>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let ipAddress = window.location.origin;
+            let url = ipAddress + "/api/register";
+            let postData = {
+                "username": document.getElementById('username').value,
+                "password": document.getElementById('password').value
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        document.querySelector('.error-message2').innerHTML = data.message;
+                        document.querySelector('.error-message2').style.display = 'block';
+                        document.querySelector('.error-message').style.display = 'none';
+                    });
+                    setTimeout(function() {
+                        window.location.replace(ipAddress + "/login.html");
+                    }, 3000);
+                } else {
+                    response.json().then(data => {
+                        document.querySelector('.error-message2').style.display = 'none';
+                        document.querySelector('.error-message').innerHTML = data.message;
+                        document.querySelector('.error-message').style.display = 'block';
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    <footer>
+        <p>AtmosphericX &copy; 2024 - Made with <3 @k3yomi@GitHub</p>
+    </footer>
+</body>
+</html>
