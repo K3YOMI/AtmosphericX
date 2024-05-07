@@ -9,6 +9,7 @@ class discord {
         bot_client.channels.fetch(channel_id).then(channel => {
             channel.messages.fetch({ limit: 1 }).then(messages => {
                 let lastMessage = messages.first();
+                let newDesc = generic_data[0]['eventDescription'].substring(0, 450) + '...';
                     let newEmbed = new discordjs.EmbedBuilder()
                     .setColor('#0099ff')
                     .setTitle('AtmosphericX Weather Alert System')
@@ -21,7 +22,7 @@ class discord {
                         { name: 'Issued', value: `<t:${Math.floor(new Date(generic_data[0]['issued']).getTime() / 1000)}:R>`, inline: true },
                         { name: 'Expires', value: `<t:${Math.floor(new Date(generic_data[0]['expires']).getTime() / 1000)}:R>`, inline: true },
                         { name: 'Affected Locations', value: `\`\`\`json\n${generic_data[0]['locations']}\`\`\``, inline: false },
-                        { name: 'Event Description', value: `\`\`\`json\n${generic_data[0]['eventDescription']}\`\`\``, inline: false },
+                        { name: 'Event Description', value: `\`\`\`json\n${newDesc}\`\`\``, inline: false },
                         { name: 'Last Updated', value: `<t:${Math.floor(new Date().getTime() / 1000)}:R>`},
                     )
                     .setTimestamp()
