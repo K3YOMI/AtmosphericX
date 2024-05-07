@@ -34,7 +34,7 @@ class endpointManager {
         req.on('end', () => {
             let jsonData = JSON.parse(body);
             let username = jsonData['username']
-            let password = crypto.createHash('sha256').update(jsonData['password']).digest('base64')
+            let password = cryptography.createHash('sha256').update(jsonData['password']).digest('base64')
             let openLogins = JSON.parse(fs.readFileSync('./users.json', 'utf8'))
             let login = false
             let finduers = openLogins.filter(user => user.username == username.toString() && user.hash == password.toString())
@@ -70,7 +70,7 @@ class endpointManager {
         req.on('end', () => {
             let jsonData = JSON.parse(body);
             let username = jsonData['username']
-            let password = crypto.createHash('sha256').update(jsonData['password']).digest('base64')
+            let password = cryptography.createHash('sha256').update(jsonData['password']).digest('base64')
             let openLogins = JSON.parse(fs.readFileSync('./users.json', 'utf8'))
             if (openLogins.filter(user => user.username == username.toString()).length > 0) {
                 res.statusCode = HTTP_FORBIDDEN
@@ -92,8 +92,8 @@ class endpointManager {
         req.on('end', () => {
             let jsonData = JSON.parse(body);
             let username = jsonData['username']
-            let password = crypto.createHash('sha256').update(jsonData['password']).digest('base64')
-            let newPassword = crypto.createHash('sha256').update(jsonData['newPassword']).digest('base64')
+            let password = cryptography.createHash('sha256').update(jsonData['password']).digest('base64')
+            let newPassword = cryptography.createHash('sha256').update(jsonData['newPassword']).digest('base64')
             let openLogins = JSON.parse(fs.readFileSync('./users.json', 'utf8'))
             let finduers = openLogins.filter(user => user.username == username.toString() && user.hash == password.toString() && user.activated == true)
             if (finduers.length > 0) {

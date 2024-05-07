@@ -45,7 +45,7 @@ alreadyQuerying = false
 
 
 http = require('http');
-crypto = require('crypto');
+cryptography = require('crypto');
 fs = require('fs')
 path = require('path')
 req = require('request')
