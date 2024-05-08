@@ -178,97 +178,124 @@ class format {
         }
     }
     registerEvent(data) {
-        let eventName = data['properties']['event']
-        let eventDescription = data['properties']['description']
-        let hailThreat = `Not Calculated`
-        let windThreat = `Not Calculated`
-        let tornadoThreat = `Not Calculated`
-        let thunderstormThreat = `Not Calculated`
-        if (data['properties']['parameters'] && data['properties']['parameters']['maxHailSize'] == undefined) { 
-            hailThreat = `Not Calculated` }
-        else{
-            hailThreat = data['properties']['parameters']['maxHailSize'] + ` (${data['properties']['parameters']['hailThreat']})`
-        }
-        if (data['properties']['parameters'] && data['properties']['parameters']['maxWindGust'] == undefined) { 
-            windThreat = `Not Calculated` 
-        }else{
-            windThreat = data['properties']['parameters']['maxWindGust'] + ` (${data['properties']['parameters']['windThreat']})`
-        }
-        if (data['properties']['parameters'] && data['properties']['parameters']['tornadoDetection'] == undefined) { 
-            tornadoThreat = `Not Calculated` 
-        }else{
-            tornadoThreat = data['properties']['parameters']['tornadoDetection']
-        }
-        if (data['properties']['parameters'] && data['properties']['parameters']['thunderstormDamageThreat'] == undefined) { 
-            thunderstormThreat = `Not Calculated` 
-        }else{
-            thunderstormThreat = data['properties']['parameters']['thunderstormDamageThreat']
-        }
+        try {
+            let eventName = data['properties']['event']
+            let eventDescription = data['properties']['description']
+            let hailThreat = `Not Calculated`
+            let windThreat = `Not Calculated`
+            let tornadoThreat = `Not Calculated`
+            let thunderstormThreat = `Not Calculated`
+            if (data['properties']['parameters'] && data['properties']['parameters']['maxHailSize'] == undefined) { 
+                hailThreat = `Not Calculated` }
+            else{
+                hailThreat = data['properties']['parameters']['maxHailSize'] + ` (${data['properties']['parameters']['hailThreat']})`
+            }
+            if (data['properties']['parameters'] && data['properties']['parameters']['maxWindGust'] == undefined) { 
+                windThreat = `Not Calculated` 
+            }else{
+                windThreat = data['properties']['parameters']['maxWindGust'] + ` (${data['properties']['parameters']['windThreat']})`
+            }
+            if (data['properties']['parameters'] && data['properties']['parameters']['tornadoDetection'] == undefined) { 
+                tornadoThreat = `Not Calculated` 
+            }else{
+                tornadoThreat = data['properties']['parameters']['tornadoDetection']
+            }
+            if (data['properties']['parameters'] && data['properties']['parameters']['thunderstormDamageThreat'] == undefined) { 
+                thunderstormThreat = `Not Calculated` 
+            }else{
+                thunderstormThreat = data['properties']['parameters']['thunderstormDamageThreat']
+            }
 
 
-        let messageType = data['properties']['messageType']
-        let indication = data['properties']['indiciated']
-        let expires = data['properties']['expires']
-        let issued = data['properties']['sent']
-        if (eventDescription == undefined) { eventDescription = `No Description` }
-        let eventLower = eventDescription.toLowerCase()
-        let locations = this.formatLocations(data['properties']['areaDesc'])
-        if (eventLower.includes(`flash flood emergency`) && eventName == `Flash Flood Warning`) { eventName = `Flash Flood Emergency` }
-        if (eventLower.includes(`particularly dangerous situation`) && eventName == `Tornado Warning`) { eventName = `Particularly Dangerous Situation` }
-        if (eventLower.includes(`tornado emergency`)) { eventName = `Tornado Emergency` }
-        if (eventName == `Tornado Warning`) {
-            if (tornadoThreat == `OBSERVED` || eventLower.includes(`confirmed`)) { tornadoThreat = `Confirmed`; eventName = `Confirmed Tornado Warning` }
-            else if (tornadoThreat == `RADAR INDICATED`) { tornadoThreat = `Radar Indicated`; eventName = `Radar Indicated Tornado Warning` }
-            else if (tornadoThreat == `POSSIBLE`) { tornadoThreat = `Cancel` }
-        }
-        if (eventName == `Severe Thunderstorm Warning`) {
-            if (thunderstormThreat == `CONSIDERABLE`) { eventName = `Considerable Destructive Severe Thunderstorm Warning` }
-            else if (thunderstormThreat == `DESTRUCTIVE`) { eventName = `Destructive Severe Thunderstorm Warning` }
-            else { eventName = `Severe Thunderstorm Warning` }
-        }
-        if (messageType == `Update`) {
-            messageType = `Updated`
-        }
-        if (messageType == `Cancel`) {
-            messageType = `Expired`
-        }
-        if (messageType == `New`) {
-            messageType = `New`
-        }
-        let eventAction = action_tables[eventName]
-        if (eventAction != undefined) {
-            let eas = false 
-            let siren = false
-            let triggeredBy = eventAction['triggeredBy']
-            let newAudio = eventAction['new']
-            let updateAudio = eventAction['update']
-            let cancelAudio = eventAction['cancel']
-            let notifyCard = eventAction['notifyCard']
-            let gif = action_media[eventName]
-            let autobeep = eventAction['autobeep']
-            if (eventName == triggeredBy) {
-                let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
-                if (messageType == `Alert`) { audioToUse = newAudio }
-                if (messageType == `Updated`) { audioToUse = updateAudio }
-                if (messageType == `Expired/Cancelled`) { audioToUse = cancelAudio }
-                if (messageType == `Updated`) {
-                    if (eventName == `Tornado Emergency` || eventName == `Particularly Dangerous Situation` || eventName == `Flash Flood Emergency` || eventName == `Confirmed Tornado Warning`) {
-                        if (!dangerMedia.includes(`${eventName}-${locations}-${data['id']}-${eventDescription}`)) {
-                            dangerMedia.push(`${eventName}-${locations}-${data['id']}-${eventDescription}`)
-                            audioToUse = newAudio
-                            if (eventName == `Tornado Emergency`) { siren = true }
-                            if (eventName == `Particularly Dangerous Situation`) { eas = true }
-                            if (eventName == `Flash Flood Emergency`) { eas = true }
-                            if (eventName == `Confirmed Tornado Warning`) { eas = true }
+            let messageType = data['properties']['messageType']
+            let indication = data['properties']['indiciated']
+            let expires = data['properties']['expires']
+            let issued = data['properties']['sent']
+            if (eventDescription == undefined) { eventDescription = `No Description` }
+            let eventLower = eventDescription.toLowerCase()
+            let locations = this.formatLocations(data['properties']['areaDesc'])
+            if (eventLower.includes(`flash flood emergency`) && eventName == `Flash Flood Warning`) { eventName = `Flash Flood Emergency` }
+            if (eventLower.includes(`particularly dangerous situation`) && eventName == `Tornado Warning`) { eventName = `Particularly Dangerous Situation` }
+            if (eventLower.includes(`tornado emergency`)) { eventName = `Tornado Emergency` }
+            if (eventName == `Tornado Warning`) {
+                if (tornadoThreat == `OBSERVED` || eventLower.includes(`confirmed`)) { tornadoThreat = `Confirmed`; eventName = `Confirmed Tornado Warning` }
+                else if (tornadoThreat == `RADAR INDICATED`) { tornadoThreat = `Radar Indicated`; eventName = `Radar Indicated Tornado Warning` }
+                else if (tornadoThreat == `POSSIBLE`) { tornadoThreat = `Cancel` }
+            }
+            if (eventName == `Severe Thunderstorm Warning`) {
+                if (thunderstormThreat == `CONSIDERABLE`) { eventName = `Considerable Destructive Severe Thunderstorm Warning` }
+                else if (thunderstormThreat == `DESTRUCTIVE`) { eventName = `Destructive Severe Thunderstorm Warning` }
+                else { eventName = `Severe Thunderstorm Warning` }
+            }
+            if (messageType == `Update`) {
+                messageType = `Updated`
+            }
+            if (messageType == `Cancel`) {
+                messageType = `Expired`
+            }
+            if (messageType == `New`) {
+                messageType = `New`
+            }
+            let eventAction = action_tables[eventName]
+            if (eventAction != undefined) {
+                let eas = false 
+                let siren = false
+                let triggeredBy = eventAction['triggeredBy']
+                let newAudio = eventAction['new']
+                let updateAudio = eventAction['update']
+                let cancelAudio = eventAction['cancel']
+                let notifyCard = eventAction['notifyCard']
+                let gif = action_media[eventName]
+                let autobeep = eventAction['autobeep']
+                if (eventName == triggeredBy) {
+                    let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
+                    if (messageType == `Alert`) { audioToUse = newAudio }
+                    if (messageType == `Updated`) { audioToUse = updateAudio }
+                    if (messageType == `Expired/Cancelled`) { audioToUse = cancelAudio }
+                    if (messageType == `Updated`) {
+                        if (eventName == `Tornado Emergency` || eventName == `Particularly Dangerous Situation` || eventName == `Flash Flood Emergency` || eventName == `Confirmed Tornado Warning`) {
+                            if (!dangerMedia.includes(`${eventName}-${locations}-${data['id']}-${eventDescription}`)) {
+                                dangerMedia.push(`${eventName}-${locations}-${data['id']}-${eventDescription}`)
+                                audioToUse = newAudio
+                                if (eventName == `Tornado Emergency`) { siren = true }
+                                if (eventName == `Particularly Dangerous Situation`) { eas = true }
+                                if (eventName == `Flash Flood Emergency`) { eas = true }
+                                if (eventName == `Confirmed Tornado Warning`) { eas = true }
+                            }
                         }
                     }
+                    if (messageType == `Alert`) {
+                        if (eventName == `Tornado Emergency`) { siren = true }
+                        if (eventName == `Particularly Dangerous Situation`) { eas = true }
+                        if (eventName == `Flash Flood Emergency`) { eas = true }
+                        if (eventName == `Confirmed Tornado Warning`) { eas = true }
+                    }
+                    return {
+                        eventName: eventName,
+                        eventDescription: eventDescription,
+                        thunderstormThreat: thunderstormThreat,
+                        hailThreat: hailThreat,
+                        windThreat: windThreat,
+                        tornadoThreat: tornadoThreat,
+                        messageType: messageType,
+                        indication: indication,
+                        expires: expires,
+                        issued: issued,
+                        locations: locations,
+                        audioToUse : audioToUse,
+                        gif: gif,
+                        eas: eas,
+                        siren: siren,
+                        notifyCard: notifyCard,
+                        autobeep: autobeep,
+                        link: data['id']
+                    }
                 }
-                if (messageType == `Alert`) {
-                    if (eventName == `Tornado Emergency`) { siren = true }
-                    if (eventName == `Particularly Dangerous Situation`) { eas = true }
-                    if (eventName == `Flash Flood Emergency`) { eas = true }
-                    if (eventName == `Confirmed Tornado Warning`) { eas = true }
-                }
+            }else{
+                let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
+                if (messageType == `Alert`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-ISSUED.mp3` }
+                if (messageType == `Updated`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-UPDATED.mp3` }
+                if (messageType == `Expired/Cancelled`) { audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3` }
                 return {
                     eventName: eventName,
                     eventDescription: eventDescription,
@@ -282,39 +309,16 @@ class format {
                     issued: issued,
                     locations: locations,
                     audioToUse : audioToUse,
-                    gif: gif,
-                    eas: eas,
-                    siren: siren,
-                    notifyCard: notifyCard,
-                    autobeep: autobeep,
+                    gif: `../../assets/media/gif/red_warning.gif`,
+                    eas: false,
+                    siren: false,
+                    notifyCard: eventName,
+                    autobeep: false,
                     link: data['id']
                 }
             }
-        }else{
-            let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
-            if (messageType == `Alert`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-ISSUED.mp3` }
-            if (messageType == `Updated`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-UPDATED.mp3` }
-            if (messageType == `Expired/Cancelled`) { audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3` }
-            return {
-                eventName: eventName,
-                eventDescription: eventDescription,
-                thunderstormThreat: thunderstormThreat,
-                hailThreat: hailThreat,
-                windThreat: windThreat,
-                tornadoThreat: tornadoThreat,
-                messageType: messageType,
-                indication: indication,
-                expires: expires,
-                issued: issued,
-                locations: locations,
-                audioToUse : audioToUse,
-                gif: `../../assets/media/gif/red_warning.gif`,
-                eas: false,
-                siren: false,
-                notifyCard: eventName,
-                autobeep: false,
-                link: data['id']
-            }
+        } catch (error) {
+            toolsConstructor.log(`[Error] [Format Manager] >> ${error.message}`)
         }
     }
 }

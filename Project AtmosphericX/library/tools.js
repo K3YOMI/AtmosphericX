@@ -5,15 +5,19 @@ class tools {
         this.format = "returned from tools.js";
     }
     env(envPath) {
-        let envFileContent = fs.readFileSync(envPath, 'utf8');
-        let envVariables = {};
-        envFileContent.split('\n').forEach(line => {
-            const [key, value] = line.split('=');
-            if (value && !value.startsWith('#')) {
-                envVariables[key] = value.replace('\r', '');
-            }
-        });
-        return envVariables;
+        try {
+            let envFileContent = fs.readFileSync(envPath, 'utf8');
+            let envVariables = {};
+            envFileContent.split('\n').forEach(line => {
+                const [key, value] = line.split('=');
+                if (value && !value.startsWith('#')) {
+                    envVariables[key] = value.replace('\r', '');
+                }
+            });
+            return envVariables;
+        } catch (error) {
+            toolsConstructor.log(`[Error] [tools.env] >> ${error.message}`);
+        }
     }
     canAccess(clientAddresss) {
         return configurations['API_ACCESS'].includes(clientAddresss) || configurations['API_ACCESS'].includes('*');
