@@ -38,6 +38,8 @@ async function executeQuery() {
         let eventName = activeManuals.eventName
         let eventDescription = activeManuals['eventDescription']
         let eventMessage = activeManuals['messageType']
+        let ignoreWarning = activeManuals['ignoreWarning']
+        if (ignoreWarning == true) {return} // Ignore the warning if it's set to true
         activeAlerts.push(activeManuals)
         let inQueue = queue.find(x => x.eventName == eventName && x.eventDescription == eventDescription && x.messageType == eventMessage)
         if (eventName.includes(`Warning`)) {warningList.push(activeManuals)}
@@ -71,6 +73,8 @@ async function executeQuery() {
             let messageType = latestAlert.messageType
             let timeIssued = latestAlert.issued
             let timeExpires = latestAlert.expires
+            let ignoreWarning = latestAlert.ignoreWarning
+            if (ignoreWarning == true) {continue} // Ignore the warning if it's set to true
             let findDuplicate = lastQueries.find(x => x.eventName == eventName && x.eventDescription == eventDesc && x.messageType == messageType && x.issued == timeIssued && x.expires == timeExpires)
             let currentTime = new Date().getTime() / 1000
             let timeCheck = currentTime - new Date(timeIssued).getTime() / 1000;

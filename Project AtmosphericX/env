@@ -22,7 +22,7 @@ ALL_ALERTS=["Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Spe
 # ALERT CONFIGURATION
 BEEP_ONLY=false
 ALLOW_UPDATES=true
-EXCLUDED_EVENTS=["Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Radar Indicated Tornado Warning"]
+EXCLUDED_EVENTS=["Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Radar Indicated Tornado Warning", "Destructive Severe Thunderstorm Warning"]
 
 
 # DISCORD BOT CONFIGURATION (OPTIONAL)

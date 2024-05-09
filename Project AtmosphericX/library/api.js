@@ -1,10 +1,10 @@
 
-
 class api {
     constructor() {
         console.log(`[AtmosphericX Library] >> Loaded API Manager`);
         this.api = "returned from api.js";
     }
+
     requestActive() {
         return new Promise(async (resolve, reject) => {
             let active = {url: `https://api.weather.gov/alerts/active`, method: 'GET',headers: { 'User-Agent': configurations['USER_AGENT'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}

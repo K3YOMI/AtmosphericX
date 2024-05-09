@@ -156,10 +156,19 @@ async function executeQuery() {
 
     total_warnings = activeWarnings.length
     total_watches = activeWatches.length
-    totalAlerts = total_warnings + total_watches + activeManuals
+    totalAlerts = total_warnings + total_watches
     document.getElementById("active_warnings_int").innerHTML = `${total_warnings} Active Warning(s) `;
     document.getElementById("active_watches_int").innerHTML = `${total_watches} Active Watche(s)`;
     document.getElementById("active_alerts_int").innerHTML = `${totalAlerts} Active Alert(s)`;
+    
+    document.getElementById("active_tornado_warns").innerHTML = `${activeWarnings.filter(x => x.eventName.includes('Tornado') || x.eventName.includes('Particularly Dangerous Situation')).length} Tornado Warning(s)`;
+    document.getElementById("active_svr_warnings").innerHTML = `${activeWarnings.filter(x => x.eventName.includes('Thunderstorm')).length} Severe Weather Warning(s)`;
+    document.getElementById("active_misc_warns").innerHTML = `${activeWarnings.filter(x => !x.eventName.includes('Thunderstorm') && !x.eventName.includes('Tornado')).length} Miscellaneous Warning(s)`;
+
+    
+
+
+
     alertsBox.innerHTML = '';
     for (let i = 0; i < activeAlerts.length; i++) {
         if (i > 2) {break}
@@ -206,6 +215,12 @@ async function configSetup() {
     document.getElementById("active_warnings_int").innerHTML = `Syncing Stream`;
     document.getElementById("active_watches_int").innerHTML = `Syncing Stream`;
     document.getElementById("active_alerts_int").innerHTML = `Syncing Stream`;
+
+    document.getElementById("active_tornado_warns").innerHTML = `Syncing Stream`;
+    document.getElementById("active_svr_warnings").innerHTML = `Syncing Stream`;
+    document.getElementById("active_misc_warns").innerHTML = `Syncing Stream`;
+
+
     lib.isMobile()
     setInterval(() => {
         if (new Date().getSeconds() % requestQueryRate == 0) { // Every 10 seconds

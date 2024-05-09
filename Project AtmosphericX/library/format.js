@@ -249,6 +249,7 @@ class format {
                 let cancelAudio = eventAction['cancel']
                 let notifyCard = eventAction['notifyCard']
                 let gif = action_media[eventName]
+                let ignoreWarning = false
                 let autobeep = eventAction['autobeep']
                 if (eventName == triggeredBy) {
                     let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
@@ -256,7 +257,7 @@ class format {
                     if (messageType == `Updated`) { audioToUse = updateAudio }
                     if (messageType == `Expired`) { audioToUse = cancelAudio }
                     if (messageType == `Updated`) {
-                        if (eventName == `Tornado Emergency` || eventName == `Particularly Dangerous Situation` || eventName == `Flash Flood Emergency` || eventName == `Confirmed Tornado Warning`) {
+                        if (eventName == `Tornado Emergency` || eventName == `Particularly Dangerous Situation` || eventName == `Flash Flood Emergency` || eventName == `Confirmed Tornado Warning` || eventName == `Destructive Severe Thunderstorm Warning`) {
                             if (!dangerMedia.includes(`${eventName}-${locations}-${data['id']}-${eventDescription}`)) {
                                 dangerMedia.push(`${eventName}-${locations}-${data['id']}-${eventDescription}`)
                                 audioToUse = newAudio
@@ -264,6 +265,7 @@ class format {
                                 if (eventName == `Particularly Dangerous Situation`) { eas = true }
                                 if (eventName == `Flash Flood Emergency`) { eas = true }
                                 if (eventName == `Confirmed Tornado Warning`) { eas = true }
+                                if (eventName == `Destructive Severe Thunderstorm Warning`) { eas = true }
                             }
                         }
                     }
@@ -272,6 +274,7 @@ class format {
                         if (eventName == `Particularly Dangerous Situation`) { eas = true }
                         if (eventName == `Flash Flood Emergency`) { eas = true }
                         if (eventName == `Confirmed Tornado Warning`) { eas = true }
+                        if (eventName == `Destructive Severe Thunderstorm Warning`) { eas = true }
                     }
                     if (beepOnly == "true") {
                         if (!excludedEvents.includes(eventName)) {
@@ -281,12 +284,9 @@ class format {
 
                     if (allowUpdateNotificiation == "false" && messageType == `Updated`) {
                         if (!excludedEvents.includes(eventName)) {
-                            return {}
+                            ignoreWarning = true
                         }
                     }
-                 
-
-
                     return {
                         eventName: eventName,
                         eventDescription: eventDescription,
@@ -300,6 +300,7 @@ class format {
                         issued: issued,
                         locations: locations,
                         audioToUse : audioToUse,
+                        ignoreWarning: ignoreWarning,
                         gif: gif,
                         eas: eas,
                         siren: siren,
@@ -322,7 +323,7 @@ class format {
 
                 if (allowUpdateNotificiation == "false" && messageType == `Updated`) {
                     if (!excludedEvents.includes(eventName)) {
-                        return {}
+                        ignoreWarning = true
                     }
                 }
 
@@ -340,6 +341,7 @@ class format {
                     issued: issued,
                     locations: locations,
                     audioToUse : audioToUse,
+                    ignoreWarning: ignoreWarning,
                     gif: `../../assets/media/gif/red_warning.gif`,
                     eas: false,
                     siren: false,
