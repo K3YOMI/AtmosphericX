@@ -154,7 +154,7 @@ class endpointManager {
             }else{
                 res.statusCode = HTTP_FORBIDDEN;
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({status: 'error', message: `Faield to change password to ${username} with the provided credentials`}))
+                res.end(JSON.stringify({status: 'error', message: `Failed to change password to ${username} with the provided credentials`}))
                 return;
             }
         } catch (error) {
