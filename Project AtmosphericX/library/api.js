@@ -31,6 +31,7 @@ class api {
                     for (let i = 0; i < watches.length; i++) {
                         let alert = watches[i]
                         if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_watch = active_total_watches.filter(watch => watch['id'] == alert['id'])
                         if (find_watch == undefined || find_watch.length == 0) {
@@ -43,6 +44,7 @@ class api {
                     for (let i = 0; i < warnings.length; i++) {
                         let alert = warnings[i]
                         if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
@@ -54,6 +56,8 @@ class api {
                     }
                     for (let i = 0; i < doesntInclude.length; i++) {
                         let alert = doesntInclude[i]
+                        if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
@@ -85,7 +89,7 @@ class api {
                     active_total_warnings = []
                     active_total_watches = []
                     generic_data = []
-                    if (body == undefined) { toolsConstructor.log('No data recieved from api.weather.gov/alerts/active'); return;}
+                    if (body == undefined) { toolsConstructor.log('No data recieved from api.weather.gov/alerts'); return;}
                     if (response.statusCode !== 200) {
                         toolsConstructor.log(`An error occured while fetching data from api.weather.gov/alerts`)
                         toolsConstructor.log(`Error: ${response.statusCode} - ${response.statusMessage}`); 
@@ -102,6 +106,7 @@ class api {
                     for (let i = 0; i < watches.length; i++) {
                         let alert = watches[i]
                         if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_watch = active_total_watches.filter(watch => watch['id'] == alert['id'])
                         if (find_watch == undefined || find_watch.length == 0) {
@@ -114,6 +119,7 @@ class api {
                     for (let i = 0; i < warnings.length; i++) {
                         let alert = warnings[i]
                         if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
@@ -127,6 +133,8 @@ class api {
 
                     for (let i = 0; i < doesntInclude.length; i++) {
                         let alert = doesntInclude[i]
+                        if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
