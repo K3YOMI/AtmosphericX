@@ -11,6 +11,7 @@ let latestAlert = []
 let latestManual = []
 let queue = []
 let alreadyQuerying = false
+let firstRun = true
 
 if (window.location.pathname.includes(`portable`)) {
     isStreaming = false;
@@ -73,7 +74,11 @@ async function executeQuery() {
             let findDuplicate = lastQueries.find(x => x.eventName == eventName && x.eventDescription == eventDesc && x.messageType == messageType && x.issued == timeIssued && x.expires == timeExpires)
             let currentTime = new Date().getTime() / 1000
             let timeCheck = currentTime - new Date(timeIssued).getTime() / 1000;
-            if (timeCheck > 8 && timeCheck < 180 && findDuplicate == undefined) {
+            if (timeCheck > 8 && timeCheck < 600 && findDuplicate == undefined && firstRun == false) {
+                queue.push(latestAlert)
+                lastQueries.push(latestAlert)
+            }
+            else if (firstRun == true && findDuplicate == undefined && timeCheck > 8 && timeCheck < 120) {
                 queue.push(latestAlert)
                 lastQueries.push(latestAlert)
             } else { 
@@ -85,6 +90,7 @@ async function executeQuery() {
                 }
             }
         }
+        firstRun = false
     }
     streamlib.runQuery(queue)
     if (isStreaming) {
@@ -101,7 +107,7 @@ async function configSetup() {
     }, 1)
     let requestQueryRate = await lib.getQueryRate();
     setTimeout(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 10)
-    setInterval(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 1000)
+    setInterval(() => {if (isStreaming) { streamlib.updateGeneralListings(warningList)}}, 100)
     setInterval(() => {
         if (new Date().getSeconds() % requestQueryRate == 0) { // Every 10 seconds
             if (alreadyQuerying) {return}

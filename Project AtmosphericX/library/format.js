@@ -179,6 +179,11 @@ class format {
     }
     registerEvent(data) {
         try {
+            let beepOnly = configurations['BEEP_ONLY']
+            let excludedEvents = JSON.parse(configurations['EXCLUDED_EVENTS'])
+            let allowUpdateNotificiation = configurations['ALLOW_UPDATES']
+
+
             let eventName = data['properties']['event']
             let eventDescription = data['properties']['description']
             let hailThreat = `Not Calculated`
@@ -205,8 +210,6 @@ class format {
             }else{
                 thunderstormThreat = data['properties']['parameters']['thunderstormDamageThreat']
             }
-
-
             let messageType = data['properties']['messageType']
             let indication = data['properties']['indiciated']
             let expires = data['properties']['expires']
@@ -233,8 +236,8 @@ class format {
             if (messageType == `Cancel`) {
                 messageType = `Expired`
             }
-            if (messageType == `New`) {
-                messageType = `New`
+            if (messageType == `Alert`) {
+                messageType = `Issued`
             }
             let eventAction = action_tables[eventName]
             if (eventAction != undefined) {
@@ -249,9 +252,9 @@ class format {
                 let autobeep = eventAction['autobeep']
                 if (eventName == triggeredBy) {
                     let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
-                    if (messageType == `Alert`) { audioToUse = newAudio }
+                    if (messageType == `Issued`) { audioToUse = newAudio }
                     if (messageType == `Updated`) { audioToUse = updateAudio }
-                    if (messageType == `Expired/Cancelled`) { audioToUse = cancelAudio }
+                    if (messageType == `Expired`) { audioToUse = cancelAudio }
                     if (messageType == `Updated`) {
                         if (eventName == `Tornado Emergency` || eventName == `Particularly Dangerous Situation` || eventName == `Flash Flood Emergency` || eventName == `Confirmed Tornado Warning`) {
                             if (!dangerMedia.includes(`${eventName}-${locations}-${data['id']}-${eventDescription}`)) {
@@ -264,12 +267,26 @@ class format {
                             }
                         }
                     }
-                    if (messageType == `Alert`) {
+                    if (messageType == `Issued`) {
                         if (eventName == `Tornado Emergency`) { siren = true }
                         if (eventName == `Particularly Dangerous Situation`) { eas = true }
                         if (eventName == `Flash Flood Emergency`) { eas = true }
                         if (eventName == `Confirmed Tornado Warning`) { eas = true }
                     }
+                    if (beepOnly == "true") {
+                        if (!excludedEvents.includes(eventName)) {
+                            audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
+                        }
+                    }
+
+                    if (allowUpdateNotificiation == "false" && messageType == `Updated`) {
+                        if (!excludedEvents.includes(eventName)) {
+                            return {}
+                        }
+                    }
+                 
+
+
                     return {
                         eventName: eventName,
                         eventDescription: eventDescription,
@@ -293,9 +310,23 @@ class format {
                 }
             }else{
                 let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
-                if (messageType == `Alert`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-ISSUED.mp3` }
+                if (messageType == `Issued`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-ISSUED.mp3` }
                 if (messageType == `Updated`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-UPDATED.mp3` }
-                if (messageType == `Expired/Cancelled`) { audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3` }
+                if (messageType == `Expired`) { audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3` }
+
+                if (beepOnly == "true") {
+                    if (!excludedEvents.includes(eventName)) {
+                        audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
+                    }
+                }
+
+                if (allowUpdateNotificiation == "false" && messageType == `Updated`) {
+                    if (!excludedEvents.includes(eventName)) {
+                        return {}
+                    }
+                }
+
+
                 return {
                     eventName: eventName,
                     eventDescription: eventDescription,

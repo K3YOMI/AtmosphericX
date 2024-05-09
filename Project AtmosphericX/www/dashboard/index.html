@@ -18,6 +18,8 @@
             <i class="fas fa-globe" title="External Data and Services" onclick="showPage('external-services')"></i>
             <i class="fas fa-chart-line" title="SPC Day Risks and Outlooks" onclick="showPage('outlooks')"></i>
             <i class="fas fa-cog" title="Settings" onclick="showPage('settings')"></i>
+            <i id='donate' class="fas fa-coffee" title="Buy me a coffee" onclick="window.open('https://www.ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000')"></i>
+            <i id='github' class="fab fa-github" title="GitHub Repository" onclick="window.open('https://www.github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000')"></i>
             <i id='changepassword' class="fas fa-key" title="Change Password"></i>
             <i id='logout' class="fas fa-sign-out-alt" title="Logout"></i>
         </div>
@@ -245,11 +247,11 @@
                         <select class="form-control" id="eventType_sel">
                             <option>Tornado Emergency</option>
                             <option>Particularly Dangerous Situation</option>
-                            <option>Tornado Warning</option>
                             <option>Confirmed Tornado Warning</option>
+                            <option>Radar Indicated Tornado Warning</option>
                             <option>Tornado Watch</option>
-                            <option>Considerable Destructive Severe Thunderstorm Warning</option>
                             <option>Destructive Severe Thunderstorm Warning</option>
+                            <option>Considerable Destructive Severe Thunderstorm Warning</option>
                             <option>Severe Thunderstorm Warning</option>
                             <option>Severe Thunderstorm Watch</option>
                             <option>Special Marine Warning</option>

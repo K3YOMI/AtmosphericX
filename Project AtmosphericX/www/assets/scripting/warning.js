@@ -13,7 +13,8 @@ async function executeQuery() {
     }
     if (activeManuals.length != 0) {list.push(activeManuals)}   
     document.getElementById("uialert").innerHTML = `<tr><th>Type<hr></th><th>Location<hr></th></tr>`
-    list.sort((a, b) => a.eventName.localeCompare(b.eventName))
+    list.sort((a, b) => a.expires.localeCompare(b.issued))
+    list.reverse()
     for (let i = 0; i < list.length; i++) {
         // only allow 20 alerts to be displayed
         if (i == 20) { break }

@@ -13,7 +13,13 @@ class endpointManager {
                 req.on('error', error => { reject(error); }); // Handle request error
             });
             let jsonData = JSON.parse(body);
-            let newData = formatConstructor.registerEvent(jsonData);
+            let newData = formatConstructor.registerEvent(jsonData)
+            if (Object.keys(newData).length == 0) {
+                res.statusCode = HTTP_OK;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ status: 'success', message: 'Data added to the system' }));
+                return
+            }
             manual_data = newData['locations'] !== "" ? newData : [];
             res.statusCode = HTTP_OK;
             res.setHeader('Content-Type', 'application/json');

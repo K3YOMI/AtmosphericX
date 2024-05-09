@@ -1,6 +1,7 @@
 let canPlay = true; // Audio rate limiter for the EAS tone
 let streamModeEnabled = true
 let usingMobileDevice = false
+let alreadyRunningQuery = false
 let audioInteractionChannel1 = undefined
 let audioInteractionChannel2 = undefined
 let audioInteractionChannel3 = undefined
@@ -166,7 +167,7 @@ class stream {
             document.getElementById('gif_notification').src = gif;
             if (location.length > 108) {location = location.substring(0, 100) + '...';}
             document.getElementById('gif_notification').style.display = 'block';
-            setTimeout(function () {document.getElementById('gif_notification').src = 'https://upload.wikimedia.org/wikipedia/commons/8/89/HD_transparent_picture.png';}, 6800);
+            setTimeout(function () {alreadyRunningQuery = false; document.getElementById('gif_notification').src = 'https://upload.wikimedia.org/wikipedia/commons/8/89/HD_transparent_picture.png';}, 6800);
             setTimeout(function () {document.getElementById('notification_title_event').innerHTML = `<div class="notification_title_event" style="animation: fade 5s linear forwards; animation-delay: 0s;">${title}</div>`;}, 500);
             setTimeout(function () {document.getElementById('notification_subtitle_event').innerHTML = `<div class="notification_subtitle_event" style="animation: fade 4.5s linear forwards;animation-delay: 0s;">${location}</div>`;}, 700);
         }
@@ -268,6 +269,8 @@ class stream {
     }
     async runQuery(queryData) {
         if (queryData.length == 0) { console.log(`empty queue`); return }
+        if (alreadyRunningQuery) { return }
+        alreadyRunningQuery = true;
         let nextQuery = queryData.length - 1;
         let alert = queryData[nextQuery];
         let messageType = alert.messageType;

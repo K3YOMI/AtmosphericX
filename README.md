@@ -111,6 +111,14 @@ OUTBREAK_ONLY=true # (true = only looks for major_alerts) (false = targets all_a
 MAJOR_ALERTS=[]
 ALL_ALERTS=[]
 
+# ALERT CONFIGURATION
+BEEP_ONLY=false # Forces only the beeping notification on unless in the states in excluded events. (Doesn't affect custom alerts)
+ALLOW_UPDATES=true	# Choose to allow event updates to push through.
+EXCLUDED_EVENTS=[] # Formatted Events Here. Please check format.js for the event names. (Ex. Tornado Emergency)
+
+
+
+
 # DISCORD BOT CONFIGURATION (OPTIONAL)
 ENABLE_DISCORD_BOT=false # Enable the discord bot functionality
 DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN # Discord bot token

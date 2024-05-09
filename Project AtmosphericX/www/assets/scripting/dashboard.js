@@ -156,7 +156,7 @@ async function executeQuery() {
 
     total_warnings = activeWarnings.length
     total_watches = activeWatches.length
-    totalAlerts = total_warnings + total_watches + activeManuals.length
+    totalAlerts = total_warnings + total_watches + activeManuals
     document.getElementById("active_warnings_int").innerHTML = `${total_warnings} Active Warning(s) `;
     document.getElementById("active_watches_int").innerHTML = `${total_watches} Active Watche(s)`;
     document.getElementById("active_alerts_int").innerHTML = `${totalAlerts} Active Alert(s)`;

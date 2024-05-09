@@ -22,11 +22,7 @@ class api {
                     }
                     let weatherData = JSON.parse(body)
                     let whitelistedEvents = []
-                    if (configurations['OUTBREAK_ONLY'] == "true") {
-                        whitelistedEvents = JSON.parse(configurations['MAJOR_ALERTS'])
-                    }else{
-                        whitelistedEvents = JSON.parse(configurations['ALL_ALERTS'])
-                    }
+                    if (configurations['OUTBREAK_ONLY'] == "true") {whitelistedEvents = JSON.parse(configurations['MAJOR_ALERTS']) } else { whitelistedEvents = JSON.parse(configurations['ALL_ALERTS'])}
                     let isWhiteListed = weatherData['features'].filter(alert => whitelistedEvents.includes(alert['properties']['event']))
                     let withinTime = isWhiteListed.filter(alert => new Date(alert['properties']['expires']).getTime() / 1000 > new Date().getTime() / 1000)
                     let warnings = withinTime.filter(alert => alert['properties']['event'].includes('Warning'))
@@ -38,9 +34,11 @@ class api {
                         let newData = formatConstructor.registerEvent(alert)
                         let find_watch = active_total_watches.filter(watch => watch['id'] == alert['id'])
                         if (find_watch == undefined || find_watch.length == 0) {
-                            active_total_watches.push(newData)
+                            if (Object.keys(newData).length != 0) {
+                                active_total_watches.push(newData)
+                                generic_data.push(newData)
+                            }
                         }
-                        generic_data.push(newData)
                     }
                     for (let i = 0; i < warnings.length; i++) {
                         let alert = warnings[i]
@@ -48,18 +46,22 @@ class api {
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
-                            active_total_warnings.push(newData)
+                            if (Object.keys(newData).length != 0) {
+                                active_total_warnings.push(newData)
+                                generic_data.push(newData)
+                            }
                         }
-                        generic_data.push(newData)
                     }
                     for (let i = 0; i < doesntInclude.length; i++) {
                         let alert = doesntInclude[i]
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
-                            active_total_warnings.push(newData)
+                            if (Object.keys(newData).length != 0) {
+                                active_total_warnings.push(newData)
+                                generic_data.push(newData)
+                            }
                         }
-                        generic_data.push(newData)
                     }
 
                     generic_data.sort((a, b) => new Date(a['issued']) - new Date(b['issued']))
@@ -69,7 +71,7 @@ class api {
                     active_total_warnings.reverse()
                     active_total_watches.reverse()
                 }catch (error) {
-                    toolsConstructor.log(`Error: ${error.message}`)
+                    toolsConstructor.log(`[Error] [API] ${error.message}`)
                 }
             })
         })
@@ -96,15 +98,18 @@ class api {
                     let withinTime = isWhiteListed.filter(alert => new Date(alert['properties']['expires']).getTime() / 1000 > new Date().getTime() / 1000)
                     let warnings = withinTime.filter(alert => alert['properties']['event'].includes('Warning'))
                     let watches = withinTime.filter(alert => alert['properties']['event'].includes('Watch'))
+                    let doesntInclude = withinTime.filter(alert => !alert['properties']['event'].includes('Warning') && !alert['properties']['event'].includes('Watch'))
                     for (let i = 0; i < watches.length; i++) {
                         let alert = watches[i]
                         if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
                         let newData = formatConstructor.registerEvent(alert)
                         let find_watch = active_total_watches.filter(watch => watch['id'] == alert['id'])
                         if (find_watch == undefined || find_watch.length == 0) {
-                            active_total_watches.push(newData)
+                            if (Object.keys(newData).length != 0) {
+                                active_total_watches.push(newData)
+                                generic_data.push(newData)
+                            }
                         }
-                        generic_data.push(newData)
                     }
                     for (let i = 0; i < warnings.length; i++) {
                         let alert = warnings[i]
@@ -112,10 +117,26 @@ class api {
                         let newData = formatConstructor.registerEvent(alert)
                         let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
                         if (find_warning == undefined || find_warning.length == 0) {
-                            active_total_warnings.push(newData)
+                            if (Object.keys(newData).length != 0) {
+                                active_total_warnings.push(newData)
+                                generic_data.push(newData)
+                            }
                         }
-                        generic_data.push(newData)
                     }
+
+
+                    for (let i = 0; i < doesntInclude.length; i++) {
+                        let alert = doesntInclude[i]
+                        let newData = formatConstructor.registerEvent(alert)
+                        let find_warning = active_total_warnings.filter(warning => warning['id'] == alert['id'])
+                        if (find_warning == undefined || find_warning.length == 0) {
+                            if (Object.keys(newData).length != 0) {
+                                active_total_warnings.push(newData)
+                                generic_data.push(newData)
+                            }
+                        }
+                    }
+
                     generic_data.sort((a, b) => new Date(a['issued']) - new Date(b['issued']))
                     active_total_warnings.sort((a, b) => new Date(a['issued']) - new Date(b['issued']))
                     active_total_watches.sort((a, b) => new Date(a['issued']) - new Date(b['issued']))
@@ -123,7 +144,7 @@ class api {
                     active_total_warnings.reverse()
                     active_total_watches.reverse()
                 }catch (error) {
-                    toolsConstructor.log(`Error: ${error.message}`)
+                    toolsConstructor.log(`[Error] [API] ${error.message}`)
                 }
             })
         })
