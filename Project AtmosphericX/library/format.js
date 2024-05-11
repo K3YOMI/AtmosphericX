@@ -1,7 +1,3 @@
-
-
-
-
 let action_tables = {
     "Considerable Destructive Severe Thunderstorm Warning": {
         triggeredBy: "Considerable Destructive Severe Thunderstorm Warning",
@@ -311,6 +307,7 @@ class format {
                 }
             }else{
                 let audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3`
+                let ignoreWarning = false
                 if (messageType == `Issued`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-ISSUED.mp3` }
                 if (messageType == `Updated`) { audioToUse = `../../assets/media/audio/UNK-SPECIAL-UPDATED.mp3` }
                 if (messageType == `Expired`) { audioToUse = `../../assets/media/audio/BEEP-INTRO.mp3` }
