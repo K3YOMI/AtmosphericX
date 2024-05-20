@@ -301,6 +301,10 @@ class stream {
                 lib.playsound(eas ? `../../assets/media/audio/EASv2.mp3` : `../../assets/media/audio/TOR-EM-SIREN.mp3`);
             }
         }
+        if (!streamModeEnabled) {
+            await lib.delay(6800);
+            alreadyRunningQuery = false;
+        }
         queryData.pop();
     }
 }
