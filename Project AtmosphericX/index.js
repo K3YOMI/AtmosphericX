@@ -66,6 +66,19 @@ return new Promise(async (resolve, reject) => {
     console.log(ascii);
     configurations = await toolsConstructor.env('env');
     const app = express();
+    if (configurations['API_ACCESS'] != "[*]") {
+        let allowed = JSON.parse(configurations['API_ACCESS'])
+        app.use((req, res, next) => {
+            let ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
+            if (!allowed.includes(ip)) {
+                res.statusCode = HTTP_FORBIDDEN;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ error: 'Forbidden', message: 'Your address is not allowed to access this API.' }));
+                return;
+            }
+            next();
+        });
+    }
     app.get('/api/alerts', (req, res) => {
         res.statusCode = HTTP_OK;
         res.setHeader('Content-Type', 'application/json');
@@ -148,16 +161,6 @@ return new Promise(async (resolve, reject) => {
         endpointConstructor.redirectDashboard(req, res);
     });
     app.use((req, res, next) => {
-        if (configurations['API_ACCESS'] != "[*]") {
-            let allowed = JSON.parse(configurations['API_ACCESS'])
-            let ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress).replace('::ffff:', '');
-            if (!allowed.includes(ip)) {
-                res.statusCode = HTTP_FORBIDDEN;
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ error: 'Forbidden', message: 'Your address is not allowed to access this API.' }));
-                return;
-            }
-        }
         if (req.url.includes('dashboard')) {
             if (!loginAuthorization.includes(req.headers['x-forwarded-for'] || req.connection.remoteAddress)) {
                 endpointConstructor.loginRedirect(req, res);
