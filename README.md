@@ -92,16 +92,18 @@ Configurating AtmosphericX is quite simple, the **env** holds all the configurat
 **DO NOT COPY THE CONFIG AS THIS IS NOT A WORKING CONFIG**
 ```conf
 # Environment Configuration
-VERSION=4.0.0 # Hold the version (do not touch)
+VERSION=4.5.0 # Hold the version (do not touch)
 
 # HOST NAME AND ACCESS
 HOSTNAME=0.0.0.0 # Your local network address (LAN) (ipconfig) (keep for local)
-PORT=3000 # Port you would like to host on your device
+HTTPS=false # If you would like to use certificates for https, if not remain false for http
+SSL_PORT=3011 # The port you would like to allocate for HTTPS
+PORT=3000 # Port you would like to host on your device HTTP
 API_ACCESS=[*] # Which IP's are allowed to access (* = wildcard/all)
 
 # GENERAL INFORMATION
 YOUR_LOCATION=COUNTY_NAME, ST # Your county, state (abbreviated) - will be used to give you alerts in the dashboard for alerts in your area
-USER_AGENT=AtmosphericX-4.0 # Custom UserAgent to the national weather service
+USER_AGENT=AtmosphericX-4.5 # Custom UserAgent to the national weather service
 
 # QUERY CONFIGURATION
 ACTIVE_ONLY=false # Active only alerts
@@ -115,8 +117,6 @@ ALL_ALERTS=[]
 BEEP_ONLY=false # Forces only the beeping notification on unless in the states in excluded events. (Doesn't affect custom alerts)
 ALLOW_UPDATES=true	# Choose to allow event updates to push through.
 EXCLUDED_EVENTS=[] # Formatted Events Here. Please check format.js for the event names. (Ex. Tornado Emergency)
-
-
 
 
 # DISCORD BOT CONFIGURATION (OPTIONAL)
@@ -139,6 +139,11 @@ After completing the install process, you can now run AtmosphericX!
 If you encounter an error regarding a **missing dependency**, you have two options to resolve it. You can manually run npm install for the specified dependency.
 
 	npm install {package_name}
+
+If you would like to enable https with an ssl certificate, run the command below. You may need to insert information regarding the cert but shouldn't take no more than a minute.
+
+	./generator.sh
+
 
 
 # 🌧️ Dashboard Setup <a name="doc_dashboard"></a>
