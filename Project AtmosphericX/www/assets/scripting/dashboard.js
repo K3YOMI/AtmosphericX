@@ -195,7 +195,7 @@ async function executeQuery() {
                 latest.push(eventName + locations + eventDesc)
                 let ipAddress = lib.getAddress();
                 await lib.delay(500)
-                lib.playsoundlimited(`${config['DEFINED_SOUNDS']['EAS']}`)
+                lib.playsoundlimited(`${config['DEFINED_SOUNDS']['ALERT']}`)
                 setTimeout(() => {
                     alert(`Critical Information for ${mySpecifiedLocation}:\nEvent Name: ${eventName}\nEvent Description: ${eventDesc}\nMessage Type: ${messageType}\nLocations: ${locations}`)
                 }, 500)

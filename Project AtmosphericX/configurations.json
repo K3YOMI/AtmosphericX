@@ -27,7 +27,8 @@
     "DEFINED_SOUNDS": {
         "BEEP": "../../assets/media/audio/BEEP-INTRO.mp3",
         "EAS": "../../assets/media/audio/EASv2.mp3",
-        "TORE": "../../assets/media/audio/TOR-EM-SIREN.mp3"
+        "TORE": "../../assets/media/audio/TOR-EM-SIREN.mp3",
+        "ALERT": "../../assets/media/audio/ALERT-TONE.mp3"
     },
     "DEFINED_BANNERS": {
         "Tornado Warning": "../../assets/media/gif/red_box.gif",
