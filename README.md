@@ -50,7 +50,7 @@
 		- Live Storm Chasing Cam Service (https://livestormchasing.com)
 		- Hourly Mesoscale Analysis (https://www.spc.noaa.gov)
 		- NexLab (https://weather.cod.edu/#)
-		- GSF Model (https://www.tropicaltidbits.com/analysis/models/)
+		- GFS Model (https://www.tropicaltidbits.com/analysis/models/)
 		- HRRR Model (https://www.tropicaltidbits.com/analysis/models/?model=hrrr)
 		- Hodographs (https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3)
 	- SPC Day Risks and Outlooks (0600 and 1200)
@@ -67,12 +67,13 @@
 		- Audio Support
 		- Notificiation Support
 	- Logout Page
-	- 404 Page
 	- IP Whitelisting
 - [x] Portable (Supports audio and active warnings)
 - [x] Mobile Phone Audio Support
 	- Requires at least once interaction
-- [x] Discord.js / Discord Bot support (Latest warning)
+- [x] Full configuration support
+- [x] Synced Alerts
+- [x] SSL Certification Support
 
 
 # 🌧️ Install Guide <a name="doc_install"></a>
@@ -87,48 +88,46 @@ once finished install git, clone the project with the command below (terminal/co
 After cloning, navigate to the **AtmosphericX** directory. Inside, you'll find another directory titled **Project AtmosphericX**. This holds the main project itself. For better ease of access, feel free to drop the **Project AtmosphericX** directory into somewhere you'll remember.
 
 # 🌩️ Configuration <a name="doc_configure"></a>
-Configurating AtmosphericX is quite simple, the **env** holds all the configurations and warnings to whitelist as well as the discord bot support configuration. Here is a general template below of the configuration and what each configuration does. 
+Configurating AtmosphericX is quite simple, the **configurations.json** holds all the configurations. Here is a general template below of the configuration and what each configuration does. 
 
 **DO NOT COPY THE CONFIG AS THIS IS NOT A WORKING CONFIG**
-```conf
-# Environment Configuration
-VERSION=4.5.0 # Hold the version (do not touch)
-
-# HOST NAME AND ACCESS
-HOSTNAME=0.0.0.0 # Your local network address (LAN) (ipconfig) (keep for local)
-HTTPS=false # If you would like to use certificates for https, if not remain false for http
-SSL_PORT=3011 # The port you would like to allocate for HTTPS
-PORT=3000 # Port you would like to host on your device HTTP
-API_ACCESS=[*] # Which IP's are allowed to access (* = wildcard/all)
-
-# GENERAL INFORMATION
-YOUR_LOCATION=COUNTY_NAME, ST # Your county, state (abbreviated) - will be used to give you alerts in the dashboard for alerts in your area
-USER_AGENT=AtmosphericX-4.5 # Custom UserAgent to the national weather service
-
-# QUERY CONFIGURATION
-ACTIVE_ONLY=false # Active only alerts
-REFRESH_RATE=30 # How often your server queries the NWS API (execute every 30 seconds, provided the seconds component of the current system time)
-QUERY_RATE=10 # How often your cleint queries the server API (execute every 10 seconds, provided the seconds component of the current system time)
-OUTBREAK_ONLY=true # (true = only looks for major_alerts) (false = targets all_alerts)
-MAJOR_ALERTS=[]
-ALL_ALERTS=[]
-
-# ALERT CONFIGURATION
-BEEP_ONLY=false # Forces only the beeping notification on unless in the states in excluded events. (Doesn't affect custom alerts)
-ALLOW_UPDATES=true	# Choose to allow event updates to push through.
-EXCLUDED_EVENTS=[] # Formatted Events Here. Please check format.js for the event names. (Ex. Tornado Emergency)
+```json
 
 
-# DISCORD BOT CONFIGURATION (OPTIONAL)
-ENABLE_DISCORD_BOT=false # Enable the discord bot functionality
-DISCORD_TOKEN=YOUR_DISCORD_BOT_TOKEN # Discord bot token
-DISCORD_UPDATE_CHANNEL=YOUR_DISCORD_CHANNEL_ID # Channel ID
-DISCORD_BOT_REFRESH_RATE=10 # How often your server queries the NWS API (Based on your system clock)
+{
+    "HOSTNAME": "0.0.0.0",
+    "HTTPS": true,
+    "SSL_PORT": 3011,
+    "PORT": 3010,
+    "API_ACCESS": ["*"],
+    "SSL_CERT_PATHS": {
+        "key": "./cert/your_key_here.key",
+        "cert": "./cert/your_cert_here.crt"
+    },
+
+    "YOUR_LOCATION": "COUNTY, ST",
+    "USER_AGENT": "AtmosphericX-4.5.0",
+
+    "ACTIVE_ONLY": true,
+    "REFRESH_RATE": 30,
+    "QUERY_RATE": 10,
+    "OUTBREAK_ONLY": true,
+    "MAJOR_ALERTS": [],
+    "ALL_ALERTS": [],
+
+    "BEEP_ONLY": false,
+    "ALLOW_UPDATES": false,
+    "EXCLUDED_EVENTS": [],
+    "DEFINED_SOUNDS": {},
+    "DEFINED_BANNERS": {},
+    "DEFINED_WARNINGS": {}
+}
+
 ```
 
 
 # ⛈️ Post Configuration <a name="doc_post"></a>
-Once you have configured your **env** file. You are now ready to install dependencies in AtmosphericX! To simply install, you will need to run the command down below.
+Once you have configured your **configurations.json** file. You are now ready to install dependencies in AtmosphericX! To simply install, you will need to run the command down below.
 
 	npm install
 
@@ -139,10 +138,6 @@ After completing the install process, you can now run AtmosphericX!
 If you encounter an error regarding a **missing dependency**, you have two options to resolve it. You can manually run npm install for the specified dependency.
 
 	npm install {package_name}
-
-If you would like to enable https with an ssl certificate, run the command below. You may need to insert information regarding the cert but shouldn't take no more than a minute.
-
-	./generator.sh
 
 
 
