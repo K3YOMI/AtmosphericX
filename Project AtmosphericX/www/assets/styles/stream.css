@@ -2,8 +2,6 @@
     font-family: SofiaSansSemiCondensed-Bold;
     src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf');
 }
-
-
 html, body, #page {
     height:100%;
     width:100%;
@@ -25,7 +23,6 @@ html, body, #page {
     display: block;
     position: absolute;
 }
-
 .defaultBox { 
     background-color: rgb(164, 48, 48);
     display: block;
@@ -33,7 +30,6 @@ html, body, #page {
     transition-duration: 1s;
     overflow: hidden;
 }
-
 .defaultBoxLight { 
     background-color: rgb(164, 48, 48);
     display: block;
@@ -48,7 +44,6 @@ html, body, #page {
     transition-duration: 1s;
     overflow: hidden;
 }
-
 #gif_notification { 
     display: block;
     position: absolute;
@@ -97,7 +92,6 @@ html, body, #page {
     font-weight : bold;
     text-shadow: 2px 2px 5px #000000;
 }
-
 #date{
     font-size: 35px;
     position: absolute;
@@ -112,7 +106,6 @@ html, body, #page {
     font-weight : bold;
     text-shadow: 2px 2px 5px #000000;
 }
-
 #total_warnings{
     font-size: 30px;
     font-weight : bold;
@@ -127,7 +120,6 @@ html, body, #page {
     font-family: 'SofiaSansSemiCondensed-Bold'; 
     text-shadow: 2px 2px 15px #000000;
 }
-
 #random_alert{
     font-size: 25px;
     position: absolute;
@@ -141,8 +133,6 @@ html, body, #page {
     font-family: 'SofiaSansSemiCondensed-Bold'; 
     text-shadow: 2px 2px 15px #000000;
 }
-
-
 #random_alert_topic{
     font-size: 25px;
     position: absolute;
@@ -190,16 +180,8 @@ html, body, #page {
     text-shadow: 2px 2px 15px #000000;
 }
 @keyframes fade {
-    0% {
-        opacity: 0;
-    }
-    40% {
-        opacity: 1;
-    }
-    75% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+    0% {opacity: 0;}
+    40% {opacity: 1;}
+    75% {opacity: 1;}
+    100% {opacity: 0;}
 }

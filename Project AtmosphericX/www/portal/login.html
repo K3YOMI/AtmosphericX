@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AtmosphericX - Login</title>
+        <link rel="stylesheet" href="../assets/styles/portal.css">
+        <script src="../assets/javascript/login.js"></script>
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="login-box">
+                <h1>AtmosphericX Login</h1>
+                <hr>
+                <div class="error-message"></div>
+                <div class="error-message2"></div>
+                <form id="login-form">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                    <p>Create an <a href="/registration">account?</a> &dash;  Change <a href="/reset">password?</a></p>
+                </form>
+            </div>
+        </div>
+        <script> 
+            login.init() 
+            login.login()
+        </script>
+        <footer><p>AtmosphericX &copy; 2024 - Made with <3 @k3yomi@GitHub</p></footer>
+    </body>
+</html>

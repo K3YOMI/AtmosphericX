@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtmosphericX - Reset Password</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="../assets/styles/portal.css">
+    <script src="../assets/javascript/login.js"></script>
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>AtmosphericX Password Reset</h1>
+            <hr>
+            <div class="error-message"></div>
+            <div class="error-message2"></div>
+            <form id="login-form">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Old Password" required>
+                <input type="password" id="new-password" placeholder="New Password" required>
+
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        login.init()
+        login.reset()
+    </script>
+    <footer>
+        <p>AtmosphericX &copy; 2024 - Made with <3 @k3yomi@GitHub</p>
+    </footer>
+</body>
+</html>

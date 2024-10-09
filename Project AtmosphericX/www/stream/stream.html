@@ -3,37 +3,33 @@
     <title>AtmosphericX - Stream</title>
     <link rel="stylesheet" href="../assets/styles/stream.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-    <script src="../assets/scripting/library.js"></script>
-    <script src="../assets/scripting/streamv2.js"></script>
-
-
+    <script src="../assets/javascript/api.js"></script>
+    <script src="../assets/javascript/stream.js"></script>
     <img id="gif_notification" src=""> 
-        <p id="notification_title_event"></p>   <!-- Notification Event Title -->
-        <p id="notification_subtitle_event"></p>   <!-- Notification Event Subtitle -->
+        <p id="notification_title_event"></p>
+        <p id="notification_subtitle_event"></p>
     </img>
-    <div class="defaultBoxLight" id="current-warnings-bar" style="height: 80px; width: 1920px; margin-top: 1010px; margin-left: 400px; background-color: rgb(42,81,224);"></div>   <!-- Alert Stuff -->
-    <div class="defaultBox" style="height: 80px; width: 456px; margin-top: 1010px; background-color: rgb(28,61,181);"></div>   <!-- Alert Type Box -->
-    <div class="defaultBoxIgnore" style="height: 40px; width: 256px; margin-top: 970px; margin-left: 200px; background-color: rgb(255, 255, 255);"></div>   <!-- Expire Box -->
+    <div class="defaultBoxLight" id="current-warnings-bar" style="height: 80px; width: 1920px; margin-top: 1010px; margin-left: 400px; background-color: rgb(42,81,224);"></div>
+    <div class="defaultBox" style="height: 80px; width: 456px; margin-top: 1010px; background-color: rgb(28,61,181);"></div>
+    <div class="defaultBoxIgnore" style="height: 40px; width: 256px; margin-top: 970px; margin-left: 200px; background-color: rgb(255, 255, 255);"></div>
 
-    <div class="defaultBoxLight" style="height: 40px; width: 200px; margin-top: 970px; background-color: rgb(28,61,181);"></div>   <!-- Time Box -->
-    <div class="defaultBoxIgnore" style="height: 40px; width: 200px; margin-top: 930px; background-color: rgb(0, 0, 0);"></div>   <!-- Date Box -->
-    <div class="defaultBox" style="height: 95px; width: 456px; margin-top: 02px; background-color: rgb(28,61,181);"></div>   <!-- Warning Box -->
-
-
+    <div class="defaultBoxLight" style="height: 40px; width: 200px; margin-top: 970px; background-color: rgb(28,61,181);"></div>
+    <div class="defaultBoxIgnore" style="height: 40px; width: 200px; margin-top: 930px; background-color: rgb(0, 0, 0);"></div>
+    <div class="defaultBox" style="height: 95px; width: 456px; margin-top: 02px; background-color: rgb(28,61,181);"></div>
     <div id="notificationBox" class="defaultBoxLight" style="height: 235px; width: 956px; margin-top: 116px; margin-left: 720px; background-color: rgb(42,81,224); border-style: solid; border-width: 5px; border-color: rgb(255, 255, 255); padding: 10px; opacity: 0.95; display: none;">
-    <h1 id="warning_title"></h1>
-    <hr id="warning_hr" style="border-color: white; width: 90%;">
-    <p id="warning_subtitle"></p>
-    
-    
-    
-    </div>   <!-- Alert Box -->
-
-
-    <p id="time"></p>   <!-- Exact Time -->
-    <p id="date"></p>   <!-- Exact Date -->
-    <p id="total_warnings"></p>   <!-- Total Warnings -->
-    <p id="random_alert"></p>   <!-- random alert box -->
-    <p id="random_alert_topic"></p>   <!-- random alert box title-->
-    <p id="random_alert_topic_expire"></p>   <!-- random alert box expire -->
+        <h1 id="warning_title"></h1>
+        <hr id="warning_hr" style="border-color: white; width: 90%;">
+        <p id="warning_subtitle"></p>
+    </div>
+    <p id="time"></p>
+    <p id="date"></p>
+    <p id="total_warnings"></p>
+    <p id="random_alert"></p>
+    <p id="random_alert_topic"></p>
+    <p id="random_alert_topic_expire"></p>
+    <script>
+        api.init()
+        layout.init()
+        layout.config()
+    </script>
 </html>

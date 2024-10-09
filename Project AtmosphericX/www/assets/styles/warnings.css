@@ -2,7 +2,6 @@
     font-family: SofiaSansSemiCondensed-Bold;
     src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf');
 }
-
 body {
     margin: 0;
     padding: 0;
@@ -16,8 +15,8 @@ body {
     width: 500px;
     overflow: hidden;
     color: white;
-    text-align: left; /* Center the text horizontally */
+    text-align: left;
     font-family: 'SofiaSansSemiCondensed-Bold';
-    margin-left: auto; /* Center the element horizontally */
-    margin-right: auto; /* Center the element horizontally */
+    margin-left: auto;
+    margin-right: auto;
 }

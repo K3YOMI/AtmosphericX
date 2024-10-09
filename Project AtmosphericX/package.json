@@ -1,8 +1,0 @@
-{
-    "dependencies": {
-      "crypto": "^1.0.1",
-      "request": "^2.88.2",
-      "express": "^4.19.2"
-    }
-  }
-  
