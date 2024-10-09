@@ -44,7 +44,7 @@
 		- SHA256 Encryption (users.json)
 	- Active Alerts & General Information
 		- Active Alerts, Warnings, and Watches
-		- Previous 3 Alerts (w/ interactable)
+		- Previous 6 Alerts (w/ interactions)
 		- Region Alerts
 	- External Services and Tools
 		- Live Storm Chasing Cam Service (https://livestormchasing.com)
@@ -61,13 +61,12 @@
 	- Query/Notification Information
 		- Force Request
 		- Notification Settings
+        - Status Alert
 		- Debug Alerts
 	- County Based Alerts
-		- Red Warning Box (Previous 3 Alerts)
+		- Red Warning Box (Previous 6 Alerts)
 		- Audio Support
 		- Notificiation Support
-	- Logout Page
-	- IP Whitelisting
 - [x] Portable (Supports audio and active warnings)
 - [x] Mobile Phone Audio Support
 	- Requires at least once interaction
@@ -93,34 +92,38 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
 **DO NOT COPY THE CONFIG AS THIS IS NOT A WORKING CONFIG**
 ```json
 
-
 {
-    "HOSTNAME": "0.0.0.0",
-    "HTTPS": true,
-    "SSL_PORT": 3011,
-    "PORT": 3010,
-    "API_ACCESS": ["*"],
-    "SSL_CERT_PATHS": {
-        "key": "./cert/your_key_here.key",
-        "cert": "./cert/your_cert_here.crt"
+    "hosting:settings": {
+        "https:enabled": false,
+        "https:port": 3011,
+        "http:port": 3010,
+        "cookie:secret": "change_me_please_this_is_a_secret_key",
+        "cookie:maxage": 86400000,
+        "cookie:secure": false,
+        "ssl:path": {
+            "ssl:key": "./cert/generated.key",
+            "ssl:cert": "./cert/generated.crt"
+        }
     },
-
-    "YOUR_LOCATION": "COUNTY, ST",
-    "USER_AGENT": "AtmosphericX-4.5.0",
-
-    "ACTIVE_ONLY": true,
-    "REFRESH_RATE": 30,
-    "QUERY_RATE": 10,
-    "OUTBREAK_ONLY": true,
-    "MAJOR_ALERTS": [],
-    "ALL_ALERTS": [],
-
-    "BEEP_ONLY": false,
-    "ALLOW_UPDATES": false,
-    "EXCLUDED_EVENTS": [],
-    "DEFINED_SOUNDS": {},
-    "DEFINED_BANNERS": {},
-    "DEFINED_WARNINGS": {}
+    "application:information": {
+        "application:location": "Somewhere, USA",
+        "application:useragent": "AtmosphericX-5.0.0"
+    },
+    "request:settings": {
+        "request:activeonly": true,
+        "request:refresh_synced": 10,
+        "request:query_sycned": 10,
+        "request:outbreakmode": true,
+        "request:outbreakalerts": [],  
+        "request:allalerts": [],
+        "request:beeponly": false,
+        "request:updates": true,
+        "request:alwaysrun": []
+    },
+    "application:sounds": {},
+    "application:banners": {},
+    "application:warnings": {},
+    "application:states": []
 }
 
 ```
@@ -174,27 +177,30 @@ If a user wants to register a new username and password, the host must activate 
 
 
 # 🌪️ API / Endpoints <a name="doc_endoints"></a>
-
-**Dashboards and Overlays**
-> Dashboard: {ip}:{port} (ex. *http://192.168.1.92:3000*)
-
-> Stream Overlay: {ip}:{port}/stream/stream (ex. *http://192.168.1.92:3000/stream/stream*
-
-> Stream Portable: {ip}:{port}/stream/portable (ex. *http://192.168.1.92:3000/stream/portable*)
-
-> Stream Warnings: {ip}:{port}/stream/warnings (ex. *http://192.168.1.92:3000/stream/warnings*)
-
-
-**Backend Endpoints**
-
-> All Alerts: {ip}:{port}/api/alerts (ex. *http://192.168.1.92:3000/api/alerts*)
-
-> Manual Alerts: {ip}:{port}/api/active_manual (ex. *http://192.168.1.92:3000/api/active_manual*)
-
-> Active Warnings: {ip}:{port}/api/active_warnings (ex. *http://192.168.1.92:3000/api/active_warnings*)
-
-> Active Watches: {ip}:{port}/api/active_watches (ex. *http://192.168.1.92:3000/api/active_watches*)
-
+```
+(POST) (PUBLIC)   /api/login
+(POST) (PUBLIC)   /api/logout
+(POST) (PUBLIC)   /api/register
+(POST) (PUBLIC)   /api/reset
+(POST) (PRIVATE)  /api/notification
+(POST) (PRIVATE)  /api/manual
+(POST) (PRIVATE)  /api/status
+(POST) (PRIVATE)  /api/forcerequest
+(GET)  (PRIVATE)  /dashboard
+(GET)  (PUBLIC)   /registration
+(GET)  (PUBLIC)   /reset
+(GET)  (PUBLIC)   /warnings
+(GET)  (PUBLIC)   /portable
+(GET)  (PUBLIC)   /stream
+(GET)  (PUBLIC)   /api/alerts
+(GET)  (PUBLIC)   /api/manual
+(GET)  (PUBLIC)   /api/warnings
+(GET)  (PUBLIC)   /api/watches
+(GET)  (PUBLIC)   /api/notifications
+(GET)  (PUBLIC)   /api/status
+(GET)  (PUBLIC)   /api/configurations
+(GET)  (PUBLIC)   /api/states
+```
 
 
 # 🌩️ Credits <a name="doc_credits"></a>
