@@ -28,25 +28,11 @@ functions.internal = async function(req, res, message=`An error occurred while p
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: 'Internal Server Error', message: message}));
 }
-functions.notfound = async function(req, res) {
-    res.statusCode = 404;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ error: 'Not Found', message: 'The requested resource could not be found.' }));
-}
-functions.unauthorized = async function(req, res, message=`You are not authorized to access this resource.`) {
-    res.statusCode = 401;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ error: 'Unauthorized', message: message }));
-}
 functions.success = async function(req, res, message=`Request processed successfully.`) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ status: 'success', message: message }));
 }
-
-
-
-
 
 class web {constructor() {this.functions = functions}}
 module.exports = web;

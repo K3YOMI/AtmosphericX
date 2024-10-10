@@ -99,7 +99,7 @@ dashboard.reset = async function() {
     }
 }
 dashboard.states = async function() { 
-    let result = JSON.parse(await api.request(`/api/states`))
+    let result = JSON.parse(await library.request(`/api/states`))
     for (let i = 0; i < result.length; i++) {
         dashboard.cache.states.push( {
             state: result[i].name,
@@ -160,7 +160,7 @@ dashboard.generatecards = async function(caller, storage, classname=`data-card`)
             }, 500);
             setTimeout(() => {
                 if (dashboard.cache.called.includes(data.data + data.title + data.id)) {return}
-                api.play(cache.config['application:sounds']['application:amber'], true)
+                library.play(cache.config['application:sounds']['application:amber'], true)
                 dashboard.cache.called.push(data.data + data.title + data.id)
                 eval(data.onclick)
             }, 2000)
@@ -176,12 +176,12 @@ dashboard.generatecards = async function(caller, storage, classname=`data-card`)
 dashboard.execute = async function() {
     try {
         dashboard.reset()
-        cache.warnings = JSON.parse(await api.request(`/api/warnings`))
-        cache.watches = JSON.parse(await api.request(`/api/watches`))
-        cache.alerts = JSON.parse(await api.request(`/api/alerts`))
-        cache.broadcasts = JSON.parse(await api.request(`/api/notifications`))
-        cache.manual = JSON.parse(await api.request(`/api/manual`))
-        cache.config = JSON.parse( await api.request(`/api/configurations`))
+        cache.warnings = JSON.parse(await library.request(`/api/warnings`))
+        cache.watches = JSON.parse(await library.request(`/api/watches`))
+        cache.alerts = JSON.parse(await library.request(`/api/alerts`))
+        cache.broadcasts = JSON.parse(await library.request(`/api/notifications`))
+        cache.manual = JSON.parse(await library.request(`/api/manual`))
+        cache.config = JSON.parse( await library.request(`/api/configurations`))
         let tActivity = [
             {title: `Active Alerts`,id: `active_alerts_int`,data: cache.alerts.length},
             {title: `Active Watches`,id: `active_watches_int`,data: cache.watches.length},
@@ -230,8 +230,8 @@ dashboard.page = async function(page) {
     }
 }
 dashboard.config = async function() {
-    cache.config = JSON.parse( await api.request(`/api/configurations`))
-    await api.isMobile()
+    cache.config = JSON.parse( await library.request(`/api/configurations`))
+    await library.isMobile()
     dashboard.execute();
     dashboard.states();
     dashboard.generatesite();
@@ -246,7 +246,7 @@ dashboard.config = async function() {
             if (cache.query) {return}
             cache.query = true
             setTimeout(() => {cache.query = false}, 1000)
-            cache.config = JSON.parse( await api.request(`/api/configurations`))
+            cache.config = JSON.parse( await library.request(`/api/configurations`))
             dashboard.execute();
         }
     }, 200);

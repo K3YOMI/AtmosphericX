@@ -22,9 +22,9 @@ warning.init = function() {
 }
 warning.execute = async function() { 
     try {
-        let active = JSON.parse(await api.request(`/api/alerts`))
-        let manual = JSON.parse(await api.request(`/api/manual`))
-        cache.config = JSON.parse( await api.request(`/api/configurations`))
+        let active = JSON.parse(await library.request(`/api/alerts`))
+        let manual = JSON.parse(await library.request(`/api/manual`))
+        cache.config = JSON.parse( await library.request(`/api/configurations`))
         for (let i = 0; i < active.length; i++) {
             let alert = active[i]
             warning.cache.alerts.push(alert) 
@@ -53,7 +53,7 @@ warning.execute = async function() {
 }
 
 warning.config = async function() {
-    cache.config = JSON.parse( await api.request(`/api/configurations`))
+    cache.config = JSON.parse( await library.request(`/api/configurations`))
     let table = document.getElementById("uialert")
     table.innerHTML = `<tr><th>Type<hr></th><th>Location<hr></th></tr>`
     setInterval(async () => {
@@ -61,7 +61,7 @@ warning.config = async function() {
             if (cache.query) {return}
             cache.query = true
             setTimeout(() => {cache.query = false}, 1000)
-            cache.config = JSON.parse( await api.request(`/api/configurations`))
+            cache.config = JSON.parse( await library.request(`/api/configurations`))
             warning.execute();
         }
     }, 100);
