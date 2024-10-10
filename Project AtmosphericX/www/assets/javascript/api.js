@@ -215,7 +215,7 @@ api.colortables = async function(warnings) {
     let light = document.getElementsByClassName(`defaultBoxLight`)
     let dark = document.getElementsByClassName(`defaultBox`)
     let types = [
-        { type: 'hur', color: { light: 'rgb(209,38,215)', dark: 'rgb(159,37,163)' }, count: hur },
+        { type: 'hur', color:  {light: 'rgb(249,56,54)', dark: 'rgb(203,25,25)' }, count: hur },
         { type: 'tore', color: { light: 'rgb(209,38,215)', dark: 'rgb(159,37,163)' }, count: tore },
         { type: 'torp', color: { light: 'rgb(249,56,54)', dark: 'rgb(203,25,25)' }, count: torp },
         { type: 'tor', color: { light: 'rgb(249,56,54)', dark: 'rgb(203,25,25)' }, count: tor },
