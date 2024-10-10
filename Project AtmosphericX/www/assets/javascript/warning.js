@@ -25,6 +25,7 @@ warning.execute = async function() {
         let active = JSON.parse(await library.request(`/api/alerts`))
         let manual = JSON.parse(await library.request(`/api/manual`))
         cache.config = JSON.parse( await library.request(`/api/configurations`))
+        warning.cache.alerts = []
         for (let i = 0; i < active.length; i++) {
             let alert = active[i]
             warning.cache.alerts.push(alert) 
