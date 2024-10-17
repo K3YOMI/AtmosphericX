@@ -111,10 +111,10 @@ return new Promise(async (resolve, reject) => {
         url += `/area/${cache.configurations['application:information']['application:stateid']}`
     }
 
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: AtmosphericX v${cache.version} by ${cache.author} :..:`)
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Server is running on port ${cache.configurations['hosting:settings']['http:port']} :..:`)
-    if (hosting['https:enabled']) {console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Secure Server is running on port ${hosting['https:port']} :..:`)}
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Please remember to stick to offical sources for accurate weather information. Even though this project uses the NWS API, it is not a replacement for official sources. :..:`)
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: AtmosphericX v${cache.version} by ${cache.author}`)
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Server is running on port ${cache.configurations['hosting:settings']['http:port']}`)
+    if (hosting['https:enabled']) {console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Secure Server is running on port ${hosting['https:port']}`)}
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Please remember to stick to offical sources for accurate weather information. Even though this project uses the NWS API, it is not a replacement for official sources.`)
 
 
     nws.functions.request(url)
