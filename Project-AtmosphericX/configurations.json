@@ -1,4 +1,5 @@
 {
+    "debug": {},
     "hosting:settings": {
         "https:enabled": false,
         "https:port": 3011,
