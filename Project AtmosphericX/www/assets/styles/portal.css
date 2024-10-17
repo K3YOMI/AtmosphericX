@@ -2,12 +2,19 @@
     font-family: SofiaSansSemiCondensed-Bold;
     src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf');
 }
-
+.bg {  
+    background: url('/assets/media/media/clouds.gif') no-repeat center center fixed; 
+    background-size: cover;   
+    position: absolute;  
+    z-index: -1;  
+    height: 100%;  
+    width: 100%;  
+}
 body {
     margin: 0;
     padding: 0;
     font-family: 'SofiaSansSemiCondensed-Bold';
-    background-color: #2b2a2a;
+    background-color: #151414;
     color: #fff;
 }
 .login-container {
@@ -19,12 +26,15 @@ body {
     flex-direction: column;
 }
 .login-box {
-    background-color: #202020;
+    background-color: #303030c2;
     padding: 40px;
+    width: 500px;
     border-radius: 8px;
 }
 .login-box h1 {
     margin-bottom: 20px;
+    color: #979797;
+    margin-top: 10px;
     font-size: 29px;
 }
 .login-box input[type="text"],
@@ -37,16 +47,13 @@ body {
     border-right-width: 0px;
     border-bottom-width: 1px;
     border-left-width: 0px;
-    color: #ffffff;
+    color: #979797;
     font-size: 16px;
 }
 .login-box input[type="text"]:focus,
 .login-box input[type="password"]:focus {
     border-color: #0758af;
 }
-
-
-
 .login-box button {
     width: 25%;
     padding: 12px;
@@ -79,15 +86,14 @@ a {
     text-decoration: none;
 }
 hr {
-    border: 1px solid #ddd;
+    border: 1px solid #ffffff;
     margin: 20px 0;
-    width: 50%;
+    width: 100%;
 }
 footer {
     position: fixed;
     bottom: 0;
     width: 100%;
     background-color: rgba(15, 15, 15, 0.603);
-    padding: 5px;
     text-align: center;
 }
