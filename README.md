@@ -105,8 +105,9 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
             "ssl:cert": "./cert/generated.crt"
         }
     },
-    "application:information": {
+     "application:information": {
         "application:location": "Somewhere, USA",
+        "application:stateid": "ALL",
         "application:useragent": "AtmosphericX-5.0.0"
     },
     "request:settings": {
