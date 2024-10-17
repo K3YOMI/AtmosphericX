@@ -19,7 +19,6 @@ functions.init = function() {
 }
 functions.request = function(url) {
     return new Promise(async (resolve, reject) => {
-        cache.configurations = core.functions.config(`./configurations.json`)
         let details = {url: url, method: 'GET',headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}
         await req(details, (error, response, body) => {
             try {
@@ -76,9 +75,11 @@ functions.request = function(url) {
                 }
                 for (let i = 0; i < doesntInclude.length; i++) {
                     let alert = doesntInclude[i]
-                    if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
-                    if (alert['properties']['description'].includes('has been cancelled')) {continue}
-                    if (alert['properties']['description'].includes('has diminished')) {continue}
+                    if (alert['properties']['description'] != null) {
+                        if (alert['properties']['description'].includes('will be allowed to expire')) {continue}
+                        if (alert['properties']['description'].includes('has been cancelled')) {continue}
+                        if (alert['properties']['description'].includes('has diminished')) {continue}
+                    }
                     let newData = core.functions.register(alert)
                     let find_warning = cache.alerts.warnings.filter(warning => warning['id'] == alert['id'])
                     if (find_warning == undefined || find_warning.length == 0) {
@@ -95,7 +96,7 @@ functions.request = function(url) {
                 cache.alerts.warnings.reverse()
                 cache.alerts.watches.reverse()
             } catch (error) { 
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${error}`)
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${error.stack}`)
             }
         })
     })

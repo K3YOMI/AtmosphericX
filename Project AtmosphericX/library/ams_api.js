@@ -185,7 +185,12 @@ functions.manual_activation = async function(req, res) { // Handles the manual a
 }
 functions.request_latest = async function(req, res) { // Handles the latest request (GET)
     try {
+        if (!req.session.account) {
+            web.functions.forbidden(req, res, 'You do not have permission to access this resource.')
+            return
+        }
         nws.functions.active()
+        cache.configurations = core.functions.config(`./configurations.json`)
         web.functions.success(req, res, `Requesting latest data.`)
     } catch (error) {web.functions.internal(req, res, error); return;}
 }

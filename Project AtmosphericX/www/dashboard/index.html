@@ -4,15 +4,16 @@
         <title>AtmosphericX - Dashboard</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link rel="stylesheet" href="../assets/styles/dashboard.css">
+        <link rel="icon" href="/assets/media/media/favicon.ico" type="image/x-icon">
         <script src="../assets/javascript/library.js"></script>
         <script src="../assets/javascript/dashboard.js"></script>
     </head>
     <body>
         <div class="curved-sidebar">
             <i class="fas fa-bell" title="Active Alerts" onclick="dashboard.page('dashboard-home')"></i>
-            <i class="fas fa-globe" title="External Data and Services" onclick="dashboard.page('external-services')"></i>
-            <i class="fas fa-chart-line" title="SPC Day Risks and Outlooks" onclick="dashboard.page('outlooks')"></i>
-            <i class="fas fa-cog" title="Settings" onclick="dashboard.page('settings')"></i>
+            <i class="fas fa-satellite" title="External Services" onclick="dashboard.page('external-services')"></i>
+            <i class="fas fa-project-diagram" title="Storm Prediction Center Outlooks (1-3)" onclick="dashboard.page('outlooks')"></i>
+            <i class="fas fa-wrench" title="Settings" onclick="dashboard.page('settings')"></i>
             <i id='donate' class="fas fa-coffee" title="Buy me a coffee" onclick="window.open('https://www.ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000')"></i>
             <i id='github' class="fab fa-github" title="GitHub Repository" onclick="window.open('https://www.github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000')"></i>
             <i id='changepassword' class="fas fa-key" title="Change Password" onclick="window.open('/reset', '_blank', 'width=1000,height=1000')"></i>

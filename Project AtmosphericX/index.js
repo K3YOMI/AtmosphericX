@@ -55,31 +55,33 @@ app.use(session({
         name: 'session',
         sameSite: 'strict',
         secure: cache.configurations['hosting:settings']['cookie:secure']
-    }
+    },
+    name: 'AtmosphericX-Cookie'
 }))
 
 
 /* Generic Middleware */
-app.use('/assets', express.static(__dirname + '/www/assets'));
+app.use(`/assets`, express.static(__dirname + '/www/assets'));
 
-
-app.get('/', (req, res) => {
-    if (req.session.account != undefined) {res.sendFile(__dirname + '/www/dashboard/index.html'); return;}
-    res.sendFile(__dirname + '/www/portal/login.html')
-})
 
 /* Stream Routes (PUBLIC) */
-app.get('/stream', (req, res) => {res.sendFile(__dirname + '/www/stream/stream.html')})
-app.get('/portable', (req, res) => {res.sendFile(__dirname + '/www/stream/portable.html')})
-app.get('/warnings', (req, res) => {res.sendFile(__dirname + '/www/stream/warnings.html')})
-app.get('/reset', (req, res) => {res.sendFile(__dirname + '/www/portal/reset.html')})
-app.get('/registration', (req, res) => {res.sendFile(__dirname + '/www/portal/registration.html')})
+app.get(`/`, (req, res) => { if (req.session.account != undefined) {
+    res.sendFile(__dirname + '/www/dashboard/index.html'); return;} 
+    res.sendFile(__dirname + '/www/portal/login.html')
+    // remove all session data
+    req.session.destroy()
+})
+app.get(`/stream`, (req, res) => {res.sendFile(__dirname + '/www/stream/stream.html')})
+app.get(`/portable`, (req, res) => {res.sendFile(__dirname + '/www/stream/portable.html')})
+app.get(`/warnings`, (req, res) => {res.sendFile(__dirname + '/www/stream/warnings.html')})
+app.get(`/reset`, (req, res) => {res.sendFile(__dirname + '/www/portal/reset.html')})
+app.get(`/registration`, (req, res) => {res.sendFile(__dirname + '/www/portal/registration.html')})
 
 /* Dashboard Routes (PRIVATE) */
-app.get('/dashboard', (req, res) => {ams.functions.dashboard(req, res)})
+app.get(`/dashboard`, (req, res) => {ams.functions.dashboard(req, res)})
 
 /* API Routes */
-app.post('/api/login', (req, res) => {ams.functions.login(req, res)})
+app.post(`/api/login`, (req, res) => {ams.functions.login(req, res)})
 app.post(`/api/logout`, (req, res) => {ams.functions.logout(req, res)})
 app.post(`/api/register`, (req, res) => {ams.functions.register(req, res)})
 app.post(`/api/reset`, (req, res) => {ams.functions.password_reset(req, res)})
@@ -97,9 +99,6 @@ app.get(`/api/status`, (req, res) => {ams.functions.request_status(req, res)})
 app.get(`/api/configurations`, (req, res) => {ams.functions.request_configurations(req, res)})
 app.get(`/api/states`, (req, res) => {ams.functions.request_states(req, res)})
 
-
-
-
 return new Promise(async (resolve, reject) => {
     let hosting = cache.configurations['hosting:settings']
     if (hosting['https:enabled']) { 
@@ -109,17 +108,22 @@ return new Promise(async (resolve, reject) => {
     }
     const httpServer = http.createServer(app)
     httpServer.listen(cache.configurations['hosting:settings']['http:port'], () => {})
-    nws.functions.request((cache.configurations['request:settings']['request:activeonly']) ? `https://api.weather.gov/alerts/active` : `https://api.weather.gov/alerts`)
-    setInterval(async () => {
+    let url = `https://api.weather.gov/alerts/active`
+    if (cache.configurations['application:information']['application:stateid'] != `ALL` && cache.configurations['application:information']['application:stateid'] != ``) {
+        url += `/area/${cache.configurations['application:information']['application:stateid']}`
+    }
+    nws.functions.request(url)
+    setInterval(async () => { // a little messy but operational...
         if (new Date().getSeconds() % cache.configurations['request:settings']['request:refresh_synced'] == 0) {
             if (cache.requesting) {return}
             cache.requesting = true
-            nws.functions.request((cache.configurations['request:settings']['request:activeonly']) ? `https://api.weather.gov/alerts/active` : `https://api.weather.gov/alerts`)
+            cache.configurations = core.functions.config(`./configurations.json`)
+            let url = `https://api.weather.gov/alerts/active`
+            if (cache.configurations['application:information']['application:stateid'] != `ALL` && cache.configurations['application:information']['application:stateid'] != ``) {
+                url += `/area/${cache.configurations['application:information']['application:stateid']}`
+            }
+            nws.functions.request(url)          
             setTimeout(() => { cache.requesting = false; }, 1000);
         }
     }, 200);
 })
-
-
-
-

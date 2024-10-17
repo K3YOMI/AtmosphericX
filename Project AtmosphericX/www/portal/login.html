@@ -5,9 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AtmosphericX - Login</title>
         <link rel="stylesheet" href="../assets/styles/portal.css">
+        <link rel="icon" href="/assets/media/media/favicon.ico" type="image/x-icon">
         <script src="../assets/javascript/login.js"></script>
     </head>
     <body>
+        <div class="bg"></div>
         <div class="login-container">
             <div class="login-box">
                 <h1>AtmosphericX Login</h1>
@@ -15,9 +17,10 @@
                 <div class="error-message"></div>
                 <div class="error-message2"></div>
                 <form id="login-form">
-                    <input type="text" id="username" placeholder="Username" required>
-                    <input type="password" id="password" placeholder="Password" required>
+                    <input type="text" id="username" autocomplete="off" placeholder="Username" required>
+                    <input type="password" id="password" autocomplete="off" placeholder="Password" required>
                     <button type="submit">Login</button>
+                    <br><br>
                     <p>Create an <a href="/registration">account?</a> &dash;  Change <a href="/reset">password?</a></p>
                 </form>
             </div>
@@ -26,6 +29,6 @@
             login.init() 
             login.login()
         </script>
-        <footer><p>AtmosphericX &copy; 2024 - Made with <3 @k3yomi@GitHub</p></footer>
+        <footer><p>Project AtmosphericX &copy; 2024</p></footer>
     </body>
 </html>
