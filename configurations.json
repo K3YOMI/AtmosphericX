@@ -1,7 +1,4 @@
 {
-    "debug": {
-        "control": 5.2
-    },
     "hosting:settings": {
         "https:enabled": false,
         "https:port": 3011,

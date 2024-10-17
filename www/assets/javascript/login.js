@@ -17,6 +17,28 @@
 let login = {}
 login.init = function() {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Login Functions`)
+    let pool = [`/assets/media/misc/login1.gif`, `/assets/media/misc/login2.gif`, `/assets/media/misc/login3.gif`, `/assets/media/misc/login4.gif`];
+    let index = 0;
+    document.querySelector('.bg').style.backgroundImage = `url(${pool[index]})`;
+    document.querySelector('.bg').style.transition = 'opacity 0.6s ease-in-out';
+    document.querySelector('.bg').style.opacity = 0;
+    setTimeout(() => {document.querySelector('.bg').style.opacity = 1}, 100);
+    setInterval(() => {
+        let currentBackground = document.querySelector('.bg').style.backgroundImage;
+        let newBackground;
+        do {
+            index = (index + 1) % pool.length;
+            newBackground = `url(${pool[index]})`;
+        } while (newBackground === currentBackground);
+
+        // fade in and out background smoothly
+        document.querySelector('.bg').style.transition = 'opacity 0.6s ease-in-out';
+        document.querySelector('.bg').style.opacity = 0;
+        setTimeout(() => {
+            document.querySelector('.bg').style.backgroundImage = newBackground;
+            document.querySelector('.bg').style.opacity = 1;
+        }, 500);
+    }, 5000);
 }
 login.login = function() { 
     document.getElementById(`login-form`).addEventListener('submit', function(event) {
