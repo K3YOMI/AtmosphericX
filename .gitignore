@@ -1,6 +1,0 @@
-.gitignore
-cache/*
-cert/*
-configurations.json
-LICENSE
-node_modules/*
