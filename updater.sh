@@ -35,7 +35,16 @@ if [[ $KEEP_EXISTING == false ]]; then
     git reset --hard origin/main
 else 
     echo "Partial update, keeping existing certs, cache, and configuration settings."
+    # keep modified work and only allow changes to files that are not tracked by git
+    git stash push -- ":(exclude)*"
     git fetch origin
-    git merge origin/main
+    git reset --soft origin/main
+    git stash pop
+    echo "Finished fixing conflicts"
+    missing_files=$(git ls-files --deleted)
+    if [[ -n $missing_files ]]; then
+        echo "Restoring missing files..."
+        git checkout -- $missing_files
+    fi
 fi
 read -p "Press any key to exit..."
