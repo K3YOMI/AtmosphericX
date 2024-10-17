@@ -31,14 +31,11 @@ fi
 
 if [[ $KEEP_EXISTING == false ]]; then
     echo "Full update, discarding local changes."
-    git stash
-    git pull origin main
-    git stash pop
-    git reset --hard
+    git fetch origin
+    git reset --hard origin/main
 else 
     echo "Partial update, keeping existing certs, cache, and configuration settings."
-    git stash
-    git pull origin main
-    git stash pop
+    git fetch origin
+    git merge origin/main
 fi
 read -p "Press any key to exit..."
