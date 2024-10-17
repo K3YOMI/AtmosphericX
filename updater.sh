@@ -35,16 +35,29 @@ if [[ $KEEP_EXISTING == false ]]; then
     git reset --hard origin/main
 else 
     echo "Partial update, keeping existing certs, cache, and configuration settings."
-    # keep modified work and only allow changes to files that are not tracked by git
-    git stash push -- ":(exclude)*"
+    # get the latest main branch and merge it with the current branch
     git fetch origin
-    git reset --soft origin/main
-    git stash pop
+    git pull origin main
     echo "Finished fixing conflicts"
+
+ extracted_files=$(git ls-files -- ':!node_modules')
+    if [[ -n $extracted_files ]]; then
+        echo "Restoring extracted files..."
+        for file in $extracted_files; do
+            if git diff --quiet -- $file; then
+                echo "Restoring $file..."
+                if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+                    del "$file"
+                else
+                    rm "$file"
+                fi
+            fi
+        done
+    fi
     missing_files=$(git ls-files --deleted)
     if [[ -n $missing_files ]]; then
         echo "Restoring missing files..."
-        git checkout -- $missing_files
+        git checkout main -- $missing_files
     fi
 fi
 read -p "Press any key to exit..."
