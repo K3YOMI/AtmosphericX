@@ -6,7 +6,7 @@ KEEP_EXISTING=false
 echo "1. FULL UPGRADE"
 echo "  Discard local changes and pull new changes from the repository. (Caution: This will discard local changes such as certificates, cache, and configuration settings.)"
 echo "2. PARTIAL UPGRADE"
-echo "  Keep existing certificates, cache, and configuration settings. (Recommended for most users.)"
+echo "  Keep existing certificates, cache, and configuration settings. (May Break Structure)"
 echo "3. DEPENDENCY UPGRADE"
 echo "  Install dependencies (npm install)."
 echo "4. INSTALL (GIT)"
