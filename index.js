@@ -59,10 +59,8 @@ app.use(session({
     name: 'AtmosphericX-Cookie'
 }))
 
-
 /* Generic Middleware */
 app.use(`/assets`, express.static(__dirname + '/www/assets'));
-
 
 /* Stream Routes (PUBLIC) */
 app.get(`/`, (req, res) => { if (req.session.account != undefined) {
