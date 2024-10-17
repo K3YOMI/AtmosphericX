@@ -253,12 +253,12 @@ dashboard.config = async function() {
 }
 dashboard.generatesite = function() {
     let externalServices = [
-        { title: "Live Storm Chasing", url: "https://livestormchasing.com/", imgSrc: "/assets/media/media/storm-live-logo.png" },
-        { title: "Hourly Mesoscale Analysis", url: "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", imgSrc: "/assets/media/media/mesoscale-logo.png" },
-        { title: "Nexlab", url: "https://weather.cod.edu/#", imgSrc: "/assets/media/media/nexlab-logo.png" },
-        { title: "GFS Model", url: "https://www.tropicaltidbits.com/analysis/models/", imgSrc: "/assets/media/media/tropical-logo.png" },
-        { title: "HRRR Model", url: "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", imgSrc: "/assets/media/media/tropical-logov2.png" },
-        { title: "Pivotal Weather (Hodographs)", url: "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", imgSrc: "/assets/media/media/pivotal-weather.png" }
+        { title: "Live Storm Chasing", url: "https://livestormchasing.com/", imgSrc: "/assets/media/misc/storm-live-logo.png" },
+        { title: "Hourly Mesoscale Analysis", url: "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", imgSrc: "/assets/media/misc/mesoscale-logo.png" },
+        { title: "Nexlab", url: "https://weather.cod.edu/#", imgSrc: "/assets/media/misc/nexlab-logo.png" },
+        { title: "GFS Model", url: "https://www.tropicaltidbits.com/analysis/models/", imgSrc: "/assets/media/misc/tropical-logo.png" },
+        { title: "HRRR Model", url: "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", imgSrc: "/assets/media/misc/tropical-logov2.png" },
+        { title: "Pivotal Weather (Hodographs)", url: "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", imgSrc: "/assets/media/misc/pivotal-weather.png" }
     ];
     let stormoutlookServices = [
         { title: "Day 1 Categorial Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif" },

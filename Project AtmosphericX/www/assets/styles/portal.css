@@ -3,7 +3,7 @@
     src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf');
 }
 .bg {  
-    background: url('/assets/media/media/clouds.gif') no-repeat center center fixed; 
+    background: url('/assets/media/misc/clouds.gif') no-repeat center center fixed; 
     background-size: cover;   
     position: absolute;  
     z-index: -1;  
