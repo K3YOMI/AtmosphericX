@@ -52,18 +52,20 @@ layout.listings = async function(warnings, watches, data) {
             expires = `${date.toLocaleString('default', { month: 'short', timeZone: 'MST' })} ${date.getDate()} ${date.getHours()}:0${date.getMinutes()} ${object}`;
         }
         document.getElementById('random_alert_topic_expire').innerHTML = `<p>${expires}</p>`;
-        let result = await library.request(`/api/status`)
-        if (result == ``) { 
-            let activeoutbreak = warnings.filter(warning => warning.eventName.includes('Tornado')).length;
-            let chance = Math.floor(Math.random() * 5);
-            if (warnings.length > 5 && activeoutbreak > 5) {
-                document.getElementById('total_warnings').innerHTML = (chance == 3) ? `<h2>OUTBREAK</h2>` : `<p>Active Warnings: ${warnings.length}<br>Active Watches: ${watches.length}</p>`;
-            } else { 
-                document.getElementById('total_warnings').innerHTML = (chance == 3) ? `<h2>BREAKING WEATHER</h2>` : `<p>Active Warnings: ${warnings.length}<br>Active Watches: ${watches.length}</p>`; 
-            }
+    } else {
+        document.getElementById('random_alert_topic_expire').innerHTML = `<p>Expires: N/A</p>`;
+    }
+    let result = await library.request(`/api/status`)
+    if (result == ``) { 
+        let activeoutbreak = warnings.filter(warning => warning.eventName.includes('Tornado')).length;
+        let chance = Math.floor(Math.random() * 5);
+        if (warnings.length > 5 && activeoutbreak > 5) {
+            document.getElementById('total_warnings').innerHTML = (chance == 3) ? `<h2>OUTBREAK</h2>` : `<p>Active Warnings: ${warnings.length}<br>Active Watches: ${watches.length}</p>`;
         } else { 
-            document.getElementById('total_warnings').innerHTML = `<h2>${result}</h2>`;
+            document.getElementById('total_warnings').innerHTML = (chance == 3) ? `<h2>BREAKING WEATHER</h2>` : `<p>Active Warnings: ${warnings.length}<br>Active Watches: ${watches.length}</p>`; 
         }
+    } else { 
+        document.getElementById('total_warnings').innerHTML = `<h2>${result}</h2>`;
     }
 }
 layout.time = async function() {
@@ -172,7 +174,6 @@ layout.execute = async function() {
     cache.alerts = JSON.parse(await library.request(`/api/alerts`))
     cache.broadcasts = JSON.parse(await library.request(`/api/notifications`))
     cache.manual = JSON.parse(await library.request(`/api/manual`))
-    cache.config = JSON.parse( await library.request(`/api/configurations`))
     if (cache.streaming) { 
         if (cache.broadcasts.length != 0) {
             let notificaitonbox = document.getElementById('notificationBox');
@@ -231,11 +232,10 @@ layout.execute = async function() {
             }
         }
         layout.query(cache.queue)
-        if (cache.streaming) { 
-            layout.colortables(cache.warnings, cache.watches, cache.alerts);
-            layout.time()
-            layout.listings(cache.warnings, cache.watches, cache.alerts);
-        }
+    }
+    if (cache.streaming) { 
+        layout.colortables(cache.warnings, cache.watches, cache.alerts);
+        layout.listings(cache.warnings, cache.watches, cache.alerts);
     }
 }
 layout.config = async function() {

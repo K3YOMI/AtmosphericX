@@ -129,7 +129,6 @@ dashboard.fillRegions = async function() {
             }
         }
     }
-    console.log(dashboard.cache.states)
 }
 dashboard.generatecards = async function(caller, storage, classname=`data-card`) {
     caller.innerHTML = '' 
@@ -149,7 +148,6 @@ dashboard.generatecards = async function(caller, storage, classname=`data-card`)
         caller.appendChild(card)
         if (data.onclick == undefined) {continue}
         card.onclick = function() {
-            console.log(data.onclick)
             eval(data.onclick)
         }
         if (data.danger == true) {
@@ -169,7 +167,7 @@ dashboard.generatecards = async function(caller, storage, classname=`data-card`)
     if (storage.length == 0) {
         let p = document.createElement('h1')
         p.id = `no_data`
-        p.innerHTML = `There is currently no data to display. Please check back later.`
+        p.innerHTML = `There is currently no data to display.`
         caller.appendChild(p)
     }
 }
@@ -180,17 +178,19 @@ dashboard.execute = async function() {
         cache.watches = JSON.parse(await library.request(`/api/watches`))
         cache.alerts = JSON.parse(await library.request(`/api/alerts`))
         cache.broadcasts = JSON.parse(await library.request(`/api/notifications`))
-        cache.manual = JSON.parse(await library.request(`/api/manual`))
+        cache.manual = await library.request(`/api/manual`)
+
         cache.config = JSON.parse( await library.request(`/api/configurations`))
         let tActivity = [
             {title: `Active Alerts`,id: `active_alerts_int`,data: cache.alerts.length},
             {title: `Active Watches`,id: `active_watches_int`,data: cache.watches.length},
             {title: `Active Warnings`, id: `active_warnings_int`,data: cache.warnings.length},
         ]
+
         dashboard.generatecards(document.getElementById('warning-center'), tActivity)
-        if (cache.manual.length != 0) {cache.alerts.unshift(cache.manual)}
+        if (cache.manual != `[]`) {cache.alerts.unshift(JSON.parse(cache.manual))}
         let tRecentAlerts = []
-        for (let i = 0; i < cache.alerts.length - 25; i++) {
+        for (let i = 0; i < cache.alerts.length; i++) {
             if (i > 5) {break}
             let alert = cache.alerts[i]
             let location = cache.config['application:location']
@@ -253,12 +253,12 @@ dashboard.config = async function() {
 }
 dashboard.generatesite = function() {
     let externalServices = [
-        { title: "Live Storm Chasing", url: "https://livestormchasing.com/", imgSrc: "/assets/media/png/storm-live-logo.png" },
-        { title: "Hourly Mesoscale Analysis", url: "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", imgSrc: "/assets/media/png/mesoscale-logo.png" },
-        { title: "Nexlab", url: "https://weather.cod.edu/#", imgSrc: "/assets/media/png/nexlab-logo.png" },
-        { title: "GFS Model", url: "https://www.tropicaltidbits.com/analysis/models/", imgSrc: "/assets/media/png/tropical-logo.png" },
-        { title: "HRRR Model", url: "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", imgSrc: "/assets/media/png/tropical-logov2.png" },
-        { title: "Pivotal Weather (Hodographs)", url: "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", imgSrc: "/assets/media/png/pivotal-weather.png" }
+        { title: "Live Storm Chasing", url: "https://livestormchasing.com/", imgSrc: "/assets/media/media/storm-live-logo.png" },
+        { title: "Hourly Mesoscale Analysis", url: "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", imgSrc: "/assets/media/media/mesoscale-logo.png" },
+        { title: "Nexlab", url: "https://weather.cod.edu/#", imgSrc: "/assets/media/media/nexlab-logo.png" },
+        { title: "GFS Model", url: "https://www.tropicaltidbits.com/analysis/models/", imgSrc: "/assets/media/media/tropical-logo.png" },
+        { title: "HRRR Model", url: "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", imgSrc: "/assets/media/media/tropical-logov2.png" },
+        { title: "Pivotal Weather (Hodographs)", url: "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", imgSrc: "/assets/media/media/pivotal-weather.png" }
     ];
     let stormoutlookServices = [
         { title: "Day 1 Categorial Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif" },
