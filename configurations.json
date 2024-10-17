@@ -1,6 +1,6 @@
 {
     "debug": {
-        "control": 5.0
+        "control": 5.2
     },
     "hosting:settings": {
         "https:enabled": false,
