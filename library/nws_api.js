@@ -19,25 +19,27 @@ functions.init = function() {
 }
 functions.request = function(url) {
     return new Promise(async (resolve, reject) => {
-        let details = {url: url, method: 'GET',headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}
-        await req(details, (error, response, body) => {
+        let details = {url: url ,headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}
+        await axios.get(details.url, {headers: details.headers}).then((response) => { // eslint-disable-line no-unused-vars
+            let data = response.data
+            let error = response.error
+            let statusCode = response.status
             try {
-                if (error) { 
-                    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${error}`); 
+                if (error != undefined) { 
+                    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${error}`)
                     return; 
                 }
-                if (body == undefined) { 
+                if (data == undefined) { 
                     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: No Data`)
                     return;
                 }
-                if (response.statusCode != 200) {
-                    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${response.statusCode}`)
+                if (statusCode != 200) {
+                    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${statusCode}`)
                     return;
                 }
                 cache.alerts.active = []
                 cache.alerts.warnings = []
                 cache.alerts.watches = []
-                let data = JSON.parse(body)
                 let events = []
                 if (cache.configurations['request:settings']['request:outbreakmode'] == true) {events = (cache.configurations['request:settings']['request:outbreakalerts']) } else { events = (cache.configurations['request:settings']['request:allalerts'])}
                 let isWhiteListed = data['features'].filter(alert => events.includes(alert['properties']['event']))

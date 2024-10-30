@@ -32,7 +32,7 @@ https = require('https')
 cryptography = require('crypto');
 fs = require('fs') 
 path = require('path')
-req = require('request')
+axios = require('axios')
 
 core = new (require('./library/core.js')); 
 ams = new (require('./library/ams_api.js'));
