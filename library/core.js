@@ -107,8 +107,8 @@ functions.register = function(data) {
             if (messageType == `Expired`) { audioToUse = cancelAudio }
             if (messageType == `Updated`) {
                 if (eas || siren) { 
-                    if (!cache.alerts.danger.includes(`${eventName}-${locations}-${siren}-${eas}-${eventDescription}`)) {
-                        cache.alerts.danger.push(`${eventName}-${locations}-${siren}-${eas}-${eventDescription}`)
+                    if (!cache.alerts.danger.includes(`${eventName}-${locations}-${issued}-${expires}-${eventDescription}`)) {
+                        cache.alerts.danger.push(`${eventName}-${locations}-${issued}-${expires}-${eventDescription}`)
                         audioToUse = newAudio
                     } else { 
                         eas = false
