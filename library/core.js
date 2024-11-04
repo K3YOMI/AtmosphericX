@@ -55,7 +55,7 @@ functions.register = function(data) {
     let tornadoThreat = `Not Calculated`
     let thunderstormThreat = `Not Calculated`
     if (data['properties']['parameters']) {
-        hailThreat = data['properties']['parameters']['maxHailSize'] ? `${data['properties']['parameters']['maxHailSize']} (${data['properties']['parameters']['hailThreat']})` : 'Not Calculated';
+        hailThreat = data['properties']['parameters']['maxHailSize'] ? `${data['properties']['parameters']['maxHailSize']}` : 'Not Calculated';
         windThreat = data['properties']['parameters']['maxWindGust'] ? `${data['properties']['parameters']['maxWindGust']} (${data['properties']['parameters']['windThreat']})` : 'Not Calculated';
         tornadoThreat = data['properties']['parameters']['tornadoDetection'] || 'Not Calculated';
         thunderstormThreat = data['properties']['parameters']['thunderstormDamageThreat'] || 'Not Calculated';
