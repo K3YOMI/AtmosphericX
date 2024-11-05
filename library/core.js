@@ -106,7 +106,7 @@ functions.register = function(data) {
             if (messageType == `Updated`) { audioToUse = updateAudio }
             if (messageType == `Expired`) { audioToUse = cancelAudio }
             if (messageType == `Updated`) {
-                if (eas || siren) { 
+                if (eas == true || siren == true) {
                     if (!cache.alerts.danger.includes(`${eventName}-${locations}-${issued}-${expires}-${eventDescription}`)) {
                         cache.alerts.danger.push(`${eventName}-${locations}-${issued}-${expires}-${eventDescription}`)
                         audioToUse = newAudio
@@ -116,14 +116,12 @@ functions.register = function(data) {
                     }
                 }
             }
-          
             if (beepOnly == true) {
                 if (!excludedEvents.includes(eventName)) {
                     audioToUse = cache.configurations['application:sounds']['application:beep']
                     onlyBeep = true
                 }
             }
-
             if (allowUpdateNotificiation == false && messageType == `Updated`) {
                 if (!excludedEvents.includes(eventName)) {
                     ignoreWarning = true
