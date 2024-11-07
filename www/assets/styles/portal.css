@@ -100,14 +100,15 @@ footer {
 }
 
 
+/* Mobile Styles */
 @media (max-width: 600px) {
     .login-box {
-        padding: 20px;
-        width: 80%;
+        padding: 20px; /* Reduce padding on mobile */
+        width: 80%; /* Make login box 90% of the screen width */
     }
     .login-box input[type="text"],
     .login-box input[type="password"] {
-        font-size: 14px;
+        font-size: 14px; /* Smaller font size */
     }
     .bg {
         height: 100vh;

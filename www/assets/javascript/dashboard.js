@@ -220,7 +220,7 @@ dashboard.execute = async function() {
 
 }
 dashboard.page = async function(page) { 
-    let pages = ['dashboard-home', 'external-services', 'outlooks', 'settings'];
+    let pages = ['dashboard-home', 'external-services', 'outlooks', 'settings', 'map'];
     for (let i = 0; i < pages.length; i++) {
         if (pages[i] == page) {
             document.getElementById(page).style.display = 'block';
@@ -262,14 +262,14 @@ dashboard.generatesite = function() {
     ];
     let stormoutlookServices = [
         { title: "Day 1 Categorial Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif" },
-        { title: "Day 2 Categorial Risk (0600)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2otlk_0600.gif" },
+        { title: "Day 2 Categorial Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2otlk_0700.gif" },
         { title: "Day 3 Categorial Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day3otlk_1200.gif" },
         { title: "Day 1 Tornado Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_1200_torn.gif" },
         { title: "Day 1 Wind Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_1200_wind.gif" },
         { title: "Day 1 Hail Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_1200_hail.gif" },
-        { title: "Day 2 Tornado Risk (0600)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0600_torn.gif" },
-        { title: "Day 2 Wind Risk (0600)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0600_wind.gif" },
-        { title: "Day 2 Hail Risk (0600)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0600_hail.gif" }
+        { title: "Day 2 Tornado Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0700_torn.gif" },
+        { title: "Day 2 Wind Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0700_wind.gif" },
+        { title: "Day 2 Hail Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0700_hail.gif" }
     ];
     let external = document.getElementById('external-services-area');
     external.innerHTML = '';

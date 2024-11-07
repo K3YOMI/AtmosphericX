@@ -72,6 +72,7 @@ app.get(`/`, (req, res) => { if (req.session.account != undefined) {
 app.get(`/stream`, (req, res) => {res.sendFile(__dirname + '/www/stream/stream.html')})
 app.get(`/portable`, (req, res) => {res.sendFile(__dirname + '/www/stream/portable.html')})
 app.get(`/warnings`, (req, res) => {res.sendFile(__dirname + '/www/stream/warnings.html')})
+app.get(`/map`, (req, res) => {res.sendFile(__dirname + '/www/stream/geolocation.html')})
 app.get(`/reset`, (req, res) => {res.sendFile(__dirname + '/www/portal/reset.html')})
 app.get(`/registration`, (req, res) => {res.sendFile(__dirname + '/www/portal/registration.html')})
 
