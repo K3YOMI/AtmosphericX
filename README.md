@@ -146,7 +146,7 @@ If you encounter an error regarding a **missing dependency**, you have two optio
 
 
 # 🌧️ Dashboard Setup <a name="doc_dashboard"></a>
-To access the dashboard, which can be found at {ip}:{port} (e.g., http://192.168.1.92:3000), you will need to login. If you are unable to see the dashboard, ensure that the NodeJS web server is up and running. Additionally, verify that your IP address has been granted API access. If required, confirm that the wildcard (*) has been applied to API_ACCESS to allow access from all addresses.
+To access the dashboard, which can be found at ``http://localhost:{port}`` (Ex. http://localhost:3010), you will need to login. If you are unable to see the dashboard, ensure that the NodeJS web server is up and running. Additionally, verify that your IP address has been granted API access. If required, confirm that the wildcard (*) has been applied to API_ACCESS to allow access from all addresses.
 
 
     Username: root
