@@ -66,7 +66,6 @@ app.use(`/assets`, express.static(__dirname + '/www/assets'));
 app.get(`/`, (req, res) => { if (req.session.account != undefined) {
     res.sendFile(__dirname + '/www/dashboard/index.html'); return;} 
     res.sendFile(__dirname + '/www/portal/login.html')
-    // remove all session data
     req.session.destroy()
 })
 app.get(`/stream`, (req, res) => {res.sendFile(__dirname + '/www/stream/stream.html')})
@@ -107,28 +106,18 @@ return new Promise(async (resolve, reject) => {
     }
     const httpServer = http.createServer(app)
     httpServer.listen(cache.configurations['hosting:settings']['http:port'], () => {})
-    let url = `https://api.weather.gov/alerts/active`
-    if (cache.configurations['application:information']['application:stateid'] != `ALL` && cache.configurations['application:information']['application:stateid'] != ``) {
-        url += `/area/${cache.configurations['application:information']['application:stateid']}`
-    }
-
+    
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: AtmosphericX v${cache.version} by ${cache.author}`)
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Server is running on port ${cache.configurations['hosting:settings']['http:port']}`)
     if (hosting['https:enabled']) {console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Secure Server is running on port ${hosting['https:port']}`)}
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Please remember to stick to offical sources for accurate weather information. Even though this project uses the NWS API, it is not a replacement for official sources.`)
-
-
-    nws.functions.request(url)
+    await ams.functions.request()    
     setInterval(async () => { // a little messy but operational...
         if (new Date().getSeconds() % cache.configurations['request:settings']['request:refresh_synced'] == 0) {
             if (cache.requesting) {return}
             cache.requesting = true
             cache.configurations = core.functions.config(`./configurations.json`)
-            let url = `https://api.weather.gov/alerts/active`
-            if (cache.configurations['application:information']['application:stateid'] != `ALL` && cache.configurations['application:information']['application:stateid'] != ``) {
-                url += `/area/${cache.configurations['application:information']['application:stateid']}`
-            }
-            nws.functions.request(url)          
+            await ams.functions.request()         
             setTimeout(() => { cache.requesting = false; }, 1000);
         }
     }, 200);

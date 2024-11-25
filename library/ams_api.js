@@ -189,7 +189,7 @@ functions.request_latest = async function(req, res) { // Handles the latest requ
             web.functions.forbidden(req, res, 'You do not have permission to access this resource.')
             return
         }
-        nws.functions.active()
+        functions.request()
         cache.configurations = core.functions.config(`./configurations.json`)
         web.functions.success(req, res, `Requesting latest data.`)
     } catch (error) {web.functions.internal(req, res, error); return;}
@@ -276,6 +276,15 @@ functions.dashboard = async function(req, res) { // Handles the dashboard reques
         if (req.session.account == undefined) {res.redirect('/'); return;}
         res.sendFile(path.join(__dirname, `../www/dashboard/index.html`))
     } catch (error) { web.functions.internal(req, res, error); return;}
+}
+
+
+functions.request = async function() {
+    let url = `https://api.weather.gov/alerts/active`
+    if (cache.configurations['application:information']['application:stateid'] != `ALL` && cache.configurations['application:information']['application:stateid'] != ``) {
+        url += `/area/${cache.configurations['application:information']['application:stateid']}`
+    }
+    nws.functions.request(url)
 }
 
 class ams {constructor() {this.functions = functions}}
