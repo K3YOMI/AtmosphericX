@@ -21,7 +21,7 @@ functions.request = function(url) {
     return new Promise(async (resolve, reject) => {
         let details = {url: url ,headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'],'Accept': 'application/geo+json','Accept-Language': 'en-US'}}
         try {
-            await axios.get(details.url, {headers: details.headers}).then((response) => { // eslint-disable-line no-unused-vars
+            await axios.get(details.url, {headers: details.headers}).then((response) => {
                 let data = response.data
                 let error = response.error
                 let statusCode = response.status
