@@ -84,7 +84,7 @@ once finished install git, clone the project with the command below (terminal/co
 
 	git clone https://github.com/k3yomi/AtmosphericX
 
-After cloning, navigate to the **AtmosphericX** directory. Inside, you'll find another directory titled **Project AtmosphericX**. This holds the main project itself. For better ease of access, feel free to drop the **Project AtmosphericX** directory into somewhere you'll remember.
+After cloning, navigate to the **AtmosphericX** directory. This holds the main project itself.
 
 # 🌩️ Configuration <a name="doc_configure"></a>
 Configurating AtmosphericX is quite simple, the **configurations.json** holds all the configurations. Here is a general template below of the configuration and what each configuration does. 
