@@ -58,9 +58,15 @@
                 <div class="grid-area" id="storm-outlook-area"></div>
             </div>
             <div id="map" style="display: none;">
-                <h2 class="title-dash">Latest Event Location</h2>
-                <div class="data-card" style="width: 50%; height: 100%; margin: 0 auto;">
-                    <center><iframe src="/map" style="border: none; width: 97%; height: 600px; background-color: grey;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" frameborder="0" scrolling="no"></iframe></center>
+                <h2 class="title-dash">Mapping Details</h2>
+                <div class="grid-area" style="grid-template-columns: 1fr 1fr;">
+                    <div class="data-card" style="width: 100%; margin: 0;">
+                        <iframe src="/map" style="border: none; width: 100%; height: 600px; background-color: grey;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                    <div class="data-card" style="width: 100%; height: 600px; margin: 0;">
+                        <h1>Latest Event Mapping</h1>
+                        <div id="generic-map"></div>
+                    </div>
                 </div>
             </div>
             <div id="settings" style="display: none;">
