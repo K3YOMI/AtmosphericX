@@ -76,6 +76,8 @@
 
 
 # 🌧️ Install Guide <a name="doc_install"></a>
+Documentation Video Reference: https://youtu.be/dmCLYmTKeNg
+
 To install Project AtmosphericX, you will need a few requirements. NodeJS / NPM and Git (optional)
 If you are not wanting to install git, you can also clone the repository by downloading it as a ZIP. If you do not know how to install any of the requirements, feel free to refer to their documentation.
 
@@ -146,14 +148,13 @@ If you encounter an error regarding a **missing dependency**, you have two optio
 
 
 # 🌧️ Dashboard Setup <a name="doc_dashboard"></a>
-To access the dashboard, which can be found at ``http://localhost:{port}`` (Ex. http://localhost:3010), you will need to login. If you are unable to see the dashboard, ensure that the NodeJS web server is up and running. Additionally, verify that your IP address has been granted API access. If required, confirm that the wildcard (*) has been applied to API_ACCESS to allow access from all addresses.
-
+To access the dashboard, which can be found at ``http://localhost:{port}`` (Ex. http://localhost:3010), you will need to login. If you are unable to see the dashboard, ensure that the NodeJS web server is up and running.
 
     Username: root
     Password: root
 
 
-Ensuring the security of your webserver is of importance. It's vital to promptly change this default password. To do so, simply navigate back to the login screen and select the "Change password?" option. It's worth noting that access to AtmosphericX's API and streaming functionalities remains open to all users, even those without login credentials, unless specific address configurations have been applied to the API_ACCESS setting in the environment file.
+Ensuring the security of your webserver is of importance. It's vital to promptly change this default password. To do so, simply navigate back to the login screen and select the "Change password?" option. It's worth noting that access to AtmosphericX's API and streaming functionalities remains open to all users, even those without login credentials.
 
 
 # 🌧️ Account Creation <a name="doc_accountcreation"></a>
