@@ -44,8 +44,8 @@
 		- SHA256 Encryption (users.json)
 	- Active Alerts & General Information
 		- Active Alerts, Warnings, and Watches
-		- Previous 6 Alerts (w/ interactions)
-		- Region Alerts
+		- Previous 6 Alerts (w/ interactions and map)
+		- Region Alerts (w/ minimal forecast office support)
 	- External Services and Tools
 		- Live Storm Chasing Cam Service (https://livestormchasing.com)
 		- Hourly Mesoscale Analysis (https://www.spc.noaa.gov)
@@ -109,7 +109,8 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
     },
      "application:information": {
         "application:location": "Somewhere, USA",
-        "application:stateid": "ALL",
+		"application:stateid": "",
+        "application:forecastoffice": "",
         "application:useragent": "AtmosphericX-5.0.0"
     },
     "request:settings": {
@@ -194,6 +195,7 @@ If a user wants to register a new username and password, the host must activate 
 (GET)  (PUBLIC)   /warnings
 (GET)  (PUBLIC)   /portable
 (GET)  (PUBLIC)   /stream
+(GET)  (PUBLIC)   /map
 (GET)  (PUBLIC)   /api/alerts
 (GET)  (PUBLIC)   /api/manual
 (GET)  (PUBLIC)   /api/warnings
