@@ -13,7 +13,8 @@
     },
     "application:information": {
         "application:location": "Somewhere, USA",
-        "application:stateid": "ALL",
+        "application:stateid": "",
+        "application:forecastoffice": "",
         "application:useragent": "AtmosphericX-5.0.0"
     },
 

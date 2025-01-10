@@ -44,6 +44,9 @@ functions.request = function(url) {
                     if (cache.configurations['request:settings']['request:outbreakmode'] == true) {events = (cache.configurations['request:settings']['request:outbreakalerts']) } else { events = (cache.configurations['request:settings']['request:allalerts'])}
                     let isWhiteListed = data['features'].filter(alert => events.includes(alert['properties']['event']))
                     let withinTime = isWhiteListed.filter(alert => new Date(alert['properties']['expires']).getTime() / 1000 > new Date().getTime() / 1000)
+                    if (cache.configurations['application:information']['application:forecastoffice'] != "ALL" && cache.configurations['application:information']['application:forecastoffice'] != "") {
+                        withinTime = withinTime.filter(alert => alert['properties']['senderName'] == cache.configurations['application:information']['application:forecastoffice'])
+                    }
                     let warnings = withinTime.filter(alert => alert['properties']['event'].includes('Warning'))
                     let watches = withinTime.filter(alert => alert['properties']['event'].includes('Watch'))
                     let doesntInclude = withinTime.filter(alert => !alert['properties']['event'].includes('Warning') && !alert['properties']['event'].includes('Watch'))
