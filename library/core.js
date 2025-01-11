@@ -110,6 +110,8 @@ functions.getSignature = function(data) {
 }
 
 functions.register = function(data) { // This is crazy and is very message but It works and i'll make it better lol
+    let ignoreWarning = false
+    let onlyBeep = false
     let audioToUse = cache.configurations['application:sounds']['application:beep']
     let beepOnly = cache.configurations['request:settings']['request:beeponly']
     let excludedEvents = (cache.configurations['request:settings']['request:alwaysrun'])
@@ -136,10 +138,11 @@ functions.register = function(data) { // This is crazy and is very message but I
     if (beepOnly == true) {
         if (!excludedEvents.includes(data.properties.event)) {
             audioToUse = cache.configurations['application:sounds']['application:beep']
+            signature.audio = audioToUse
             onlyBeep = true
         }
     }
-    if (allowUpdateNotification == false && data.properties.event.messageType == `Updated`) {
+    if (allowUpdateNotification == false && data.properties.messageType == `Updated`) {
         if (!excludedEvents.includes(data.properties.event)) {
             ignoreWarning = true
         }
