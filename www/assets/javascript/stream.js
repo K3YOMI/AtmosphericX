@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.0                              
+    Version: 5.5.2                              
 */
 
 
@@ -33,9 +33,9 @@ layout.listings = async function(warnings, watches, data) {
         return
     }
     let random = data[Math.floor(Math.random() * data.length)];
-    let topic = random.eventName; 
-    let location = random.locations;
-    let expires = random.expires;
+    let topic = random.details.name; 
+    let location = random.details.locations;
+    let expires = random.details.expires;
     if (location.length > 220) { 
         location = location.substring(0, 220) + '...';
     }
@@ -57,7 +57,7 @@ layout.listings = async function(warnings, watches, data) {
     }
     let result = await library.request(`/api/status`)
     if (result == ``) { 
-        let activeoutbreak = warnings.filter(warning => warning.eventName.includes('Tornado')).length;
+        let activeoutbreak = warnings.filter(warning => warning.details.name.includes('Tornado')).length;
         let chance = Math.floor(Math.random() * 5);
         if (warnings.length > 5 && activeoutbreak > 5) {
             document.getElementById('total_warnings').innerHTML = (chance == 3) ? `<h2>OUTBREAK</h2>` : `<p>Active Warnings: ${warnings.length}<br>Active Watches: ${watches.length}</p>`;
@@ -83,15 +83,15 @@ layout.time = async function() {
     document.getElementById('date').innerHTML = `<p>${months[thismonth]} ${thisday}</p>`;
 }
 layout.colortables = async function(warnings) {
-    let tore = warnings.filter(x => x.eventName == `Tornado Emergency`).length;
-    let ffe = warnings.filter(x => x.eventName == `Flash Flood Emergency`).length;
-    let torp = warnings.filter(x => x.eventName == `Particularly Dangerous Situation`).length;
-    let tor = warnings.filter(x => x.eventName.includes(`Tornado`)).length;
-    let svr = warnings.filter(x => x.eventName.includes(`Severe Thunderstorm Warning`)).length;
-    let ffw = warnings.filter(x => x.eventName == `Flash Flood Warning`).length;
-    let smw = warnings.filter(x => x.eventName == `Special Marine Warning`).length;
-    let ssw = warnings.filter(x => x.eventName == `Snow Squall Warning`).length;
-    let hur = warnings.filter(x => x.eventName == `Hurricane Warning`).length;
+    let tore = warnings.filter(x => x.details.name == `Tornado Emergency`).length;
+    let ffe = warnings.filter(x => x.details.name == `Flash Flood Emergency`).length;
+    let torp = warnings.filter(x => x.details.name == `Particularly Dangerous Situation`).length;
+    let tor = warnings.filter(x => x.details.name.includes(`Tornado`)).length;
+    let svr = warnings.filter(x => x.details.name.includes(`Severe Thunderstorm Warning`)).length;
+    let ffw = warnings.filter(x => x.details.name == `Flash Flood Warning`).length;
+    let smw = warnings.filter(x => x.details.name == `Special Marine Warning`).length;
+    let ssw = warnings.filter(x => x.details.name == `Snow Squall Warning`).length;
+    let hur = warnings.filter(x => x.details.name == `Hurricane Warning`).length;
     let light = document.getElementsByClassName(`defaultBoxLight`)
     let dark = document.getElementsByClassName(`defaultBox`)
     let types = [
@@ -139,30 +139,19 @@ layout.query = async function(data) {
     cache.running = true;
     let nextQuery = data.length - 1;
     let alert = data[nextQuery];
-    let messageType = alert.messageType;
-    let locations = alert.locations;
-    let audioToUse = alert.audioToUse;
-    let notifyCard = alert.notifyCard;
-    let autoBeep = alert.autobeep;
-    let onlyBeep = alert.onlyBeep;
-    let eas = alert.eas;
-    let siren = alert.siren;
-    let gif = alert.gif;
-    layout.alert(gif, `${notifyCard} (${messageType})`, `${locations}`);
-    if (autoBeep) {
+    console.log(alert)
+    layout.alert(alert.metadata.gif, `${alert.details.name} (${alert.details.type})`, `${alert.details.locations}`);
+    if (alert.metadata.autobeep) {
         library.play(cache.config['application:sounds']['application:beep'], false);
-        if (!onlyBeep) { await library.delay(1300); library.play(audioToUse, false); }
+        if (!alert.metadata.onlyBeep) { await library.delay(1300); library.play(alert.metadata.audio, false); }
     } else { 
-        library.play(audioToUse, false);
+        library.play(alert.metadata.audio, false);
     }
-    if (eas || siren) {
+    if (alert.metadata.eas || alert.metadata.siren) {
         await library.delay(3500);
-        library.play(eas ? cache.config['application:sounds']['application:eas'] : cache.config['application:sounds']['application:siren']);
+        library.play(alert.metadata.eas ? cache.config['application:sounds']['application:eas'] : cache.config['application:sounds']['application:siren']);
     }
-    if (!cache.streaming) {
-        await library.delay(6800);
-        cache.running = false;
-    }
+    if (!cache.streaming) { await library.delay(6800); cache.running = false; }
     data.pop();
 }
 
@@ -188,20 +177,16 @@ layout.execute = async function() {
         }
     }
     if (cache.manual.length != 0) { 
-        let event = cache.manual.eventName
-        let description = cache.manual['eventDescription']
-        let type = cache.manual['messageType']
-        let ignored = cache.manual['ignoreWarning']
-        if (ignored != true) {
+        if (cache.manual.metadata.ignored != true) {
             cache.alerts.push(cache.manual)
-            let inQueue = cache.queue.find(x => x.eventName == event && x.eventDescription == description && x.messageType == type)
-            if (event.includes(`Warning`)) {cache.warnings.push(cache.manual)}
-            if (event.includes(`Watch`)) {cache.watches.push(cache.manual)}
-            if (event.includes(`Tornado Emergency`) || event.includes(`Flash Flood Emergency`) || event.includes(`Particularly Dangerous Situation`)) {
+            let inQueue = cache.queue.find(x => x.details.name == cache.manual.details.name && x.details.description == cache.manual.details.description && x.details.type == cache.manual.details.type)
+            if (cache.manual.details.name.includes(`Warning`)) {cache.warnings.push(cache.manual)}
+            if (cache.manual.details.name.includes(`Watch`)) {cache.watches.push(cache.manual)}
+            if (cache.manual.details.name.includes(`Tornado Emergency`) || cache.manual.details.name.includes(`Flash Flood Emergency`) || cache.manual.details.name.includes(`Particularly Dangerous Situation`)) {
                 cache.warnings.push(cache.manual)
             }
-            if (inQueue == undefined && cache.latestManual != event + description + type + cache.manual.location) {
-                cache.latestManual = event + description + type + cache.manual.location
+            if (inQueue == undefined && cache.latestManual != cache.manual.details.name + cache.manual.details.description + cache.manual.details.type + cache.manual.details.location) {
+                cache.latestManual = cache.manual.details.name + cache.manual.details.description + cache.manual.details.type + cache.manual.details.location
                 cache.queue.push(cache.manual)
             }
         }
@@ -209,16 +194,10 @@ layout.execute = async function() {
     if (cache.alerts.length != 0) {
         for (let i = 0; i < cache.alerts.length; i++) {
             let alert = cache.alerts[i]
-            let event = alert.eventName
-            let description = alert.eventDescription
-            let type = alert.messageType
-            let issued = alert.issued
-            let expires = alert.expires
-            let ignored = alert.ignoreWarning
-            if (ignored == true) {continue}
-            let duplicate = cache.lastQueries.find(x => x.eventName == event && x.eventDescription == description && x.messageType == type && x.issued == issued && x.expires == expires)
+            if (alert.metadata.ignored == true) {continue}
+            let duplicate = cache.lastQueries.find(x => x.details.name == alert.details.name && x.details.description == alert.details.description && x.details.type == alert.details.type && x.details.issued == alert.details.issued && x.details.expires == alert.details.expires)
             let time = new Date().getTime() / 1000
-            let check = time - new Date(issued).getTime() / 1000;
+            let check = time - new Date(alert.details.issued).getTime() / 1000;
             if (check > 8 && check < 600 && duplicate == undefined) {
                 cache.queue.push(alert)
                 cache.lastQueries.push(alert)

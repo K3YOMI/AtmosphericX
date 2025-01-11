@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.0                              
+    Version: 5.5.2                              
 */
 
 cache = {}
@@ -47,14 +47,14 @@ web.functions.init()
 cache.configurations = core.functions.config(`./configurations.json`)
 app = express() 
 app.use(session({
-    secret: cache.configurations['hosting:settings']['cookie:secret'],
+    secret: cryptography.randomBytes(64).toString('hex'), // Replaced with a random bytes. Why set it to a static when you can randomize it each time?!
     resave: false,
     saveUninitialized: true,
     cookie: {
         maxAge: cache.configurations['hosting:settings']['cookie:maxage'],
         name: 'session',
         sameSite: 'strict',
-        secure: cache.configurations['hosting:settings']['cookie:secure']
+        secure: cache.configurations['hosting:settings']['https:enabled']
     },
     name: 'AtmosphericX-Cookie'
 }))

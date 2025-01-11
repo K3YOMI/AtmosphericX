@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.0                              
+    Version: 5.5.2                              
 */
 
 let functions = {}
@@ -178,7 +178,7 @@ functions.manual_activation = async function(req, res) { // Handles the manual a
             web.functions.success(req, res, `Successfully removed event.`)
             return
         }
-        cache.alerts.manual = data.locations !== "" ? data : []
+        cache.alerts.manual = data.details.locations !== "" ? data : []
         web.functions.success(req, res, `Successfully registered new event.`)
         return
     } catch (error) {web.functions.internal(req, res, error); return;}

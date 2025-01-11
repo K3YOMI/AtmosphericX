@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.0                              
+    Version: 5.5.2                              
 */
 
 let warning = {}
@@ -39,8 +39,8 @@ warning.execute = async function() {
             let row = table.insertRow(-1)
             let cell1 = row.insertCell(0)
             let cell2 = row.insertCell(1)
-            cell1.innerHTML = alert.eventName.substring(0, 30);
-            cell2.innerHTML = alert.locations.substring(0, 20);
+            cell1.innerHTML = alert.details.name.substring(0, 30);
+            cell2.innerHTML = alert.details.locations.substring(0, 20);
         }
         if (warning.cache.alerts.length > 20) {
             let table = document.getElementById("uialert")

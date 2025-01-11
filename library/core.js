@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.0                              
+    Version: 5.5.2                              
 */
 
 let functions = {}
@@ -43,111 +43,122 @@ functions.format = function(locations) {
         return newLocation
     }
 }
-functions.register = function(data) {
+functions.parameters = function(paramaters) { 
+    if (paramaters == undefined) {return {hail: 'Not Calculated', wind: 'Not Calculated', tornado: 'Not Calculated', thunderstorm: 'Not Calculated'}}
+    let maxHailSize = paramaters.maxHailSize ? `${paramaters.maxHailSize}` : 'Not Calculated';
+    let maxWindGust = paramaters.maxWindGust ? `${paramaters.maxWindGust} (${paramaters.windThreat})` : 'Not Calculated';
+    let tornadoDetection = paramaters.tornadoDetection || 'Not Calculated';
+    let thunderstormDamageThreat = paramaters.thunderstormDamageThreat || 'Not Calculated';
+    return {hail: maxHailSize, wind: maxWindGust, tornado: tornadoDetection, thunderstorm: thunderstormDamageThreat}
+}
+functions.getCustomEventSignature = function(data) {
+    let description = (data.properties.description == undefined) ? `no description` : data['properties']['description'].toLowerCase()
+    if (description.includes(`flash flood emergency`) && data.properties.event == `Flash Flood Warning`) { data.properties.event = `Flash Flood Emergency` }
+    if (description.includes(`particularly dangerous situation`) && data.properties.event == `Tornado Warning`) { data.properties.event = `Particularly Dangerous Situation` }
+    if (description.includes(`tornado emergency`)) { data.properties.event = `Tornado Emergency` }
+    if (data.properties.event == `Tornado Warning`) {
+        if (data.properties.parameters.tornadoDetection == `OBSERVED` || description.includes(`confirmed`)) { data.properties.parameters.tornadoDetection = `Confirmed`; data.properties.event = `Confirmed Tornado Warning` }
+        else if (data.properties.parameters.tornadoDetection == `RADAR INDICATED`) { data.properties.parameters.tornadoDetection = `Radar Indicated`; data.properties.event = `Radar Indicated Tornado Warning` }
+        else if (data.properties.parameters.tornadoDetection == `POSSIBLE`) { data.properties.parameters.tornadoDetection = `Cancel` }
+    }
+    if (data.properties.event == `Severe Thunderstorm Warning`) {
+        if (data.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) { data.properties.event = `Considerable Destructive Severe Thunderstorm Warning` }
+        else if (data.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) { data.properties.event = `Destructive Severe Thunderstorm Warning` }
+        else { data.properties.event = `Severe Thunderstorm Warning` }
+    }
+    return data.properties.event
+}
+functions.getSignature = function(data) {
+    let audioToUse = cache.configurations['application:sounds']['application:beep']
+    let eventAction = cache.configurations['application:warnings'][data.properties.event]
+    if (eventAction == undefined) {
+        eventAction = cache.configurations['application:warnings']['UNK'] 
+        let newAlert = eventAction.new
+        let updateAlert = eventAction.update
+        let cancelAlert = eventAction.cancel
+        if (data.properties.messageType == `Update`) {data.properties.messageType = `Updated`; audioToUse = updateAlert}
+        if (data.properties.messageType == `Cancel`) {data.properties.messageType = `Expired`; audioToUse = cancelAlert}
+        if (data.properties.messageType == `Alert`) {data.properties.messageType = `Issued`; audioToUse = newAlert}
+        return {
+            message: data.properties.messageType,
+            audiopresets: {new: newAlert, update: updateAlert, cancel: cancelAlert},
+            audio: audioToUse,
+            gif: cache.configurations['application:banners']['UNK'],
+            eas: cache.configurations['application:warnings']['UNK'].eas,
+            siren: cache.configurations['application:warnings']['UNK'].siren,
+            autobeep: cache.configurations['application:warnings']['UNK'].autobeep,
+            notifyCard: cache.configurations['application:warnings']['UNK'].notifyCard,
+        }
+    } else { 
+        let newAlert = eventAction.new
+        let updateAlert = eventAction.update
+        let cancelAlert = eventAction.cancel
+        if (data.properties.messageType == `Update`) {data.properties.messageType = `Updated`; audioToUse = updateAlert}
+        if (data.properties.messageType == `Cancel`) {data.properties.messageType = `Expired`; audioToUse = cancelAlert}
+        if (data.properties.messageType == `Alert`) {data.properties.messageType = `Issued`; audioToUse = newAlert}
+        return {
+            message: data.properties.messageType,
+            audiopresets: {new: newAlert, update: updateAlert, cancel: cancelAlert},
+            audio: audioToUse,
+            gif: cache.configurations['application:banners'][data.properties.event],
+            eas: eventAction.eas,
+            siren: eventAction.siren,
+            autobeep: eventAction.autobeep,
+            notifyCard: eventAction.card,
+        }
+    }
+}
+
+functions.register = function(data) { // This is crazy and is very message but It works and i'll make it better lol
     let audioToUse = cache.configurations['application:sounds']['application:beep']
     let beepOnly = cache.configurations['request:settings']['request:beeponly']
     let excludedEvents = (cache.configurations['request:settings']['request:alwaysrun'])
-    let allowUpdateNotificiation = cache.configurations['request:settings']['request:updates']
-    let eventName = data['properties']['event']
-    let eventDescription = data['properties']['description']
-    let hailThreat = `Not Calculated`
-    let windThreat = `Not Calculated`
-    let tornadoThreat = `Not Calculated`
-    let thunderstormThreat = `Not Calculated`
-    if (data['properties']['parameters']) {
-        hailThreat = data['properties']['parameters']['maxHailSize'] ? `${data['properties']['parameters']['maxHailSize']}` : 'Not Calculated';
-        windThreat = data['properties']['parameters']['maxWindGust'] ? `${data['properties']['parameters']['maxWindGust']} (${data['properties']['parameters']['windThreat']})` : 'Not Calculated';
-        tornadoThreat = data['properties']['parameters']['tornadoDetection'] || 'Not Calculated';
-        thunderstormThreat = data['properties']['parameters']['thunderstormDamageThreat'] || 'Not Calculated';
-    } else {
-        hailThreat = 'Not Calculated';
-        windThreat = 'Not Calculated';
-        tornadoThreat = 'Not Calculated';
-        thunderstormThreat = 'Not Calculated';
-    }
-    let messageType = data['properties']['messageType']
-    let indication = data['properties']['indiciated']
-    let expires = data['properties']['expires']
-    let issued = data['properties']['sent']
-    if (eventDescription == undefined) { eventDescription = `No Description` }
-    let eventLower = eventDescription.toLowerCase()
-    let locations = functions.format(data['properties']['areaDesc'])
-    if (eventLower.includes(`flash flood emergency`) && eventName == `Flash Flood Warning`) { eventName = `Flash Flood Emergency` }
-    if (eventLower.includes(`particularly dangerous situation`) && eventName == `Tornado Warning`) { eventName = `Particularly Dangerous Situation` }
-    if (eventLower.includes(`tornado emergency`)) { eventName = `Tornado Emergency` }
-    if (eventName == `Tornado Warning`) {
-        if (tornadoThreat == `OBSERVED` || eventLower.includes(`confirmed`)) { tornadoThreat = `Confirmed`; eventName = `Confirmed Tornado Warning` }
-        else if (tornadoThreat == `RADAR INDICATED`) { tornadoThreat = `Radar Indicated`; eventName = `Radar Indicated Tornado Warning` }
-        else if (tornadoThreat == `POSSIBLE`) { tornadoThreat = `Cancel` }
-    }
-    if (eventName == `Severe Thunderstorm Warning`) {
-        if (thunderstormThreat == `CONSIDERABLE`) { eventName = `Considerable Destructive Severe Thunderstorm Warning` }
-        else if (thunderstormThreat == `DESTRUCTIVE`) { eventName = `Destructive Severe Thunderstorm Warning` }
-        else { eventName = `Severe Thunderstorm Warning` }
-    }
-    if (messageType == `Update`) {messageType = `Updated`}
-    if (messageType == `Cancel`) {messageType = `Expired`}
-    if (messageType == `Alert`) {messageType = `Issued`}
-    let eventAction = cache.configurations['application:warnings'][eventName]
-    if (eventAction != undefined) {
-        let onlyBeep = false
-        let ignoreWarning = false
-        let triggered = eventAction['triggered']
-        let newAudio = eventAction['new']
-        let updateAudio = eventAction['update']
-        let cancelAudio = eventAction['cancel']
-        let notifyCard = eventAction['card']
-        let gif = cache.configurations['application:banners'][eventName]
-        let autobeep = eventAction['autobeep']
-        let eas = eventAction['eas'] 
-        let siren = eventAction['siren']
-        if (eventName == triggered) {
-            if (messageType == `Issued`) { audioToUse = newAudio }
-            if (messageType == `Updated`) { audioToUse = updateAudio }
-            if (messageType == `Expired`) { audioToUse = cancelAudio }
-            if (messageType == `Updated`) {
-                if (eas == true || siren == true) {
-                    if (!cache.alerts.danger.includes(`${eventName}-${locations}-${issued}-${expires}-${eventDescription}`)) {
-                        cache.alerts.danger.push(`${eventName}-${locations}-${issued}-${expires}-${eventDescription}`)
-                        audioToUse = newAudio
-                    } else { 
-                        eas = false
-                        siren = false
-                    }
-                }
-            }
-            if (beepOnly == true) {
-                if (!excludedEvents.includes(eventName)) {
-                    audioToUse = cache.configurations['application:sounds']['application:beep']
-                    onlyBeep = true
-                }
-            }
-            if (allowUpdateNotificiation == false && messageType == `Updated`) {
-                if (!excludedEvents.includes(eventName)) {
-                    ignoreWarning = true
-                }
-            }
-            return {eventName: eventName,eventDescription: eventDescription,thunderstormThreat: thunderstormThreat,hailThreat: hailThreat,windThreat: windThreat,tornadoThreat: tornadoThreat,messageType: messageType,indication: indication,expires: expires,issued: issued,locations: locations,audioToUse : audioToUse,ignoreWarning: ignoreWarning,gif: gif,eas: eas,siren: siren,onlyBeep: onlyBeep,notifyCard: notifyCard,autobeep: autobeep,link: data['id']}
+    let allowUpdateNotification = cache.configurations['request:settings']['request:updates'];
+    let {hail, wind, tornado, thunderstorm} = functions.parameters(data.properties.parameters)
+    data.properties.parameters = {maxHailSize: hail, maxWindGust: wind, tornadoDetection: tornado, thunderstormDamageThreat: thunderstorm}
+    if (data.properties.description == undefined) { data.properties.description = `no description` }
+    data.properties.areaDesc = functions.format(data.properties.areaDesc)
+    data.properties.event = functions.getCustomEventSignature(data)
+    let signature = functions.getSignature(data)
+    data.properties.messageType = signature.message
+    if (signature.eas == true || signature.siren == true) {
+        if (!cache.alerts.danger.includes(`${data.properties.event}-${data.properties.areaDesc}-${data.properties.sent}-${data.properties.expires}-${data.properties.description}`)) {
+            cache.alerts.danger.push(`${data.properties.event}-${data.properties.areaDesc}-${data.properties.sent}-${data.properties.expires}-${data.properties.description}`)
+            audioToUse = signature.audiopresets.new
+        } else { 
+            signature.eas = false
+            signature.siren = false
         }
-    }else{
-        let unknownEvent = cache.configurations['application:warnings']['UNK']
-        let onlyBeep = false
-        let ignoreWarning = false
-        if (messageType == `Issued`) { audioToUse = unknownEvent['new'] }
-        if (messageType == `Updated`) { audioToUse = unknownEvent['update'] }
-        if (messageType == `Expired`) { audioToUse = unknownEvent['cancel'] }
-        if (beepOnly == true) {
-            if (!excludedEvents.includes(eventName)) {
-                audioToUse = cache.configurations['application:sounds']['application:beep']
-                onlyBeep = true
-            }
+    }
+    if (beepOnly == true) {
+        if (!excludedEvents.includes(data.properties.event)) {
+            audioToUse = cache.configurations['application:sounds']['application:beep']
+            onlyBeep = true
         }
-        if (allowUpdateNotificiation == false && messageType == `Updated`) {
-            if (!excludedEvents.includes(eventName)) {
-                ignoreWarning = true
-            }
+    }
+    if (allowUpdateNotification == false && data.properties.event.messageType == `Updated`) {
+        if (!excludedEvents.includes(data.properties.event)) {
+            ignoreWarning = true
         }
-        return {eventName: eventName,eventDescription: eventDescription,thunderstormThreat: thunderstormThreat,hailThreat: hailThreat,windThreat: windThreat,tornadoThreat: tornadoThreat,messageType: messageType,indication: indication,expires: expires,issued: issued,locations: locations,audioToUse : audioToUse,ignoreWarning: ignoreWarning,gif: cache.configurations['application:banners']['UNK'],eas: false,siren: false,onlyBeep: onlyBeep,notifyCard: eventName,autobeep: unknownEvent['autobeep'],link: data['id']}
+    }
+    return {
+        raw: data,
+        details: {
+            name: data.properties.event,
+            type: data.properties.messageType,
+            indication: data.properties.indicated,
+            expires: data.properties.expires,
+            issued: data.properties.sent,
+            locations: data.properties.areaDesc,
+            description: data.properties.description,
+            hail: data.properties.parameters.maxHailSize,
+            wind: data.properties.parameters.maxWindGust,
+            tornado: data.properties.parameters.tornadoDetection,
+            thunderstorm: data.properties.parameters.thunderstormDamageThreat,
+            sender: data.properties.senderName,
+            link: data.id
+        },
+        metadata: signature,
     }
 }
 

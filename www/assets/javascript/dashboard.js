@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.0                              
+    Version: 5.5.2                              
 */
 
 
@@ -88,7 +88,7 @@ dashboard.manualrequest = async function() {
         fetch(`/api/manual`, {
             method: `POST`,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ event: eventType, properties: { event: eventType, description: "N/A", messageType: action, expires: "N/A", indicated: observationtype, areaDesc: locations, parameters: {} } })
+            body: JSON.stringify({ event: eventType, properties: { event: eventType, description: "N/A", messageType: action, expires: "N/A", indicated: observationtype, areaDesc: locations, parameters: {} } }),
         }).then(response => { }).catch(error => {})
     })
 }
@@ -123,7 +123,7 @@ dashboard.fillRegions = async function() {
         let state = dashboard.cache.states[i]
         for (let j = 0; j < cache.alerts.length; j++) {
             let alert = cache.alerts[j]
-            let abbreviation = dashboard.getAbbreviation(alert.locations)
+            let abbreviation = dashboard.getAbbreviation(alert.details.locations)
             if (abbreviation == state.abbreviation) {
                 dashboard.cache.states[i].alerts.push(alert)
             }
@@ -194,13 +194,13 @@ dashboard.execute = async function() {
             if (i > 5) {break}
             let alert = cache.alerts[i]
             let location = cache.config['application:location']
-            if (!alert.locations.includes(location)) {
-                let payload = `alert(\`${alert.eventName} (${alert.messageType})\\n${alert.eventDescription}\`);`
-                let builder = {id: `alert_${i}`, title: `${alert.eventName} (${alert.messageType})`, data: `${alert.locations.substring(0, 250)}`, onclick: payload}
+            if (!alert.details.locations.includes(location)) {
+                let payload = `alert(\`${alert.details.name} (${alert.details.type})\\n${alert.details.description}\`);`
+                let builder = {id: `alert_${i}`, title: `${alert.details.name} (${alert.details.type})`, data: `${alert.details.locations.substring(0, 250)}`, onclick: payload}
                 tRecentAlerts.push(builder)
             }else {
-                let payload = `alert(\`${alert.eventName} (${alert.messageType})\\n${alert.eventDescription}\`);`
-                let builder = {id: `alert_${i}`, title: `${alert.eventName} (${alert.messageType})`, data: `${alert.locations.substring(0, 250)}`, onclick: payload, danger: true}
+                let payload = `alert(\`${alert.details.name} (${alert.details.type})\\n${alert.details.description}\`);`
+                let builder = {id: `alert_${i}`, title: `${alert.details.name} (${alert.details.type})`, data: `${alert.details.locations.substring(0, 250)}`, onclick: payload, danger: true}
                 tRecentAlerts.push(builder)
             }
         }
@@ -211,8 +211,11 @@ dashboard.execute = async function() {
             let state = dashboard.cache.states[i]
             if (state.alerts.length == 0) {continue}
             let latest = state.alerts[state.alerts.length - 1]
-            let payload = `let regionSelected = document.getElementById('region-selected'); let regionSelectedText = document.getElementById('region-selected-text'); let regionSelectedData = document.getElementById('region-selected-data'); let region = dashboard.cache.states.filter(state => state.state == "${state.state}"); regionSelectedText.innerHTML = "Alerts for " + region[0].state; regionSelectedData.innerHTML = ""; for (let i = 0; i < region[0].alerts.length; i++) { let talert = region[0].alerts[i]; let div = document.createElement('div'); let title = document.createElement('h1'); let hr = document.createElement('hr'); let p = document.createElement('p'); div.classList.add("mini-card"); title.innerHTML = talert.eventName + " (" + talert.messageType + ")"; div.style.gridTemplateColumns = "1fr 1fr 1fr 1fr"; p.innerHTML = "Location: " + talert.locations.substring(0, 55) + "<br>Issued: " + talert.issued + "<br>Expires: " + talert.expires + "<br>Wind Speed: " + talert.windThreat + "<br>Hail Threat: " + talert.hailThreat + "<br>Tornado Threat: " + talert.tornadoThreat + "<br>Link: <a href='" + talert.link + "'>View Alert</a>"; div.appendChild(title); div.appendChild(hr); div.appendChild(p); div.onclick = function() { alert(talert.eventName + " (" + talert.messageType + ")\\n" + talert.eventDescription); }; regionSelectedData.appendChild(div); } regionSelected.style.display = "block";`
-            let builder = {id: `state_${i}`, title: `${state.state}`, data: `Total Alerts: ${state.alerts.length}<br>Latest Alert: ${latest.eventName} (${latest.messageType})<br>Location: ${latest.locations.substring(0, 55)}<br>Issued: ${latest.issued}<br>Expires: ${latest.expires}<br>Wind Speed: ${latest.windThreat}<br>Hail Threat: ${latest.hailThreat}<br>Tornado Threat: ${latest.tornadoThreat}<br>Link: <a href="${latest.link}">View Alert</a>`, onclick: payload}
+            let payload = `let regionSelected = document.getElementById('region-selected'); let regionSelectedText = document.getElementById('region-selected-text'); let regionSelectedData = document.getElementById('region-selected-data'); let region = dashboard.cache.states.filter(state => state.state == "${state.state}"); regionSelectedText.innerHTML = "Alerts for " + region[0].state; regionSelectedData.innerHTML = ""; for (let i = 0; i < region[0].alerts.length; i++) { let talert = region[0].alerts[i]; let div = document.createElement('div'); let title = document.createElement('h1'); let hr = document.createElement('hr'); let p = document.createElement('p'); div.classList.add("mini-card"); title.innerHTML = talert.details.name + " (" + talert.details.type + ")"; div.style.gridTemplateColumns = "1fr 1fr 1fr 1fr"; p.innerHTML = "Location: " + talert.details.locations.substring(0, 55) + "<br>Issued: " + talert.details.issued + "<br>Expires: " + talert.details.expires + "<br>Wind Speed: " + talert.details.wind + "<br>Hail Threat: " + talert.details.hail + "<br>Tornado Threat: " + talert.details.tornado + "<br>Sender: " + talert.details.sender + "<br>Link: <a href='" + talert.details.link + "'>View Alert</a>"; div.appendChild(title); div.appendChild(hr); div.appendChild(p); div.onclick = function() { alert(talert.details.name + " (" + talert.details.type + ")\\n" + talert.details.description); }; regionSelectedData.appendChild(div); } regionSelected.style.display = "block";`
+            let builder = {
+                id: `state_${i}`, 
+                title: `${state.state}`, 
+                data: `Total Alerts: ${state.alerts.length}<br>Latest Alert: ${latest.details.name} (${latest.details.type})<br>Location: ${latest.details.locations.substring(0, 55)}<br>Issued: ${latest.details.issued}<br>Expires: ${latest.details.expires}<br>Wind Speed: ${latest.details.wind}<br>Hail Threat: ${latest.details.hail}<br>Tornado Threat: ${latest.details.tornado}<br>Sender: ${latest.details.sender}<br>Link: <a href="${latest.details.link}">View Alert</a>`, onclick: payload}
             tRegions.push(builder)
         }
         dashboard.generatecards(document.getElementById('regions'), tRegions, `mini-card`)

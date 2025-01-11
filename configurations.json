@@ -3,18 +3,18 @@
         "https:enabled": false,
         "https:port": 3011,
         "http:port": 3010,
-        "cookie:secret": "change_me",
         "cookie:maxage": 86400000,
-        "cookie:secure": false,
         "ssl:path": {
             "ssl:key": "./cert/generated.key",
             "ssl:cert": "./cert/generated.crt"
         }
     },
-    "application:information": {
+   "application:information": {
         "application:location": "Somewhere, USA",
         "application:stateid": "",
         "application:forecastoffice": "",
+        "application:same": [],
+        "application:zones": [],
         "application:useragent": "AtmosphericX-5.0.0"
     },
 
