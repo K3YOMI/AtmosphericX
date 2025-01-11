@@ -143,7 +143,7 @@ layout.query = async function(data) {
     layout.alert(alert.metadata.gif, `${alert.details.name} (${alert.details.type})`, `${alert.details.locations}`);
     if (alert.metadata.autobeep) {
         library.play(cache.config['application:sounds']['application:beep'], false);
-        if (!alert.metadata.onlyBeep) { await library.delay(1300); library.play(alert.metadata.audio, false); }
+        if (!alert.details.onlyBeep) { await library.delay(1300); library.play(alert.metadata.audio, false); }
     } else { 
         library.play(alert.metadata.audio, false);
     }
