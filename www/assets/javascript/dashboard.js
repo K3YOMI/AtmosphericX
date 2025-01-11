@@ -88,7 +88,7 @@ dashboard.manualrequest = async function() {
         fetch(`/api/manual`, {
             method: `POST`,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ event: eventType, properties: { event: eventType, description: "N/A", messageType: action, expires: "N/A", indicated: observationtype, areaDesc: locations, parameters: {} } }),
+            body: JSON.stringify({ event: eventType, properties: { senderName:"Manual Admin Override", event: eventType, description: "N/A", messageType: action, expires: "N/A", indicated: observationtype, areaDesc: locations, parameters: {} } }),
         }).then(response => { }).catch(error => {})
     })
 }

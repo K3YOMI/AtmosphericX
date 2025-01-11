@@ -115,7 +115,10 @@ functions.register = function(data) { // This is crazy and is very message but I
     let excludedEvents = (cache.configurations['request:settings']['request:alwaysrun'])
     let allowUpdateNotification = cache.configurations['request:settings']['request:updates'];
     let {hail, wind, tornado, thunderstorm} = functions.parameters(data.properties.parameters)
-    data.properties.parameters = {maxHailSize: hail, maxWindGust: wind, tornadoDetection: tornado, thunderstormDamageThreat: thunderstorm}
+    data.properties.parameters.maxWindGust = wind
+    data.properties.parameters.tornadoDetection = tornado
+    data.properties.parameters.thunderstormDamageThreat = thunderstorm
+    data.properties.parameters.maxHailSize = hail
     if (data.properties.description == undefined) { data.properties.description = `no description` }
     data.properties.areaDesc = functions.format(data.properties.areaDesc)
     data.properties.event = functions.getCustomEventSignature(data)
@@ -146,7 +149,6 @@ functions.register = function(data) { // This is crazy and is very message but I
         details: {
             name: data.properties.event,
             type: data.properties.messageType,
-            indication: data.properties.indicated,
             expires: data.properties.expires,
             issued: data.properties.sent,
             locations: data.properties.areaDesc,
