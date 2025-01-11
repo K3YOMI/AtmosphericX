@@ -45,7 +45,7 @@
 	- Active Alerts & General Information
 		- Active Alerts, Warnings, and Watches
 		- Previous 6 Alerts (w/ interactions and map)
-		- Region Alerts (w/ minimal forecast office support)
+		- Region Alerts (Forecast Office, Direct Location, SAME ID, or UGC ID)
 	- External Services and Tools
 		- Live Storm Chasing Cam Service (https://livestormchasing.com)
 		- Hourly Mesoscale Analysis (https://www.spc.noaa.gov)
@@ -99,9 +99,7 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
         "https:enabled": false,
         "https:port": 3011,
         "http:port": 3010,
-        "cookie:secret": "change_me_please_this_is_a_secret_key",
         "cookie:maxage": 86400000,
-        "cookie:secure": false,
         "ssl:path": {
             "ssl:key": "./cert/generated.key",
             "ssl:cert": "./cert/generated.crt"
@@ -109,8 +107,10 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
     },
      "application:information": {
         "application:location": "Somewhere, USA",
-		"application:stateid": "",
+        "application:stateid": "",
         "application:forecastoffice": "",
+        "application:same": [],
+        "application:zones": [],
         "application:useragent": "AtmosphericX-5.0.0"
     },
     "request:settings": {
