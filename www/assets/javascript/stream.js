@@ -177,7 +177,7 @@ layout.execute = async function() {
         }
     }
     if (cache.manual.length != 0) { 
-        if (cache.manual.metadata.ignored != true) {
+        if (cache.manual.details.ignored != true) {
             cache.alerts.push(cache.manual)
             let inQueue = cache.queue.find(x => x.details.name == cache.manual.details.name && x.details.description == cache.manual.details.description && x.details.type == cache.manual.details.type)
             if (cache.manual.details.name.includes(`Warning`)) {cache.warnings.push(cache.manual)}
@@ -194,7 +194,7 @@ layout.execute = async function() {
     if (cache.alerts.length != 0) {
         for (let i = 0; i < cache.alerts.length; i++) {
             let alert = cache.alerts[i]
-            if (alert.metadata.ignored == true) {continue}
+            if (alert.details.ignored == true) {continue}
             let duplicate = cache.lastQueries.find(x => x.details.name == alert.details.name && x.details.description == alert.details.description && x.details.type == alert.details.type && x.details.issued == alert.details.issued && x.details.expires == alert.details.expires)
             let time = new Date().getTime() / 1000
             let check = time - new Date(alert.details.issued).getTime() / 1000;

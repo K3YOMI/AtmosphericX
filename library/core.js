@@ -158,6 +158,7 @@ functions.register = function(data) { // This is crazy and is very message but I
             tornado: data.properties.parameters.tornadoDetection,
             thunderstorm: data.properties.parameters.thunderstormDamageThreat,
             sender: data.properties.senderName,
+            ignored: ignoreWarning,
             link: data.id
         },
         metadata: signature,
