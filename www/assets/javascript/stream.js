@@ -90,7 +90,6 @@ layout.time = async function(convertTime=false, accu=0) {
         document.getElementById('time').innerHTML = `<p>${hour}:${minute}:${second}</p>`;
         document.getElementById('date').innerHTML = `<p>${months[thismonth]} ${thisday}</p>`;
     } else {
-        // get my timezone abbreviation
         console.log(`${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`)
         return `${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`
     }
