@@ -121,7 +121,7 @@ html, body, #page {
     text-shadow: 2px 2px 15px #000000;
 }
 #random_alert{
-    font-size: 25px;
+    font-size: 30px;
     position: absolute;
     text-align: left;
     overflow: hidden;
@@ -133,8 +133,10 @@ html, body, #page {
     font-family: 'SofiaSansSemiCondensed-Bold'; 
     text-shadow: 2px 2px 15px #000000;
 }
+
+
 #random_alert_topic{
-    font-size: 25px;
+    font-size: 30px;
     position: absolute;
     text-align: center;
     overflow: hidden;
@@ -184,4 +186,21 @@ html, body, #page {
     40% {opacity: 1;}
     75% {opacity: 1;}
     100% {opacity: 0;}
+}
+
+@keyframes upToFadeOutAniamtion {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-10px); opacity: 0; }
+}
+@keyframes upToFadeInAniamtion {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes opactity100Aniamtion {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes opactity0Aniamtion {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }

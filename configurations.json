@@ -9,15 +9,15 @@
             "ssl:cert": "./cert/generated.crt"
         }
     },
-   "application:information": {
+    "application:information": {
         "application:location": "Somewhere, USA",
+        "application:timezone": "America/America/New_York",
         "application:stateid": "",
         "application:forecastoffice": "",
         "application:same": [],
         "application:zones": [],
         "application:useragent": "AtmosphericX-5.0.0"
     },
-
      "request:settings": {
         "request:refresh_synced": 30,
         "request:query_sycned": 10,

@@ -232,6 +232,7 @@ functions.request_configurations = async function(req, res) { // Handles the con
             WARNING: "This is configuration data routed from the server, please use this data for client development purposes only.",
             ['request:allalerts']: cache.configurations['request:settings']['request:allalerts'],
             ['query:rate']: cache.configurations['request:settings']['request:query_sycned'],
+            ['application:timezone']: cache.configurations['application:information']['application:timezone'],
             ['refresh:rate']: cache.configurations['request:settings']['request:refresh_synced'],
             ['application:location']: cache.configurations['application:information']['application:location'],
             ['application:useragent']: cache.configurations['application:information']['application:useragent'],

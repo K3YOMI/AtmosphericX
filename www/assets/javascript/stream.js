@@ -24,6 +24,17 @@ layout.init = function() {
         library.streaming(true)
     }
 }
+layout.runaniamtions = async function() {
+    return new Promise((resolve, reject) => {
+        document.getElementById('random_alert').style.animation = `upToFadeOutAniamtion 0.3s linear forwards`;
+        document.getElementById('random_alert_topic').style.animation = `opactity0Aniamtion 0.5s linear forwards`;
+        setTimeout(() => {
+            document.getElementById('random_alert').style.animation = `upToFadeInAniamtion 0.5s linear forwards`;
+            document.getElementById('random_alert_topic').style.animation = `opactity100Aniamtion 0.5s linear forwards`;
+            resolve()
+        }, 500);
+    })
+}
 layout.listings = async function(warnings, watches, data) {
     if (data.length == 0) { 
         document.getElementById('random_alert').innerHTML = `<p>No Active Events</p>`;
@@ -32,26 +43,18 @@ layout.listings = async function(warnings, watches, data) {
         document.getElementById('total_warnings').innerHTML = `<h2>No Active Events</h2>`;
         return
     }
+    if (data.length != 1) { await layout.runaniamtions(); }
     let random = data[Math.floor(Math.random() * data.length)];
     let topic = random.details.name; 
     let location = random.details.locations;
     let expires = random.details.expires;
-    if (location.length > 220) { 
-        location = location.substring(0, 220) + '...';
-    }
+    if (location.length > 90) { location = location.substring(0, 90) + '...';}
+    if (topic.length > 25) { document.getElementById('random_alert_topic').style.fontSize = `25px`; } else { document.getElementById('random_alert_topic').style.fontSize = `30px`; }
+
     document.getElementById('random_alert').innerHTML = `<p>${(location.toUpperCase())}</p>`;
     document.getElementById('random_alert_topic').innerHTML = `<p>${topic.toUpperCase()}</p>`;
     if (expires != `N/A` && expires != undefined) { 
-        let date = new Date(expires)
-        let timezone = date.getTimezoneOffset(); 
-        let offsets = {"CDT": 300,"CST": 360,"EDT": 240,"EST": 300,"MDT": 360,"MST": 420,"PDT": 420,"PST": 480}
-        let object = Object.keys(offsets).find(key => offsets[key] === timezone);
-        expires = `${date.toLocaleString('default', { month: 'short', timeZone: 'MST' })} ${date.getDate()} ${date.getHours()}:${date.getMinutes()} ${object}`;
-
-        if (date.getMinutes() == 0) {
-            expires = `${date.toLocaleString('default', { month: 'short', timeZone: 'MST' })} ${date.getDate()} ${date.getHours()}:0${date.getMinutes()} ${object}`;
-        }
-        document.getElementById('random_alert_topic_expire').innerHTML = `<p>${expires}</p>`;
+        document.getElementById('random_alert_topic_expire').innerHTML = `<p>${await layout.time(true, new Date(expires))}</p>`;
     } else {
         document.getElementById('random_alert_topic_expire').innerHTML = `<p>Expires: N/A</p>`;
     }
@@ -68,19 +71,29 @@ layout.listings = async function(warnings, watches, data) {
         document.getElementById('total_warnings').innerHTML = `<h2>${result}</h2>`;
     }
 }
-layout.time = async function() {
-    let time = new Date();
-    let second = time.getSeconds();
-    let minute = time.getMinutes();
-    let hour = time.getHours();  
-    let thismonth = time.getMonth();
-    let thisday = time.getDate();
+layout.time = async function(convertTime=false, accu=0) {
+    let time;
+    if (accu == 0) { time = new Date() } else { time = accu }
+    let formal = new Date(time.toLocaleString("en-US", { timeZone: cache.config['application:timezone'] }));
+    let timezoneabr = new Date().toLocaleString("en-US", { timeZoneName: "short", timeZone: cache.config['application:timezone'] });
+    let timezone = timezoneabr.split(' ')[3];
+    let second = formal.getSeconds();
+    let minute = formal.getMinutes();
+    let hour = formal.getHours();
+    let thismonth = formal.getMonth();
+    let thisday = formal.getDate();
     let months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEPT","OCT","NOV","DEC"];
     if (minute < 10) {minute = "0" + minute}
     if (second < 10) {second = "0" + second}
     if (hour < 10) { hour = "0" + hour}
-    document.getElementById('time').innerHTML = `<p>${hour}:${minute}:${second}</p>`;
-    document.getElementById('date').innerHTML = `<p>${months[thismonth]} ${thisday}</p>`;
+    if (!convertTime) {
+        document.getElementById('time').innerHTML = `<p>${hour}:${minute}:${second}</p>`;
+        document.getElementById('date').innerHTML = `<p>${months[thismonth]} ${thisday}</p>`;
+    } else {
+        // get my timezone abbreviation
+        console.log(`${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`)
+        return `${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`
+    }
 }
 layout.colortables = async function(warnings) {
     let tore = warnings.filter(x => x.details.name == `Tornado Emergency`).length;
