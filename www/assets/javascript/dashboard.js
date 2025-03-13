@@ -264,15 +264,15 @@ dashboard.generatesite = function() {
         { title: "Pivotal Weather (Hodographs)", url: "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", imgSrc: "/assets/media/misc/pivotal-weather.png" }
     ];
     let stormoutlookServices = [
-        { title: "Day 1 Categorial Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif" },
-        { title: "Day 2 Categorial Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2otlk_0700.gif" },
-        { title: "Day 3 Categorial Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day3otlk_1200.gif" },
-        { title: "Day 1 Tornado Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_1200_torn.gif" },
-        { title: "Day 1 Wind Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_1200_wind.gif" },
-        { title: "Day 1 Hail Risk (1200)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_1200_hail.gif" },
-        { title: "Day 2 Tornado Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0700_torn.gif" },
-        { title: "Day 2 Wind Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0700_wind.gif" },
-        { title: "Day 2 Hail Risk (0700)", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_0700_hail.gif" }
+        { title: "Day 1 Categorial Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1otlk.gif" },
+        { title: "Day 2 Categorial Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2otlk.gif" },
+        { title: "Day 3 Categorial Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day3otlk.gif" },
+        { title: "Day 1 Tornado Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_torn.gif" },
+        { title: "Day 1 Wind Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_wind.gif" },
+        { title: "Day 1 Hail Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_hail.gif" },
+        { title: "Day 2 Tornado Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_torn.gif" },
+        { title: "Day 2 Wind Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_wind.gif" },
+        { title: "Day 2 Hail Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" }
     ];
     let external = document.getElementById('external-services-area');
     external.innerHTML = '';
