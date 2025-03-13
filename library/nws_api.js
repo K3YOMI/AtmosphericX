@@ -106,9 +106,7 @@ functions.request = function(url) {
                 if (statusCode != 200) {return;}
                 functions.build(data)
             })
-        } catch (error) { 
-            console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Error: ${error.stack}`)
-        }
+        } catch (error) { }
     })
 }
 
