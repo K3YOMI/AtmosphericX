@@ -48,10 +48,10 @@ functions.genericFilter = function(data) {
 }
 functions.build = function(data) {
     try {
-        cache.alerts.active = []
-        cache.alerts.warnings = []
-        cache.alerts.watches = []
-        cache.alerts.reports = []
+        let tCacheActive = []
+        let tCacheWarnings = []
+        let tCacheWatches = []
+        let tCacheReports = []
         if (data.nws != undefined && data.nws['features'].length > 0) {
             let nws = data.nws
             let customFiltering = functions.customfilter(nws['features'])
@@ -59,23 +59,23 @@ functions.build = function(data) {
             for (let i = 0; i < watches.length; i++) { // Watches
                 let alert = watches[i]
                 if (functions.isCancelled(alert['properties']['description'])) {continue}
-                if (functions.doesExist(cache.alerts.watches, alert['id'])) {continue}
+                if (functions.doesExist(tCacheWatches, alert['id'])) {continue}
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) {continue}
-                    cache.alerts.watches.push(tData)
-                    cache.alerts.active.push(tData)
+                    tCacheWatches.push(tData)
+                    tCacheActive.push(tData)
                 }
             } 
             for (let i = 0; i < warnings.length; i++) { // Warnings
                 let alert = warnings[i]
                 if (functions.isCancelled(alert['properties']['description'])) {continue}
-                if (functions.doesExist(cache.alerts.warnings, alert['id'])) {continue}
+                if (functions.doesExist(tCacheWarnings, alert['id'])) {continue}
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) {continue}
-                    cache.alerts.warnings.push(tData)
-                    cache.alerts.active.push(tData)
+                    tCacheWarnings.push(tData)
+                    tCacheActive.push(tData)
                 }
             }
             for (let i = 0; i < unknown.length; i++) { // Does haven't a defined warning/watch string in the eventName
@@ -83,17 +83,17 @@ functions.build = function(data) {
                 if (alert['properties']['description'] != null) {
                     if (functions.isCancelled(alert['properties']['description'])) {continue}
                 }
-                if (functions.doesExist(cache.alerts.warnings, alert['id'])) {continue}
+                if (functions.doesExist(tCacheWarnings, alert['id'])) {continue}
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) {continue}
-                    cache.alerts.warnings.push(tData)
-                    cache.alerts.active.push(tData)
+                    tCacheWarnings.push(tData)
+                    tCacheActive.push(tData)
                 }
             }
         }
 
-        if (data.iem != undefined && data.iem['features'].length > 0) {
+        if (data.iem != undefined && data.iem['features'].length > 0) { // this aint finished, ignore this
             let iem = data.iem.features
             for (let i = 0; i < iem.length; i++) {
                 let alert = iem[i]
@@ -142,14 +142,14 @@ functions.build = function(data) {
                 let tData = core.functions.register(build)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) {continue}
-                    cache.alerts.reports.push(tData)
+                    tCacheReports.push(tData)
                 }
             }
         }
-
-
-
-
+        cache.alerts.active = tCacheActive
+        cache.alerts.warnings = tCacheWarnings
+        cache.alerts.watches = tCacheWatches
+        cache.alerts.reports = tCacheReports
         cache.alerts.active.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
         cache.alerts.warnings.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
         cache.alerts.watches.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
