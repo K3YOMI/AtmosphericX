@@ -62,6 +62,7 @@ functions.build = function(data) {
                 if (functions.doesExist(cache.alerts.watches, alert['id'])) {continue}
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) {continue}
                     cache.alerts.watches.push(tData)
                     cache.alerts.active.push(tData)
                 }
@@ -72,6 +73,7 @@ functions.build = function(data) {
                 if (functions.doesExist(cache.alerts.warnings, alert['id'])) {continue}
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) {continue}
                     cache.alerts.warnings.push(tData)
                     cache.alerts.active.push(tData)
                 }
@@ -84,6 +86,7 @@ functions.build = function(data) {
                 if (functions.doesExist(cache.alerts.warnings, alert['id'])) {continue}
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) {continue}
                     cache.alerts.warnings.push(tData)
                     cache.alerts.active.push(tData)
                 }
@@ -138,6 +141,7 @@ functions.build = function(data) {
                 let build = {id: "n/a",properties: {"areaDesc": properties['county'] + ', ' + properties['state'],"expires": expires,"sent": sent,"messageType": "Alert","event": properties['typetext'],"sender": "reported","senderName": properties['source'],"description": properties['remark'] + ' - ' + properties['city'],"parameters": {}}, value: properties['magf'] + ' ' + properties['unit'], lat: properties['lat'], lon: properties['lon']}
                 let tData = core.functions.register(build)
                 if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) {continue}
                     cache.alerts.reports.push(tData)
                 }
             }

@@ -142,6 +142,7 @@ functions.register = function(data) {
     }
     if (allowUpdateNotification == false && data.properties.messageType == `Updated`) {
         if (!excludedEvents.includes(data.properties.event)) {
+            // remove it from the cache
             ignoreWarning = true
         }
     }

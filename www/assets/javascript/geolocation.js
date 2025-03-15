@@ -16,6 +16,7 @@
 let geolocation = {}
 geolocation.cache = {}
 geolocation.cache.alerts = []
+geolocation.cache.past = undefined
 
 geolocation.init = function() {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Geolocation Functions`)
@@ -42,13 +43,12 @@ geolocation.stormreports = async function() {
         let location = alert.details.locations;
         let sender = alert.details.sender;
         if (i == 0) {
-            geolocation.cache.map.setView([lat, lon], 6, {animate: true, duration: 10});
+            if (geolocation.cache.past != alert) { geolocation.cache.map.setView([lat, lon], 6, {animate: true, duration: 10}); geolocation.cache.past = alert }
             geolocation.cache.map.eachLayer(function (layer) {
                 if (layer instanceof L.Marker) {geolocation.cache.map.removeLayer(layer)}
                 if (layer instanceof L.Circle) {geolocation.cache.map.removeLayer(layer)}
             });
             let circle = L.circle([lat, lon], {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 50000}).addTo(geolocation.cache.map).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}`).openPopup();
-            geolocation.cache.map.fitBounds(circle.getBounds());
             let opacity = 0.1;
             let fadeIn = true;
             setInterval(() => circle.setStyle({ fillOpacity: (fadeIn = opacity >= 0.5 ? false : opacity <= 0.1 ? true : fadeIn) ? opacity += 0.05 : opacity -= 0.05 }), 100);
