@@ -210,7 +210,7 @@ functions.request_configurations = async function(req, res) { // Handles the con
             ['query:rate']: cache.configurations['request:settings']['request:query_sycned'],
             ['application:timezone']: cache.configurations['application:api']['primary:api']['nws:api']['application:timezone'],
             ['refresh:rate']: cache.configurations['request:settings']['request:refresh_synced'],
-            ['application:location']: cache.configurations['application:api']['primary:api']['nws:api']['application:location'],
+            ['application:location']: cache.configurations['application:information']['application:location'],
             ['application:useragent']: cache.configurations['application:api']['primary:api']['nws:api']['application:useragent'],
             ['application:sounds']: cache.configurations['application:sounds'],
             ['application:banners']: cache.configurations['application:banners'],
