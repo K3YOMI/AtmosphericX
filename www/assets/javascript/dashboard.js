@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 
@@ -25,7 +25,6 @@ dashboard.cache.called = []
 dashboard.init = function() {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Dashboard Functions`)
 }
-
 dashboard.logout = async function() {
     let logout = document.getElementById('logout');
     logout.addEventListener('click', function(event) {
@@ -178,15 +177,29 @@ dashboard.execute = async function() {
         cache.watches = JSON.parse(await library.request(`/api/watches`))
         cache.alerts = JSON.parse(await library.request(`/api/alerts`))
         cache.broadcasts = JSON.parse(await library.request(`/api/notifications`))
+        cache.reports = JSON.parse(await library.request(`/api/reports`))
+        cache.config = JSON.parse( await library.request(`/api/configurations`))
         cache.manual = await library.request(`/api/manual`)
 
-        cache.config = JSON.parse( await library.request(`/api/configurations`))
+
         let tActivity = [
             {title: `Active Alerts`,id: `active_alerts_int`,data: cache.alerts.length},
             {title: `Active Watches`,id: `active_watches_int`,data: cache.watches.length},
             {title: `Active Warnings`, id: `active_warnings_int`,data: cache.warnings.length},
         ]
-
+        let tReports = []
+        for (let i = 0; i < cache.reports.length; i++) {
+            let report = cache.reports[i]
+            let type = report.details.name
+            let location = report.details.locations
+            let source = report.details.sender
+            let value = report.raw.value
+            let description = report.details.description
+            let valid = await library.time(true, report.details.expires)
+            let unit = report.details.unit
+            tReports.push({id: `report_${i}`, title: `${type}`, data: `Location: ${location}<br>Expires: ${valid}<br>Source: ${source}<br>Value: ${value}<br>Description: ${description}`})
+        }
+        dashboard.generatecards(document.getElementById('reports-center'), tReports)
         dashboard.generatecards(document.getElementById('warning-center'), tActivity)
         if (cache.manual != `[]`) {cache.alerts.unshift(JSON.parse(cache.manual))}
         let tRecentAlerts = []
@@ -223,7 +236,7 @@ dashboard.execute = async function() {
 
 }
 dashboard.page = async function(page) { 
-    let pages = ['dashboard-home', 'external-services', 'outlooks', 'settings', 'map'];
+    let pages = ['dashboard-home', 'external-services', 'outlooks', 'settings', 'map', 'storm-reports']
     for (let i = 0; i < pages.length; i++) {
         if (pages[i] == page) {
             document.getElementById(page).style.display = 'block';

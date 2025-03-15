@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 let functions = {}
@@ -87,7 +87,6 @@ functions.getSignature = function(data) {
             eas: cache.configurations['application:warnings']['UNK'].eas,
             siren: cache.configurations['application:warnings']['UNK'].siren,
             autobeep: cache.configurations['application:warnings']['UNK'].autobeep,
-            notifyCard: cache.configurations['application:warnings']['UNK'].notifyCard,
         }
     } else { 
         let newAlert = eventAction.new
@@ -108,8 +107,7 @@ functions.getSignature = function(data) {
         }
     }
 }
-
-functions.register = function(data) { // This is crazy and is very message but It works and i'll make it better lol
+functions.register = function(data) {
     let ignoreWarning = false
     let onlyBeep = false
     let audioToUse = cache.configurations['application:sounds']['application:beep']
@@ -121,7 +119,7 @@ functions.register = function(data) { // This is crazy and is very message but I
     data.properties.parameters.tornadoDetection = tornado
     data.properties.parameters.thunderstormDamageThreat = thunderstorm
     data.properties.parameters.maxHailSize = hail
-    if (data.properties.description == undefined) { data.properties.description = `no description` }
+    if (data.properties.description == undefined) { data.properties.description = `No Description` }
     data.properties.areaDesc = functions.format(data.properties.areaDesc)
     data.properties.event = functions.getCustomEventSignature(data)
     let signature = functions.getSignature(data)
@@ -147,10 +145,11 @@ functions.register = function(data) { // This is crazy and is very message but I
             ignoreWarning = true
         }
     }
+    if (signature.notifyCard == undefined) { signature.notifyCard = data.properties.event}
     return {
         raw: data,
         details: {
-            name: data.properties.event,
+            name: signature.notifyCard,
             type: data.properties.messageType,
             expires: data.properties.expires,
             issued: data.properties.sent,
@@ -168,6 +167,5 @@ functions.register = function(data) { // This is crazy and is very message but I
         metadata: signature,
     }
 }
-
-class nws {constructor() {this.functions = functions}}
-module.exports = nws;
+class core {constructor() {this.functions = functions}}
+module.exports = core;

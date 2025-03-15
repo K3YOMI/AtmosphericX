@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 let geolocation = {}
@@ -26,30 +26,47 @@ geolocation.create = function() {
         geolocation.cache.map = L.map(document.getElementById('atmospheric-alert-map'));
         geolocation.cache.map.eachLayer(function (layer) { if (layer instanceof L.TileLayer) { geolocation.cache.map.removeLayer(layer);}});
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {className: 'map-tiles'}).addTo(geolocation.cache.map);
-        geolocation.cache.map.setView([0, 0], 6, { animate: true, duration: 6.5 });
+        geolocation.cache.map.setView([42.0171798, -93.9254114], 5, { animate: true, duration: 6.5 });
     }
 }
 
-geolocation.plot = async function(latest) {
-    let location = latest.details.locations.split(',')[0]
-    let state = latest.details.locations.split(',')[1].split(';')[0]
-    fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + location + ', ' + state).then(response => response.json()).then(data => {
-        if (data.length == 0) {return}
-        let lat = data[0].lat
-        let lon = data[0].lon
-        geolocation.cache.map.setView([lat, lon], 6, {animate: true,duration: 10});
-        geolocation.cache.map.eachLayer(function (layer) {
-            if (layer instanceof L.Marker) {geolocation.cache.map.removeLayer(layer)}
-            if (layer instanceof L.Circle) {geolocation.cache.map.removeLayer(layer)}
-        });
-        let circle = L.circle([lat, lon], {color: 'black',fillColor: 'red',fillOpacity: 0.1,radius: 50000}).addTo(geolocation.cache.map).bindPopup(`<b>${latest.details.name} (${latest.details.type})</b><br>${latest.details.locations}`).openPopup();
-        geolocation.cache.map.fitBounds(circle.getBounds());
-        let opacity = 0.1;
-        let fadeIn = true;
-        setInterval(() => circle.setStyle({ fillOpacity: (fadeIn = opacity >= 0.5 ? false : opacity <= 0.1 ? true : fadeIn) ? opacity += 0.05 : opacity -= 0.05 }), 100);
-    })
+geolocation.stormreports = async function() {
+    let reports = JSON.parse(await library.request(`/api/reports`))
+    let active = JSON.parse(await library.request(`/api/alerts`))
+    for (let i = 0; i < active.length; i++) {
+        // check if latest 
+        let alert = active[i]
+        if (alert.raw.geometry == undefined) {continue}
+        let lat = alert.raw.geometry.coordinates[0][0][1]
+        let lon = alert.raw.geometry.coordinates[0][1][0]
+        let location = alert.details.locations;
+        let sender = alert.details.sender;
+        if (i == 0) {
+            geolocation.cache.map.setView([lat, lon], 6, {animate: true, duration: 10});
+            geolocation.cache.map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {geolocation.cache.map.removeLayer(layer)}
+                if (layer instanceof L.Circle) {geolocation.cache.map.removeLayer(layer)}
+            });
+            let circle = L.circle([lat, lon], {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 50000}).addTo(geolocation.cache.map).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}`).openPopup();
+            geolocation.cache.map.fitBounds(circle.getBounds());
+            let opacity = 0.1;
+            let fadeIn = true;
+            setInterval(() => circle.setStyle({ fillOpacity: (fadeIn = opacity >= 0.5 ? false : opacity <= 0.1 ? true : fadeIn) ? opacity += 0.05 : opacity -= 0.05 }), 100);
+        } else {
+            L.circle([lat, lon], {color: 'black',fillColor: 'red',fillOpacity: 0.1,radius: 10000}).addTo(geolocation.cache.map).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`)
+        }
+    }
+    for (let i = 0; i < reports.length; i++) {
+        console.log(reports[i]);
+        let report = reports[i];
+        let location = report.details.locations;
+        let lat = report.raw.lat;
+        let lon = report.raw.lon;
+        let sender = report.details.sender;
+        let value = report.raw.value;
+        L.circle([lat, lon], {color: 'black',fillColor: 'blue',fillOpacity: 0.1,radius: 2000}).addTo(geolocation.cache.map).bindPopup(`<b>${report.details.name} (${report.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Value:</b> ${value}`)
+    }
 }
-
 geolocation.execute = async function() { 
     try {
         let active = JSON.parse(await library.request(`/api/alerts`))
@@ -60,21 +77,14 @@ geolocation.execute = async function() {
             let alert = active[i]
             geolocation.cache.alerts.push(alert) 
         }
+        geolocation.stormreports()
         if (manual.length != 0) {geolocation.cache.alerts.push(manual)}  
-        let alert = manual.length != 0 ? manual : geolocation.cache.alerts[0]
-        if (geolocation.cache.latest != JSON.stringify(alert)) {
-            console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: New Alert Detected`)
-            geolocation.cache.latest = JSON.stringify(alert)
-            if (alert.details.locations.includes(',')) {
-                geolocation.plot(alert)
-            }
-        }
     } catch (error) {console.log(error)}
 }
-
 geolocation.config = async function() {
     cache.config = JSON.parse( await library.request(`/api/configurations`))
     geolocation.create()
+    geolocation.execute();
     setInterval(async () => {
         if (new Date().getSeconds() % cache.config['query:rate'] == 0) {
             if (cache.query) {return}

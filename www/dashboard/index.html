@@ -12,6 +12,7 @@
         <div class="curved-sidebar">
             <i class="fas fa-bell" title="Active Alerts" onclick="dashboard.page('dashboard-home')"></i>
             <i class="fas fa-satellite" title="External Services" onclick="dashboard.page('external-services')"></i>
+            <i class="fas fa-flag" title="Storm Reports" onclick="dashboard.page('storm-reports')"></i>
             <i class="fas fa-project-diagram" title="Storm Prediction Center Outlooks (1-3)" onclick="dashboard.page('outlooks')"></i>
             <i class="fas fa-map" title="Alert Map" onclick="dashboard.page('map')"></i>
             <i class="fas fa-wrench" title="Settings" onclick="dashboard.page('settings')"></i>
@@ -53,20 +54,24 @@
                 <h2 class="title-dash">External Services & Analysis Tools</h2>
                 <div class="grid-area" id="external-services-area"></div>
             </div>
+
+
+            <div id="storm-reports" style="display: none;">
+                <h2 class="title-dash">Global Reports</h2>
+                <div class="grid-area" id="reports-center"></div>
+            </div>
+
+
             <div id="outlooks" style="display: none;">
                 <h2 class="title-dash">Storm Prediction Center Outlooks</h2>
                 <div class="grid-area" id="storm-outlook-area"></div>
             </div>
             <div id="map" style="display: none;">
                 <h2 class="title-dash">Mapping Details</h2>
-                <div class="grid-area" style="grid-template-columns: 1fr 1fr;">
+                <div class="grid-area" style="grid-template-columns: 1fr;">
                     <div class="data-card" style="width: 100%; margin: 0;">
-                        <iframe src="/map" style="border: none; width: 100%; height: 600px; background-color: grey;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" frameborder="0" scrolling="no"></iframe>
-                    </div>
-                    <div class="data-card" style="width: 100%; height: 600px; margin: 0;">
-                        <h1>Latest Event Mapping</h1>
-                        <div id="generic-map"></div>
-                    </div>
+                        <iframe src="/map" style="border: none; width: 100%; height: 600px; background-color: grey;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" scrolling="no"></iframe>
+                    </div>                   
                 </div>
             </div>
             <div id="settings" style="display: none;">
@@ -97,7 +102,7 @@
                         <h1>API Endpoints</h1>
                         <br>
                         <script>
-                            let links = [['All Alerts', '/api/alerts'],['Warnings', '/api/warnings'],['Watches', '/api/watches'],['Manual Requests', '/api/manual'],['Notification', '/api/notifications']]
+                            let links = [['All Alerts', '/api/alerts'],['Warnings', '/api/warnings'],['Watches', '/api/watches'],['Manual Requests', '/api/manual'],['Notification', '/api/notifications', '/api/reports']]
                             for (let i = 0; i < links.length; i++) {document.write('<button type="button" class="btn btn-primary" onclick="window.open(window.location.protocol + \'//\' + window.location.host + \'' + links[i][1] + '\', \'_blank\', \'width=1000,height=1000\')">' + links[i][0] + '</button><br><br>')}
                         </script>
                     </div>

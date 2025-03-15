@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 
@@ -18,11 +18,7 @@ let layout = {}
 
 layout.init = function() {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Stream Functions`)
-    if (window.location.pathname == `/portable`) {
-        library.streaming(false)
-    }else{
-        library.streaming(true)
-    }
+    if (window.location.pathname.includes(`/stream`)) { library.streaming(true) }
 }
 layout.runaniamtions = async function() {
     return new Promise((resolve, reject) => {
@@ -54,7 +50,7 @@ layout.listings = async function(warnings, watches, data) {
     document.getElementById('random_alert').innerHTML = `<p>${(location.toUpperCase())}</p>`;
     document.getElementById('random_alert_topic').innerHTML = `<p>${topic.toUpperCase()}</p>`;
     if (expires != `N/A` && expires != undefined) { 
-        document.getElementById('random_alert_topic_expire').innerHTML = `<p>${await layout.time(true, new Date(expires))}</p>`;
+        document.getElementById('random_alert_topic_expire').innerHTML = `<p>${await library.time(true, new Date(expires))}</p>`;
     } else {
         document.getElementById('random_alert_topic_expire').innerHTML = `<p>Expires: N/A</p>`;
     }
@@ -69,29 +65,6 @@ layout.listings = async function(warnings, watches, data) {
         }
     } else { 
         document.getElementById('total_warnings').innerHTML = `<h2>${result}</h2>`;
-    }
-}
-layout.time = async function(convertTime=false, accu=0) {
-    let time;
-    if (accu == 0) { time = new Date() } else { time = accu }
-    let formal = new Date(time.toLocaleString("en-US", { timeZone: cache.config['application:timezone'] }));
-    let timezoneabr = new Date().toLocaleString("en-US", { timeZoneName: "short", timeZone: cache.config['application:timezone'] });
-    let timezone = timezoneabr.split(' ')[3];
-    let second = formal.getSeconds();
-    let minute = formal.getMinutes();
-    let hour = formal.getHours();
-    let thismonth = formal.getMonth();
-    let thisday = formal.getDate();
-    let months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEPT","OCT","NOV","DEC"];
-    if (minute < 10) {minute = "0" + minute}
-    if (second < 10) {second = "0" + second}
-    if (hour < 10) { hour = "0" + hour}
-    if (!convertTime) {
-        document.getElementById('time').innerHTML = `<p>${hour}:${minute}:${second}</p>`;
-        document.getElementById('date').innerHTML = `<p>${months[thismonth]} ${thisday}</p>`;
-    } else {
-        console.log(`${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`)
-        return `${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`
     }
 }
 layout.colortables = async function(warnings) {
@@ -151,7 +124,6 @@ layout.query = async function(data) {
     cache.running = true;
     let nextQuery = data.length - 1;
     let alert = data[nextQuery];
-    console.log(alert)
     layout.alert(alert.metadata.gif, `${alert.details.name} (${alert.details.type})`, `${alert.details.locations}`);
     if (alert.metadata.autobeep) {
         library.play(cache.config['application:sounds']['application:beep'], false);
@@ -166,15 +138,13 @@ layout.query = async function(data) {
     if (!cache.streaming) { await library.delay(6800); cache.running = false; }
     data.pop();
 }
-
-
-
 layout.execute = async function() {
     cache.warnings = JSON.parse(await library.request(`/api/warnings`))
     cache.watches = JSON.parse(await library.request(`/api/watches`))
     cache.alerts = JSON.parse(await library.request(`/api/alerts`))
     cache.broadcasts = JSON.parse(await library.request(`/api/notifications`))
     cache.manual = JSON.parse(await library.request(`/api/manual`))
+    cache.reports = JSON.parse(await library.request(`/api/reports`))
     if (cache.streaming) { 
         if (cache.broadcasts.length != 0) {
             let notificaitonbox = document.getElementById('notificationBox');
@@ -210,6 +180,7 @@ layout.execute = async function() {
             let duplicate = cache.lastQueries.find(x => x.details.name == alert.details.name && x.details.description == alert.details.description && x.details.type == alert.details.type && x.details.issued == alert.details.issued && x.details.expires == alert.details.expires)
             let time = new Date().getTime() / 1000
             let check = time - new Date(alert.details.issued).getTime() / 1000;
+            console.log(check)
             if (check > 8 && check < 600 && duplicate == undefined) {
                 cache.queue.push(alert)
                 cache.lastQueries.push(alert)
@@ -234,13 +205,13 @@ layout.config = async function() {
     setTimeout(() => {
         library.isMobile()
         if (cache.streaming) {
-            document.getElementById('random_alert').innerHTML = `<p>Syncing Server</p>`;
-            document.getElementById('random_alert_topic').innerHTML = `<p>Syncing Server</p>`;
-            document.getElementById('total_warnings').innerHTML = `<h2>Syncing Server</h2>`;
-            document.getElementById('random_alert_topic_expire').innerHTML = `<p>Syncing Server</p>`;
+            document.getElementById('random_alert').innerHTML = `<p>Syncing</p>`;
+            document.getElementById('random_alert_topic').innerHTML = `<p>Syncing</p>`;
+            document.getElementById('total_warnings').innerHTML = `<h2>Syncing</h2>`;
+            document.getElementById('random_alert_topic_expire').innerHTML = `<p>Syncing</p>`;
         }
     }, 1)
-    if (cache.streaming) {setInterval(() => { layout.time() }, 100);}
+    if (cache.streaming) {setInterval(() => { library.time() }, 100);}
     setInterval(async () => {
         if (new Date().getSeconds() % cache.config['query:rate'] == 0) {
             if (cache.query) {return}

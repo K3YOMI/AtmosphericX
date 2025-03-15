@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 let warning = {}
@@ -52,7 +52,6 @@ warning.execute = async function() {
         }
     } catch (error) {console.log(error)}
 }
-
 warning.config = async function() {
     cache.config = JSON.parse( await library.request(`/api/configurations`))
     let table = document.getElementById("uialert")

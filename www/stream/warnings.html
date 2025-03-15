@@ -1,13 +1,312 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>AtmosphericX - Warnings</title>
-        <script src="../assets/javascript/library.js"></script>
-        <script src="../assets/javascript/warning.js"></script>
-        <link rel="stylesheet" href="../assets/styles/warnings.css">
-        <link rel="icon" href="/assets/media/misc/favicon.ico" type="image/x-icon">
-    </head>
-    <body>
-        <table id="uialert"><tr><th>Type</th><th>Location</th></tr></table> 
-    </body>
-</html>
+{
+    "hosting:settings": {
+        "https:enabled": false,
+        "https:port": 3011,
+        "http:port": 3010,
+        "cookie:maxage": 86400000,
+        "ssl:path": {
+            "ssl:key": "./cert/generated.key",
+            "ssl:cert": "./cert/generated.crt"
+        }
+    },
+    "application:api": {
+        "primary:api": {
+            "nws:api": {
+                "nws:enabled": true,
+                "nws:api": "https://api.weather.gov/alerts",
+                "nws:state": "",
+                "nws:forecastoffice": [],
+                "nws:same": [],
+                "nws:zone": []
+            },
+        },
+        "misc:api": {
+            "wire:xmpp": {
+                "wire:xmpp:enabled": false,
+                "wire:user": "",
+                "wire:secret": ""
+            },
+            "iem:stormreports": {
+                "iem:stormreports:enable": true,
+                "iem:stormreports:state": "",
+                "iem:stormreports:hours": 3,
+                "iem:stormreports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+            },
+            "allisonhouse:warningpoly": {
+                "allisonhouse:warningpoly:enable": true,
+                "allisonhouse:warningpoly:api": ""
+            },
+            "cod:warningpoly": {
+                "cod:warningpoly:enable": true,
+                "cod:warningpoly:api": "https://warnings.cod.edu/"
+            },
+            "map:level3": {},
+            "map:level2": {}
+        }
+    },
+    "application:information": {
+        "application:location": "Somewhere, USA",
+        "application:timezone": "America/New_York",
+        "application:useragent": "AtmosphericX-v6"
+    },
+     "request:settings": {
+        "request:refresh_synced": 10,
+        "request:query_sycned": 10,
+        "request:outbreakmode": true,
+        "request:outbreakalerts": ["Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
+        "request:allalerts": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","911 Telephone Outage Emergency","Administrative Message","Air Quality Alert","Air Stagnation Advisory","Arroyo And Small Stream Flood Advisory","Ashfall Advisory","Ashfall Warning","Avalanche Advisory","Avalanche Warning","Avalanche Watch","Beach Hazards Statement","Blizzard Warning","Blizzard Watch","Blowing Dust Advisory","Blowing Dust Warning","Brisk Wind Advisory","Child Abduction Emergency","Civil Danger Warning","Civil Emergency Message","Coastal Flood Advisory","Coastal Flood Statement","Coastal Flood Warning","Coastal Flood Watch","Dense Fog Advisory","Dense Smoke Advisory","Dust Advisory","Dust Storm Warning","Earthquake Warning","Evacuation - Immediate","Excessive Heat Warning","Excessive Heat Watch","Extreme Cold Warning","Extreme Cold Watch","Extreme Fire Danger","Extreme Wind Warning","Fire Warning","Fire Weather Watch","Flash Flood Statement","Flash Flood Warning","Flash Flood Watch","Flood Advisory","Flood Statement","Flood Warning","Flood Watch","Freeze Warning","Freeze Watch","Freezing Fog Advisory","Freezing Rain Advisory","Freezing Spray Advisory","Frost Advisory","Gale Warning","Gale Watch","Hard Freeze Warning","Hard Freeze Watch","Hazardous Materials Warning","Hazardous Seas Warning","Hazardous Seas Watch","Hazardous Weather Outlook","Heat Advisory","Heavy Freezing Spray Warning","Heavy Freezing Spray Watch","High Surf Advisory","High Surf Warning","High Wind Warning","High Wind Watch","Hurricane Force Wind Warning","Hurricane Force Wind Watch","Hurricane Local Statement","Hurricane Warning","Hurricane Watch","Hydrologic Advisory","Hydrologic Outlook","Ice Storm Warning","Lake Effect Snow Advisory","Lake Effect Snow Warning","Lake Effect Snow Watch","Lake Wind Advisory","Lakeshore Flood Advisory","Lakeshore Flood Statement","Lakeshore Flood Warning","Lakeshore Flood Watch","Law Enforcement Warning","Local Area Emergency","Low Water Advisory","Marine Weather Statement","Nuclear Power Plant Warning","Radiological Hazard Warning","Red Flag Warning","Rip Current Statement","Severe Thunderstorm Warning","Severe Thunderstorm Watch","Severe Weather Statement","Shelter In Place Warning","Short Term Forecast","Small Craft Advisory","Small Craft Advisory For Hazardous Seas","Small Craft Advisory For Rough Bar","Small Craft Advisory For Winds","Small Stream Flood Advisory","Snow Squall Warning","Special Marine Warning","Special Weather Statement","Storm Surge Warning","Storm Surge Watch","Storm Warning","Storm Watch","Test","Tornado Warning","Tornado Watch","Tropical Depression Local Statement","Tropical Storm Local Statement","Tropical Storm Warning","Tropical Storm Watch","Tsunami Advisory","Tsunami Warning","Tsunami Watch","Typhoon Local Statement","Typhoon Warning","Typhoon Watch","Urban And Small Stream Flood Advisory","Volcano Warning","Wind Advisory","Wind Chill Advisory","Wind Chill Warning","Wind Chill Watch","Winter Storm Warning","Winter Storm Watch","Winter Weather Advisory"],
+        "request:beeponly": false,
+        "request:updates": false,
+        "request:alwaysrun": ["Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"]
+    },
+    "application:sounds": {
+        "application:beep": "/assets/media/audio/tones/beep-tone.mp3",
+        "application:eas": "/assets/media/audio/tones/eas-tone.mp3",
+        "application:siren": "/assets/media/audio/tones/tore-tone.mp3",
+        "application:amber": "/assets/media/audio/tones/amber-tone.mp3"
+    },
+    "application:banners": {
+        "Tornado Warning": "/assets/media/gif/red_box.gif",
+        "Radar Indicated Tornado Warning": "/assets/media/gif/red_box.gif",
+        "Confirmed Tornado Warning": "/assets/media/gif/red_warning.gif",
+        "Tornado Watch": "/assets/media/gif/red_box.gif",
+        "Tornado Emergency": "/assets/media/gif/purple_warning.gif",
+        "Particularly Dangerous Situation": "/assets/media/gif/red_warning.gif",
+        "Severe Thunderstorm Warning": "/assets/media/gif/orange_box.gif",
+        "Considerable Destructive Severe Thunderstorm Warning": "/assets/media/gif/orange_box.gif",
+        "Destructive Severe Thunderstorm Warning": "/assets/media/gif/red_warning.gif",
+        "Severe Thunderstorm Watch": "/assets/media/gif/orange_box.gif",
+        "Flash Flood Emergency": "/assets/media/gif/red_warning.gif",
+        "Flash Flood Warning": "/assets/media/gif/green_box.gif",
+        "Flash Flood Watch": "/assets/media/gif/green_box.gif",
+        "Special Marine Warning": "/assets/media/gif/blue_box.gif",
+        "Snow Squall Warning": "/assets/media/gif/red_warning.gif",
+        "Earthquake Warning": "/assets/media/gif/red_warning.gif",
+        "UNK": "/assets/media/gif/red_warning.gif"
+    },
+    "application:warnings": {
+        "Tornado Emergency": {
+            "triggered": "Tornado Emergency",
+            "new": "/assets/media/audio/tor/tor-upgraded.mp3",
+            "update": "/assets/media/audio/tor/tor-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Tornado Emergency",
+            "siren": true,
+            "eas": false,
+            "autobeep": true
+        },
+        "Particularly Dangerous Situation": {
+            "triggered": "Particularly Dangerous Situation",
+            "new": "/assets/media/audio/tor/tor-upgraded.mp3",
+            "update": "/assets/media/audio/tor/tor-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Particularly Dangerous Situation",
+            "siren": false,
+            "eas": true,
+            "autobeep": true
+        },
+        "Flash Flood Emergency": {
+            "triggered": "Flash Flood Emergency",
+            "new": "/assets/media/audio/flood/flash-flood-upgraded.mp3",
+            "update": "/assets/media/audio/flood/flash-flood-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Flash Flood Emergency",
+            "siren": false,
+            "eas": true,
+            "autobeep": true
+        },
+        "Confirmed Tornado Warning": {
+            "triggered": "Confirmed Tornado Warning",
+            "new": "/assets/media/audio/tor/confirmed-tor-issued.mp3",
+            "update": "/assets/media/audio/tor/tor-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Confirmed Tornado Warning",
+            "siren": true,
+            "eas": false,
+            "autobeep": true
+        },
+        "Destructive Severe Thunderstorm Warning": {
+            "triggered": "Destructive Severe Thunderstorm Warning",
+            "new": "/assets/media/audio/svr/destructive-severe-issued.mp3",
+            "update": "/assets/media/audio/svr/destructive-severe-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Severe Thunderstorm Warning (Destructive)",
+            "siren": false,
+            "eas": true,
+            "autobeep": true
+        },
+        "Considerable Destructive Severe Thunderstorm Warning": {
+            "triggered": "Considerable Destructive Severe Thunderstorm Warning",
+            "new": "/assets/media/audio/svr/considerable-severe-issued.mp3",
+            "update": "/assets/media/audio/svr/considerable-severe-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Severe Thunderstorm Warning (Considerable)",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Severe Thunderstorm Warning": {
+            "triggered": "Severe Thunderstorm Warning",
+            "new": "/assets/media/audio/svr/severe-issued.mp3",
+            "update": "/assets/media/audio/svr/severe-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Severe Thunderstorm Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Tornado Warning": {
+            "triggered": "Tornado Warning",
+            "new": "/assets/media/audio/tor/radar-tor-issued.mp3",
+            "update": "/assets/media/audio/tor/tor-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Radar Indicated Tornado Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Radar Indicated Tornado Warning": {
+            "triggered": "Radar Indicated Tornado Warning",
+            "new": "/assets/media/audio/tor/radar-tor-issued.mp3",
+            "update": "/assets/media/audio/tor/tor-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Radar Indicated Tornado Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Flash Flood Warning": {
+            "triggered": "Flash Flood Warning",
+            "new": "/assets/media/audio/flood/flash-flood-issued.mp3",
+            "update": "/assets/media/audio/flood/flash-flood-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Flash Flood Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Special Marine Warning": {
+            "triggered": "Special Marine Warning",
+            "new": "/assets/media/audio/marine/special-marine-issued.mp3",
+            "update": "/assets/media/audio/marine/special-marine-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Special Marine Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Snow Squall Warning": {
+            "triggered": "Snow Squall Warning",
+            "new": "/assets/media/audio/snowsq/snow-squall-issued.mp3",
+            "update": "/assets/media/audio/snowsq/snow-squall-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Snow Squall Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "Flash Flood Watch": {
+            "triggered": "Flash Flood Watch",
+            "new": "/assets/media/audio/tones/beep-tone.mp3",
+            "update": "/assets/media/audio/tones/beep-tone.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Flash Flood Watch",
+            "siren": false,
+            "eas": false,
+            "autobeep": false
+        },
+        "Severe Thunderstorm Watch": {
+            "triggered": "Severe Thunderstorm Watch",
+            "new": "/assets/media/audio/tones/beep-tone.mp3",
+            "update": "/assets/media/audio/tones/beep-tone.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Severe Thunderstorm Watch",
+            "siren": false,
+            "eas": false,
+            "autobeep": false
+        },
+        "Tornado Watch": {
+            "triggered": "Tornado Watch",
+            "new": "/assets/media/audio/tones/beep-tone.mp3",
+            "update": "/assets/media/audio/tones/beep-tone.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Tornado Watch",
+            "siren": false,
+            "eas": false,
+            "autobeep": false
+        },
+        "Earthquake Warning": {
+            "triggered": "Earthquake Warning",
+            "new": "/assets/media/audio/tones/beep-tone.mp3",
+            "update": "/assets/media/audio/tones/beep-tone.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Earthquake Warning",
+            "siren": false,
+            "eas": false,
+            "autobeep": true
+        },
+        "UNK": {
+            "triggered": "Unknown Event",
+            "new": "/assets/media/audio/unk/unk-issued.mp3",
+            "update": "/assets/media/audio/unk/unk-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Unknown Event",
+            "siren": false,
+            "eas": false,
+            "autobeep": false
+        }
+    },
+    "application:states": [
+        {"name": "Alabama", "abbreviation": "AL"},
+        {"name": "Alaska", "abbreviation": "AK"},
+        {"name": "Arizona", "abbreviation": "AZ"},
+        {"name": "Arkansas", "abbreviation": "AR"},
+        {"name": "California", "abbreviation": "CA"},
+        {"name": "Colorado", "abbreviation": "CO"},
+        {"name": "Connecticut", "abbreviation": "CT"},
+        {"name": "Delaware", "abbreviation": "DE"},
+        {"name": "Florida", "abbreviation": "FL"},
+        {"name": "Georgia", "abbreviation": "GA"},
+        {"name": "Hawaii", "abbreviation": "HI"},
+        {"name": "Idaho", "abbreviation": "ID"},
+        {"name": "Illinois", "abbreviation": "IL"},
+        {"name": "Indiana", "abbreviation": "IN"},
+        {"name": "Iowa", "abbreviation": "IA"},
+        {"name": "Kansas", "abbreviation": "KS"},
+        {"name": "Kentucky", "abbreviation": "KY"},
+        {"name": "Louisiana", "abbreviation": "LA"},
+        {"name": "Maine", "abbreviation": "ME"},
+        {"name": "Maryland", "abbreviation": "MD"},
+        {"name": "Massachusetts", "abbreviation": "MA"},
+        {"name": "Michigan", "abbreviation": "MI"},
+        {"name": "Minnesota", "abbreviation": "MN"},
+        {"name": "Mississippi", "abbreviation": "MS"},
+        {"name": "Missouri", "abbreviation": "MO"},
+        {"name": "Montana", "abbreviation": "MT"},
+        {"name": "Nebraska", "abbreviation": "NE"},
+        {"name": "Nevada", "abbreviation": "NV"},
+        {"name": "New Hampshire", "abbreviation": "NH"},
+        {"name": "New Jersey", "abbreviation": "NJ"},
+        {"name": "New Mexico", "abbreviation": "NM"},
+        {"name": "New York", "abbreviation": "NY"},
+        {"name": "North Carolina", "abbreviation": "NC"},
+        {"name": "North Dakota", "abbreviation": "ND"},
+        {"name": "Ohio", "abbreviation": "OH"},
+        {"name": "Oklahoma", "abbreviation": "OK"},
+        {"name": "Oregon", "abbreviation": "OR"},
+        {"name": "Pennsylvania", "abbreviation": "PA"},
+        {"name": "Rhode Island", "abbreviation": "RI"},
+        {"name": "South Carolina", "abbreviation": "SC"},
+        {"name": "South Dakota", "abbreviation": "SD"},
+        {"name": "Tennessee", "abbreviation": "TN"},
+        {"name": "Texas", "abbreviation": "TX"},
+        {"name": "Utah", "abbreviation": "UT"},
+        {"name": "Vermont", "abbreviation": "VT"},
+        {"name": "Virginia", "abbreviation": "VA"},
+        {"name": "Washington", "abbreviation": "WA"},
+        {"name": "West Virginia", "abbreviation": "WV"},
+        {"name": "Wisconsin", "abbreviation": "WI"},
+        {"name": "Wyoming", "abbreviation": "WY"},
+        {"name": "Other", "abbreviation": "Other"}
+    ]
+}

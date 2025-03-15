@@ -10,14 +10,13 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 let functions = {}
 functions.init = function() {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Web Functions`)
 }
-
 functions.forbidden = async function(req, res, message=`You are not authorized to access this resource.`) {
     res.statusCode = 403;
     res.setHeader('Content-Type', 'application/json');
@@ -32,6 +31,12 @@ functions.success = async function(req, res, message=`Request processed successf
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ status: 'success', message: message }));
+}
+functions.dashboard = async function(req, res) { // Handles the dashboard request (GET)
+    try {
+        if (req.session.account == undefined) {res.redirect('/'); return;}
+        res.sendFile(path.join(__dirname, `../www/dashboard/index.html`))
+    } catch (error) { functions.internal(req, res, error); return;}
 }
 
 class web {constructor() {this.functions = functions}}

@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 let functions = {}
@@ -194,35 +194,11 @@ functions.request_latest = async function(req, res) { // Handles the latest requ
         web.functions.success(req, res, `Requesting latest data.`)
     } catch (error) {web.functions.internal(req, res, error); return;}
 }
-functions.request_manual = async function(req, res) { // Handles the manual request (GET)
+functions.request_data = async function(req, res, type) {
     try {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(cache.alerts.manual))
-        return
-    } catch (error) {web.functions.internal(req, res, error); return;}
-}
-functions.request_warnings = async function(req, res) { // Handles the warnings request (GET)
-    try {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(cache.alerts.warnings))
-        return
-    } catch (error) {web.functions.internal(req, res, error); return;}
-}
-functions.request_watches = async function(req, res) { // Handles the watches request (GET)
-    try {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(cache.alerts.watches))
-        return
-    } catch (error) {web.functions.internal(req, res, error); return;}
-}
-functions.request_alerts = async function(req, res) { // Handles the alerts request (GET)
-    try {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(cache.alerts.active))
+        res.end(type)
         return
     } catch (error) {web.functions.internal(req, res, error); return;}
 }
@@ -232,10 +208,10 @@ functions.request_configurations = async function(req, res) { // Handles the con
             WARNING: "This is configuration data routed from the server, please use this data for client development purposes only.",
             ['request:allalerts']: cache.configurations['request:settings']['request:allalerts'],
             ['query:rate']: cache.configurations['request:settings']['request:query_sycned'],
-            ['application:timezone']: cache.configurations['application:information']['application:timezone'],
+            ['application:timezone']: cache.configurations['application:api']['primary:api']['nws:api']['application:timezone'],
             ['refresh:rate']: cache.configurations['request:settings']['request:refresh_synced'],
-            ['application:location']: cache.configurations['application:information']['application:location'],
-            ['application:useragent']: cache.configurations['application:information']['application:useragent'],
+            ['application:location']: cache.configurations['application:api']['primary:api']['nws:api']['application:location'],
+            ['application:useragent']: cache.configurations['application:api']['primary:api']['nws:api']['application:useragent'],
             ['application:sounds']: cache.configurations['application:sounds'],
             ['application:banners']: cache.configurations['application:banners'],
             ['application:warnings']: cache.configurations['application:warnings'],
@@ -246,47 +222,45 @@ functions.request_configurations = async function(req, res) { // Handles the con
         return
     } catch (error) {web.functions.internal(req, res, error); return;}
 }
-functions.request_notifications = async function(req, res) { // Handles the notifications request (GET)
-    try {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(cache.alerts.broadcasts))
-        return
-    } catch (error) {web.functions.internal(req, res, error); return;}
-}
-functions.request_status = async function(req, res) { // Handles the notifications request (GET)
-    try {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        res.end(cache.alerts.status)
-        return
-    } catch (error) {web.functions.internal(req, res, error); return;}
-}
-functions.request_states = async function(req, res) {
-    try {
-        res.statusCode = 200
-        res.setHeader('Content-Type', 'application/json')
-        res.end(JSON.stringify(cache.configurations['application:states']))
-        return
-    } catch (error) {web.functions.internal(req, res, error); return;}
-}
-
-
-functions.dashboard = async function(req, res) { // Handles the dashboard request (GET)
-    try {
-        if (req.session.account == undefined) {res.redirect('/'); return;}
-        res.sendFile(path.join(__dirname, `../www/dashboard/index.html`))
-    } catch (error) { web.functions.internal(req, res, error); return;}
-}
-
-
 functions.request = async function() {
-    let url = `https://api.weather.gov/alerts/active`
-    if (cache.configurations['application:information']['application:stateid'] != `ALL` && cache.configurations['application:information']['application:stateid'] != ``) {
-        url += `/area/${cache.configurations['application:information']['application:stateid']}`
+    let calls = cache.configurations['application:api']
+    let primary = calls['primary:api']
+    let misc = calls['misc:api']
+    let data = {}
+    data.nws = undefined
+    data.iem = undefined
+    data.reports = undefined
+    let worked = false
+    if (primary['nws:api']['nws:enabled'] == true) {
+        let url = primary['nws:api']['nws:api']
+        let state = primary['nws:api']['nws:state']
+        if (state != `ALL` && state != ``) { url += `/area/${state}` }
+        let d = await ext.functions.request(url)
+        if (d != []) { data.nws = d; worked = true }
     }
-    nws.functions.request(url)
+    if (primary['iem:api']['iem:enabled'] == true) {
+        let url = primary['iem:api']['iem:api']
+        // 2025-03-14T20:00:00Z
+        let Zdate = new Date().toISOString().split(`T`)[0] + `T` + new Date().toISOString().split(`T`)[1].split(`:`)[0] + `:00:00Z`
+        let d = await ext.functions.request(url + `${Zdate}`)
+        if (d != []) { data.iem = d; worked = true }
+        console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: This api is currently disabled.`)
+        process.exit()
+
+    }
+    if (misc['iem:stormreports']['iem:stormreports:enable'] == true) {
+        let url = misc['iem:stormreports']['iem:stormreports:api']
+        let state = misc['iem:stormreports']['iem:stormreports:state']
+        let hours = misc['iem:stormreports']['iem:stormreports:hours']
+        if (state != `ALL` && state != ``) { url += `states=${state}` }
+        url += `&hours=${hours}`
+        let d = await ext.functions.request(url)
+        if (d != []) { data.reports = d; worked = true }
+
+    }
+    if (!worked) {return console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Request failed - No data received. Timeout?`)}
+    await ext.functions.build(data)
 }
 
-class ams {constructor() {this.functions = functions}}
-module.exports = ams;
+class api {constructor() {this.functions = functions}}
+module.exports = api;

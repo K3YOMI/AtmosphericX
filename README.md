@@ -6,7 +6,7 @@
 <h1 style='font-size: 65px'; align="center">🌩️ Project AtmosphericX 🌪️</h1>
 
 <div align="center">
-  	<p align = "center">AtmosphericX is a web application that uses the National Weather Service API to provide near real-time weather alerts and outlooks. The application can be used by storm chasers, emergency management, or the general public to stay informed about severe weather or special alerts. Please note that this application is still in development and may not be fully functional. Also please note that information provided by this application should not be used as the sole source of information for severe weather events. Always refer to the National Weather Service for the most accurate and up-to-date information or your NOAA Weather Radio. I do not claim responsibility for any damages that may occur as a result of using this application. </p>
+  	<p align = "center">AtmosphericX is a web application that uses the National Weather Service API and other similar APIs to provide near real-time weather alerts and outlooks. The application can be used by storm chasers, emergency management, or the general public to stay informed about severe weather or special alerts. Please note that this application is still in development and may not be fully functional. Also please note that information provided by this application should not be used as the sole source of information for severe weather events. Always refer to the National Weather Service for the most accurate and up-to-date information or your NOAA Weather Radio. I do not claim responsibility for any damages that may occur as a result of using this application. </p>
   	<p align = "center">Documentation written by @k3yomi</p>
 	<div align="center" style="border: none;">
 		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/K3YOMI/AtmosphericX">
@@ -44,6 +44,7 @@
 		- SHA256 Encryption (users.json)
 	- Active Alerts & General Information
 		- Active Alerts, Warnings, and Watches
+		- Local Storm Reports (Hail, Rain, Damages, Etc)
 		- Previous 6 Alerts (w/ interactions and map)
 		- Region Alerts (Forecast Office, Direct Location, SAME ID, or UGC ID)
 	- External Services and Tools
@@ -103,6 +104,49 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
         "ssl:path": {
             "ssl:key": "./cert/generated.key",
             "ssl:cert": "./cert/generated.crt"
+        }
+    },
+	"application:api": {
+        "primary:api": {
+            "nws:api": {
+                "nws:enabled": true,
+                "nws:api": "https://api.weather.gov/alerts",
+                "nws:state": "",
+                "nws:forecastoffice": [],
+                "nws:same": [],
+                "nws:zone": []
+            },
+            "iem:api": {
+                "iem:enabled": false,
+                "iem:api": "https://mesonet.agron.iastate.edu/geojson/sbw.geojson?ts=",
+                "iem:state": "",
+                "iem:forecastoffice": [],
+                "iem:same": [],
+                "iem:zone": []
+            }
+        },
+        "misc:api": {
+            "wire:xmpp": {
+                "wire:xmpp:enabled": false,
+                "wire:user": "",
+                "wire:secret": ""
+            },
+            "iem:stormreports": {
+                "iem:stormreports:enable": true,
+                "iem:stormreports:state": "",
+                "iem:stormreports:hours": 1,
+                "iem:stormreports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+            },
+            "allisonhouse:warningpoly": {
+                "allisonhouse:warningpoly:enable": true,
+                "allisonhouse:warningpoly:api": ""
+            },
+            "cod:warningpoly": {
+                "cod:warningpoly:enable": true,
+                "cod:warningpoly:api": "https://warnings.cod.edu/"
+            },
+            "map:level3": {},
+            "map:level2": {}
         }
     },
      "application:information": {
@@ -204,6 +248,7 @@ If a user wants to register a new username and password, the host must activate 
 (GET)  (PUBLIC)   /api/status
 (GET)  (PUBLIC)   /api/configurations
 (GET)  (PUBLIC)   /api/states
+(GET)  (PUBLIC)   /reports
 ```
 
 

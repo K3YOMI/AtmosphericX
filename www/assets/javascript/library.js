@@ -10,13 +10,14 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 
 let library = {}
 let cache = {}
 cache.warnings = []; cache.alerts = []
+cache.reports = [];
 cache.watches = []; cache.manual = []
 cache.broadcasts = []; cache.lastQueries = []
 cache.queue = []; cache.config = []
@@ -27,9 +28,6 @@ cache.streaming = false
 cache.running = false
 cache.isMobile = false
 cache.channel1, cache.channel2, cache.channel3, cache.channel4 = undefined
-
-
-
 
 library.init = function() {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded API Functions`)
@@ -62,6 +60,28 @@ library.isMobile = async function() { // Checks the useragent for mobile devices
             }
             [cache.channel1, cache.channel2, cache.channel3, cache.channel4] = channels;
         }
+    }
+}
+library.time = async function(convertTime=false, accu=0) {
+    let time;
+    if (accu == 0) { time = new Date() } else { time = accu }
+    let formal = new Date(time.toLocaleString("en-US", { timeZone: cache.config['application:timezone'] }));
+    let timezoneabr = new Date().toLocaleString("en-US", { timeZoneName: "short", timeZone: cache.config['application:timezone'] });
+    let timezone = timezoneabr.split(' ')[3];
+    let second = formal.getSeconds();
+    let minute = formal.getMinutes();
+    let hour = formal.getHours();
+    let thismonth = formal.getMonth();
+    let thisday = formal.getDate();
+    let months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEPT","OCT","NOV","DEC"];
+    if (minute < 10) {minute = "0" + minute}
+    if (second < 10) {second = "0" + second}
+    if (hour < 10) { hour = "0" + hour}
+    if (!convertTime) {
+        document.getElementById('time').innerHTML = `<p>${hour}:${minute}:${second}</p>`;
+        document.getElementById('date').innerHTML = `<p>${months[thismonth]} ${thisday}</p>`;
+    } else {
+        return `${months[thismonth]} ${thisday} ${hour}:${minute}:${second} ${timezone}`
     }
 }
 library.play = async function(url, limited=false) { // Decides if we should play audio normally or on a channel

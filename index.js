@@ -10,7 +10,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
-    Version: 5.5.2                              
+    Version: 6.0.0                              
 */
 
 cache = {}
@@ -20,6 +20,7 @@ cache.alerts = {
     active: [], warnings: [],
     watches: [], manual: [],
     broadcasts: [], danger: [],
+    reports: [],
     status: undefined
 }
 cache.configurations = undefined;
@@ -27,22 +28,22 @@ cache.requesting = false;
 
 express = require('express') // Web Framework
 session = require('express-session') // Session Management
-http = require('http')
-https = require('https')
-cryptography = require('crypto');
-fs = require('fs') 
-path = require('path')
-axios = require('axios')
+http = require('http') // HTTP Server 
+https = require('https') // HTTPS Server
+cryptography = require('crypto'); // Cryptography (Hashing, Encryption, etc)
+fs = require('fs')  // File System
+path = require('path') // Path
+axios = require('axios') // Axios (Mostly for API Requests)
 
 core = new (require('./library/core.js')); 
-ams = new (require('./library/ams_api.js'));
-nws = new (require('./library/nws_api.js'));
+api = new (require('./library/api.js'));
+ext = new (require('./library/external.js'));
 web = new (require('./library/web.js'));
 
 
 core.functions.init()
-ams.functions.init()
-nws.functions.init()
+api.functions.init()
+ext.functions.init()
 web.functions.init()
 cache.configurations = core.functions.config(`./configurations.json`)
 app = express() 
@@ -76,26 +77,27 @@ app.get(`/reset`, (req, res) => {res.sendFile(__dirname + '/www/portal/reset.htm
 app.get(`/registration`, (req, res) => {res.sendFile(__dirname + '/www/portal/registration.html')})
 
 /* Dashboard Routes (PRIVATE) */
-app.get(`/dashboard`, (req, res) => {ams.functions.dashboard(req, res)})
+app.get(`/dashboard`, (req, res) => {web.functions.dashboard(req, res)})
 
 /* API Routes */
-app.post(`/api/login`, (req, res) => {ams.functions.login(req, res)})
-app.post(`/api/logout`, (req, res) => {ams.functions.logout(req, res)})
-app.post(`/api/register`, (req, res) => {ams.functions.register(req, res)})
-app.post(`/api/reset`, (req, res) => {ams.functions.password_reset(req, res)})
-app.post(`/api/notification`, (req, res) => {ams.functions.notification_activation(req, res)})
-app.post(`/api/manual`, (req, res) => {ams.functions.manual_activation(req, res)})
-app.post(`/api/status`, (req, res) => {ams.functions.status_activation(req, res)})
-app.post(`/api/forcerequest`, (req, res) => {ams.functions.request_latest(req, res)})
+app.post(`/api/login`, (req, res) => {api.functions.login(req, res)})
+app.post(`/api/logout`, (req, res) => {api.functions.logout(req, res)})
+app.post(`/api/register`, (req, res) => {api.functions.register(req, res)})
+app.post(`/api/reset`, (req, res) => {api.functions.password_reset(req, res)})
+app.post(`/api/notification`, (req, res) => {api.functions.notification_activation(req, res)})
+app.post(`/api/manual`, (req, res) => {api.functions.manual_activation(req, res)})
+app.post(`/api/status`, (req, res) => {api.functions.status_activation(req, res)})
+app.post(`/api/forcerequest`, (req, res) => {api.functions.request_latest(req, res)})
 
-app.get(`/api/alerts`, (req, res) => {ams.functions.request_alerts(req, res)})
-app.get(`/api/manual`, (req, res) => {ams.functions.request_manual(req, res)})
-app.get(`/api/warnings`, (req, res) => {ams.functions.request_warnings(req, res)})
-app.get(`/api/watches`, (req, res) => {ams.functions.request_watches(req, res)})
-app.get(`/api/notifications`, (req, res) => {ams.functions.request_notifications(req, res)})
-app.get(`/api/status`, (req, res) => {ams.functions.request_status(req, res)})
-app.get(`/api/configurations`, (req, res) => {ams.functions.request_configurations(req, res)})
-app.get(`/api/states`, (req, res) => {ams.functions.request_states(req, res)})
+app.get(`/api/alerts`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.active))})
+app.get(`/api/reports`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.reports))})
+app.get(`/api/manual`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.manual))})
+app.get(`/api/warnings`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.warnings))})
+app.get(`/api/watches`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.watches))})
+app.get(`/api/notifications`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.broadcasts))})
+app.get(`/api/states`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.configurations['application:states']))})
+app.get(`/api/status`, (req, res) => {api.functions.request_data(req, res, cache.alerts.status)})
+app.get(`/api/configurations`, (req, res) => {api.functions.request_configurations(req, res)})
 
 return new Promise(async (resolve, reject) => {
     let hosting = cache.configurations['hosting:settings']
@@ -110,14 +112,14 @@ return new Promise(async (resolve, reject) => {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: AtmosphericX v${cache.version} by ${cache.author}`)
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Server is running on port ${cache.configurations['hosting:settings']['http:port']}`)
     if (hosting['https:enabled']) {console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Secure Server is running on port ${hosting['https:port']}`)}
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Please remember to stick to offical sources for accurate weather information. Even though this project uses the NWS API, it is not a replacement for official sources.`)
-    await ams.functions.request()    
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Please remember to stick to offical sources for accurate weather information. Even though this project uses multiple api sources, it is not a replacement for official sources.`)
+    await api.functions.request()    
     setInterval(async () => { // a little messy but operational...
         if (new Date().getSeconds() % cache.configurations['request:settings']['request:refresh_synced'] == 0) {
             if (cache.requesting) {return}
             cache.requesting = true
+            await api.functions.request()         
             cache.configurations = core.functions.config(`./configurations.json`)
-            await ams.functions.request()         
             setTimeout(() => { cache.requesting = false; }, 1000);
         }
     }, 200);
