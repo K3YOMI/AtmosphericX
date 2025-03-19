@@ -269,7 +269,7 @@ functions.request = async function() {
         }
     }
     async function cod() {
-        if (primary['cod:warnings']) {
+        if (primary['cod:warnings']['cod:warnings:enable'] == true) {
             let url = primary['cod:warnings']['cod:warnings:api']
             let d = await ext.functions.request(url)
             if (d.length == 0) { await cod(); return; }
