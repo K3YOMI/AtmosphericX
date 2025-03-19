@@ -269,13 +269,22 @@ functions.request = async function() {
         }
     }
     async function cod() {
-        if (primary['cod:warnings']) {}
+        if (primary['cod:warnings']) {
+            let url = primary['cod:warnings']['cod:warnings:api']
+            let d = await ext.functions.request(url)
+            if (d.length == 0) { await cod(); return; }
+            let extract = await ext.functions.extract(d)
+            let download = await ext.functions.download(extract, url)
+            let parser = await ext.functions.parser(download)
+            data.generic = parser
+        }
     }
     
 
     await nws()
     await reports()
     await allisionHouse()
+    await cod()
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms)`)
 
 
