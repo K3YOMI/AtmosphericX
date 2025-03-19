@@ -70,19 +70,17 @@
                     await widgets.bar.colorize()
                     widgets.notifcations.set(`notification_box`, `notification_title`, `notification_subtitle`)
                     let location = (cache.random && cache.random.details && cache.random.details.locations) ? cache.random.details.locations : 'Nothing to display'
-                    let topic = (cache.random && cache.random.details && cache.random.details.name) ? cache.random.details.name : 'Nothing to display'
+                    let topic = (cache.random && cache.random.details && cache.random.details.name) ? cache.random.details.name : 'Not Available'
                     let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)) ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60) : 'Nothing to display'
                     if (expires < 0) {expires = `Just Expired`}
                     if (expires == 0) {expires = `Expires in <b>Less than a minute</b>`}
                     if (expires > 1) {expires = `Expires in <b>${expires} minutes</b>`}
-                    if (isNaN(expires)) {expires = `Not Available`}
+                    if (!Number.isNaN(Number(expires))) {expires = `Not Available`}
                     if (topic.length > 24) { document.getElementById('random_alert_title').style.fontSize = `25px`; } else { document.getElementById('random_alert_title').style.fontSize = `35px`; }
-
                     widgets.random.set('random_alert_location', location, 90, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
                     widgets.random.set('random_alert_title', topic, 45, 'opacity0Animation', 'opacity100Animation')
-                    widgets.random.set('random_alert_expires', expires, 45, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
+                    widgets.random.set('random_alert_expires', expires, 45, 'opacity0Animation', 'opacity100Animation')
                     widgets.header.update('total_warnings')
-
                     if (cache.queue.length > 0) { await library.query(cache.queue) }
                 }
             }, 200) 
