@@ -246,7 +246,7 @@ If you have no idea how to perform this or don't feel like modifying your own cu
 - (GET)  (PUBLIC) /api/status
 - (GET)  (PUBLIC) /api/configurations
 - (GET)  (PUBLIC) /api/states
-- (GET)  (PUBLIC) /reports
+- (GET)  (PUBLIC) /api/reports
 
 [Private API]
 - (GET)  (PUBLIC) /dashboard
