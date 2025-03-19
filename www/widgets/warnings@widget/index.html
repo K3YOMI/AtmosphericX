@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Alert Box</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/warnings@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <body> 
+        <table class='data' id="warnings"><tr><th>Type<hr></th><th>Location<hr></th></tr></table> 
+    </body>
+    <script>
+        /*
+            This will display a bunch of warnings in a table sorted by the issued date...
+
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.checkSession() - Checks if the session is ready to be updated
+            - library.sync() - Syncs the client with the server
+
+            Variables:
+            - cache.alerts - The alerts that are being displayed
+            - cache.alerts.issued - The issued date of the alert
+            - cache.alerts.details.name - The name of the alert
+            - cache.alerts.details.locations - The locations of the alert
+        */
+        library.createSession().then(() => {
+            library.init()
+            library.isMobile()
+            widgets.functions.init()
+            setInterval(async () => {
+                let session = await library.checkSession()
+                if (session) { 
+                    await library.sync()
+                    widgets.warnings.update('warnings')
+                }
+            }, 200) 
+        })
+    </script>
+</html>

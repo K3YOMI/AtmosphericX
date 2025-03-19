@@ -4,17 +4,17 @@
         <title>AtmosphericX - Dashboard</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link rel="stylesheet" href="../assets/styles/dashboard.css">
-        <link rel="icon" href="/assets/media/misc/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
         <script src="../assets/javascript/library.js"></script>
         <script src="../assets/javascript/dashboard.js"></script>
     </head>
     <body>
         <div class="curved-sidebar">
-            <i class="fas fa-bell" title="Active Alerts" onclick="dashboard.page('dashboard-home')"></i>
-            <i class="fas fa-satellite" title="External Services" onclick="dashboard.page('external-services')"></i>
+            <i class="fas fa-house-user" title="Active Alerts" onclick="dashboard.page('dashboard-home')"></i>
             <i class="fas fa-flag" title="Storm Reports" onclick="dashboard.page('storm-reports')"></i>
-            <i class="fas fa-project-diagram" title="Storm Prediction Center Outlooks (1-3)" onclick="dashboard.page('outlooks')"></i>
             <i class="fas fa-map" title="Alert Map" onclick="dashboard.page('map')"></i>
+            <i class="fas fa-project-diagram" title="Storm Prediction Center Outlooks (1-3)" onclick="dashboard.page('outlooks')"></i>
+            <i class="fas fa-satellite" title="External Services" onclick="dashboard.page('external-services')"></i>
             <i class="fas fa-wrench" title="Settings" onclick="dashboard.page('settings')"></i>
             <i id='donate' class="fas fa-coffee" title="Buy me a coffee" onclick="window.open('https://www.ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000')"></i>
             <i id='github' class="fab fa-github" title="GitHub Repository" onclick="window.open('https://www.github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000')"></i>
@@ -24,28 +24,56 @@
         <div class="wrapper">
             <div id="dashboard-home">
                 <h2 class="title-dash">Project AtmosphericX Dashboard</h2>
-                <div class="grid-area" id="warning-center"></div>
-                
-                <h1 class="subtitle-dashboard">Latest Alerts</h1>
-                <hr class="hr-dash">
                 <div class="grid-area">
-                    <div class="data-card" style="grid-column: 1/4;">
-                        <div class="alerts-area-box" id="recent-alerts"></div>
+                    <div class="data-card" style="grid-column: 1/4";>  
+                        <h1 class="subtitle-dashboard">System Statistics & Alerts</h1>
+                        <hr class="hr-dash">
+                        <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-up" id="grid-dropdown-hosting" onclick="dashboard.toggle('grid-dropdown-hosting-container', 'grid-dropdown-hosting')"></i>
+                        <div class="animated-box" id="grid-dropdown-hosting-container" style="display: block;">
+                            <div class="alerts-area-box-4" id="hosting-stats" style="grid-template-columns: 1fr 1fr 1fr 1fr;"></div>
+                            <div class="alerts-area-box-4" id="warning-center" style="grid-template-columns: 1fr 1fr 1fr 1fr;"></div>
+                        </div>
                     </div>
                 </div>
-                <h1 class="subtitle-dashboard">Divided By Regions</h1>
-                <hr class="hr-dash">
                 <div class="grid-area">
                     <div class="data-card" style="grid-column: 1/4;">
-                        <div class="alerts-area-box" id="regions"></div>
+                        <h1 class="subtitle-dashboard">Alert Statistics</h1>
+                        <hr class="hr-dash">
+                        <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-right" id="grid-dropdown-statistics" onclick="dashboard.toggle('grid-dropdown-stats', 'grid-dropdown-statistics')"></i>
+                        <div id="grid-dropdown-stats" style="display: none;">
+                            <div class="alerts-area-box" id="warning-statistics" style="grid-template-columns: 1fr 1fr 1fr"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-area">
+                    <div class="data-card" style="grid-column: 1/4;">
+                        <h1 class="subtitle-dashboard">Recent Alerts</h1>
+                        <hr class="hr-dash">
+                        <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-up" id="grid-dropdown-alerts" onclick="dashboard.toggle('grid-dropdown-alerts-container', 'grid-dropdown-alerts')"></i>
+                        <div id="grid-dropdown-alerts-container" style="display: block;">
+                            <div class="alerts-area-box" id="recent-alerts"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-area">
+                    <div class="data-card" style="grid-column: 1/4;">
+                        <h1 class="subtitle-dashboard">Regional Statistics</h1>
+                        <hr class="hr-dash">
+                        <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-up" id="grid-dropdown-regional" onclick="dashboard.toggle('grid-dropdown-regional-container', 'grid-dropdown-regional')"></i>
+                        <div id="grid-dropdown-regional-container" style="display: block;">
+                            <div class="alerts-area-box" id="regions"></div>
+                        </div>
                     </div>
                 </div>
                 <div id = "region-selected" style="display: none;">
-                    <h1 class="subtitle-dashboard" id="region-selected-text"></h1>
-                    <hr class="hr-dash">
                     <div class="grid-area">
                         <div class="data-card" style="grid-column: 1/4;">
-                            <div class="alerts-area-box-4" id="region-selected-data"></div>
+                            <h1 class="subtitle-dashboard" id="region-selected-text"></h1>
+                            <hr class="hr-dash">
+                            <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-right" id="grid-dropdown-selected" onclick="dashboard.toggle('grid-dropdown-selected-container', 'grid-dropdown-selected')"></i>
+                            <div id="grid-dropdown-selected-container" style="display: none;">
+                                <div class="alerts-area-box-4" id="region-selected-data"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -54,23 +82,19 @@
                 <h2 class="title-dash">External Services & Analysis Tools</h2>
                 <div class="grid-area" id="external-services-area"></div>
             </div>
-
-
             <div id="storm-reports" style="display: none;">
                 <h2 class="title-dash">Global Reports</h2>
                 <div class="grid-area" id="reports-center"></div>
             </div>
-
-
             <div id="outlooks" style="display: none;">
                 <h2 class="title-dash">Storm Prediction Center Outlooks</h2>
                 <div class="grid-area" id="storm-outlook-area"></div>
             </div>
             <div id="map" style="display: none;">
-                <h2 class="title-dash">Mapping Details</h2>
+                <h2 class="title-dash">Map and Portable Calls</h2>
                 <div class="grid-area" style="grid-template-columns: 1fr;">
                     <div class="data-card" style="width: 100%; margin: 0;">
-                        <iframe src="/map" style="border: none; width: 100%; height: 600px; background-color: grey;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" scrolling="no"></iframe>
+                        <iframe src="/widgets/map" style="border: none; width: 100%; height: 800px; background-color: grey;" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" scrolling="no"></iframe>
                     </div>                   
                 </div>
             </div>
@@ -78,16 +102,14 @@
                 <h2 class="title-dash">Administration Panel</h2>
                 <div class="grid-area" id="administation-area">
                     <div class="data-card">
-                        <h1>Query Settings</h1>
-                        <br>
-                        <button type="button" class="btn btn-primary" title="Request New Information" data-toggle="tooltip" data-placement="top" id="btn_forceRequest">Force Request</button>
-                    </div>
-                    <div class="data-card">
                         <h1>Notification Settings</h1>
                         <br>
                         <input type="text" class="form-control" id="notificiation_announcement" placeholder="ANNOUNCEMENT">
                         <input type="text" class="form-control" id="notification_message" placeholder="MESSAGE HERE">
                         <button type="button" class="btn btn-primary" title="Send Notification Box" data-toggle="tooltip" data-placement="top" id="btn_submitNotification">Submit</button>
+                        <br><br>
+                        <button type="button" class="btn btn-primary" title="Request New Information" data-toggle="tooltip" data-placement="top" id="btn_forceRequest">Force Request</button>
+
                     </div>
                     <div class="data-card">
                         <h1>Manual Alerts</h1>

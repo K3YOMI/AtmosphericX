@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Stream</title>
+    <link rel="stylesheet" href="/widgets/@premade/stream_layout@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <link rel="icon" href="/assets/media/misc/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <img id="alert_notification" src=""> 
+        <p id="alert_title"></p>
+        <p id="alert_description"></p>
+    </img>
+    <div class="defaultBox"  style="height: 95px; width: 1920px; margin-top: 0px; margin-left: 400px; background-color: rgb(42,81,224);"></div>
+    <div class="defaultBox" style="height: 95px; width: 456px; margin-top: 0px; background-color: rgb(28,61,181);"></div>
+    <div class="defaultBoxLight" id="current-warnings-bar" style="height: 80px; width: 1920px; margin-top: 1010px; margin-left: 400px; background-color: rgb(42,81,224);"></div>
+    <div class="defaultBox" style="height: 80px; width: 456px; margin-top: 1010px; background-color: rgb(28,61,181);"></div>
+    <div class="defaultBoxIgnore" style="height: 40px; width: 256px; margin-top: 970px; margin-left: 200px; background-color: rgb(255, 255, 255);"></div>
+    <div class="defaultBoxLight" style="height: 40px; width: 200px; margin-top: 970px; background-color: rgb(28,61,181);"></div>
+    <div class="defaultBoxIgnore" style="height: 40px; width: 200px; margin-top: 930px; background-color: rgb(0, 0, 0);"></div>
+
+
+    <div id="notification_box" class="defaultBoxLight" style="height: 235px; width: 956px; margin-top: 116px; margin-left: 720px; background-color: rgb(42,81,224); border-style: solid; border-width: 5px; border-color: rgb(255, 255, 255); padding: 10px; opacity: 0.95; display: none;">
+        <h1 id="notification_title"></h1>
+        <hr id="warning_hr" style="border-color: white; width: 90%;">
+        <p id="notification_subtitle"></p>
+    </div>
+    <p id="time"></p>
+    <p id="date"></p>
+
+    <p id="random_alert_location">Syncing</p>
+    <p id="random_alert_title">Syncing</p>
+    <p id="random_alert_expires">Syncing</p>
+    <p id="total_warnings">Syncing</p>
+<script>
+ /*
+            This is an old preset layout for the stream interface, if you are looking for up-to-date code, this isn't the place.
+            This is simply a placeholder for a stream layout that was used in the past. If you'd like to have the most up to date layout,
+            you can now create your own. 
+
+            This will call the library and widgets libraries to prepare for the alert box widget
+
+            This will check for the time every 200ms (Can be changed, ideally 200ms is good) and check if the session is ready to be updated
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.checkSession() - Checks if the session is ready to be updated
+            - library.sync() - Gathers information from the API and compares to see if it's recent or new, if so, it will add to the queue cache
+            - library.query() - Queries the queue cache and sends the data to the API for processing (Alerts and Sound)
+            - widgets.bar.colorize() - Colors the bar based on the current warnings
+            - widgets.notifcations.set() - Sets the notification box with the title and subtitle
+            - widgets.random.set() - Sets the random alert with the location, title, and expires
+            
+            Variables:
+            - cache.queue - Array - The queue of alerts that need to be processed (Default: [])
+        */
+         library.createSession().then(() => {
+            library.init()
+            library.isMobile()
+            widgets.functions.init()
+            cache.alertbox = true
+            setInterval(async () => {
+                document.getElementById("time").innerHTML = library.time().time
+                document.getElementById("date").innerHTML = library.time().date
+                let session = await library.checkSession()
+                if (session) { 
+                    await library.sync()
+                    await widgets.bar.colorize()
+                    widgets.notifcations.set(`notification_box`, `notification_title`, `notification_subtitle`)
+                    let location = (cache.random && cache.random.details && cache.random.details.locations) ? cache.random.details.locations : 'Nothing to display'
+                    let topic = (cache.random && cache.random.details && cache.random.details.name) ? cache.random.details.name : 'Nothing to display'
+                    let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)) ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60) : 'Nothing to display'
+                    if (expires < 0) {expires = `Just Expired`}
+                    if (expires == 0) {expires = `Expires in <b>Less than a minute</b>`}
+                    if (expires > 1) {expires = `Expires in <b>${expires} minutes</b>`}
+                    if (isNaN(expires)) {expires = `Not Available`}
+                    if (topic.length > 24) { document.getElementById('random_alert_title').style.fontSize = `25px`; } else { document.getElementById('random_alert_title').style.fontSize = `35px`; }
+
+                    widgets.random.set('random_alert_location', location, 90, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
+                    widgets.random.set('random_alert_title', topic, 45, 'opacity0Animation', 'opacity100Animation')
+                    widgets.random.set('random_alert_expires', expires, 45, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
+                    widgets.header.update('total_warnings')
+
+                    if (cache.queue.length > 0) { await library.query(cache.queue) }
+                }
+            }, 200) 
+        })
+    </script>
+
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Alert Box</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/interactive_map@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <link href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" rel="stylesheet"/>
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <body> 
+        <div id="interactive-map"></div>
+    </body>
+    <script>
+        /*
+            Full on interactive map using leaflet, this isn't fully finished and is still being worked on. In the future, this wil show
+            level2 and level3 radar products. This is a very basic version...
+
+
+            Additionally, This will auto zoom on new alerts and show storm reports provided by a few APIs to show the user what events are 
+            occuring on a visual scale
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.checkSession() - Checks if the session is ready to be updated
+            - library.sync() - Gathers information from the API and compares to see if it's recent or new, if so, it will add to the queue cache
+            - widgets.map.create() - Creates the map
+            - widgets.map.populate() - Populates the map with the data from the API
+        */
+
+        library.createSession().then(() => {
+            library.init()
+            library.isMobile()
+            widgets.functions.init()
+            widgets.map.create()
+            setInterval(async () => {
+                let session = await library.checkSession()
+                if (session) { 
+                    await library.sync()
+                    widgets.map.populate()  
+                }
+            }, 200) 
+        })
+    </script>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Alert Box</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <body> 
+        <div class="defaultBox" style="height: 1920px; width: 1080px;"></div>
+    </body>
+    <script>
+        /*
+            This widget will create a bar (defaultBox) which is a darker version of the light bar. This can be used
+            to create a unique dynamic theme for your interface. Basically a newer more modular version of the old standard
+            interface.
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.checkSession() - Checks if the session is ready to be updated
+            - library.sync() - Gathers information from the API and compares to see if it's recent or new, if so, it will add to the queue cache
+            - library.query() - Queries the queue cache and sends the data to the API for processing (Alerts and Sound)
+        */
+        library.createSession().then(() => {
+            library.init()
+            widgets.functions.init()
+            setInterval(async () => {
+                let session = await library.checkSession()
+                if (session) { 
+                    await library.sync()
+                    await widgets.bar.colorize()
+                }
+            }, 200) 
+        })
+    </script>
+</html>

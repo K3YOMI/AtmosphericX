@@ -1,0 +1,22 @@
+@font-face {
+    font-family: SofiaSansSemiCondensed-Bold;
+    src: url('/assets/fonts/SofiaSansSemiCondensed-Bold.ttf');
+}  
+body, html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    float: center;
+    overflow: hidden;
+}
+.text { 
+    font-size: 35px;
+    font-weight : bold;
+    overflow: hidden;
+    text-align: center;
+    color: white;
+    font-family: 'SofiaSansSemiCondensed-Bold'; 
+    text-shadow: 2px 2px 15px #00000069; 
+}

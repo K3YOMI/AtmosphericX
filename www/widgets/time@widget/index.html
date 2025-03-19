@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Alert Box</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/time@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <body> 
+        <p class='text' id="local_time_interface"></p>
+    </body>
+    <script>
+        /*
+           This is the time widget, it will display the current time on the on the widget in text
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.time() - Gets the current time and date
+        */
+        library.createSession().then(() => {
+            library.init()
+            library.isMobile()
+            widgets.functions.init()
+            setInterval(async () => {
+                document.getElementById("local_time_interface").innerHTML = library.time().time
+            }, 200) 
+        })
+    </script>
+</html>

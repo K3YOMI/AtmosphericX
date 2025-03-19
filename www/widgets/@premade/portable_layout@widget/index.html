@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Portable</title>
+    <link rel="stylesheet" href="/widgets/@premade/portable_layout@widget/index.css">
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <body style="background-color: rgb(0, 0, 0);">
+        <h1 style="color: rgb(255, 255, 255); font-size: 44px; text-align: center;">You are running in portable mode</h1>
+        <p style="font-style: italic; text-align: center;">Display elements will not be shown</p>
+        <div>
+            <iframe src="/widgets/warnings" style="width: 100%; height: 700px; border: none;"></iframe>
+        </div>
+    </body>
+    <script>
+        /*
+            This is an old preset layout for the stream interface, if you are looking for up-to-date code, this isn't the place.
+            This is simply a placeholder for a stream layout that was used in the past. If you'd like to have the most up to date layout,
+            you can now create your own. 
+
+            This will call the library and widgets libraries to prepare for the alert box widget
+
+            This will check for the time every 200ms (Can be changed, ideally 200ms is good) and check if the session is ready to be updated
+
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.checkSession() - Checks if the session is ready to be updated
+            - library.sync() - Gathers information from the API and compares to see if it's recent or new, if so, it will add to the queue cache
+            - library.query() - Queries the queue cache and sends the data to the API for processing (Alerts and Sound)
+
+            Variables:
+            - cache.queue - Array - The queue of alerts that need to be processed (Default: [])
+        */
+        library.createSession().then(() => {
+            library.init()
+            library.isMobile()
+            widgets.functions.init()
+            setInterval(async () => {
+                let session = await library.checkSession()
+                if (session) { 
+                    await library.sync()
+                    if (cache.queue.length > 0) { await library.query(cache.queue) }
+                }
+            }, 200) 
+        });
+    </script>
+</html>

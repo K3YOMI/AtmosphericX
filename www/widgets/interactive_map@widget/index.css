@@ -1,0 +1,23 @@
+@font-face {
+    font-family: SofiaSansSemiCondensed-Bold;
+    src: url('/assets/fonts/SofiaSansSemiCondensed-Bold.ttf');
+}  
+body, html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    float: center;
+    overflow: hidden;
+}
+#interactive-map { 
+    width: 1920px;
+    height: 1080px;
+}
+:root {
+    --map-tiles-filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7)
+}
+.map-tiles {
+    filter:var(--map-tiles-filter, none);
+}

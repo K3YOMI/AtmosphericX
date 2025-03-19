@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX - Alert Box</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/random_alert_location@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/widgets.js"></script>
+    <body> 
+        <p class='text' id="random_alert_location">Syncing</p>
+    </body>
+    <script>
+        /*
+            This supplies detail to the random alert, it will display information about the alert in text
+
+            Calls:
+            - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
+            - library.init() - Initializes the library and sets the session to ready
+            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
+            - library.checkSession() - Checks if the session is ready to be updated
+          
+            Variables:
+            - cache.random - The random alert that is being displayed
+            - cache.random.details.locations - The locations of the alert
+            - cache.random.details.locations.length - The length of the locations
+            - locations - The locations of the alert
+        */
+       library.createSession().then(() => {
+            library.init()
+            library.isMobile()
+            widgets.functions.init()
+            setInterval(async () => {
+                let session = await library.checkSession()
+                if (session) { 
+                    await library.sync()
+                    let text = (cache.random && cache.random.details && cache.random.details.locations) ? cache.random.details.locations : 'Nothing to display'
+                    widgets.random.set('random_alert_location', text, 90, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
+                }
+            }, 200) 
+        })
+    </script>
+</html>
