@@ -81,12 +81,7 @@ app.get(`/`, (req, res) => { if (req.session.account != undefined) {
 })
 
 /* API Detection Middleware */
-app.use((req, res, next) => { 
-    core.functions.host(false, true);  
-    next()
-    let referrer = req.headers.referer
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: ${req.ip} requested ${req.url} from ${referrer}`)
-})
+app.use((req, res, next) => { core.functions.host(false, true);  next()})
 
 /* Custom Widgets Routes */
 app.get(`/widgets/alert`, (req, res) => {res.sendFile(__dirname + '/www/widgets/alert_bar@widget/index.html')})
