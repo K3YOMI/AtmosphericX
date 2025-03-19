@@ -1,0 +1,184 @@
+
+/*
+                                            _               _     __   __
+         /\  | |                           | |             (_)    \ \ / /
+        /  \ | |_ _ __ ___   ___  ___ _ __ | |__   ___ _ __ _  ___ \ V / 
+       / /\ \| __| '_ ` _ \ / _ \/ __| '_ \| '_ \ / _ \ '__| |/ __| > <  
+      / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
+     /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
+                                     | |                                 
+                                     |_|                                                                                                                
+    
+    Written by: k3yomi@GitHub                     Primary API: https://api.weather.gov
+    Version: 6.0.0                              
+*/
+
+
+let widgets = {}
+widgets.cache = {}
+widgets.cache.maplod = undefined
+widgets.cache.pastalt = undefined
+widgets.cache.focus = undefined
+widgets.functions = {}
+
+widgets.alert = {}
+widgets.random = {}
+widgets.bar = {}
+widgets.map = {}
+widgets.header = {}
+widgets.warnings = {}
+widgets.notifcations = {}
+
+widgets.functions.init = function() {
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Widget Functions`)
+}
+widgets.alert.send = function(animation_dict, alert_title, alert_description) {
+    cache.alert++
+    let doc_notification = document.getElementById(`alert_notification`)
+    let doc_title = document.getElementById(`alert_title`)
+    let doc_description = document.getElementById(`alert_description`)
+    doc_notification.style.display = `block`;
+    doc_notification.src = `${animation_dict}?alert=${cache.alert}`
+    if (alert_description.length > 108) {alert_description = alert_description.substring(0, 100) + '...';}
+    setTimeout(function() { 
+        doc_notification.style.display = `none`; cache.running = false;
+    }, 6800)
+    setTimeout(function() { 
+        doc_title.innerHTML = `<div class="alert_title" style="animation: fade 5s linear forwards; animation-delay: 0s;">${alert_title}</div>`;
+    }, 500)
+    setTimeout(function() {
+        doc_description.innerHTML = `<div class="alert_description" style="animation: fade 4.5s linear forwards; animation-delay: 0s;">${alert_description}</div>`;
+    }, 700)
+}
+widgets.random.set = async function(type='random_alert_title', strText, maxLength, animationStart='opacity0Animation', animationEnd='opacity100Animation') {
+    if (strText.length > maxLength) { strText = strText.substring(0, maxLength) + '...';}
+    if (cache.alerts.length == 1) {document.getElementById(type).innerHTML = strText; return;}
+    if (cache.alerts.length == 0) {document.getElementById(type).innerHTML = 'No Active Alerts'; return;}
+    document.getElementById(type).style.animation = `${animationStart} 0.3s linear forwards`;
+    await setTimeout(() => {
+        document.getElementById(type).style.animation = `${animationEnd} 0.5s linear forwards`;
+        document.getElementById(type).innerHTML = strText
+    }, 500);
+}
+widgets.notifcations.set = function(id, titleid, subtitleid) {
+    if (cache.broadcasts.length != 0) {
+        if (cache.broadcasts.title.length > 20) { cache.broadcasts.title = cache.broadcasts.title.substring(0, 70) + '...'; }
+        if (cache.broadcasts.message.length > 150) { cache.broadcasts.message = cache.broadcasts.message.substring(0, 150) + '...'; }
+        document.getElementById(id).style.display = 'block';
+        document.getElementById(titleid).innerHTML = cache.broadcasts.title;
+        document.getElementById(subtitleid).innerHTML = cache.broadcasts.message;
+    } else { 
+        document.getElementById(id).style.display = 'none';
+    }
+}
+
+
+widgets.bar.colorize = function() {
+
+    let light = document.getElementsByClassName(`defaultBoxLight`)
+    let dark = document.getElementsByClassName(`defaultBox`)
+    let types = cache.config['overlay:settings']['color:scheme']
+    types.forEach(type => {
+        type.count = cache.alerts.filter(x => x.details.name.includes(type.type)).length;
+    });
+    let highest = types.find(type => {return type.count > 0; }) || types[types.length - 1];
+    for (let x = 0; x<light.length; x++){
+        light[x].style.backgroundColor = highest.color.light
+    }
+    for (let x = 0; x<dark.length; x++){
+        dark[x].style.backgroundColor = highest.color.dark
+    }
+}
+widgets.map.create = function() {
+    document.getElementById('interactive-map').style.backgroundColor = 'black';
+    if (!widgets.cache.maplod) {
+        widgets.cache.maplod = L.map(document.getElementById('interactive-map'));
+        widgets.cache.maplod.eachLayer(function (layer) { if (layer instanceof L.TileLayer) { widgets.cache.maplod.removeLayer(layer);}});
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {className: 'map-tiles'}).addTo(widgets.cache.maplod);
+        widgets.cache.maplod.setView([42.0171798, -93.9254114], 5, { animate: true, duration: 6.5 });
+    }
+}
+widgets.map.populate = function() {
+    let active = cache.alerts
+    let reports = cache.reports
+    let condition = false 
+    widgets.cache.maplod.eachLayer(function (layer) { 
+        if (layer instanceof L.Circle && layer !== widgets.cache.focus) { 
+            widgets.cache.maplod.removeLayer(layer);
+        }
+    });
+    for (let i = 0; i < active.length; i++) {
+        let alert = active[i]
+        if (alert.raw.geometry == undefined) {continue}
+        let lat = alert.raw.geometry.coordinates[0][0][1]
+        let lon = alert.raw.geometry.coordinates[0][1][0]
+        let location = alert.details.locations;
+        let sender = alert.details.sender;
+        if (condition == false) {
+            condition = true
+            if (widgets.cache.pastalt != JSON.stringify(alert)) { 
+                widgets.cache.pastalt = JSON.stringify(alert)
+                let circle = L.circle([lat, lon], {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 50000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}</div>`).openPopup();
+                widgets.cache.focus = circle;
+                let opacity = 0.1;
+                let fadeIn = true;
+                widgets.cache.maplod.setView([lat, lon],7, {animate: true, duration: 2}); 
+                let interval = setInterval(() => {
+                    if (!circle || !widgets.cache.maplod.hasLayer(circle)) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    circle.setStyle({ fillOpacity: (fadeIn = opacity >= 0.5 ? false : opacity <= 0.1 ? true : fadeIn) ? opacity += 0.05 : opacity -= 0.05 });
+                }, 100);
+            }
+        } else {
+            L.circle([lat, lon], {color: 'black',fillColor: 'red',fillOpacity: 0.1,radius: 10000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`)
+        }
+    }
+    for (let i = 0; i < reports.length; i++) {
+        let report = reports[i];
+        let location = report.details.locations;
+        let lat = report.raw.lat;
+        let lon = report.raw.lon;
+        let sender = report.details.sender;
+        let value = report.raw.value;
+        L.circle([lat, lon], {color: 'black',fillColor: 'blue',fillOpacity: 0.1,radius: 2000}).addTo(widgets.cache.maplod).bindPopup(`<b>${report.details.name} (${report.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Value:</b> ${value}`)
+    }
+
+}
+widgets.header.update = function(id) {       
+    let tInOutbreak = cache.warnings.filter(warning => warning.details.name.includes('Tornado')).length
+    let tRandomChance = Math.floor(Math.random() * 4)
+    if (cache.status == ``) {
+        if (cache.warnings.length > 5 && tInOutbreak > 5) {
+            document.getElementById(id).innerHTML = (tRandomChance == 3) ? `<h2>OUTBREAK</h2>` : `<p>Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}</p>`;
+        } else { 
+            document.getElementById(id).innerHTML = (tRandomChance == 3) ? `<h2>BREAKING WEATHER</h2>` : `<p>Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}</p>`; 
+        }
+    } else { 
+        cache.status = cache.status.substring(0, 15) + '...';
+        document.getElementById(id).innerHTML = `<h2>${cache.status}</h2>`;
+    }
+}
+widgets.warnings.update = function(id) {
+    document.getElementById(id).innerHTML = `<tr><th>Type<hr></th><th>Location<hr></th></tr>`;
+    cache.alerts.sort((a, b) => {return new Date(b.issued) - new Date(a.issued)})
+    for (let i = 0; i < cache.alerts.length; i++) {
+        if (i == 20) { break }
+        let alert = cache.alerts[i]
+        let table = document.getElementById(id)
+        let row = table.insertRow(-1)
+        let cell1 = row.insertCell(0)
+        let cell2 = row.insertCell(1)
+        cell1.innerHTML = alert.details.name.substring(0, 30);
+        cell2.innerHTML = alert.details.locations.substring(0, 20);
+    }
+    if (cache.alerts.length > 20) {
+        let table = document.getElementById(id)
+        let row = table.insertRow(-1)
+        let cell1 = row.insertCell(0)
+        let cell2 = row.insertCell(1)
+        cell1.innerHTML = "..."
+        cell2.innerHTML = `+${cache.alerts.length - 20} more`
+    }
+}

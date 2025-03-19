@@ -1,0 +1,43 @@
+@font-face {
+    font-family: SofiaSansSemiCondensed-Bold;
+    src: url('/assets/fonts/SofiaSansSemiCondensed-Bold.ttf');
+}  
+
+.defaultBox { 
+    background-color: rgba(28,61,181);
+    display: block;
+    width: 100%;
+    transition-duration: 1s;
+    overflow: hidden;
+}
+.defaultBoxLight { 
+    background-color: rgba(42,81,224);
+    display: block;
+    width: 100%;
+    transition-duration: 1s;
+    overflow: hidden;
+}
+
+
+@keyframes fade {
+    0% {opacity: 0;}
+    40% {opacity: 1;}
+    75% {opacity: 1;}
+    100% {opacity: 0;}
+}
+@keyframes upToFadeOutAniamtion {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-10px); opacity: 0; }
+}
+@keyframes upToFadeInAniamtion {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes opacity100Animation {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes opacity0Animation {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
