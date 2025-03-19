@@ -202,20 +202,24 @@ functions.request_data = async function(req, res, type) {
         return
     } catch (error) {web.functions.internal(req, res, error); return;}
 }
-functions.request_configurations = async function(req, res) { // Handles the configurations request (GET)
+functions.request_configurations = function(req, res, ret=true) { // Handles the configurations request (GET)
     try {
         let modified = { 
             WARNING: "This is configuration data routed from the server, please use this data for client development purposes only.",
             ['request:allalerts']: cache.configurations['request:settings']['request:allalerts'],
             ['query:rate']: cache.configurations['request:settings']['request:query_sycned'],
-            ['application:timezone']: cache.configurations['application:api']['primary:api']['nws:api']['application:timezone'],
             ['refresh:rate']: cache.configurations['request:settings']['request:refresh_synced'],
+            ['application:timezone']: cache.configurations['application:information']['application:timezone'],
             ['application:location']: cache.configurations['application:information']['application:location'],
             ['application:useragent']: cache.configurations['application:api']['primary:api']['nws:api']['application:useragent'],
             ['application:sounds']: cache.configurations['application:sounds'],
             ['application:banners']: cache.configurations['application:banners'],
             ['application:warnings']: cache.configurations['application:warnings'],
+            ['overlay:settings']: {
+                ['color:scheme']: cache.configurations['overlay:settings']['color:scheme'],
+            }
         }
+        if (!ret) {return modified}
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
         res.end(JSON.stringify(modified, null, 2))
@@ -227,38 +231,55 @@ functions.request = async function() {
     let primary = calls['primary:api']
     let misc = calls['misc:api']
     let data = {}
+    let time = new Date()
     data.nws = undefined
-    data.iem = undefined
+    data.generic = undefined
     data.reports = undefined
-    let worked = false
-    if (primary['nws:api']['nws:enabled'] == true) {
-        let url = primary['nws:api']['nws:api']
-        let state = primary['nws:api']['nws:state']
-        if (state != `ALL` && state != ``) { url += `/area/${state}` }
-        let d = await ext.functions.request(url)
-        if (d != []) { data.nws = d; worked = true }
+    
+    async function nws() { // National Weather Service API Handler
+        if (primary['nws:api']['nws:enabled'] == true) {
+            let url = primary['nws:api']['nws:api']
+            let state = primary['nws:api']['nws:state']
+            if (state != `ALL` && state != ``) { url += `/area/${state}` }
+            let d = await ext.functions.request(url)
+            if (d.features && d.features.length > 0) { data.nws = d; } else { await nws(); return }
+        }
     }
-    if (primary['iem:api']['iem:enabled'] == true) {
-        let url = primary['iem:api']['iem:api']
-        // 2025-03-14T20:00:00Z
-        let Zdate = new Date().toISOString().split(`T`)[0] + `T` + new Date().toISOString().split(`T`)[1].split(`:`)[0] + `:00:00Z`
-        let d = await ext.functions.request(url + `${Zdate}`)
-        if (d != []) { data.iem = d; worked = true }
-        console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: This api is currently disabled.`)
-        process.exit()
+    async function reports() { // IEM Storm Reports API Handler
+        if (misc['iem:stormreports']['iem:stormreports:enable'] == true) {
+            let url = misc['iem:stormreports']['iem:stormreports:api']
+            let state = misc['iem:stormreports']['iem:stormreports:state']
+            let hours = misc['iem:stormreports']['iem:stormreports:hours']
+            if (state != `ALL` && state != ``) { url += `states=${state}` }
+            url += `&hours=${hours}`
+            let d = await ext.functions.request(url)
+            if (d.features && d.features.length > 0) { data.reports = d; } else { await reports(); return; }
+        }
+    }
 
+    async function allisionHouse() { 
+        if (primary['allisonhouse:warnings']['allisonhouse:warnings:enable'] == true) {
+            let url = primary['allisonhouse:warnings']['allisonhouse:warnings:api']
+            let d = await ext.functions.request(url)
+            if (d.length == 0) { await allisionHouse(); return; }
+            let extract = await ext.functions.extract(d)
+            let download = await ext.functions.download(extract, url)
+            let parser = await ext.functions.parser(download)
+            data.generic = parser
+        }
     }
-    if (misc['iem:stormreports']['iem:stormreports:enable'] == true) {
-        let url = misc['iem:stormreports']['iem:stormreports:api']
-        let state = misc['iem:stormreports']['iem:stormreports:state']
-        let hours = misc['iem:stormreports']['iem:stormreports:hours']
-        if (state != `ALL` && state != ``) { url += `states=${state}` }
-        url += `&hours=${hours}`
-        let d = await ext.functions.request(url)
-        if (d != []) { data.reports = d; worked = true }
+    async function cod() {
+        if (primary['cod:warnings']) {}
+    }
+    
 
-    }
-    if (!worked) {return console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Request failed - No data received. Timeout?`)}
+    await nws()
+    await reports()
+    await allisionHouse()
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms)`)
+
+
+
     await ext.functions.build(data)
 }
 

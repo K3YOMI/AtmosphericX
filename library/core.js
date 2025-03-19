@@ -22,6 +22,12 @@ functions.init = function() {
     console.log(logo)
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded Core Functions`)
 }
+functions.host = function(operations=false, requests=false) {
+    cache.statistics.cpu = (Math.round(os.loadavg()[0] * 100) + '%') == '0%' ? 'Unsupported (%)' : Math.round(os.loadavg()[0] * 100) + '%';
+    cache.statistics.memory = Math.round((os.totalmem() - os.freemem()) / os.totalmem() * 100) + '%';
+    if (operations) { cache.statistics.operations++}
+    if (requests) { cache.statistics.requests++}
+}
 functions.config = function(path) {
     let content = fs.readFileSync(path, 'utf8');
     return JSON.parse(content);
@@ -142,7 +148,6 @@ functions.register = function(data) {
     }
     if (allowUpdateNotification == false && data.properties.messageType == `Updated`) {
         if (!excludedEvents.includes(data.properties.event)) {
-            // remove it from the cache
             ignoreWarning = true
         }
     }

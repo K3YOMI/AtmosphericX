@@ -24,6 +24,7 @@
 - [Post Configuration](#doc_post)
 - [Dashboard Setup](#doc_dashboard)
 - [Registration Documentation](#doc_accountcreation)
+- [OBS Importing Documentation](#doc_obs)
 - [Endpoint Documentation](#doc_endoints)
 - [Credits and Packages](#doc_credits)
 
@@ -41,7 +42,7 @@
 	- Login Page
 		- Account Creation
 		- Password Change Support
-		- SHA256 Encryption (users.json)
+		- SHA256 Hashing (users.json)
 	- Active Alerts & General Information
 		- Active Alerts, Warnings, and Watches
 		- Local Storm Reports (Hail, Rain, Damages, Etc)
@@ -54,7 +55,7 @@
 		- GFS Model (https://www.tropicaltidbits.com/analysis/models/)
 		- HRRR Model (https://www.tropicaltidbits.com/analysis/models/?model=hrrr)
 		- Hodographs (https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3)
-	- SPC Day Risks and Outlooks (0600 and 1200)
+	- SPC Day Risks and Outlooks
 		- Categorial (Days: 1, 2, and 3)
 		- Tornado Risk (Days: 1 and 2)
 		- Hail Risk (Days: 1 and 2)
@@ -68,16 +69,18 @@
 		- Red Warning Box (Previous 6 Alerts)
 		- Audio Support
 		- Notificiation Support
-- [x] Portable (Supports audio and active warnings)
+- [x] Portable Mode (/premade/portable)
 - [x] Mobile Phone Audio Support
 	- Requires at least once interaction
 - [x] Full configuration support
 - [x] Synced Alerts
 - [x] SSL Certification Support
+- [x] Full widget support
+- [x] OBS Support
 
 
 # 🌧️ Install Guide <a name="doc_install"></a>
-Documentation Video Reference: https://youtu.be/dmCLYmTKeNg
+Documentation Video Reference: https://youtu.be/dmCLYmTKeNg (**OUTDATED**)
 
 To install Project AtmosphericX, you will need a few requirements. NodeJS / NPM and Git (optional)
 If you are not wanting to install git, you can also clone the repository by downloading it as a ZIP. If you do not know how to install any of the requirements, feel free to refer to their documentation.
@@ -96,6 +99,7 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
 ```json
 
 {
+    {
     "hosting:settings": {
         "https:enabled": false,
         "https:port": 3011,
@@ -106,63 +110,44 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
             "ssl:cert": "./cert/generated.crt"
         }
     },
-	"application:api": {
+    "application:api": {
         "primary:api": {
             "nws:api": {
                 "nws:enabled": true,
-                "nws:api": "https://api.weather.gov/alerts",
+                "nws:api": "https://api.weather.gov/alerts/active",
                 "nws:state": "",
                 "nws:forecastoffice": [],
                 "nws:same": [],
                 "nws:zone": []
             },
-            "iem:api": {
-                "iem:enabled": false,
-                "iem:api": "https://mesonet.agron.iastate.edu/geojson/sbw.geojson?ts=",
-                "iem:state": "",
-                "iem:forecastoffice": [],
-                "iem:same": [],
-                "iem:zone": []
+            "allisonhouse:warnings": {
+                "allisonhouse:warnings:enable": false,
+                "allisonhouse:warnings:api": "https://warnings.allisonhouse.com"
+            },
+            "cod:warnings": {
+                "cod:warnings:enable": false,
+                "cod:warnings:api": "https://warnings.cod.edu"
             }
         },
         "misc:api": {
-            "wire:xmpp": {
-                "wire:xmpp:enabled": false,
-                "wire:user": "",
-                "wire:secret": ""
-            },
             "iem:stormreports": {
                 "iem:stormreports:enable": true,
                 "iem:stormreports:state": "",
                 "iem:stormreports:hours": 1,
                 "iem:stormreports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
-            },
-            "allisonhouse:warningpoly": {
-                "allisonhouse:warningpoly:enable": true,
-                "allisonhouse:warningpoly:api": ""
-            },
-            "cod:warningpoly": {
-                "cod:warningpoly:enable": true,
-                "cod:warningpoly:api": "https://warnings.cod.edu/"
-            },
-            "map:level3": {},
-            "map:level2": {}
+            }
         }
     },
-     "application:information": {
+    "application:information": {
         "application:location": "Somewhere, USA",
-        "application:stateid": "",
-        "application:forecastoffice": "",
-        "application:same": [],
-        "application:zones": [],
-        "application:useragent": "AtmosphericX-5.0.0"
+        "application:timezone": "America/New_York",
+        "application:useragent": "AtmosphericX-v6"
     },
-    "request:settings": {
-        "request:activeonly": true,
-        "request:refresh_synced": 10,
+     "request:settings": {
+        "request:refresh_synced": 30,
         "request:query_sycned": 10,
-        "request:outbreakmode": true,
-        "request:outbreakalerts": [],  
+        "request:outbreakmode": false,
+        "request:outbreakalerts": [],
         "request:allalerts": [],
         "request:beeponly": false,
         "request:updates": true,
@@ -172,6 +157,8 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
     "application:banners": {},
     "application:warnings": {},
     "application:states": []
+}
+
 }
 
 ```
@@ -221,34 +208,71 @@ If a user wants to register a new username and password, the host must activate 
 
 
 
+# 🔴 Open Broadcasting Software Setup <a name="doc_obs"></a>
+
+### ⚠️ PLEASE READ BEFORE IMPORTING ⚠️
+> If you are **NOT** running this project on your local machine or you have **changed the default port**, it's imperative to change the links in the .json file for the exported obs scene.
+If not, you will have to manually change them in the sources. 
+
+Setting up AtmosphericX with [OBS](https://obsproject.com/) Studio is quite simple and can be time consuming depending if you want the full experince.
+A few plugins are required before proceeding with OBS studio, assuming you already have it installed.
+One of the required plugins is [Source Clone](https://obsproject.com/forum/resources/source-clone.1632/) and [Composite Blur](https://obsproject.com/forum/resources/composite-blur.1780/)
+
+The templates located in the `/obs` directory under the project folder include these essential exported files. Getting these plugins are highly beneficial and can enhance your OBS Studio experience, even outside the scope of AtmosphericX. They provide additional functionality and customization options to improve your streaming or recording setup. 
+
+To import: Scene Collection > Import > *.json
+
+Once you import the scene, you will see two new scenes. ``Template Scene`` and ``Template Overlay Source``, it's highly encouraged you don't touch either scenes and make a new scene that uses the ``soure clone`` source to then copy the overlay source and modify from there. You can see widget urls located down below.
+
+If you have no idea how to perform this or don't feel like modifying your own custom setup of AtmosphericX, you can simply import a browser source and use the URL ``[yourip/localhost]:[port]/premade/stream``. This will give you the old stream overlay with **full** functionality. 
 
 
-# 🌪️ API / Endpoints <a name="doc_endoints"></a>
+# 🌪️ API / Widgets <a name="doc_endoints"></a>
 ```
-(POST) (PUBLIC)   /api/login
-(POST) (PUBLIC)   /api/logout
-(POST) (PUBLIC)   /api/register
-(POST) (PUBLIC)   /api/reset
-(POST) (PRIVATE)  /api/notification
-(POST) (PRIVATE)  /api/manual
-(POST) (PRIVATE)  /api/status
-(POST) (PRIVATE)  /api/forcerequest
-(GET)  (PRIVATE)  /dashboard
-(GET)  (PUBLIC)   /registration
-(GET)  (PUBLIC)   /reset
-(GET)  (PUBLIC)   /warnings
-(GET)  (PUBLIC)   /portable
-(GET)  (PUBLIC)   /stream
-(GET)  (PUBLIC)   /map
-(GET)  (PUBLIC)   /api/alerts
-(GET)  (PUBLIC)   /api/manual
-(GET)  (PUBLIC)   /api/warnings
-(GET)  (PUBLIC)   /api/watches
-(GET)  (PUBLIC)   /api/notifications
-(GET)  (PUBLIC)   /api/status
-(GET)  (PUBLIC)   /api/configurations
-(GET)  (PUBLIC)   /api/states
-(GET)  (PUBLIC)   /reports
+[Login Portal]
+- (GET)  (PUBLIC) /registration
+- (GET)  (PUBLIC) /reset
+- (POST) (PUBLIC) /api/login
+- (POST) (PUBLIC) /api/logout
+- (POST) (PUBLIC) /api/register
+- (POST) (PUBLIC) /api/reset
+
+[Public API]
+- (GET)  (PUBLIC) /api/alerts
+- (GET)  (PUBLIC) /api/manual
+- (GET)  (PUBLIC) /api/warnings
+- (GET)  (PUBLIC) /api/watches
+- (GET)  (PUBLIC) /api/notifications
+- (GET)  (PUBLIC) /api/status
+- (GET)  (PUBLIC) /api/configurations
+- (GET)  (PUBLIC) /api/states
+- (GET)  (PUBLIC) /reports
+
+[Private API]
+- (GET)  (PUBLIC) /dashboard
+- (POST) (PUBLIC) /api/forcerequest
+- (POST) (PUBLIC) /api/notification
+- (POST) (PUBLIC) /api/manual
+- (POST) (PUBLIC) /api/status
+
+[Widgets]
+- (GET)  (PUBLIC) /widgets/alert
+- (GET)  (PUBLIC) /widgets/map
+- (GET)  (PUBLIC) /widgets/warnings
+- (GET)  (PUBLIC) /widgets/light
+- (GET)  (PUBLIC) /widgets/dark
+- (GET)  (PUBLIC) /widgets/random_description
+- (GET)  (PUBLIC) /widgets/random_title
+- (GET)  (PUBLIC) /widgets/random_location
+- (GET)  (PUBLIC) /widgets/random_expires
+- (GET)  (PUBLIC) /widgets/local_time
+- (GET)  (PUBLIC) /widgets/local_date
+- (GET)  (PUBLIC) /widgets/header
+- (GET)  (PUBLIC) /widgets/notification
+
+[Premade Overlays]
+- (GET)  (PUBLIC) /premade/stream
+- (GET)  (PUBLIC) /premade/portable
 ```
 
 
