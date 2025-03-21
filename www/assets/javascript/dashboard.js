@@ -194,8 +194,8 @@ dashboard.execute = async function() {
         {title: `Reports`, id: `active_reports_int`, data: `<center><h1 style="font-size: 30px">${cache.reports.length}</h1></center>`},
     ]
     let tHostingStats = [
-        {title: `Calls`, id: `operations_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.operations}</h1></center>`},
-        {title: `Requests`, id: `requests_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.requests}</h1></center>`},
+        {title: `External Calls`, id: `operations_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.operations}</h1></center>`},
+        {title: `Internal Calls`, id: `requests_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.requests}</h1></center>`},
         {title: `Memory`, id: `memory_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.memory}</h1></center>`},
         {title: `CPU`, id: `cpu_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.cpu}</h1></center>`}
     ]
