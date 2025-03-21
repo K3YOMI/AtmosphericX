@@ -128,7 +128,7 @@
             "update": "/assets/media/audio/tor/tor-updated.mp3",
             "cancel": "/assets/media/audio/tones/beep-tone.mp3",
             "card": "Tornado Emergency",
-            "siren": false,
+            "siren": true,
             "eas": false,
             "autobeep": true
         },

@@ -159,7 +159,7 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
      "request:settings": {
         "request:refresh_synced": 30,
         "request:query_sycned": 10,
-        "request:outbreakmode": false,
+        "request:outbreakmode": true,
         "request:outbreakalerts": [],
         "request:allalerts": [],
         "request:beeponly": false,
