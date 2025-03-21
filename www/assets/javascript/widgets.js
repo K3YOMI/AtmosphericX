@@ -173,6 +173,9 @@ widgets.map.populate = function() {
         let currentTime = Date.now();
         let minutesElapsed = Math.floor((currentTime - lastSeenTime) / 60000);
         if (minutesElapsed < 30) {
+            defaultColor = { color: 'yellow', fillColor: 'yellow', fillOpacity: 0.1, radius: 50 };
+        }
+        if (description.includes('Heading')) {
             defaultColor = { color: 'green', fillColor: 'green', fillOpacity: 0.1, radius: 50 };
         }
         if (streaming) {
@@ -180,7 +183,7 @@ widgets.map.populate = function() {
         }
         let circle = L.circle([lat, lon], defaultColor).addTo(widgets.cache.maplod).bindPopup(`<b>${description}</b>`);
         if (tracking && tracking !== "SPOTTER_NAME_HERE" && description.includes(tracking)) {
-            circle.setStyle({ fillColor: 'yellow', color: 'yellow' });
+            circle.setStyle({ fillColor: 'pink', color: 'pink' });
             widgets.cache.maplod.fitBounds(circle.getBounds(), { maxZoom: 12, animate: true, duration: 2 });
         }
     }
