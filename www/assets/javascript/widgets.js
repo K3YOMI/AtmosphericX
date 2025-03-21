@@ -40,7 +40,7 @@ widgets.alert.send = function(animation_dict, alert_title, alert_description) {
     let doc_description = document.getElementById(`alert_description`)
     doc_notification.style.display = `block`;
     doc_notification.src = `${animation_dict}?alert=${cache.alert}`
-    if (alert_description.length > 108) {alert_description = alert_description.substring(0, 100) + '...';}
+    if (alert_description.length > 80) {alert_description = alert_description.substring(0, 80) + '...';}
     setTimeout(function() { 
         doc_notification.style.display = `none`; cache.running = false;
     }, 6800)

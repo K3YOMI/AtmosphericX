@@ -100,9 +100,16 @@ library.play = function(uri, limited=false) { // Plays frontend audio (Limited t
     }
 }
 library.time = function(value=0) { 
-    let time
-    let tMonthDictionary = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEPT","OCT","NOV","DEC"];
-    if (value == 0) { time = new Date() } else { time = value }
+    let time;
+    let tMonthDictionary = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEPT", "OCT", "NOV", "DEC"];
+    let timezone = cache.config['application:timezone'];
+    let t12Hour = cache.config['application:12hour'];
+    
+    if (value == 0) { 
+        time = new Date(); 
+    } else { 
+        time = value; 
+    }
     let tFormal = new Date(time.toLocaleString("en-US", { timeZone: cache.config['application:timezone'] }));
     let tFormalAbreviation = new Date().toLocaleString("en-US", { timeZoneName: "short", timeZone: cache.config['application:timezone'] });
     let tTimezone = tFormalAbreviation.split(' ')[3];
@@ -111,11 +118,23 @@ library.time = function(value=0) {
     let tHour = tFormal.getHours();
     let tMonth = tFormal.getMonth();
     let tDay = tFormal.getDate();
-    if (tMinute < 10) { tMinute = "0" + tMinute }
-    if (tSecond < 10) { tSecond = "0" + tSecond }
-    if (tHour < 10) { tHour = "0" + tHour }
+    let tExtension = tHour >= 12 ? "PM" : "AM";
+    
+    if (t12Hour) {
+        tHour = tHour % 12 || 12; // Convert to 12-hour format
+    }
+    
+    if (tMinute < 10) { tMinute = "0" + tMinute; }
+    if (tSecond < 10) { tSecond = "0" + tSecond; }
+    if (tHour < 10 && !t12Hour) { tHour = "0" + tHour; }
     tMonth = tMonthDictionary[tMonth];
-    return {time: `${tHour}:${tMinute}:${tSecond}`, date: `${tMonth} ${tDay}`, timezone: tTimezone, unix: tFormal.getTime() / 1000}
+    
+    return {
+        time: `${tHour}:${tMinute}:${tSecond}${t12Hour ? " " + tExtension : ""}`,
+        date: `${tMonth} ${tDay}`,
+        timezone: tTimezone,
+        unix: tFormal.getTime() / 1000
+    };
 }
 library.delay = async function(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
