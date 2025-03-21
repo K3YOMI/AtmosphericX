@@ -184,7 +184,7 @@ widgets.map.populate = function() {
         let circle = L.circle([lat, lon], defaultColor).addTo(widgets.cache.maplod).bindPopup(`<b>${description}</b>`);
         if (tracking && tracking !== "SPOTTER_NAME_HERE" && description.includes(tracking)) {
             circle.setStyle({ fillColor: 'pink', color: 'pink' });
-            widgets.cache.maplod.fitBounds(circle.getBounds(), { maxZoom: 12, animate: true, duration: 2 });
+            widgets.cache.maplod.fitBounds(circle.getBounds(), { maxZoom: 15, animate: true, duration: 2 });
         }
     }
 }
