@@ -20,6 +20,7 @@ let cache = {
     alerts: [],
     reports: [],
     watches: [],
+    spotters: [],
     manual: [],
     broadcasts: [],
     lastQueries: [],
@@ -172,6 +173,7 @@ library.sync = async function() {
         cache.config = response.configurations
         cache.random = response.random
         cache.status = response.status
+        cache.spotters = response.spotters
         if (cache.manual.length != 0) {
             if (cache.manual.details.ingored != true) { 
                 cache.alerts.push(cache.manual)

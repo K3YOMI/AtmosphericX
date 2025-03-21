@@ -166,6 +166,30 @@ functions.parser = function (data) {
         resolve(tCache)
     });
 }
+functions.spotternetwork = function(d1, d2) {
+    return new Promise((resolve, reject) => {
+        let regex = /Object:\s*([\d.-]+),([\d.-]+)\s*Icon:.*?"(.*?)\n.*?Text:.*?"(.*?)"/g
+        let regex2 = /Object:\s*([\d.-]+),([\d.-]+)\s*Icon:.*?"(.*?)\n.*?Icon:.*?"(.*?)\n.*?Text:.*?"(.*?)"/g
+        let regx3 = /Object:\s*([\d.-]+),([\d.-]+)\s*$/g
+        regex = new RegExp(regex.source + '|' + regex2.source + '|' + regx3.source, 'gs')
+        let spotters = []
+        let d1Match = [...d1.matchAll(regex)]
+        let d2Match = [...d2.matchAll(regex)]
+        for (const match of d2Match) {
+            let lat = parseFloat(match[1])
+            let lon = parseFloat(match[2])
+            let description = match[3] == undefined ? "N/A" : match[3]
+            spotters.push({ lat: lat, lon: lon, description: description, streaming: 1})
+        }
+        for (const match of d1Match) {
+            let lat = parseFloat(match[1])
+            let lon = parseFloat(match[2])
+            let description = match[3] == undefined ? "N/A" : match[3]
+            spotters.push({ lat: lat, lon: lon, description: description, streaming: 0})
+        }
+        resolve(spotters)
+    })
+}
 
 
 functions.build = function (data) {

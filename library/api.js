@@ -237,6 +237,10 @@ functions.request_configurations = function(req, res, ret=true) { // Handles the
             },
             ['spc:outlooks']: cache.configurations['spc:outlooks'],
             ['external:services']: cache.configurations['external:services'],
+            ['map:layers']: {
+                ['radar']: cache.configurations['application:api']['misc:api']['radar:layer'],
+                ['tracking']: cache.configurations['application:api']['misc:api']['spotternetwork:members']['spotternetwork:tracking'],
+            },
         }
         if (!ret) {return modified}
         res.statusCode = 200
@@ -251,6 +255,7 @@ functions.request = async function() {
     let misc = calls['misc:api']
     let data = {}
     let time = new Date()
+    let result = ``
     data.nws = undefined
     data.generic = undefined
     data.reports = undefined
@@ -262,6 +267,7 @@ functions.request = async function() {
             if (state != `ALL` && state != ``) { url += `/area/${state}` }
             let d = await ext.functions.request(url)
             if (d.features != undefined) { data.nws = d; } else { await nws(); return }
+            result += `(NWS: ${d.features.length})`
         }
     }
     async function reports() { // IEM Storm Reports API Handler
@@ -273,6 +279,7 @@ functions.request = async function() {
             url += `&hours=${hours}`
             let d = await ext.functions.request(url)
             if (d.features != undefined) { data.reports = d; } else { await reports(); return; }
+            result += ` (REPORTS: ${d.features.length})`
         }
     }
 
@@ -285,6 +292,7 @@ functions.request = async function() {
             let download = await ext.functions.download(extract, url)
             let parser = await ext.functions.parser(download)
             data.generic = parser
+            result += ` (AH: ${parser.length})`
         }
     }
     async function cod() {
@@ -296,13 +304,33 @@ functions.request = async function() {
             let download = await ext.functions.download(extract, url)
             let parser = await ext.functions.parser(download)
             data.generic = parser
+            result += ` (COD: ${parser.length})`
         }
     }
+    async function spotternetwork() {
+        let d = ``
+        let c = ``
+        if (misc['spotternetwork:members']['spotternetwork:members:enable'] == true) {
+            let url = misc['spotternetwork:members']['spotternetwork:members:api']
+            d = await ext.functions.request(url)
+            if (d.length == 0) { await spotternetwork(); return; }
+        }
+        if (misc['spotternetwork:members']['spotternetwork:streams:enable'] == true) {
+            let url = misc['spotternetwork:members']['spotternetwork:streams:api']
+            c = await ext.functions.request(url)
+            if (c.length == 0) { await spotternetwork(); return; }
+        }
+        let parsed = await ext.functions.spotternetwork(d,c)
+        cache.alerts.spotters = parsed
+        result += ` (SPOTTERS: ${parsed.length})`
+    }
+
     await nws()
     await reports()
     await allisionHouse()
     await cod()
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms)`)
+    await spotternetwork()
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms) | ${result}`)
     await ext.functions.build(data)
 }
 

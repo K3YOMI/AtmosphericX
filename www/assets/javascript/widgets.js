@@ -109,12 +109,26 @@ widgets.map.create = function() {
 widgets.map.populate = function() {
     let active = cache.alerts
     let reports = cache.reports
+    let spotters = cache.spotters
     let condition = false 
+    let radar = cache.config['map:layers']['radar']['radar:layer:enable']
+    let api = cache.config['map:layers']['radar']['radar:layer:api']
+    let tracking = cache.config['map:layers']['tracking']
     widgets.cache.maplod.eachLayer(function (layer) { 
-        if (layer instanceof L.Circle || layer instanceof L.Polygon && layer !== widgets.cache.focus) { 
-            widgets.cache.maplod.removeLayer(layer);
+        if (!(layer instanceof L.TileLayer)) {
+            if (radar == true) {
+                widgets.cache.maplod.eachLayer(function (layer) {
+                    if (layer.options && layer.options.className === 'map-tiles2') {
+                        widgets.cache.maplod.removeLayer(layer);
+                    }
+                });
+            }
+ 
+            if (layer instanceof L.Polygon && layer != widgets.cache.focus) { widgets.cache.maplod.removeLayer(layer); }
+            if (layer instanceof L.Circle) { widgets.cache.maplod.removeLayer(layer); }
         }
     });
+    if (radar == true) { L.tileLayer(api, {className: 'map-tiles2', opacity: 0.4}).addTo(widgets.cache.maplod); }
     for (let i = 0; i < active.length; i++) {
         let alert = active[i]
         if (alert.raw.geometry == undefined) {continue}
@@ -132,9 +146,9 @@ widgets.map.populate = function() {
             if (widgets.cache.pastalt != JSON.stringify(alert)) { 
                 widgets.cache.pastalt = JSON.stringify(alert);
                 if (widgets.cache.focus) { widgets.cache.maplod.removeLayer(widgets.cache.focus); }
-                let polygon = L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}</div>`).openPopup();
+                let polygon = L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}</div>`)
                 widgets.cache.focus = polygon;
-                widgets.cache.maplod.fitBounds(polygon.getBounds(), {animate: true, duration: 2});
+                if (tracking == "" || tracking == "SPOTTER_NAME_HERE") { widgets.cache.maplod.fitBounds(polygon.getBounds(), {animate: true, duration: 2}); polygon.openPopup(); }
             }
         } else {
             L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 2000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`);
@@ -147,9 +161,29 @@ widgets.map.populate = function() {
         let lon = report.raw.lon;
         let sender = report.details.sender;
         let value = report.raw.value;
-        L.circle([lat, lon], {color: 'black',fillColor: 'blue',fillOpacity: 0.1,radius: 2000}).addTo(widgets.cache.maplod).bindPopup(`<b>${report.details.name} (${report.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Value:</b> ${value}`)
+        L.circle([lat, lon], {color: 'white',fillColor: 'white',fillOpacity: 0.1,radius: 2000}).addTo(widgets.cache.maplod).bindPopup(`<b>${report.details.name} (${report.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Value:</b> ${value}`)
     }
-
+    for (let i = 0; i < spotters.length; i++) {
+        let spotter = spotters[i];
+        let description = spotter.description.toString().replace(/\\n/g, '<br>').replace('"', '');
+        let { lat, lon, streaming } = spotter;
+        let defaultColor = { color: 'red', fillColor: 'red', fillOpacity: 0.1, radius: 50 };
+        let lastSeen = description.split('<br>')[1];
+        let lastSeenTime = new Date(lastSeen + ' UTC').getTime();
+        let currentTime = Date.now();
+        let minutesElapsed = Math.floor((currentTime - lastSeenTime) / 60000);
+        if (minutesElapsed < 30) {
+            defaultColor = { color: 'green', fillColor: 'green', fillOpacity: 0.1, radius: 50 };
+        }
+        if (streaming) {
+            defaultColor = { color: 'blue', fillColor: 'blue', fillOpacity: 0.1, radius: 50 };
+        }
+        let circle = L.circle([lat, lon], defaultColor).addTo(widgets.cache.maplod).bindPopup(`<b>${description}</b>`);
+        if (tracking && tracking !== "SPOTTER_NAME_HERE" && description.includes(tracking)) {
+            circle.setStyle({ fillColor: 'yellow', color: 'yellow' });
+            widgets.cache.maplod.fitBounds(circle.getBounds(), { maxZoom: 12, animate: true, duration: 2 });
+        }
+    }
 }
 widgets.header.update = function(id) {       
     if (cache.status == ``) {

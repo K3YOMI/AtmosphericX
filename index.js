@@ -22,6 +22,7 @@ cache.alerts = {
     broadcasts: [], danger: [],
     reports: [],
     random: [],
+    spotters: [],
     random_index: 0,
     status: ``
 }
