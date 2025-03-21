@@ -20,7 +20,7 @@ body, html {
     color: white;
     word-wrap: break-word;
     font-family: 'SofiaSansSemiCondensed-Bold'; 
-    text-shadow: 15px 15px 15px #000000;
+    text-shadow: 5px 5px 15px #000000;
     margin-bottom: 0;
     position: absolute;
     top: 25%;
