@@ -135,14 +135,14 @@ html, body, #page {
     text-shadow: 2px 2px 15px #000000;
 }
 #random_alert_title{
-    font-size: 35px;
+    margin-top: 1023px;
+    font-size: 30px;
     position: absolute;
     text-align: center;
     overflow: hidden;
-    margin-top: 1015px;
     color: white;
     width: 450px;
-    height: 150px;
+    height: 90px;
     word-wrap: break-word;
     font-family: 'SofiaSansSemiCondensed-Bold'; 
     text-shadow: 2px 2px 5px #000000;

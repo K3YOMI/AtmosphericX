@@ -22,6 +22,7 @@ cache.alerts = {
     broadcasts: [], danger: [],
     reports: [],
     random: [],
+    random_index: 0,
     status: ``
 }
 cache.configurations = undefined;
@@ -97,6 +98,7 @@ app.get(`/widgets/local_time`, (req, res) => {res.sendFile(__dirname + '/www/wid
 app.get(`/widgets/local_date`, (req, res) => {res.sendFile(__dirname + '/www/widgets/date@widget/index.html')})
 app.get(`/widgets/header`, (req, res) => {res.sendFile(__dirname + '/www/widgets/header@widget/index.html')})
 app.get(`/widgets/notification`, (req, res) => {res.sendFile(__dirname + '/www/widgets/notification@widget/index.html')})
+app.get(`/widgets/spc`, (req, res) => {res.sendFile(__dirname + '/www/widgets/spc@widget/index.html')})
 
 
 /* Premade Widgets */
@@ -147,17 +149,20 @@ return new Promise(async (resolve, reject) => {
     if (hosting['https:enabled']) {console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Secure Server is running on port ${hosting['https:port']}`)}
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Please remember to stick to offical sources for accurate weather information. Even though this project uses multiple api sources, it is not a replacement for official sources.`)
     await api.functions.request()    
+    await api.functions.request_random_alert()
     core.functions.host(true)
     setInterval(async () => { // a little messy but operational...
-        const allAlerts = [...cache.alerts.active, ...[cache.alerts.manual]];
-        cache.alerts.random = allAlerts[Math.floor(Math.random() * allAlerts.length)];
+        await api.functions.request_random_alert()
         if (new Date().getSeconds() % cache.configurations['request:settings']['request:refresh_synced'] == 0) {
             if (cache.requesting) {return}
-            cache.requesting = true
-            await api.functions.request()  
-            core.functions.host(true)
             cache.configurations = core.functions.config(`./configurations.json`)
-            setTimeout(() => { cache.requesting = false; }, 1000);
+            cache.requesting = true 
+            setTimeout(async () => { 
+                cache.requesting = false; 
+                await api.functions.request()  
+                core.functions.host(true)
+            }, 1000);
+
         }
     }, 200);
 })

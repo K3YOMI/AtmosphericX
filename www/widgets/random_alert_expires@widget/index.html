@@ -17,7 +17,6 @@
             Calls:
             - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
             - library.init() - Initializes the library and sets the session to ready
-            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
             - library.checkSession() - Checks if the session is ready to be updated
           
             Variables:
@@ -28,18 +27,17 @@
         */
         library.createSession().then(() => {
             library.init()
-            library.isMobile()
             widgets.functions.init()
             setInterval(async () => {
                 let session = await library.checkSession()
                 if (session) { 
                     await library.sync()
-                    let sTime = Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)
-                    if (sTime != isNaN(sTime)) {sTime = `Not Available`}
-                    if (sTime < 0) {sTime = `Just Expired`}
-                    if (sTime == 0) {sTime = `Expires in <b>Less than a minute</b>`}
-                    if (sTime > 1) {sTime = `Expires in <b>${sTime} minutes</b>`}
-                    widgets.random.set('random_alert_expires', sTime, 32, 'opacity0Animation', 'opacity100Animation')
+                    let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)) ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60) : 'Not Available'
+
+                    if (expires < 0) {expires = `Expires Soon`}
+                    if (expires > 1) {expires = `Expires in <b>${expires} minutes</b>`}
+                    if (!Number.isNaN(Number(expires))) {expires = `Not Available`}
+                    widgets.random.set('random_alert_expires', expires, 32, 'opacity0Animation', 'opacity100Animation')
                 }
             }, 200) 
         })

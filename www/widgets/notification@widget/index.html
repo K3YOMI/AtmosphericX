@@ -21,12 +21,10 @@
             Calls:
             - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
             - library.init() - Initializes the library and sets the session to ready
-            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
             - library.time() - Gets the current time and date
         */
         library.createSession().then(() => {
             library.init()
-            library.isMobile()
             widgets.functions.init()
             setInterval(async () => {
                 let session = await library.checkSession()

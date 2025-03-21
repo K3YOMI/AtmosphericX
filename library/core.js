@@ -57,7 +57,7 @@ functions.parameters = function(paramaters) {
     let thunderstormDamageThreat = paramaters.thunderstormDamageThreat || 'Not Calculated';
     return {hail: maxHailSize, wind: maxWindGust, tornado: tornadoDetection, thunderstorm: thunderstormDamageThreat}
 }
-functions.getCustomEventSignature = function(data) {
+functions.get_custom_event_signature = function(data) {
     let description = (data.properties.description == undefined) ? `no description` : data['properties']['description'].toLowerCase()
     if (description.includes(`flash flood emergency`) && data.properties.event == `Flash Flood Warning`) { data.properties.event = `Flash Flood Emergency` }
     if (description.includes(`particularly dangerous situation`) && data.properties.event == `Tornado Warning`) { data.properties.event = `Particularly Dangerous Situation` }
@@ -74,7 +74,7 @@ functions.getCustomEventSignature = function(data) {
     }
     return data.properties.event
 }
-functions.getSignature = function(data) {
+functions.get_signature = function(data) {
     let audioToUse = cache.configurations['application:sounds']['application:beep']
     let eventAction = cache.configurations['application:warnings'][data.properties.event]
     if (eventAction == undefined) {
@@ -127,8 +127,8 @@ functions.register = function(data) {
     data.properties.parameters.maxHailSize = hail
     if (data.properties.description == undefined) { data.properties.description = `No Description` }
     data.properties.areaDesc = functions.format(data.properties.areaDesc)
-    data.properties.event = functions.getCustomEventSignature(data)
-    let signature = functions.getSignature(data)
+    data.properties.event = functions.get_custom_event_signature(data)
+    let signature = functions.get_signature(data)
     data.properties.messageType = signature.message
     if (signature.eas == true || signature.siren == true) {
         if (!cache.alerts.danger.includes(`${data.properties.event}-${data.properties.areaDesc}-${data.properties.sent}-${data.properties.expires}-${data.properties.description}`)) {

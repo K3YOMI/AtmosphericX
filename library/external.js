@@ -18,18 +18,18 @@ functions.init = function () {
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Loaded NWS Functions`)
 }
 
-functions.isCancelled = function (description) {
+functions.is_cancelled = function (description) {
     if (description.includes('has been cancelled')) { return true }
     if (description.includes('will be allowed to expire')) { return true }
     if (description.includes('has diminished')) { return true }
     return false
 }
-functions.doesExist = function (arr, id) {
+functions.does_exist = function (arr, id) {
     let find = arr.filter(alert => alert['id'] == id)
     if (find == undefined || find.length == 0) { return false }
     return true
 }
-functions.customfilter = function (data) {
+functions.custom_filter = function (data) {
     let forecastOffice = cache.configurations['application:api']['primary:api']['nws:api']['nws:forecastoffice']
     let sameCode = cache.configurations['application:api']['primary:api']['nws:api']['nws:same']
     let zones = cache.configurations['application:api']['primary:api']['nws:api']['nws:zone']
@@ -38,7 +38,7 @@ functions.customfilter = function (data) {
     if (zones.length != 0) { data = data.filter(alert => alert['properties']['geocode']['UGC'].some(code => zones.includes(code))) }
     return data
 }
-functions.genericFilter = function (data) {
+functions.generic_filter = function (data) {
     let permittedEvents = cache.configurations['request:settings']['request:outbreakmode'] ? cache.configurations['request:settings']['request:outbreakalerts'] : cache.configurations['request:settings']['request:allalerts']
     let filter = data.filter(alert => permittedEvents.includes(alert['properties']['event'])).filter(alert => new Date(alert['properties']['expires']).getTime() / 1000 > new Date().getTime() / 1000)
     let warnings = filter.filter(alert => alert['properties']['event'].includes('Warning'))
@@ -176,12 +176,14 @@ functions.build = function (data) {
         let tCacheReports = []
         if (data.nws != undefined && data.nws.features.length > 0) {
             let nws = data.nws
-            let customFiltering = functions.customfilter(nws['features'])
-            let { warnings, watches, unknown } = functions.genericFilter(customFiltering)
+            let customFiltering = functions.custom_filter(nws['features'])
+            let { warnings, watches, unknown } = functions.generic_filter(customFiltering)
             for (let i = 0; i < watches.length; i++) { // Watches
                 let alert = watches[i]
-                if (functions.isCancelled(alert['properties']['description'])) { continue }
-                if (functions.doesExist(tCacheWatches, alert['id'])) { continue }
+                if (alert['properties']['description'] != null) {
+                    if (functions.is_cancelled(alert['properties']['description'])) { continue }
+                }
+                if (functions.does_exist(tCacheWatches, alert['id'])) { continue }
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) { continue }
@@ -191,8 +193,10 @@ functions.build = function (data) {
             }
             for (let i = 0; i < warnings.length; i++) { // Warnings
                 let alert = warnings[i]
-                if (functions.isCancelled(alert['properties']['description'])) { continue }
-                if (functions.doesExist(tCacheWarnings, alert['id'])) { continue }
+                if (alert['properties']['description'] != null) {
+                    if (functions.is_cancelled(alert['properties']['description'])) { continue }
+                }
+                if (functions.does_exist(tCacheWarnings, alert['id'])) { continue }
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) { continue }
@@ -203,9 +207,9 @@ functions.build = function (data) {
             for (let i = 0; i < unknown.length; i++) { // Does haven't a defined warning/watch string in the eventName
                 let alert = unknown[i]
                 if (alert['properties']['description'] != null) {
-                    if (functions.isCancelled(alert['properties']['description'])) { continue }
+                    if (functions.is_cancelled(alert['properties']['description'])) { continue }
                 }
-                if (functions.doesExist(tCacheWarnings, alert['id'])) { continue }
+                if (functions.does_exist(tCacheWarnings, alert['id'])) { continue }
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) { continue }
@@ -232,12 +236,12 @@ functions.build = function (data) {
         }
         if (data.generic != undefined && data.generic.features.length > 0) {
             let generic = data.generic.features
-            let customFiltering = functions.customfilter(generic)
-            let { warnings, watches, unknown } = functions.genericFilter(customFiltering)
+            let customFiltering = functions.custom_filter(generic)
+            let { warnings, watches, unknown } = functions.generic_filter(customFiltering)
             for (let i = 0; i < watches.length; i++) { // Watches
                 let alert = watches[i]
-                if (functions.isCancelled(alert['properties']['description'])) { continue }
-                if (functions.doesExist(tCacheWatches, alert['id'])) { continue }
+                if (functions.is_cancelled(alert['properties']['description'])) { continue }
+                if (functions.does_exist(tCacheWatches, alert['id'])) { continue }
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) { continue }
@@ -247,8 +251,8 @@ functions.build = function (data) {
             }
             for (let i = 0; i < warnings.length; i++) { // Warnings
                 let alert = warnings[i]
-                if (functions.isCancelled(alert['properties']['description'])) { continue }
-                if (functions.doesExist(tCacheWarnings, alert['id'])) { continue }
+                if (functions.is_cancelled(alert['properties']['description'])) { continue }
+                if (functions.does_exist(tCacheWarnings, alert['id'])) { continue }
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) { continue }
@@ -259,9 +263,9 @@ functions.build = function (data) {
             for (let i = 0; i < unknown.length; i++) { // Does haven't a defined warning/watch string in the eventName
                 let alert = unknown[i]
                 if (alert['properties']['description'] != null) {
-                    if (functions.isCancelled(alert['properties']['description'])) { continue }
+                    if (functions.is_cancelled(alert['properties']['description'])) { continue }
                 }
-                if (functions.doesExist(tCacheWarnings, alert['id'])) { continue }
+                if (functions.does_exist(tCacheWarnings, alert['id'])) { continue }
                 let tData = core.functions.register(alert)
                 if (Object.keys(tData).length != 0) {
                     if (tData.details.ignored == true) { continue }

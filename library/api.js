@@ -202,6 +202,22 @@ functions.request_data = async function(req, res, type) {
         return
     } catch (error) {web.functions.internal(req, res, error); return;}
 }
+functions.request_random_alert = async function() {
+    return new Promise((resolve, reject) => {
+        let alerts = [...cache.alerts.active, ...[cache.alerts.manual]].filter(alert => alert && Object.keys(alert).length > 0);
+        if (alerts.length > 0) {
+            if (cache.alerts.random_index === undefined || cache.alerts.random_index >= alerts.length) {
+                cache.alerts.random_index = 0;
+            }
+            cache.alerts.random = alerts[cache.alerts.random_index];
+            cache.alerts.random_index++;
+        } else {
+            cache.alerts.random = null;
+            cache.alerts.random_index = undefined;
+        }
+        resolve();
+    });
+}
 functions.request_configurations = function(req, res, ret=true) { // Handles the configurations request (GET)
     try {
         let modified = { 
@@ -210,6 +226,7 @@ functions.request_configurations = function(req, res, ret=true) { // Handles the
             ['query:rate']: cache.configurations['request:settings']['request:query_sycned'],
             ['refresh:rate']: cache.configurations['request:settings']['request:refresh_synced'],
             ['application:timezone']: cache.configurations['application:information']['application:timezone'],
+            ['application:12hour']: cache.configurations['application:information']['application:12hour'],
             ['application:location']: cache.configurations['application:information']['application:location'],
             ['application:useragent']: cache.configurations['application:api']['primary:api']['nws:api']['application:useragent'],
             ['application:sounds']: cache.configurations['application:sounds'],
@@ -217,7 +234,9 @@ functions.request_configurations = function(req, res, ret=true) { // Handles the
             ['application:warnings']: cache.configurations['application:warnings'],
             ['overlay:settings']: {
                 ['color:scheme']: cache.configurations['overlay:settings']['color:scheme'],
-            }
+            },
+            ['spc:outlooks']: cache.configurations['spc:outlooks'],
+            ['external:services']: cache.configurations['external:services'],
         }
         if (!ret) {return modified}
         res.statusCode = 200
@@ -242,7 +261,7 @@ functions.request = async function() {
             let state = primary['nws:api']['nws:state']
             if (state != `ALL` && state != ``) { url += `/area/${state}` }
             let d = await ext.functions.request(url)
-            if (d.features && d.features.length > 0) { data.nws = d; } else { await nws(); return }
+            if (d.features != undefined) { data.nws = d; } else { await nws(); return }
         }
     }
     async function reports() { // IEM Storm Reports API Handler
@@ -253,7 +272,7 @@ functions.request = async function() {
             if (state != `ALL` && state != ``) { url += `states=${state}` }
             url += `&hours=${hours}`
             let d = await ext.functions.request(url)
-            if (d.features && d.features.length > 0) { data.reports = d; } else { await reports(); return; }
+            if (d.features != undefined) { data.reports = d; } else { await reports(); return; }
         }
     }
 
@@ -279,16 +298,11 @@ functions.request = async function() {
             data.generic = parser
         }
     }
-    
-
     await nws()
     await reports()
     await allisionHouse()
     await cod()
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms)`)
-
-
-
     await ext.functions.build(data)
 }
 

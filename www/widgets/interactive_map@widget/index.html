@@ -24,7 +24,6 @@
             Calls:
             - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
             - library.init() - Initializes the library and sets the session to ready
-            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
             - library.checkSession() - Checks if the session is ready to be updated
             - library.sync() - Gathers information from the API and compares to see if it's recent or new, if so, it will add to the queue cache
             - widgets.map.create() - Creates the map
@@ -33,7 +32,6 @@
 
         library.createSession().then(() => {
             library.init()
-            library.isMobile()
             widgets.functions.init()
             widgets.map.create()
             setInterval(async () => {

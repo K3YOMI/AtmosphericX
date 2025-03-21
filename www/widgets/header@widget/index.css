@@ -13,10 +13,17 @@ body, html {
 }
 .text { 
     font-size: 35px;
-    font-weight : bold;
-    overflow: hidden;
+    line-height: 35px;
+    width: 100%;
     text-align: center;
+    overflow: hidden;
     color: white;
+    word-wrap: break-word;
     font-family: 'SofiaSansSemiCondensed-Bold'; 
-    text-shadow: 2px 2px 15px #00000069; 
+    text-shadow: 15px 15px 15px #000000;
+    margin-bottom: 0;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -17,7 +17,6 @@
             Calls:
             - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
             - library.init() - Initializes the library and sets the session to ready
-            - library.isMobile() - Checks if the client is on a mobile device (If so, it will change the sounds to support mobile devices)
             - library.checkSession() - Checks if the session is ready to be updated
           
             Variables:
@@ -28,14 +27,13 @@
         */
         library.createSession().then(() => {
             library.init()
-            library.isMobile()
             widgets.functions.init()
             document.getElementById("random_alert_description").innerHTML = `Syncing`
             setInterval(async () => {
                 let session = await library.checkSession()
                 if (session) { 
                     await library.sync()
-                    let text = (cache.random && cache.random.details && cache.random.details.description) ? cache.random.details.description : 'Nothing to display'
+                    let text = (cache.random && cache.random.details && cache.random.details.description) ? cache.random.details.description : 'Not Available'
                     widgets.random.set('random_alert_description', text, 140, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
                 }
             }, 200) 

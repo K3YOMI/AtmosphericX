@@ -11,7 +11,7 @@
         <p id="alert_title"></p>
         <p id="alert_description"></p>
     </img>
-    <div class="defaultBox"  style="height: 95px; width: 1920px; margin-top: 0px; margin-left: 400px; background-color: rgb(42,81,224);"></div>
+    <div class="defaultBoxLight"  style="height: 95px; width: 1920px; margin-top: 0px; margin-left: 400px; background-color: rgb(42,81,224);"></div>
     <div class="defaultBox" style="height: 95px; width: 456px; margin-top: 0px; background-color: rgb(28,61,181);"></div>
     <div class="defaultBoxLight" id="current-warnings-bar" style="height: 80px; width: 1920px; margin-top: 1010px; margin-left: 400px; background-color: rgb(42,81,224);"></div>
     <div class="defaultBox" style="height: 80px; width: 456px; margin-top: 1010px; background-color: rgb(28,61,181);"></div>
@@ -25,8 +25,8 @@
         <hr id="warning_hr" style="border-color: white; width: 90%;">
         <p id="notification_subtitle"></p>
     </div>
-    <p id="time"></p>
-    <p id="date"></p>
+    <p id="time">Syncing</p>
+    <p id="date">Syncing</p>
 
     <p id="random_alert_location">Syncing</p>
     <p id="random_alert_title">Syncing</p>
@@ -72,15 +72,19 @@
                     let location = (cache.random && cache.random.details && cache.random.details.locations) ? cache.random.details.locations : 'Nothing to display'
                     let topic = (cache.random && cache.random.details && cache.random.details.name) ? cache.random.details.name : 'Not Available'
                     let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)) ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60) : 'Nothing to display'
-                    if (expires < 0) {expires = `Just Expired`}
-                    if (expires == 0) {expires = `Expires in <b>Less than a minute</b>`}
+                    if (expires < 0) {expires = `Expires Soon`}
                     if (expires > 1) {expires = `Expires in <b>${expires} minutes</b>`}
                     if (!Number.isNaN(Number(expires))) {expires = `Not Available`}
-                    if (topic.length > 24) { document.getElementById('random_alert_title').style.fontSize = `25px`; } else { document.getElementById('random_alert_title').style.fontSize = `35px`; }
+                    if (topic.length > 35) { 
+                        document.getElementById('random_alert_title').style.marginTop = `1010px`;
+                    } else { 
+                        document.getElementById('random_alert_title').style.marginTop = `1023px`;
+                    }
                     widgets.random.set('random_alert_location', location, 90, 'upToFadeOutAniamtion', 'upToFadeInAniamtion')
                     widgets.random.set('random_alert_title', topic, 45, 'opacity0Animation', 'opacity100Animation')
                     widgets.random.set('random_alert_expires', expires, 45, 'opacity0Animation', 'opacity100Animation')
                     widgets.header.update('total_warnings')
+
                     if (cache.queue.length > 0) { await library.query(cache.queue) }
                 }
             }, 200) 

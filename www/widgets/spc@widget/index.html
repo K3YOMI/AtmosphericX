@@ -3,40 +3,43 @@
     <title>AtmosphericX - Alert Box</title>
     <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-    <link rel="stylesheet" href="../widgets/random_alert_title@widget/index.css">
+    <link rel="stylesheet" href="../widgets/spc@widget/index.css">
     <link rel="stylesheet" href="../../assets/styles/streaming.css">
     <script src="../../assets/javascript/library.js"></script>
     <script src="../../assets/javascript/widgets.js"></script>
     <body> 
-        <p class='text' id="random_alert_title">Syncing</p>
+        <img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" class="spc-image" id="spc-image">
+        <div class="text">Day 1 Categorial Risk</div>
     </body>
     <script>
         /*
-            This supplies detail to the random alert, it will display information about the alert in text
+            SPC Days 1-3 widget, will auto rotate with text in the bottom right of the image....
+
 
             Calls:
             - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
             - library.init() - Initializes the library and sets the session to ready
-            - library.checkSession() - Checks if the session is ready to be updated
-          
-            Variables:
-            - cache.random - The random alert that is being displayed
-            - cache.random.details.name - The name of the alert
-            - cache.random.details.name.length - The length of the name
-            - name - The name of the alert
+            - library.sync() - Syncs the client with the server
         */
         library.createSession().then(() => {
             library.init()
             widgets.functions.init()
-            document.getElementById("random_alert_title").innerHTML = `Syncing`
+            let index = 0
             setInterval(async () => {
                 let session = await library.checkSession()
                 if (session) { 
                     await library.sync()
-                    let text = (cache.random && cache.random.details && cache.random.details.name) ? cache.random.details.name : 'Not Available'
-                    widgets.random.set('random_alert_title', text, 45, 'opacity0Animation', 'opacity100Animation')
                 }
             }, 200) 
+            setInterval(() => {
+                index++
+                let risks = cache.config['spc:outlooks']
+                risks.sort((a, b) => a.day - b.day)
+                index = index >= risks.length ? 0 : index
+                let risk = risks[index]
+                document.getElementById('spc-image').src = risk.source
+                document.querySelector('.text').innerText = risk.title
+            }, 3000)
         })
     </script>
 </html>
