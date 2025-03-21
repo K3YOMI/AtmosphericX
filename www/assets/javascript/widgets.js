@@ -22,6 +22,7 @@ widgets.cache.focus = undefined
 widgets.functions = {}
 
 widgets.alert = {}
+widgets.spc = {}
 widgets.random = {}
 widgets.bar = {}
 widgets.map = {}
@@ -50,10 +51,20 @@ widgets.alert.send = function(animation_dict, alert_title, alert_description) {
         doc_description.innerHTML = `<div class="alert_description" style="animation: fade 4.5s linear forwards; animation-delay: 0s;">${alert_description}</div>`;
     }, 700)
 }
+widgets.spc.update = function(img, text) {
+    if (widgets.spc.index == undefined) { widgets.spc.index = 0; }
+    widgets.spc.index++
+    let risks = cache.config['spc:outlooks']
+    risks.sort((a, b) => a.day - b.day)
+    widgets.spc.index = widgets.spc.index >= risks.length ? 0 : widgets.spc.index
+    let risk = risks[widgets.spc.index]
+    document.getElementById(img).src = risk.source
+    document.getElementById(text).innerHTML = risk.title
+}
 widgets.random.set = async function(type='random_alert_title', strText, maxLength, animationStart='opacity0Animation', animationEnd='opacity100Animation') {
     if (strText.length > maxLength) { strText = strText.substring(0, maxLength) + '...';}
     if (cache.alerts.length == 1) {document.getElementById(type).innerHTML = strText; return;}
-    if (cache.alerts.length == 0) {document.getElementById(type).innerHTML = 'No Active Alerts'; return;}
+    if (cache.alerts.length == 0) {document.getElementById(type).innerHTML = 'Nothing to display'; return;}
     document.getElementById(type).style.animation = `${animationStart} 0.3s linear forwards`;
     await setTimeout(() => {
         document.getElementById(type).style.animation = `${animationEnd} 0.5s linear forwards`;
@@ -71,10 +82,7 @@ widgets.notifcations.set = function(id, titleid, subtitleid) {
         document.getElementById(id).style.display = 'none';
     }
 }
-
-
 widgets.bar.colorize = function() {
-
     let light = document.getElementsByClassName(`defaultBoxLight`)
     let dark = document.getElementsByClassName(`defaultBox`)
     let types = cache.config['overlay:settings']['color:scheme']
@@ -103,36 +111,33 @@ widgets.map.populate = function() {
     let reports = cache.reports
     let condition = false 
     widgets.cache.maplod.eachLayer(function (layer) { 
-        if (layer instanceof L.Circle && layer !== widgets.cache.focus) { 
+        if (layer instanceof L.Circle || layer instanceof L.Polygon && layer !== widgets.cache.focus) { 
             widgets.cache.maplod.removeLayer(layer);
         }
     });
     for (let i = 0; i < active.length; i++) {
         let alert = active[i]
         if (alert.raw.geometry == undefined) {continue}
-        let lat = alert.raw.geometry.coordinates[0][0][1]
-        let lon = alert.raw.geometry.coordinates[0][1][0]
+        let coords = []
+        for (let x = 0; x < alert.raw.geometry.coordinates.length; x++) {
+            for (let y = 0; y < alert.raw.geometry.coordinates[x].length; y++) {
+                coords.push(alert.raw.geometry.coordinates[x][y])
+            }
+        }
+        let coordinates = alert.raw.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
         let location = alert.details.locations;
         let sender = alert.details.sender;
         if (condition == false) {
-            condition = true
+            condition = true;
             if (widgets.cache.pastalt != JSON.stringify(alert)) { 
-                widgets.cache.pastalt = JSON.stringify(alert)
-                let circle = L.circle([lat, lon], {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 50000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}</div>`).openPopup();
-                widgets.cache.focus = circle;
-                let opacity = 0.1;
-                let fadeIn = true;
-                widgets.cache.maplod.setView([lat, lon],7, {animate: true, duration: 2}); 
-                let interval = setInterval(() => {
-                    if (!circle || !widgets.cache.maplod.hasLayer(circle)) {
-                        clearInterval(interval);
-                        return;
-                    }
-                    circle.setStyle({ fillOpacity: (fadeIn = opacity >= 0.5 ? false : opacity <= 0.1 ? true : fadeIn) ? opacity += 0.05 : opacity -= 0.05 });
-                }, 100);
+                widgets.cache.pastalt = JSON.stringify(alert);
+                if (widgets.cache.focus) { widgets.cache.maplod.removeLayer(widgets.cache.focus); }
+                let polygon = L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}</div>`).openPopup();
+                widgets.cache.focus = polygon;
+                widgets.cache.maplod.fitBounds(polygon.getBounds(), {animate: true, duration: 2});
             }
         } else {
-            L.circle([lat, lon], {color: 'black',fillColor: 'red',fillOpacity: 0.1,radius: 10000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`)
+            L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 2000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`);
         }
     }
     for (let i = 0; i < reports.length; i++) {
@@ -148,9 +153,11 @@ widgets.map.populate = function() {
 }
 widgets.header.update = function(id) {       
     if (cache.status == ``) {
-        document.getElementById(id).innerHTML = `Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}`;
+        document.getElementById(id).innerHTML = `Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}` 
     } else { 
-        if (cache.status.length > 15) { cache.status = cache.status.substring(0, 15) + '...';}
+        if (cache.status.length > 15) {
+            cache.status = cache.status.substring(0, 15) + '...';
+        }
         document.getElementById(id).innerHTML = `${cache.status}`;
     }
 }

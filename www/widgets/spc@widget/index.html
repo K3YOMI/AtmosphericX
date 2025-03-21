@@ -9,7 +9,7 @@
     <script src="../../assets/javascript/widgets.js"></script>
     <body> 
         <img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" class="spc-image" id="spc-image">
-        <div class="text">Day 1 Categorial Risk</div>
+        <div id="text" class="text">Day 1 Categorial Risk</div>
     </body>
     <script>
         /*
@@ -20,6 +20,8 @@
             - library.createSession() - Creates a session and triggers a callback to get the configurations for the client from the server
             - library.init() - Initializes the library and sets the session to ready
             - library.sync() - Syncs the client with the server
+            - library.checkSession() - Checks the session and returns a boolean
+            - widgets.spc.update('spc-image', 'text') - Updates the image and text on the widget
         */
         library.createSession().then(() => {
             library.init()
@@ -29,17 +31,9 @@
                 let session = await library.checkSession()
                 if (session) { 
                     await library.sync()
+                    widgets.spc.update('spc-image', 'text')
                 }
             }, 200) 
-            setInterval(() => {
-                index++
-                let risks = cache.config['spc:outlooks']
-                risks.sort((a, b) => a.day - b.day)
-                index = index >= risks.length ? 0 : index
-                let risk = risks[index]
-                document.getElementById('spc-image').src = risk.source
-                document.querySelector('.text').innerText = risk.title
-            }, 3000)
+        
         })
     </script>
-</html>

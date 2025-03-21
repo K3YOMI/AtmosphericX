@@ -292,25 +292,8 @@ dashboard.config = async function() {
     }, 200);
 }
 dashboard.generatesite = function() {
-    let externalServices = [
-        { title: "Live Storm Chasing", url: "https://livestormchasing.com/", imgSrc: "/assets/media/dashboard/storm-live-logo.png" },
-        { title: "Mesoscale Analysis", url: "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", imgSrc: "/assets/media/dashboard/mesoscale-logo.png" },
-        { title: "Nexlab", url: "https://weather.cod.edu/#", imgSrc: "/assets/media/dashboard/nexlab-logo.png" },
-        { title: "GFS Model", url: "https://www.tropicaltidbits.com/analysis/models/", imgSrc: "/assets/media/dashboard/tropical-logo.png" },
-        { title: "HRRR Model", url: "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", imgSrc: "/assets/media/dashboard/tropical-logov2.png" },
-        { title: "Hodographs", url: "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", imgSrc: "/assets/media/dashboard/pivotal-weather.png" }
-    ];
-    let stormoutlookServices = [
-        { title: "Day 1 Categorial Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1otlk.gif" },
-        { title: "Day 2 Categorial Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2otlk.gif" },
-        { title: "Day 3 Categorial Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day3otlk.gif" },
-        { title: "Day 1 Tornado Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_torn.gif" },
-        { title: "Day 1 Wind Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_wind.gif" },
-        { title: "Day 1 Hail Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day1probotlk_hail.gif" },
-        { title: "Day 2 Tornado Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_torn.gif" },
-        { title: "Day 2 Wind Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_wind.gif" },
-        { title: "Day 2 Hail Risk", imgSrc: "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" }
-    ];
+    let externalServices = cache.config['external:services']
+    let stormoutlookServices = cache.config['spc:outlooks']
     let external = document.getElementById('external-services-area');
     external.innerHTML = '';
     externalServices.forEach(service => {
@@ -321,7 +304,7 @@ dashboard.generatesite = function() {
         let hr = document.createElement('hr');
         let img = document.createElement('img');
         img.classList.add('service-img');
-        img.src = service.imgSrc;
+        img.src = service.image;
         img.onclick = () => window.open(service.url, '_blank', 'width=1000,height=1000');
         card.appendChild(title);
         card.appendChild(hr);
@@ -338,7 +321,7 @@ dashboard.generatesite = function() {
         let hr = document.createElement('hr');
         let img = document.createElement('img');
         img.classList.add('service-img-non-visual');
-        img.src = service.imgSrc;
+        img.src = service.source;
         card.appendChild(title);
         card.appendChild(hr);
         card.appendChild(img);
