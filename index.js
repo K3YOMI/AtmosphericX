@@ -14,7 +14,7 @@
 */
 
 cache = {}
-cache.version = `5.0.1`
+cache.version = `6.0.1`
 cache.author = `k3yomi@GitHub`
 cache.alerts = {
     active: [], warnings: [],
