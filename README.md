@@ -93,13 +93,11 @@ once finished install git, clone the project with the command below (terminal/co
 After cloning, navigate to the **AtmosphericX** directory. This holds the main project itself.
 
 # 🌩️ Configuration <a name="doc_configure"></a>
-Configurating AtmosphericX is quite simple, the **configurations.json** holds all the configurations. Here is a general template below of the configuration and what each configuration does. 
-
+Configurating AtmosphericX is quite simple, the **configurations.json** holds all the configurations.
 **DO NOT COPY THE CONFIG AS THIS IS NOT A WORKING CONFIG**
 ```json
 
 {
-    {
     "hosting:settings": {
         "https:enabled": false,
         "https:port": 3011,
@@ -109,6 +107,9 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
             "ssl:key": "./cert/generated.key",
             "ssl:cert": "./cert/generated.crt"
         }
+    },
+    "overlay:settings": {
+        "color:scheme": []
     },
     "application:api": {
         "primary:api": {
@@ -135,12 +136,24 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
                 "iem:stormreports:state": "",
                 "iem:stormreports:hours": 1,
                 "iem:stormreports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+            },
+            "spotternetwork:members": {
+                "spotternetwork:members:enable": true,
+                "spotternetwork:members:api": "https://www.spotternetwork.org/feeds/gr.txt",
+                "spotternetwork:streams:enable": true,
+                "spotternetwork:streams:api": "https://www.spotternetwork.org/feeds/gr-stream.txt",
+                "spotternetwork:tracking": "SPOTTER_NAME_HERE"
+            },
+            "radar:layer": {
+                "radar:layer:enable": true,
+                "radar:layer:api": "https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png"
             }
         }
     },
     "application:information": {
-        "application:location": "Somewhere, USA",
+        "application:location": "County, ST",
         "application:timezone": "America/New_York",
+        "application:12hour": false,
         "application:useragent": "AtmosphericX-v6"
     },
      "request:settings": {
@@ -153,14 +166,13 @@ Configurating AtmosphericX is quite simple, the **configurations.json** holds al
         "request:updates": true,
         "request:alwaysrun": []
     },
+    "spc:outlooks": [],
+    "external:services": [],
     "application:sounds": {},
     "application:banners": {},
     "application:warnings": {},
     "application:states": []
 }
-
-}
-
 ```
 
 
