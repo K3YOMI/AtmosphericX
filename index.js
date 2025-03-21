@@ -122,7 +122,7 @@ app.post(`/api/status`, (req, res) => {api.functions.status_activation(req, res)
 app.post(`/api/forcerequest`, (req, res) => {api.functions.request_latest(req, res)})
 
 /* API Data Routes */
-app.get(`/api/bulk`, (req, res) => {api.functions.request_data(req, res, JSON.stringify({...cache.alerts, configurations: api.functions.request_configurations(req, res, false), statistics: cache.statistics}))})
+app.get(`/api/all`, (req, res) => {api.functions.request_data(req, res, JSON.stringify({...cache.alerts, configurations: api.functions.request_configurations(req, res, false), statistics: cache.statistics}))})
 app.get(`/api/alerts`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.active))})
 app.get(`/api/reports`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.reports))})
 app.get(`/api/manual`, (req, res) => {api.functions.request_data(req, res, JSON.stringify(cache.alerts.manual))})

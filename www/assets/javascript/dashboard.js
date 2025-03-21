@@ -171,7 +171,7 @@ dashboard.generatecards = async function(caller, storage, classname=`data-card`)
     }
 }
 dashboard.execute = async function() {
-    let response = JSON.parse(await library.request(`/api/bulk`))
+    let response = JSON.parse(await library.request(`/api/all`))
     cache.warnings = response.warnings
     cache.watches = response.watches
     cache.manual = response.manual
@@ -271,7 +271,7 @@ dashboard.toggle = async function(parent, child) {
     }
 }
 dashboard.config = async function() {
-    let response = JSON.parse(await library.request(`/api/bulk`))
+    let response = JSON.parse(await library.request(`/api/all`))
     cache.config = response.configurations
     await library.isMobile()
     dashboard.execute();

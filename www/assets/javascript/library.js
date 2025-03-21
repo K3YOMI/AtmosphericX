@@ -128,7 +128,7 @@ library.request = async function(url) {
     })
 }
 library.createSession = async function() {
-    let response = JSON.parse(await library.request(`/api/bulk`))
+    let response = JSON.parse(await library.request(`/api/all`))
     cache.config = response.configurations
     return
 }
@@ -143,7 +143,7 @@ library.checkSession = async function() {
 }
 library.sync = async function() {
     return new Promise(async (resolve, reject) => {
-        let response = JSON.parse(await library.request(`/api/bulk`))
+        let response = JSON.parse(await library.request(`/api/all`))
         cache.alerts = response.active
         cache.reports = response.reports
         cache.manual = response.manual
