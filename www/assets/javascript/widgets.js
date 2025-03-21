@@ -147,17 +147,11 @@ widgets.map.populate = function() {
 
 }
 widgets.header.update = function(id) {       
-    let tInOutbreak = cache.warnings.filter(warning => warning.details.name.includes('Tornado')).length
-    let tRandomChance = Math.floor(Math.random() * 4)
     if (cache.status == ``) {
-        if (cache.warnings.length > 5 && tInOutbreak > 5) {
-            document.getElementById(id).innerHTML = (tRandomChance == 3) ? `<h2>OUTBREAK</h2>` : `<p>Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}</p>`;
-        } else { 
-            document.getElementById(id).innerHTML = (tRandomChance == 3) ? `<h2>BREAKING WEATHER</h2>` : `<p>Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}</p>`; 
-        }
+        document.getElementById(id).innerHTML = `Active Warnings: ${cache.warnings.length}<br>Active Watches: ${cache.watches.length}`;
     } else { 
-        cache.status = cache.status.substring(0, 15) + '...';
-        document.getElementById(id).innerHTML = `<h2>${cache.status}</h2>`;
+        if (cache.status.length > 15) { cache.status = cache.status.substring(0, 15) + '...';}
+        document.getElementById(id).innerHTML = `${cache.status}`;
     }
 }
 widgets.warnings.update = function(id) {
