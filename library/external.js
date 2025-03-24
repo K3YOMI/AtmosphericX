@@ -224,7 +224,6 @@ functions.lightning = function(data) {
     });
 }
 
-
 functions.build = function (data) {
     try {
         let tCacheActive = []
@@ -275,22 +274,6 @@ functions.build = function (data) {
                 }
             }
         }
-        if (data.reports != undefined && data.reports.features.length > 0) {
-            let reports = data.reports.features
-            for (let i = 0; i < reports.length; i++) {
-                let properties = reports[i].properties
-                if (properties['remark'] == undefined) { properties['remark'] = 'No Description' }
-                if (properties['magf'] == undefined) { properties['magf'] = 'N/A'; properties['unit'] = '' }
-                let expires = properties['valid'] = properties['valid'].replace('T', ' ').replace('Z', '')
-                let sent = new Date().toISOString()
-                let build = { id: "n/a", properties: { "areaDesc": properties['county'] + ', ' + properties['state'], "expires": expires, "sent": sent, "messageType": "Alert", "event": properties['typetext'], "sender": "reported", "senderName": properties['source'], "description": properties['remark'] + ' - ' + properties['city'], "parameters": {} }, value: properties['magf'] + ' ' + properties['unit'], lat: properties['lat'], lon: properties['lon'] }
-                let tData = core.functions.register(build)
-                if (Object.keys(tData).length != 0) {
-                    if (tData.details.ignored == true) { continue }
-                    tCacheReports.push(tData)
-                }
-            }
-        }
         if (data.generic != undefined && data.generic.features.length > 0) {
             let generic = data.generic.features
             let customFiltering = functions.custom_filter(generic)
@@ -330,21 +313,58 @@ functions.build = function (data) {
                     tCacheActive.push(tData)
                 }
             }
-
         }
-        cache.alerts.active = tCacheActive
-        cache.alerts.warnings = tCacheWarnings
-        cache.alerts.watches = tCacheWatches
-        cache.alerts.reports = tCacheReports
-        cache.alerts.random = cache.alerts.active[Math.floor(Math.random() * cache.alerts.active.length)]
-        cache.alerts.active.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
-        cache.alerts.warnings.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
-        cache.alerts.watches.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
-        cache.alerts.reports.sort((a, b) => new Date(a.details.expires) - new Date(b.details.expires))
-        cache.alerts.active.reverse()
-        cache.alerts.warnings.reverse()
-        cache.alerts.watches.reverse()
-        cache.alerts.reports.reverse()
+
+        if (data.mPing != undefined && data.mPing.length > 0) {
+            let regex = /Icon:.*?([\d.-]+),([\d.-]+),\d+,\d+,\d+, "Report Type: (.*?)\\nTime of Report: (.*?)"/g;
+            let matches = [...data.mPing.matchAll(regex)];
+            for (const match of matches) {
+                let lat = parseFloat(match[1]);
+                let lon = parseFloat(match[2]);
+                let reportType = match[3];
+                let timeOfReport = match[4];
+                if (reportType == 'NULL') { continue }
+                let build = { id : "n/a", properties : { "areaDesc" : `Lon: ${lon}, Lat: ${lat}`, "expires" : new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(), "sent" : timeOfReport, "messageType" : "Alert", "event" : reportType, "sender" : "reported", "senderName" : "mPing", "description" : "No Description", "parameters" : {} }, value : "No Value", lat : lat, lon : lon }
+                let tData = core.functions.register(build)
+                if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) { continue }
+                    tCacheReports.push(tData)
+                }
+            }
+        }
+        if (data.lsr != undefined && data.lsr.features.length > 0) {
+            let reports = data.lsr.features
+            for (let i = 0; i < reports.length; i++) {
+                let properties = reports[i].properties
+                if (properties['remark'] == undefined) { properties['remark'] = 'No Description' }
+                if (properties['magf'] == undefined) { properties['magf'] = 'N/A'; properties['unit'] = '' }
+                let expires = properties['valid'] = properties['valid'].replace('T', ' ').replace('Z', '')
+                let sent = new Date().toISOString()
+                let build = { id: "n/a", properties: { "areaDesc": properties['county'] + ', ' + properties['state'], "expires": expires, "sent": sent, "messageType": "Alert", "event": properties['typetext'], "sender": "reported", "senderName": properties['source'], "description": properties['remark'] + ' - ' + properties['city'], "parameters": {} }, value: properties['magf'] + ' ' + properties['unit'], lat: properties['lat'], lon: properties['lon'] }
+                let tData = core.functions.register(build)
+                if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) { continue }
+                    tCacheReports.push(tData)
+                }
+            }
+        }
+        if (data.lsr != undefined && data.lsr.features.length > 0 || data.mPing != undefined && data.mPing.length > 0) {
+            cache.alerts.reports = tCacheReports
+            cache.alerts.reports.sort((a, b) => new Date(a.details.expires) - new Date(b.details.expires))
+            cache.alerts.reports.reverse()
+        }
+        if (data.generic != undefined && data.generic.features.length > 0 || data.nws != undefined && data.nws.features.length > 0) {
+            cache.alerts.active = tCacheActive
+            cache.alerts.warnings = tCacheWarnings
+            cache.alerts.watches = tCacheWatches
+            cache.alerts.random = cache.alerts.active[Math.floor(Math.random() * cache.alerts.active.length)]
+            cache.alerts.active.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
+            cache.alerts.warnings.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
+            cache.alerts.watches.sort((a, b) => new Date(a.details.issued) - new Date(b.details.issued))
+            cache.alerts.active.reverse()
+            cache.alerts.warnings.reverse()
+            cache.alerts.watches.reverse()
+        }
     } catch (error) { console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Failed to build alerts: ${error}`) }
 }
 functions.request = function (url, ua = false) {

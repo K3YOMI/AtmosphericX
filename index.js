@@ -17,6 +17,7 @@ cache = {}
 cache.version = `6.0.1`
 cache.author = `k3yomi@GitHub`
 cache.alerts = {}
+cache.time = {}
 cache.configurations = undefined;
 cache.requesting = false;
 cache.statistics = { operations: 0, requests: 0, memory: 0, cpu: 0 }

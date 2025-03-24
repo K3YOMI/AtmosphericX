@@ -204,6 +204,7 @@ functions.request_data = async function(req, res, type) {
 }
 functions.request_random_alert = async function() {
     return new Promise((resolve, reject) => {
+        if (cache.alerts.active == undefined) {cache.alerts.active = []}
         let alerts = [...cache.alerts.active, ...[cache.alerts.manual]].filter(alert => alert && Object.keys(alert).length > 0);
         if (alerts.length > 0) {
             if (cache.alerts.random_index === undefined || cache.alerts.random_index >= alerts.length) {
@@ -249,145 +250,235 @@ functions.request_configurations = function(req, res, ret=true) { // Handles the
         return
     } catch (error) {web.functions.internal(req, res, error); return;}
 }
+
+
 functions.request = async function() {
     let calls = cache.configurations['application:api']
-    let primary = calls['primary:api']
-    let misc = calls['misc:api']
+
     let data = {}
+    let results = ``
     let time = new Date()
-    let result = ``
     let currentRetries = 0;
-    data.nws = undefined
-    data.generic = undefined
-    data.reports = undefined
-    
-    async function nws() { // National Weather Service API Handler
-        if (primary['nws:api']['nws:enabled'] == true) {
-            let url = primary['nws:api']['nws:api']
-            let state = primary['nws:api']['nws:state']
-            if (state != `ALL` && state != ``) { url += `/area/${state}` }
-            let d = await ext.functions.request(url)
-            if (d.features != undefined) { 
-                data.nws = d; 
-            } else { 
-                await nws(); 
-                currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying NWS API Request (Attempt: ${currentRetries})`)
-                return 
+
+    async function a_nws(handle) { // National Weather Service API
+        let url = handle['nws:api'];
+        let state = handle['nws:state'];
+        if (state && state !== 'ALL') { url += `/area/${state}`; }
+        try {
+            let d = await ext.functions.request(url);
+            if (d.features) {
+                data.nws = d;
+                results += `(NWS: OK)`;
+            } else {
+                throw new Error('Invalid response');
             }
-            result += `(NWS: ${d.features.length})`
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying NWS API Request (Attempt: ${currentRetries})`);
+                await a_nws(handle);
+            } else {
+                results += `(NWS: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] NWS API Request Failed after ${currentRetries} attempts.`);
+            }
         }
     }
-    async function reports() { // IEM Storm Reports API Handler
-        if (misc['iem:stormreports']['iem:stormreports:enable'] == true) {
-            let url = misc['iem:stormreports']['iem:stormreports:api']
-            let state = misc['iem:stormreports']['iem:stormreports:state']
-            let hours = misc['iem:stormreports']['iem:stormreports:hours']
+    async function a_allision_house(handle) { // Allision House API (Non-Subscription)
+        let url = handle['allisonhouse:warnings:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d.length) {
+                let extract = await ext.functions.extract(d);
+                let download = await ext.functions.download(extract, url);
+                let parser = await ext.functions.parser(download);
+                data.generic = parser;
+                results += ` (AH: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying AH API Request (Attempt: ${currentRetries})`);
+                await a_allision_house(handle);
+            } else {
+                results += `(AH: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] AH API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_cod(handle) { // College of Dupage API (Non-Subscription)
+        let url = handle['cod:warnings:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d.length) {
+                let extract = await ext.functions.extract(d);
+                let download = await ext.functions.download(extract, url);
+                let parser = await ext.functions.parser(download);
+                data.generic = parser;
+                results += ` (COD: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying COD API Request (Attempt: ${currentRetries})`);
+                await a_cod(handle);
+            } else {
+                results += `(COD: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] COD API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_spotters(handle) { // Spotter Network API
+        let url = handle['spotternetwork:members:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d.length) {
+                let parsed = await ext.functions.spotternetwork(d);
+                cache.alerts.spotters = parsed;
+                results += ` (SPOTTERS: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying Spotter Network API Request (Attempt: ${currentRetries})`);
+                await a_spotters(handle);
+            } else {
+                results += `(SPOTTERS: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] Spotter Network API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_discussions(handle) { // SPC Mesoscale Discussions API 
+        let url = handle['spc:meoscale:convective:disscussion:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d.length) {
+                let parsed = await ext.functions.mesoscale(d);
+                cache.alerts.mesoscale = parsed;
+                results += ` (MESO: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying Mesoscale API Request (Attempt: ${currentRetries})`);
+                await a_discussions(handle);
+            } else {
+                results += `(MESO: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] Mesoscale API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_lightning(handle) { // Lightning API
+        let url = handle['lightning:reports:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d.length) {
+                let parsed = await ext.functions.lightning(d);
+                cache.alerts.lightning = parsed;
+                results += ` (LIGHTNING: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying Lightning API Request (Attempt: ${currentRetries})`);
+                await a_lightning(handle);
+            } else {
+                results += `(LIGHTNING: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] Lightning API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_mping(handle) { // mPing API
+        let url = handle['mPing:reports:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d != undefined) {
+                data.mPing = d;
+                results += ` (mPing: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying mPing API Request (Attempt: ${currentRetries})`);
+                await a_mping(handle);
+            } else {
+                results += `(mPing: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] mPing API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_lsr(handle) { // IEM LSR Reports API
+        let url = handle['lsr:reports:api']
+        let state = handle['lsr:reports:state']
+        let hours = handle['lsr:reports:hours']
+        try {
             if (state != `ALL` && state != ``) { url += `states=${state}` }
             url += `&hours=${hours}`
             let d = await ext.functions.request(url);
-            if (d.features != undefined) { 
-                data.reports = d; 
-            } else { 
-                currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Reports API Request (Attempt: ${currentRetries})`);
-                await reports(); 
-                return; 
+            if (d.features != undefined) {
+                data.lsr = d;
+                results += ` (LSR: OK)`;
+            } else {
+                throw new Error('Invalid response');
             }
-            result += ` (REPORTS: ${d.features.length})`
-        }
-    }
-
-    async function allisionHouse() { 
-        if (primary['allisonhouse:warnings']['allisonhouse:warnings:enable'] == true) {
-            let url = primary['allisonhouse:warnings']['allisonhouse:warnings:api']
-            let d = await ext.functions.request(url)
-            if (d.length == 0) { 
-                await allisionHouse();
+        } catch (error) {
+            console.log(error)
+            if (currentRetries < 3) { 
                 currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying AH API Request (Attempt: ${currentRetries}`)
-                return; 
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying IEM Reports API Request (Attempt: ${currentRetries})`);
+                await a_lsr(handle);
+            } else {
+                results += `(LSR: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] IEM Reports API Request Failed after ${currentRetries} attempts.`);
             }
-            let extract = await ext.functions.extract(d)
-            let download = await ext.functions.download(extract, url)
-            let parser = await ext.functions.parser(download)
-            data.generic = parser
-            result += ` (AH: ${parser.length})`
-        }
-    }
-    async function cod() {
-        if (primary['cod:warnings']['cod:warnings:enable'] == true) {
-            let url = primary['cod:warnings']['cod:warnings:api']
-            let d = await ext.functions.request(url)
-            if (d.length == 0) { 
-                await cod(); 
-                currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying COD API Request (Attempt: ${currentRetries})`)
-                return; 
-            }
-            let extract = await ext.functions.extract(d)
-            let download = await ext.functions.download(extract, url)
-            let parser = await ext.functions.parser(download)
-            data.generic = parser
-            result += ` (COD: ${parser.length})`
-        }
-    }
-    async function spotternetwork() {
-        if (misc['spotternetwork:members']['spotternetwork:members:enable'] == true) {
-            let url = misc['spotternetwork:members']['spotternetwork:members:api']
-            let d = await ext.functions.request(url)
-            if (d.length == 0) { 
-                await spotternetwork(); 
-                currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Spotter Network API Request (Attempt: ${currentRetries})`)
-                return; 
-            }
-            let parsed = await ext.functions.spotternetwork(d)
-            cache.alerts.spotters = parsed
-            result += ` (SPOTTERS: ${parsed.length})`
-        }
-    }
-    async function mesoscale() {
-        if (misc['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:enable'] == true) {
-            let url = misc['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:api']
-            let d = await ext.functions.request(url)
-            if (d.length == 0) { 
-                await mesoscale(); 
-                currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Mesoscale API Request (Attempt: ${currentRetries})`)
-                return; 
-            }
-            let parsed = await ext.functions.mesoscale(d)
-            cache.alerts.mesoscale = parsed
-            result += ` (MESO: ${parsed.length})`
-        }
-    }
-
-    async function lightning() {
-        if (misc['lightning:reports']['lightning:reports:enable'] == true) {
-            let url = misc['lightning:reports']['lightning:reports:api']
-            let d = await ext.functions.request(url)
-            if (d.length == 0) { 
-                await lightning(); 
-                currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Lightning API Request (Attempt: ${currentRetries})`)
-                return; 
-            }
-            let parsed = await ext.functions.lightning(d)
-            cache.alerts.lightning = parsed
-            result += ` (LIGHTNING: ${parsed.length})`
         }
     }
 
 
-    await nws()
-    await reports()
-    await allisionHouse()
-    await cod()
-    await spotternetwork()
-    await mesoscale()
-    await lightning()
-    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms) | ${result}`)
+    let handles = [
+        {name: 'nws', handle: calls['primary:api']['nws:api'], timer: calls['primary:api']['nws:api']['nws:cachetime'], contradictions: ['allisonhouse:warnings', 'cod:warnings'], func: a_nws},
+        {name: 'allisonhouse:warnings', handle: calls['primary:api']['allisonhouse:warnings'], timer: calls['primary:api']['allisonhouse:warnings']['allisonhouse:warnings:cachetime'], contradictions: ['nws', 'cod:warnings'], func: a_allision_house},
+        {name: 'cod:warnings', handle: calls['primary:api']['cod:warnings'], timer: calls['primary:api']['cod:warnings']['cod:warnings:cachetime'], contradictions: ['nws', 'allisonhouse:warnings'], func: a_cod},
+        {name: 'spotternetwork:members', handle: calls['misc:api']['spotternetwork:members'], timer: calls['misc:api']['spotternetwork:members']['spotternetwork:members:cachetime'], contradictions: [], func: a_spotters},
+        {name: 'spc:meoscale:convective:disscussion', handle: calls['misc:api']['spc:meoscale:convective:disscussion'], timer: calls['misc:api']['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:cachetime'], contradictions: [], func: a_discussions},
+        {name: 'lightning:reports', handle: calls['misc:api']['lightning:reports'], timer: calls['misc:api']['lightning:reports']['lightning:reports:cachetime'], contradictions: [], func: a_lightning},
+        {name: 'mPing:reports', handle: calls['misc:api']['mPing:reports'], timer: calls['misc:api']['mPing:reports']['mPing:reports:cachetime'], contradictions: ["lsr:reports"], func: a_mping},
+        {name: 'lsr:reports', handle: calls['misc:api']['lsr:reports'], timer: calls['misc:api']['lsr:reports']['lsr:reports:cachetime'], contradictions: ["mPing:reports"], func: a_lsr}
+    ] 
+    for (let i = 0; i < handles.length; i++) {
+        let contradictions = handles[i].contradictions;
+        for (let j = 0; j < contradictions.length; j++) {
+            let contradictionIndex = handles.findIndex(handle => handle.name === contradictions[j]);
+            if (contradictionIndex !== -1 && handles[contradictionIndex].handle[`${contradictions[j]}:enable`] === true) {
+                if (handles[i].handle[`${handles[i].name}:enable`] === true) {
+                    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Contradiction Detected: ${handles[i].name} and ${contradictions[j]} are both enabled. Disabling ${contradictions[j]}.`);
+                    handles[contradictionIndex].handle[`${contradictions[j]}:enable`] = false;
+                }
+            }
+        }
+    }
+    let active = handles.filter(handle => handle.handle[`${handle.name}:enable`] == true) 
+    for (let i = 0; i < active.length; i++) {
+        if (cache.time[active[i].name] == undefined) {cache.time[active[i].name] = Date.now() - active[i].timer * 1000}
+    }
+    let readyToRequest = active.filter(handle => (Date.now() - cache.time[handle.name]) / 1000 >= handle.timer) // filter out the ones ready to be requested
+    for (let i = 0; i < readyToRequest.length; i++) {
+        await readyToRequest[i].func(readyToRequest[i].handle)
+        cache.time[readyToRequest[i].name] = Date.now()
+    }
+    if (results == ``) { return }
+    console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms) | ${results}`)
     await ext.functions.build(data)
 }
 

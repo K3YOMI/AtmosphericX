@@ -25,7 +25,8 @@
     "application:api": {
         "primary:api": {
             "nws:api": {
-                "nws:enabled": true,
+                "nws:enable": true,
+                "nws:cachetime": 29,
                 "nws:api": "https://api.weather.gov/alerts/active",
                 "nws:state": "",
                 "nws:forecastoffice": [],
@@ -34,22 +35,31 @@
             },
             "allisonhouse:warnings": {
                 "allisonhouse:warnings:enable": false,
+                "allisonhouse:warnings:cachetime": 29,
                 "allisonhouse:warnings:api": "https://warnings.allisonhouse.com"
             },
             "cod:warnings": {
                 "cod:warnings:enable": false,
+                "cod:warnings:cachetime": 29,
                 "cod:warnings:api": "https://warnings.cod.edu"
             }
         },
         "misc:api": {
-            "iem:stormreports": {
-                "iem:stormreports:enable": true,
-                "iem:stormreports:state": "",
-                "iem:stormreports:hours": 1,
-                "iem:stormreports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+            "lsr:reports": {
+                "lsr:reports:enable": false,
+                "lsr:reports:state": "",
+                "lsr:reports:hours": 1,
+                "lsr:reports:cachetime": 1799,
+                "lsr:reports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+            },
+            "mPing:reports": {
+                "mPing:reports:enable": true,
+                "mPing:reports:cachetime": 1799,
+                "mPing:reports:api": "https://placefilenation.com/Placefiles/mping_60min.php"
             },
             "spotternetwork:members": {
                 "spotternetwork:members:enable": true,
+                "spotternetwork:members:cachetime": 29,
                 "spotternetwork:members:api": "https://www.spotternetwork.org/feeds/gr.txt",
                 "spotternetwork:tracking": "SPOTTER_NAME_HERE"
             },
@@ -59,10 +69,12 @@
             },
             "spc:meoscale:convective:disscussion": {
                 "spc:meoscale:convective:disscussion:enable": true,
+                "spc:meoscale:convective:disscussion:cachetime": 119,
                 "spc:meoscale:convective:disscussion:api": "https://placefilenation.com/Placefiles/mcd.php"
             },
             "lightning:reports": {
                 "lightning:reports:enable": true,
+                "lightning:reports:cachetime": 119,
                 "lightning:reports:api": "https://placefilenation.com/Placefiles/20lightning.php"
             }
         }

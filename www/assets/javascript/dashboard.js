@@ -210,7 +210,7 @@ dashboard.execute = async function() {
         {title: `CPU`, id: `cpu_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.cpu}</h1></center>`}
     ]
     for (let i = 0; i < cache.reports.length; i++) {
-        tReports.push({id: `report_${i}`, title: `${cache.reports[i].details.name}`, data: `${cache.reports[i].details.locations}<br>${cache.reports[i].details.sender}<br>Value: ${cache.reports[i].raw.value}<br>Valid Thru: ${cache.reports[i].details.expires}<br>${cache.reports[i].details.description}`})
+        tReports.push({id: `report_${i}`, title: `${cache.reports[i].details.name}`, data: `Location: ${cache.reports[i].details.locations}<br>Sender: ${cache.reports[i].details.sender}<br>Value: ${cache.reports[i].raw.value}<br>Valid Thru: ${cache.reports[i].details.expires}<br>Description: ${cache.reports[i].details.description}`})
     }
     for (let i = 0; i < cache.mesoscale.length; i++) {
         if (cache.mesoscale[i] != "") {
