@@ -53,9 +53,14 @@
                 "lsr:reports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
             },
             "mPing:reports": {
-                "mPing:reports:enable": true,
+                "mPing:reports:enable": false,
                 "mPing:reports:cachetime": 1799,
                 "mPing:reports:api": "https://placefilenation.com/Placefiles/mping_60min.php"
+            },
+            "grlevelx:reports": {
+                "grlevelx:reports:enable": true,
+                "grlevelx:reports:cachetime": 1799,
+                "grlevelx:reports:api": "https://www.grlevelx.com/lsr/lsr_latest.txt"
             },
             "spotternetwork:members": {
                 "spotternetwork:members:enable": true,

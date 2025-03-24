@@ -332,6 +332,31 @@ functions.build = function (data) {
                 }
             }
         }
+   
+        if (data.grxlsr != undefined && data.grxlsr.length > 0) {
+            let regex = /(\w+)\|(\d{4}\/\d{2}\/\d{2})\|(\d{2}:\d{2})\|([\d.-]+)\|([\d.-]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)/g;
+            let matches = [...data.grxlsr.matchAll(regex)];
+            for (const match of matches) {
+                let date = match[2];
+                let time = match[3];
+                let lat = parseFloat(match[4]);
+                let lon = parseFloat(match[5]);
+                let eventType = match[6];
+                let magnitude = match[7];
+                let state = match[8];
+                let county = match[9];
+                let location = match[10];
+                let source = match[11];
+                let build = { id: "n/a", properties: {"areaDesc": `${location}, ${county}, ${state}`,"expires": new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),"sent": `${date} ${time}`,"messageType": "Alert","event": eventType,"sender": "reported","senderName": source,"description": `${eventType} reported with magnitude ${magnitude} at ${location}, ${county}, ${state}`,"parameters": {}}, value: magnitude, lat: lat, lon: lon};
+                let tData = core.functions.register(build);
+                if (Object.keys(tData).length != 0) {
+                    if (tData.details.ignored == true) { continue; }
+                    tCacheReports.push(tData);
+                }
+            }
+        }
+
+
         if (data.lsr != undefined && data.lsr.features.length > 0) {
             let reports = data.lsr.features
             for (let i = 0; i < reports.length; i++) {
@@ -348,7 +373,7 @@ functions.build = function (data) {
                 }
             }
         }
-        if (data.lsr != undefined && data.lsr.features.length > 0 || data.mPing != undefined && data.mPing.length > 0) {
+        if (data.lsr != undefined && data.lsr.features.length > 0 || data.mPing != undefined && data.mPing.length > 0 || data.grxlsr != undefined && data.grxlsr.length > 0) {
             cache.alerts.reports = tCacheReports
             cache.alerts.reports.sort((a, b) => new Date(a.details.expires) - new Date(b.details.expires))
             cache.alerts.reports.reverse()
@@ -371,11 +396,15 @@ functions.request = function (url, ua = false) {
     return new Promise(async (resolve, reject) => {
         let details = { 
             url: url, 
-            headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'], 'Accept': 'application/geo+json', 'Accept-Language': 'en-US' }, 
+            headers: { 
+                'User-Agent': cache.configurations['application:information']['application:useragent'], 
+                'Accept': 'application/geo+json, text/plain', 
+                'Accept-Language': 'en-US' 
+            }, 
         };
         if (ua != false) { details.headers['User-Agent'] = ua; }
         try {
-            await axios.get(details.url, { headers: details.headers, maxRedirects: 0, timeout: 1000 }).then((response) => {
+            await axios.get(details.url, { headers: details.headers, maxRedirects: 0, timeout: 5000 }).then((response) => {
                 let data = response.data;
                 let error = response.error;
                 let statusCode = response.status;

@@ -403,7 +403,7 @@ functions.request = async function() {
             let d = await ext.functions.request(url);
             if (d != undefined) {
                 data.mPing = d;
-                results += ` (mPing: OK)`;
+                results += ` (MPING: OK)`;
             } else {
                 throw new Error('Invalid response');
             }
@@ -413,8 +413,29 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying mPing API Request (Attempt: ${currentRetries})`);
                 await a_mping(handle);
             } else {
-                results += ` (mPing: ERR)`;
+                results += ` (MPING: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] mPing API Request Failed after ${currentRetries} attempts.`);
+            }
+        }
+    }
+    async function a_grxlsr(handle) { // GRLevelX LSRs API
+        let url = handle['grlevelx:reports:api'];
+        try {
+            let d = await ext.functions.request(url);
+            if (d != undefined) {
+                data.grxlsr = d;
+                results += ` (GRXLSR: OK)`;
+            } else {
+                throw new Error('Invalid response');
+            }
+        } catch (error) {
+            if (currentRetries < 3) { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying GRXLSR API Request (Attempt: ${currentRetries})`);
+                await a_grxlsr(handle);
+            } else {
+                results += ` (GRXLSR: ERR)`;
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] GRXLSR API Request Failed after ${currentRetries} attempts.`);
             }
         }
     }
@@ -452,8 +473,9 @@ functions.request = async function() {
         {name: 'spotternetwork:members', handle: calls['misc:api']['spotternetwork:members'], timer: calls['misc:api']['spotternetwork:members']['spotternetwork:members:cachetime'], contradictions: [], func: a_spotters},
         {name: 'spc:meoscale:convective:disscussion', handle: calls['misc:api']['spc:meoscale:convective:disscussion'], timer: calls['misc:api']['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:cachetime'], contradictions: [], func: a_discussions},
         {name: 'lightning:reports', handle: calls['misc:api']['lightning:reports'], timer: calls['misc:api']['lightning:reports']['lightning:reports:cachetime'], contradictions: [], func: a_lightning},
-        {name: 'mPing:reports', handle: calls['misc:api']['mPing:reports'], timer: calls['misc:api']['mPing:reports']['mPing:reports:cachetime'], contradictions: ["lsr:reports"], func: a_mping},
-        {name: 'lsr:reports', handle: calls['misc:api']['lsr:reports'], timer: calls['misc:api']['lsr:reports']['lsr:reports:cachetime'], contradictions: ["mPing:reports"], func: a_lsr}
+        {name: 'mPing:reports', handle: calls['misc:api']['mPing:reports'], timer: calls['misc:api']['mPing:reports']['mPing:reports:cachetime'], contradictions: ["lsr:reports", "grlevelx:reports"], func: a_mping},
+        {name: 'lsr:reports', handle: calls['misc:api']['lsr:reports'], timer: calls['misc:api']['lsr:reports']['lsr:reports:cachetime'], contradictions: ["mPing:reports", "grlevelx:reports"], func: a_lsr},
+        {name: 'grlevelx:reports', handle: calls['misc:api']['grlevelx:reports'], timer: calls['misc:api']['grlevelx:reports']['grlevelx:reports:cachetime'], contradictions: ["mPing:reports", "lsr:reports"], func: a_grxlsr},
     ] 
     for (let i = 0; i < handles.length; i++) {
         let contradictions = handles[i].contradictions;
