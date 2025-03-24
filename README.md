@@ -55,6 +55,8 @@
 		- GFS Model (https://www.tropicaltidbits.com/analysis/models/)
 		- HRRR Model (https://www.tropicaltidbits.com/analysis/models/?model=hrrr)
 		- Hodographs (https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3)
+        - RGEM Model (https://www.tropicaltidbits.com/analysis/models/?model=rgem&region=us)
+        - WeatherWise (https://web.weatherwise.app)
 	- SPC Day Risks and Outlooks
 		- Categorial (Days: 1, 2, and 3)
 		- Tornado Risk (Days: 1 and 2)
@@ -69,6 +71,10 @@
 		- Red Warning Box (Previous 6 Alerts)
 		- Audio Support
 		- Notificiation Support
+    - Discussions and mPing
+        - Mesoscale Discussions
+        - Lightning Strikes (Past 20 minutes)
+        - Storm Reports (Hail, Snow, Thunderstorm Wind Damage, Etc)
 - [x] Portable Mode (/premade/portable)
 - [x] Mobile Phone Audio Support
 	- Requires at least once interaction
