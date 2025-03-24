@@ -435,11 +435,11 @@ functions.request = async function() {
         } catch (error) {
             if (currentRetries < 3) { 
                 currentRetries++;
-                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying IEM Reports API Request (Attempt: ${currentRetries})`);
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying LSR API Request (Attempt: ${currentRetries})`);
                 await a_lsr(handle);
             } else {
                 results += ` (LSR: ERR)`;
-                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] IEM Reports API Request Failed after ${currentRetries} attempts.`);
+                console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] LSR API Request Failed after ${currentRetries} attempts.`);
             }
         }
     }
