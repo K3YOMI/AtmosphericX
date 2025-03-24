@@ -278,7 +278,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying NWS API Request (Attempt: ${currentRetries})`);
                 await a_nws(handle);
             } else {
-                results += `(NWS: ERR)`;
+                results += ` (NWS: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] NWS API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -302,7 +302,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying AH API Request (Attempt: ${currentRetries})`);
                 await a_allision_house(handle);
             } else {
-                results += `(AH: ERR)`;
+                results += ` (AH: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] AH API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -326,7 +326,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying COD API Request (Attempt: ${currentRetries})`);
                 await a_cod(handle);
             } else {
-                results += `(COD: ERR)`;
+                results += ` (COD: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] COD API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -348,7 +348,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying Spotter Network API Request (Attempt: ${currentRetries})`);
                 await a_spotters(handle);
             } else {
-                results += `(SPOTTERS: ERR)`;
+                results += ` (SPOTTERS: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] Spotter Network API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -370,7 +370,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying Mesoscale API Request (Attempt: ${currentRetries})`);
                 await a_discussions(handle);
             } else {
-                results += `(MESO: ERR)`;
+                results += ` (MESO: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] Mesoscale API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -392,7 +392,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying Lightning API Request (Attempt: ${currentRetries})`);
                 await a_lightning(handle);
             } else {
-                results += `(LIGHTNING: ERR)`;
+                results += ` (LIGHTNING: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] Lightning API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -413,7 +413,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying mPing API Request (Attempt: ${currentRetries})`);
                 await a_mping(handle);
             } else {
-                results += `(mPing: ERR)`;
+                results += ` (mPing: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] mPing API Request Failed after ${currentRetries} attempts.`);
             }
         }
@@ -423,8 +423,8 @@ functions.request = async function() {
         let state = handle['lsr:reports:state']
         let hours = handle['lsr:reports:hours']
         try {
-            if (state != `ALL` && state != ``) { url += `states=${state}` }
-            url += `&hours=${hours}`
+            url += `hours=${hours}`
+            if (state != `ALL` && state != ``) { url += `&states=${state}` }
             let d = await ext.functions.request(url);
             if (d.features != undefined) {
                 data.lsr = d;
@@ -438,7 +438,7 @@ functions.request = async function() {
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying IEM Reports API Request (Attempt: ${currentRetries})`);
                 await a_lsr(handle);
             } else {
-                results += `(LSR: ERR)`;
+                results += ` (LSR: ERR)`;
                 console.error(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [ERROR] IEM Reports API Request Failed after ${currentRetries} attempts.`);
             }
         }
