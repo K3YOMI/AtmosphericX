@@ -308,28 +308,45 @@ functions.request = async function() {
         }
     }
     async function spotternetwork() {
-        let d = ``
-        let c = ``
         if (misc['spotternetwork:members']['spotternetwork:members:enable'] == true) {
             let url = misc['spotternetwork:members']['spotternetwork:members:api']
-            d = await ext.functions.request(url)
+            let d = await ext.functions.request(url)
             if (d.length == 0) { await spotternetwork(); return; }
+            let parsed = await ext.functions.spotternetwork(d)
+            cache.alerts.spotters = parsed
+            result += ` (SPOTTERS: ${parsed.length})`
         }
-        if (misc['spotternetwork:members']['spotternetwork:streams:enable'] == true) {
-            let url = misc['spotternetwork:members']['spotternetwork:streams:api']
-            c = await ext.functions.request(url)
-            if (c.length == 0) { await spotternetwork(); return; }
-        }
-        let parsed = await ext.functions.spotternetwork(d,c)
-        cache.alerts.spotters = parsed
-        result += ` (SPOTTERS: ${parsed.length})`
     }
+    async function mesoscale() {
+        if (misc['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:enable'] == true) {
+            let url = misc['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:api']
+            let d = await ext.functions.request(url)
+            if (d.length == 0) { await mesoscale(); return; }
+            let parsed = await ext.functions.mesoscale(d)
+            cache.alerts.mesoscale = parsed
+            result += ` (MESO: ${parsed.length})`
+        }
+    }
+
+    async function lightning() {
+        if (misc['lightning:reports']['lightning:reports:enable'] == true) {
+            let url = misc['lightning:reports']['lightning:reports:api']
+            let d = await ext.functions.request(url)
+            if (d.length == 0) { await lightning(); return; }
+            let parsed = await ext.functions.lightning(d)
+            cache.alerts.lightning = parsed
+            result += ` (LIGHTNING: ${parsed.length})`
+        }
+    }
+
 
     await nws()
     await reports()
     await allisionHouse()
     await cod()
     await spotternetwork()
+    await mesoscale()
+    await lightning()
     console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Updated Alert Cache (Taken: ${new Date() - time}ms) | ${result}`)
     await ext.functions.build(data)
 }

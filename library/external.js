@@ -166,29 +166,62 @@ functions.parser = function (data) {
         resolve(tCache)
     });
 }
-functions.spotternetwork = function(d1, d2) {
+functions.spotternetwork = function(data) {
     return new Promise((resolve, reject) => {
         let regex = /Object:\s*([\d.-]+),([\d.-]+)\s*Icon:.*?"(.*?)\n.*?Text:.*?"(.*?)"/g
         let regex2 = /Object:\s*([\d.-]+),([\d.-]+)\s*Icon:.*?"(.*?)\n.*?Icon:.*?"(.*?)\n.*?Text:.*?"(.*?)"/g
         let regx3 = /Object:\s*([\d.-]+),([\d.-]+)\s*$/g
         regex = new RegExp(regex.source + '|' + regex2.source + '|' + regx3.source, 'gs')
         let spotters = []
-        let d1Match = [...d1.matchAll(regex)]
-        let d2Match = [...d2.matchAll(regex)]
-        for (const match of d2Match) {
-            let lat = parseFloat(match[1])
-            let lon = parseFloat(match[2])
-            let description = match[3] == undefined ? "N/A" : match[3]
-            spotters.push({ lat: lat, lon: lon, description: description, streaming: 1})
-        }
+        let d1Match = [...data.matchAll(regex)]
         for (const match of d1Match) {
             let lat = parseFloat(match[1])
             let lon = parseFloat(match[2])
+            let meta = match[0]
             let description = match[3] == undefined ? "N/A" : match[3]
-            spotters.push({ lat: lat, lon: lon, description: description, streaming: 0})
+            let isActive = (meta.includes('Icon: 0,0,000,6,2')) ? 1 : 0
+            let isStreaming = (meta.includes('Icon: 0,0,000,1,19')) ? 1 : 0
+            let isIdle = (meta.includes('Icon: 0,0,000,6,6')) ? 1 : 0
+            let isOffline = (meta.includes('Icon: 0,0,000,6,10')) ? 1 : 0
+            spotters.push({ lat: lat, lon: lon, description: description, streaming: isStreaming, active: isActive, idle: isIdle, offline: isOffline })
         }
-        resolve(spotters)
+        let unique = spotters.filter((thing, index, self) => index === self.findIndex((t) => (t.description === thing.description && t.lat === thing.lat && t.lon === thing.lon)))
+        resolve(unique)
     })
+}
+functions.mesoscale = function(data) {
+    return new Promise(async (resolve, reject) => {
+        let discussions = data.split('#################################################################################################################');
+        let parsedDiscussions = discussions.map(discussion => {
+            let regex = /Icon:.*?1, 1, "(.*?)"/g;
+            let matches = [...discussion.matchAll(regex)];
+            let discussionText = '';
+            for (let i = 0; i < matches.length; i++) {
+                let match = matches[i];
+                let text = match[1];
+                discussionText += text;
+            }
+            discussionText = discussionText.replace(/<a href=/g, '');
+            return discussionText.trim();
+        });
+        parsedDiscussions = parsedDiscussions.filter(discussion => discussion !== '');
+        resolve(parsedDiscussions);
+    });
+}
+
+functions.lightning = function(data) {
+    return new Promise(async (resolve, reject) => {
+        let regex = /Icon:.*?([\d.-]+),([\d.-]+),0,1,12,(.*?)/g;
+        let matches = [...data.matchAll(regex)];
+        let strikes = [];
+        for (let i = 0; i < matches.length; i++) {
+            let match = matches[i];
+            let lat = parseFloat(match[1]);
+            let lon = parseFloat(match[2]);
+            strikes.push({ lat: lat, lon: lon});
+        }
+        resolve(strikes);
+    });
 }
 
 
@@ -314,9 +347,10 @@ functions.build = function (data) {
         cache.alerts.reports.reverse()
     } catch (error) { console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Failed to build alerts: ${error}`) }
 }
-functions.request = function (url) {
+functions.request = function (url, ua=false) {
     return new Promise(async (resolve, reject) => {
         let details = { url: url, headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'], 'Accept': 'application/geo+json', 'Accept-Language': 'en-US' } }
+        if (ua != false) { details.headers['User-Agent'] = ua }
         try {
             await axios.get(details.url, { headers: details.headers, timeout: 1000 }).then((response) => {
                 let data = response.data

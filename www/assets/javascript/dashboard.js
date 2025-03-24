@@ -172,26 +172,36 @@ dashboard.generatecards = async function(caller, storage, classname=`data-card`)
 }
 dashboard.execute = async function() {
     let response = JSON.parse(await library.request(`/api/all`))
-    cache.warnings = response.warnings
-    cache.watches = response.watches
-    cache.manual = response.manual
-    cache.alerts = response.active
-    cache.broadcasts = response.broadcasts
-    cache.reports = response.reports 
-    cache.config = response.configurations
-    cache.statistics = response.statistics
+    cache.warnings = response.warnings ? response.warnings : []
+    cache.watches = response.watches ? response.watches : []
+    cache.manual = response.manual ? response.manual : []
+    cache.alerts = response.active ? response.active : []
+    cache.broadcasts = response.broadcasts ? response.broadcasts : []
+    cache.reports = response.reports  ? response.reports : []
+    cache.config = response.configurations ? response.configurations : []
+    cache.statistics = response.statistics ? response.statistics : []
+    cache.mesoscale = response.mesoscale ? response.mesoscale : ``
+    cache.lightning = response.lightning ? response.lightning : []
+    cache.spotters = response.spotters ? response.spotters : []
     await dashboard.reset()
     await dashboard.fillRegions()
     let tReports = []
     let tStatisticsByCount = []
     let tStats = []
+    let tMesoscale = []
     let tRecentAlerts = []
+    let tLightning = []
     let tRegions = []
     let tActivityAlerts = [
         {title: `Alerts`,id: `active_alerts_int`,data: `<center><h1 style="font-size: 30px">${cache.alerts.length}</h1></center>`},
         {title: `Watches`,id: `active_watches_int`,data: `<center><h1 style="font-size: 30px">${cache.watches.length}</h1></center>`},
         {title: `Warnings`, id: `active_warnings_int`,data: `<center><h1 style="font-size: 30px">${cache.warnings.length}</h1></center>`},
         {title: `Reports`, id: `active_reports_int`, data: `<center><h1 style="font-size: 30px">${cache.reports.length}</h1></center>`},
+        {title: `Lightning Strikes`, id: `active_lightning_int`, data: `<center><h1 style="font-size: 30px">${cache.lightning.length}</h1></center>`},
+        {title: `Mesoscale Discussions`, id: `active_meso_int`, data: `<center><h1 style="font-size: 30px">${cache.mesoscale.length}</h1></center>`},
+        {title: `Active Network Members`, id: `active_spotter_network_int`, data: `<center><h1 style="font-size: 30px">${cache.spotters.filter(spotter => spotter.active == 1).length}</h1></center>`},
+        {title: `Streaming Network Members`, id: `streaming_spotter_network_int`, data: `<center><h1 style="font-size: 30px">${cache.spotters.filter(spotter => spotter.streaming == 1).length}</h1></center>`}
+
     ]
     let tHostingStats = [
         {title: `External Calls`, id: `operations_int`, data: `<center><h1 style="font-size: 30px">${cache.statistics.operations}</h1></center>`},
@@ -201,6 +211,15 @@ dashboard.execute = async function() {
     ]
     for (let i = 0; i < cache.reports.length; i++) {
         tReports.push({id: `report_${i}`, title: `${cache.reports[i].details.name}`, data: `${cache.reports[i].details.locations}<br>${cache.reports[i].details.sender}<br>Value: ${cache.reports[i].raw.value}<br>Valid Thru: ${cache.reports[i].details.expires}<br>${cache.reports[i].details.description}`})
+    }
+    for (let i = 0; i < cache.mesoscale.length; i++) {
+        if (cache.mesoscale[i] != "") {
+            
+            tMesoscale.push({id: `meso_${i}`, title: `Mesoscale Discussion #${i + 1}`, data: `${cache.mesoscale[i]}`, onclick: `alert(\`${cache.mesoscale[i]}\`);`})
+        }
+    }
+    for (let i = 0; i < cache.lightning.length; i++) {
+        tLightning.push({id: `lightning_${i}`, title: `Lightning Strike #${i + 1}`, data: `Latitude: ${cache.lightning[i].lat}<br>Longitude: ${cache.lightning[i].lon}`})
     }
     for (let i = 0; i < cache.alerts.length; i++) {
         if (!tStatisticsByCount.some(stat => stat.type == cache.alerts[i].details.name)) {
@@ -220,11 +239,11 @@ dashboard.execute = async function() {
         let location = cache.config['application:location']
         if (!alert.details.locations.includes(location)) {
             let payload = `alert(\`${alert.details.name} (${alert.details.type})\\n${alert.details.description}\`);`
-            let builder = {id: `alert_${i}`, title: `${alert.details.name} (${alert.details.type})`, data: `${alert.details.locations.substring(0, 250)}`, onclick: payload}
+            let builder = {id: `alert_${i}`, title: `${alert.details.name} (${alert.details.type})`, data: `<br>Location: ${alert.details.locations.substring(0, 55)}<br>Issued: ${alert.details.issued}<br>Expires: ${alert.details.expires}<br>Wind Speed: ${alert.details.wind}<br>Hail Threat: ${alert.details.hail}<br>Tornado Threat: ${alert.details.tornado}<br>Sender: ${alert.details.sender}<br>Link: <a href="${alert.details.link}">View Alert</a>`, onclick: payload}
             tRecentAlerts.push(builder)
         } else { 
             let payload = `alert(\`${alert.details.name} (${alert.details.type})\\n${alert.details.description}\`);`
-            let builder = {id: `alert_${i}`, title: `${alert.details.name} (${alert.details.type})`, data: `${alert.details.locations.substring(0, 250)}`, onclick: payload, danger: true}
+            let builder = {id: `alert_${i}`, title: `${alert.details.name} (${alert.details.type})`, data: `<br>Location: ${alert.details.locations.substring(0, 55)}<br>Issued: ${alert.details.issued}<br>Expires: ${alert.details.expires}<br>Wind Speed: ${alert.details.wind}<br>Hail Threat: ${alert.details.hail}<br>Tornado Threat: ${alert.details.tornado}<br>Sender: ${alert.details.sender}<br>Link: <a href="${alert.details.link}">View Alert</a>`, onclick: payload, danger: true}
             tRecentAlerts.push(builder)
         }
     }
@@ -245,6 +264,8 @@ dashboard.execute = async function() {
     dashboard.generatecards(document.getElementById('regions'), tRegions, `mini-card`)
     dashboard.generatecards(document.getElementById('hosting-stats'), tHostingStats, `mini-card`)
     dashboard.generatecards(document.getElementById('warning-statistics'), tStats, `mini-card`)
+    dashboard.generatecards(document.getElementById('meso-discussions'), tMesoscale, `mini-card`)
+    dashboard.generatecards(document.getElementById('lightning-strikes'), tLightning, `mini-card`)
 }
 
 dashboard.page = async function(page) { 

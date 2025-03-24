@@ -16,24 +16,10 @@
 cache = {}
 cache.version = `6.0.1`
 cache.author = `k3yomi@GitHub`
-cache.alerts = {
-    active: [], warnings: [],
-    watches: [], manual: [],
-    broadcasts: [], danger: [],
-    reports: [],
-    random: [],
-    spotters: [],
-    random_index: 0,
-    status: ``
-}
+cache.alerts = {}
 cache.configurations = undefined;
 cache.requesting = false;
-cache.statistics = {
-    operations: 0,
-    requests: 0,
-    memory: 0,
-    cpu: 0
-}
+cache.statistics = { operations: 0, requests: 0, memory: 0, cpu: 0 }
 
 express = require('express') // Web Framework
 session = require('express-session') // Session Management

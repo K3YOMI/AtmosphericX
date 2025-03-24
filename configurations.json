@@ -51,21 +51,27 @@
             "spotternetwork:members": {
                 "spotternetwork:members:enable": true,
                 "spotternetwork:members:api": "https://www.spotternetwork.org/feeds/gr.txt",
-                "spotternetwork:streams:enable": true,
-                "spotternetwork:streams:api": "https://www.spotternetwork.org/feeds/gr-stream.txt",
                 "spotternetwork:tracking": "SPOTTER_NAME_HERE"
             },
             "radar:layer": {
                 "radar:layer:enable": true,
                 "radar:layer:api": "https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png"
+            },
+            "spc:meoscale:convective:disscussion": {
+                "spc:meoscale:convective:disscussion:enable": true,
+                "spc:meoscale:convective:disscussion:api": "https://placefilenation.com/Placefiles/mcd.php"
+            },
+            "lightning:reports": {
+                "lightning:reports:enable": true,
+                "lightning:reports:api": "https://placefilenation.com/Placefiles/20lightning.php"
             }
         }
     },
     "application:information": {
         "application:location": "County, ST",
-        "application:timezone": "America/New_York",
+        "application:timezone": "America/Chicago",
         "application:12hour": false,
-        "application:useragent": "AtmosphericX-v6"
+        "application:useragent": "AtmosphericX/v6.0.0"
     },
      "request:settings": {
         "request:refresh_synced": 30,
@@ -94,7 +100,9 @@
         { "title": "Nexlab",                "url": "https://weather.cod.edu/#", "image": "/assets/media/dashboard/nexlab-logo.png" },
         { "title": "GFS Model",             "url": "https://www.tropicaltidbits.com/analysis/models/", "image": "/assets/media/dashboard/tropical-logo.png" },
         { "title": "HRRR Model",            "url": "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", "image": "/assets/media/dashboard/tropical-logov2.png" },
-        { "title": "Hodographs",            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", "image": "/assets/media/dashboard/pivotal-weather.png" }
+        { "title": "RGEM Model",            "url": "https://www.tropicaltidbits.com/analysis/models/?model=rgem&region=us", "image": "/assets/media/dashboard/tropical-logo.png" },
+        { "title": "Hodographs",            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", "image": "/assets/media/dashboard/pivotal-weather.png" },
+        { "title": "WeatherWise",           "url": "https://web.weatherwise.app", "image": "/assets/media/dashboard/weather-wise.png" }
     ],
     "application:sounds": {
         "application:beep": "/assets/media/audio/tones/beep-tone.mp3",

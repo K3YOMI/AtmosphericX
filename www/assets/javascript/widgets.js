@@ -148,10 +148,11 @@ widgets.map.populate = function() {
                 if (widgets.cache.focus) { widgets.cache.maplod.removeLayer(widgets.cache.focus); }
                 let polygon = L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}</div>`)
                 widgets.cache.focus = polygon;
-                if (tracking == "" || tracking == "SPOTTER_NAME_HERE") { widgets.cache.maplod.fitBounds(polygon.getBounds(), {animate: true, duration: 2}); polygon.openPopup(); }
+                // Don't question the max zoom and zoom out, it's to keep it in bounds properly on streaming interfaces.
+                if (tracking == "" || tracking == "SPOTTER_NAME_HERE") { widgets.cache.maplod.fitBounds(polygon.getBounds(), {maxZoom: 255, animate: true, duration: 2}); widgets.cache.maplod.fitBounds(polygon.getBounds(), {maxZoom: 8, animate: true, duration: 2}); polygon.openPopup(); }
             }
         } else {
-            L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1, radius: 2000}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`);
+            L.polygon(coordinates, {color: 'black', fillColor: 'red', fillOpacity: 0.1}).addTo(widgets.cache.maplod).bindPopup(`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`);
         }
     }
     for (let i = 0; i < reports.length; i++) {
@@ -166,22 +167,20 @@ widgets.map.populate = function() {
     for (let i = 0; i < spotters.length; i++) {
         let spotter = spotters[i];
         let description = spotter.description.toString().replace(/\\n/g, '<br>').replace('"', '');
-        let { lat, lon, streaming } = spotter;
         let defaultColor = { color: 'red', fillColor: 'red', fillOpacity: 0.1, radius: 50 };
-        let lastSeen = description.split('<br>')[1];
-        let lastSeenTime = new Date(lastSeen + ' UTC').getTime();
-        let currentTime = Date.now();
-        let minutesElapsed = Math.floor((currentTime - lastSeenTime) / 60000);
-        if (minutesElapsed < 30) {
-            defaultColor = { color: 'yellow', fillColor: 'yellow', fillOpacity: 0.1, radius: 50 };
+        if (spotter.idle == 1) {
+            defaultColor.color = 'yellow';
+            defaultColor.fillColor = 'yellow';
         }
-        if (description.includes('Heading')) {
-            defaultColor = { color: 'green', fillColor: 'green', fillOpacity: 0.1, radius: 50 };
+        if (spotter.active == 1) {
+            defaultColor.color = 'green';
+            defaultColor.fillColor = 'green';
         }
-        if (streaming) {
-            defaultColor = { color: 'blue', fillColor: 'blue', fillOpacity: 0.1, radius: 50 };
+        if (spotter.streaming == 1) {
+            defaultColor.color = 'blue';
+            defaultColor.fillColor = 'blue';
         }
-        let circle = L.circle([lat, lon], defaultColor).addTo(widgets.cache.maplod).bindPopup(`<b>${description}</b>`);
+        let circle = L.circle([spotter.lat, spotter.lon], defaultColor).addTo(widgets.cache.maplod).bindPopup(`<b>${description}</b>`);
         if (tracking && tracking !== "SPOTTER_NAME_HERE" && description.includes(tracking)) {
             circle.setStyle({ fillColor: 'pink', color: 'pink' });
             widgets.cache.maplod.fitBounds(circle.getBounds(), { maxZoom: 15, animate: true, duration: 2 });

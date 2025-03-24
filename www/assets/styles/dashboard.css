@@ -42,7 +42,6 @@ p {
     position: fixed;
     z-index: 1;
     margin: 20px;
-    zoom: 0.8;
     display: flex;
     flex-direction: column;
     justify-content: space-around;

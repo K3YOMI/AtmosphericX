@@ -131,6 +131,7 @@ functions.register = function(data) {
     let signature = functions.get_signature(data)
     data.properties.messageType = signature.message
     if (signature.eas == true || signature.siren == true) {
+        if (cache.alerts.danger == undefined) { cache.alerts.danger = []}
         if (!cache.alerts.danger.includes(`${data.properties.event}-${data.properties.areaDesc}-${data.properties.sent}-${data.properties.expires}-${data.properties.description}`)) {
             cache.alerts.danger.push(`${data.properties.event}-${data.properties.areaDesc}-${data.properties.sent}-${data.properties.expires}-${data.properties.description}`)
             audioToUse = signature.audiopresets.new

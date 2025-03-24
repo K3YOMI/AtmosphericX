@@ -83,7 +83,27 @@
                 <div class="grid-area" id="external-services-area"></div>
             </div>
             <div id="storm-reports" style="display: none;">
-                <h2 class="title-dash">Global Reports</h2>
+                <h2 class="title-dash">Discussions and mPing</h2>
+                <div class="grid-area">
+                    <div class="data-card" style="grid-column: 1/4;">
+                        <h1 class="subtitle-dashboard">Mesoscale Discussions</h1>
+                        <hr class="hr-dash">
+                        <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-right" id="grid-dropdown-mesod" onclick="dashboard.toggle('grid-dropdown-meso', 'grid-dropdown-mesod')"></i>
+                        <div id="grid-dropdown-meso" style="display: none;">
+                            <div class="alerts-area-box" id="meso-discussions" style="grid-template-columns: 1fr"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-area">
+                    <div class="data-card" style="grid-column: 1/4;">
+                        <h1 class="subtitle-dashboard">Lightning Strikes (20 minutes)</h1>
+                        <hr class="hr-dash">
+                        <i style="font-size: 19px; padding: 5px" class="fas fa-chevron-right" id="grid-dropdown-lightningd" onclick="dashboard.toggle('grid-dropdown-lightning', 'grid-dropdown-lightningd')"></i>
+                        <div id="grid-dropdown-lightning" style="display: none;">
+                            <div class="alerts-area-box" id="lightning-strikes" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr"></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="grid-area" id="reports-center"></div>
             </div>
             <div id="outlooks" style="display: none;">
