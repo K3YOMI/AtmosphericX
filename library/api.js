@@ -433,7 +433,6 @@ functions.request = async function() {
                 throw new Error('Invalid response');
             }
         } catch (error) {
-            console.log(error)
             if (currentRetries < 3) { 
                 currentRetries++;
                 console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [WARNING] Retrying IEM Reports API Request (Attempt: ${currentRetries})`);
