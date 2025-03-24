@@ -347,22 +347,25 @@ functions.build = function (data) {
         cache.alerts.reports.reverse()
     } catch (error) { console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: Failed to build alerts: ${error}`) }
 }
-functions.request = function (url, ua=false) {
+functions.request = function (url, ua = false) {
     return new Promise(async (resolve, reject) => {
-        let details = { url: url, headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'], 'Accept': 'application/geo+json', 'Accept-Language': 'en-US' } }
-        if (ua != false) { details.headers['User-Agent'] = ua }
+        let details = { 
+            url: url, 
+            headers: { 'User-Agent': cache.configurations['application:information']['application:useragent'], 'Accept': 'application/geo+json', 'Accept-Language': 'en-US' }, 
+        };
+        if (ua != false) { details.headers['User-Agent'] = ua; }
         try {
-            await axios.get(details.url, { headers: details.headers, timeout: 1000 }).then((response) => {
-                let data = response.data
-                let error = response.error
-                let statusCode = response.status
-                if (error != undefined) { resolve([]) }
-                if (data == undefined) { resolve([]) }
-                if (statusCode != 200) { resolve([]) }
-                resolve(data)
-            })
-        } catch (error) { resolve([]) }
-    })
+            await axios.get(details.url, { headers: details.headers, maxRedirects: 0, timeout: 1000 }).then((response) => {
+                let data = response.data;
+                let error = response.error;
+                let statusCode = response.status;
+                if (error != undefined) { resolve([]); }
+                if (data == undefined) { resolve([]); }
+                if (statusCode != 200) { resolve([]); }
+                resolve(data);
+            });
+        } catch (error) { resolve([]); }
+    });
 }
 
 

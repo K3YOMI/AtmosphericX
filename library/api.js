@@ -256,6 +256,7 @@ functions.request = async function() {
     let data = {}
     let time = new Date()
     let result = ``
+    let currentRetries = 0;
     data.nws = undefined
     data.generic = undefined
     data.reports = undefined
@@ -266,7 +267,14 @@ functions.request = async function() {
             let state = primary['nws:api']['nws:state']
             if (state != `ALL` && state != ``) { url += `/area/${state}` }
             let d = await ext.functions.request(url)
-            if (d.features != undefined) { data.nws = d; } else { await nws(); return }
+            if (d.features != undefined) { 
+                data.nws = d; 
+            } else { 
+                await nws(); 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying NWS API Request (Attempt: ${currentRetries})`)
+                return 
+            }
             result += `(NWS: ${d.features.length})`
         }
     }
@@ -277,8 +285,15 @@ functions.request = async function() {
             let hours = misc['iem:stormreports']['iem:stormreports:hours']
             if (state != `ALL` && state != ``) { url += `states=${state}` }
             url += `&hours=${hours}`
-            let d = await ext.functions.request(url)
-            if (d.features != undefined) { data.reports = d; } else { await reports(); return; }
+            let d = await ext.functions.request(url);
+            if (d.features != undefined) { 
+                data.reports = d; 
+            } else { 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Reports API Request (Attempt: ${currentRetries})`);
+                await reports(); 
+                return; 
+            }
             result += ` (REPORTS: ${d.features.length})`
         }
     }
@@ -287,7 +302,12 @@ functions.request = async function() {
         if (primary['allisonhouse:warnings']['allisonhouse:warnings:enable'] == true) {
             let url = primary['allisonhouse:warnings']['allisonhouse:warnings:api']
             let d = await ext.functions.request(url)
-            if (d.length == 0) { await allisionHouse(); return; }
+            if (d.length == 0) { 
+                await allisionHouse();
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying AH API Request (Attempt: ${currentRetries}`)
+                return; 
+            }
             let extract = await ext.functions.extract(d)
             let download = await ext.functions.download(extract, url)
             let parser = await ext.functions.parser(download)
@@ -299,7 +319,12 @@ functions.request = async function() {
         if (primary['cod:warnings']['cod:warnings:enable'] == true) {
             let url = primary['cod:warnings']['cod:warnings:api']
             let d = await ext.functions.request(url)
-            if (d.length == 0) { await cod(); return; }
+            if (d.length == 0) { 
+                await cod(); 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying COD API Request (Attempt: ${currentRetries})`)
+                return; 
+            }
             let extract = await ext.functions.extract(d)
             let download = await ext.functions.download(extract, url)
             let parser = await ext.functions.parser(download)
@@ -311,7 +336,12 @@ functions.request = async function() {
         if (misc['spotternetwork:members']['spotternetwork:members:enable'] == true) {
             let url = misc['spotternetwork:members']['spotternetwork:members:api']
             let d = await ext.functions.request(url)
-            if (d.length == 0) { await spotternetwork(); return; }
+            if (d.length == 0) { 
+                await spotternetwork(); 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Spotter Network API Request (Attempt: ${currentRetries})`)
+                return; 
+            }
             let parsed = await ext.functions.spotternetwork(d)
             cache.alerts.spotters = parsed
             result += ` (SPOTTERS: ${parsed.length})`
@@ -321,7 +351,12 @@ functions.request = async function() {
         if (misc['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:enable'] == true) {
             let url = misc['spc:meoscale:convective:disscussion']['spc:meoscale:convective:disscussion:api']
             let d = await ext.functions.request(url)
-            if (d.length == 0) { await mesoscale(); return; }
+            if (d.length == 0) { 
+                await mesoscale(); 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Mesoscale API Request (Attempt: ${currentRetries})`)
+                return; 
+            }
             let parsed = await ext.functions.mesoscale(d)
             cache.alerts.mesoscale = parsed
             result += ` (MESO: ${parsed.length})`
@@ -332,7 +367,12 @@ functions.request = async function() {
         if (misc['lightning:reports']['lightning:reports:enable'] == true) {
             let url = misc['lightning:reports']['lightning:reports:api']
             let d = await ext.functions.request(url)
-            if (d.length == 0) { await lightning(); return; }
+            if (d.length == 0) { 
+                await lightning(); 
+                currentRetries++;
+                console.log(`[Project AtmosphericX] [${new Date().toLocaleString()}] :..: [GET] Retrying Lightning API Request (Attempt: ${currentRetries})`)
+                return; 
+            }
             let parsed = await ext.functions.lightning(d)
             cache.alerts.lightning = parsed
             result += ` (LIGHTNING: ${parsed.length})`
