@@ -74,9 +74,7 @@
                     let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60))
                         ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)
                         : 'Nothing to display'  
-                    if (expires < 0) {
-                        expires = `Expires Soon`
-                    } else if (typeof expires === 'number') {
+                    if (typeof expires === 'number') {
                         if (expires >= 60) {
                             const hours = Math.floor(expires / 60)
                             expires = `Expires in <b>${hours} hour${hours !== 1 ? 's' : ''}</b>`
