@@ -71,10 +71,23 @@
                     widgets.notifcations.set(`notification_box`, `notification_title`, `notification_subtitle`)
                     let location = (cache.random && cache.random.details && cache.random.details.locations) ? cache.random.details.locations : 'Nothing to display'
                     let topic = (cache.random && cache.random.details && cache.random.details.name) ? cache.random.details.name : 'Not Available'
-                    let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)) ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60) : 'Nothing to display'
-                    if (expires < 0) {expires = `Expires Soon`}
-                    if (expires > 1) {expires = `Expires in <b>${expires} minutes</b>`}
-                    if (!Number.isNaN(Number(expires))) {expires = `Not Available`}
+                    let expires = (cache.random && cache.random.details && Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60))
+                        ? Math.floor((library.time(cache.random.details.expires).unix - library.time().unix) / 60)
+                        : 'Nothing to display'  
+                    if (expires < 0) {
+                        expires = `Expires Soon`
+                    } else if (typeof expires === 'number') {
+                        if (expires >= 60) {
+                            const hours = Math.floor(expires / 60)
+                            expires = `Expires in <b>${hours} hour${hours !== 1 ? 's' : ''}</b>`
+                        } else if (expires > 1) {
+                            expires = `Expires in <b>${expires} minutes</b>`
+                        } else {
+                            expires = `Expires Soon`
+                        }
+                    } else {
+                        expires = `Not Available`
+                    }
                     if (topic.length > 35) { 
                         document.getElementById('random_alert_title').style.marginTop = `1010px`;
                     } else { 
