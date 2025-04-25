@@ -24,8 +24,11 @@ path = require(`path`)
 axios = require(`axios`)
 os = require(`os`)
 process = require(`process`)
-nexrad_plot = require('nexrad-level-2-plot');
-nexrad_data = require('nexrad-level-2-data');
+//"nexrad-level-2-data": "^2.4.2",
+//"nexrad-level-2-plot": "^2.6.4",
+// This will be disabled to prevent canvas issues on Windows + Linux...
+//nexrad_plot = require('nexrad-level-2-plot'); 
+//nexrad_data = require('nexrad-level-2-data');
 xmpp = require('@xmpp/client');
 xml2js = require('xml2js');
 glob = require('glob');
@@ -53,7 +56,7 @@ Hooks = new (require(`./library/Hooks.js`))
 Parsing = new (require(`./library/Parsing.js`))
 APICalls = new (require(`./library/APICalls.js`))
 Formats = new (require(`./library/Formats.js`))
-Level2Nexrad = new (require(`./library/Level2Nexrad.js`))
+//Level2Nexrad = new (require(`./library/Level2Nexrad.js`))
 Database = new (require(`./library/Database.js`))
 Routes = new (require(`./library/Routes.js`))
 ShapefileManager = new (require(`./library/ShapefileManager.js`))

@@ -7,8 +7,6 @@
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "express-ws": "^5.0.2",
-    "nexrad-level-2-data": "^2.4.2",
-    "nexrad-level-2-plot": "^2.6.4",
     "shapefile": "^0.6.6",
     "sqlite3": "^5.1.7",
     "xml2js": "^0.6.2"
