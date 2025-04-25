@@ -112,13 +112,13 @@ class Listener {
         }
         if (action == `Extended` || action == `Updated` || action == `Correction` || action == `Upgraded`) {
             if (find != -1) {    
-                let prior_locations = data.properties.locations + " - " + cache.wire.features[find].properties.locations;
+                let prior_locations = data.properties.areaDesc + " - " + cache.wire.features[find].properties.areaDesc;
                 let new_history = cache.wire.features[find].history.concat(data.history);
                 let prior_sender = cache.wire.features[find].properties.senderName;
                 new_history = new_history.sort((a, b) => new Date(b.time) - new Date(a.time));
                 cache.wire.features[find] = data;
                 cache.wire.features[find].properties.senderName = prior_sender;
-                cache.wire.features[find].properties.locations = prior_locations;
+                cache.wire.features[find].properties.areaDesc = prior_locations;
                 cache.wire.features[find].properties.parameters = data.properties.parameters;
                 cache.wire.features[find].history = new_history;
                 Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);

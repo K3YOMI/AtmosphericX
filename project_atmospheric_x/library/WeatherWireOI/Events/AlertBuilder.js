@@ -97,9 +97,9 @@ class AlertBuilder {
         let filter = await Parsing._FilterNWSAlertsv2(this.alerts)
         let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
         for (let i = 0; i < filterd.length; i++) {
-            await NOAAWeatherWireService.ProcessValidAlert(filterd[i], `RAW`, `${new Date().getTime() - start}ms`)
+            NOAAWeatherWireService.ProcessValidAlert(filterd[i], `RAW`, `${new Date().getTime() - start}ms`)
         }
-        return
+        return filterd
     }
 
     /**
@@ -155,9 +155,9 @@ class AlertBuilder {
         let filter = await Parsing._FilterNWSAlertsv2(this.alerts)
         let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
         for (let i = 0; i < filterd.length; i++) {
-            await NOAAWeatherWireService.ProcessValidAlert(filterd[i], `XML`, `${new Date().getTime() - start}ms`)
+            NOAAWeatherWireService.ProcessValidAlert(filterd[i], `XML`, `${new Date().getTime() - start}ms`)
         }
-        return
+        return filterd
     }
 }
 
