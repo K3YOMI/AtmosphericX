@@ -81,7 +81,7 @@
                 "endpoint": "https://placefilenation.com/Placefiles/mcd.php"
             },
             "lightning_reports": {
-                "enabled": true,
+                "enabled": false,
                 "cache_time": 119,
                 "endpoint": "https://placefilenation.com/Placefiles/20lightning.php"
             }

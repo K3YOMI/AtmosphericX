@@ -366,7 +366,7 @@ class Hooks {
             this.Log(`${this.name}.Manual : ${cache.accounts[_req.session.account].username} cleared manual activation alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
             this.PrintLog(`${this.name}.Manual`, `Manual activation alert cleared by ${cache.accounts[_req.session.account].username}`);
         }
-        Routes.SyncClients(false)
+        await Routes.SyncClients(false)
     }
 
     /**
@@ -422,7 +422,7 @@ class Hooks {
             this.PrintLog(`${this.name}.Notification`, `Notification cleared by ${cache.accounts[_req.session.account].username}`);
             Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Notification cleared successfully.` });
         }
-        Routes.SyncClients(false)
+        await Routes.SyncClients(false)
     }
 
     /**
@@ -478,7 +478,7 @@ class Hooks {
             this.PrintLog(`${this.name}.Status`, `Status alert cleared by ${cache.accounts[_req.session.account].username}`);
             Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Status alert cleared successfully.` });
         }
-        Routes.SyncClients(false)
+        await Routes.SyncClients(false)
     }
 }
 

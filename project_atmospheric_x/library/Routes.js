@@ -174,17 +174,20 @@ class Routes {
         return new Promise(async (resolve) => {
             if (!cache.ws_clients || cache.ws_clients.length === 0) { resolve(`No clients to sync`); return; }
             await Hooks._GetRandomAlert()
-            let cfg = await Hooks.CallClientConfigurations(); 
-            cache.ws_clients.forEach(async (client) => {
+            let cfg = await Hooks.CallClientConfigurations();
+            for (let i = 0; i < cache.ws_clients.length; i++) {
+                const client = cache.ws_clients[i];
                 if (client.readyState === websocket.OPEN) {
                     const last_message = cache.ws_client_ratelimit.find((entry) => entry.ws === client);
-                    if (_timeout == true && last_message && (Date.now() - last_message.time) < cache.configurations.project_settings.websocket_timeout * 1000) { return }
+                    if (_timeout == true && last_message && (Date.now() - last_message.time) < cache.configurations.project_settings.websocket_timeout * 1000) {
+                        continue;
+                    }
                     cache.ws_client_ratelimit = cache.ws_client_ratelimit.filter((entry) => entry.ws !== client);
-                    cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });    
+                    cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });
                     client.send(JSON.stringify(cfg, null, 4));
                 }
-            });
-            resolve(`Message synced to all clients`);
+            }
+            resolve(`Message synced to all clients`);    
         });
     }
 

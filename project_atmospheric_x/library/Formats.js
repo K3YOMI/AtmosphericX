@@ -390,7 +390,7 @@ class Formats {
                 let response = await Parsing._ReadRawStations(_raw.nwsstat);
                 cache.alerts.stations = response;
             }
-            Routes.SyncClients()
+            await Routes.SyncClients()
         } catch (error) {
             Hooks.Log(`${this.name}.Build : ${error.message}`)
             Hooks.PrintLog(`${this.name}.Build`, `Error building alerts: ${error.message}`)

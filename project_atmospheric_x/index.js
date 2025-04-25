@@ -97,7 +97,7 @@ let cmd_node = [
     }},
     {"cmd": "/force", "description": "Force update all clients", "args": [], "example": "/force", "function": async (args) => {
         Hooks.RefreshConfigurations()
-        Routes.SyncClients()
+        await Routes.SyncClients()
         Hooks.Log(`AtmosphericX.CommandExecution : Force update all connected clients`)
         Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Force update all connected clients`)
     }},
