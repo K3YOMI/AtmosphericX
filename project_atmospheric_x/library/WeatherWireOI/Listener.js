@@ -73,14 +73,9 @@ class Listener {
                 if (message.xml == true && message.valid_xml_alert == false) { return }
                 await product.CreateNewAlert()
             })
-            await ShapefileManager.CreateZoneMap([
-                {id: `C`, file: `USCounties`},
-                {id: `Z`, file: `ForecastZones`},
-                {id: `Z`, file: `FireZones`},
-                {id: `Z`, file: `OffShoreZones`},
-                {id: `Z`, file: `FireCounties`},
-                {id: `Z`, file: `Marine`},
-            ])
+            await ShapefileManager.CreateZoneMap([{id: `C`, file: `USCounties`},{id: `Z`, file: `ForecastZones`},{id: `Z`, file: `FireZones`},{id: `Z`, file: `OffShoreZones`},{id: `Z`, file: `FireCounties`},{id: `Z`, file: `Marine`},])
+            Hooks.PrintLog(`${this.name}`, `Shapefiles have been already imported into the database`)
+            Hooks.PrintLog(`${this.name}`, `Attempting to connect to ${wire_service}...`)
             await session.start()
         })
     }

@@ -24,7 +24,6 @@ class ShapefileManager {
         this.author = `k3yomi@GitHub`
         this.name = `ShapefileManager`
         this.production = true
-        this.areas = []
         Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
@@ -44,15 +43,30 @@ class ShapefileManager {
       * each containing an `id`, `location`, and `geometry`.
       */
 
+
+    async CheckShapefiles() {
+        return new Promise(async (resolve, reject) => {
+            let res = await Database.SendDatabaseQuery(`SELECT name FROM sqlite_master WHERE type='table' AND name='shapefiles'`, [])
+            if (res.length == 0) {
+                await Database.SendDatabaseQuery(`CREATE TABLE shapefiles (id TEXT PRIMARY KEY, location TEXT, geometry TEXT)`, [])
+                resolve(false)
+            }
+            resolve(true)
+        })
+    }
+
     async CreateZoneMap(_shapefiles=[]) {
         return new Promise(async (resolve, reject) => {
             let shape_files = _shapefiles
+            let create = await this.CheckShapefiles()
+            if (create == true) { resolve(true); return }
             for (let i = 0; i < shape_files.length; i++) {
                 let file = shape_files[i].file
                 let type = shape_files[i].id
                 let filepath = `../storage/shapefiles/${file}`
                 let read = await shapefile.read(filepath, filepath)
                 let features = read.features
+                Hooks.PrintLog(`${this.name}`, `Importing shapefile ${file} (${type}) into database... This may take a moment.`)
                 for (let a = 0; a < features.length; a++) {
                     let properties = features[a].properties
                     let fips_exists = properties.FIPS != undefined
@@ -61,24 +75,23 @@ class ShapefileManager {
                     if (fips_exists) {
                         let t = `${properties.STATE}${type}${properties.FIPS.substring(2)}`
                         let n = `${properties.COUNTYNAME}, ${properties.STATE}`
-                        this.areas.push({ id: t, location: n, geometry: features[a].geometry })
+                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     } else if (state_exists) {
                         let t = `${properties.STATE}${type}${properties.ZONE}`
                         let n = `${properties.NAME}, ${properties.STATE}`
-                        this.areas.push({ id: t, location: n, geometry: features[a].geometry })
+                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     } else if (full_state_id_exists) {
                         let t = `${properties.ST}${type}-NoZone`
                         let n = `${properties.NAME}, ${properties.STATE}`
-                        this.areas.push({ id: t, location: n, geometry: features[a].geometry })
+                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     } else {
                         let t = properties.ID 
                         let n = properties.NAME
-                        this.areas.push({ id: t, location: n, geometry: [] })
+                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     }
                 }
             }
-            resolve(this.areas)
-            Hooks.PrintLog(`${this.name}`, `Successfully loaded ${this.areas.length} shapefiles`)
+            resolve(true)
         })
     }
 
@@ -96,15 +109,15 @@ class ShapefileManager {
 
     async GetCoordinates(_ugc=[]) {
         return new Promise(async (resolve, reject) => {
-            let ugc = _ugc.map(item => item.trim());
             let coords = [];
-            for (let i = 0; i < this.areas.length; i++) {
-                let id = this.areas[i].id;
-                let geo = this.areas[i].geometry;
-                if (ugc.includes(id)) { 
+            for (let i = 0; i < _ugc.length; i++) {
+                let id = _ugc[i].trim();
+                let located = await Database.SendDatabaseQuery(`SELECT geometry FROM shapefiles WHERE id = ?`, [id])
+                if (located.length > 0) {
+                    let geo = JSON.parse(located[0].geometry);
                     if (geo && geo.type === "Polygon") {
                         coords = coords.concat(geo.coordinates[0].map(coord => [coord[0], coord[1]]));
-                        break;
+                        break; // Only return the first matching polygon's coordinates
                     }
                 }
             }
@@ -124,12 +137,13 @@ class ShapefileManager {
 
     async GetLocations(_ugc=[]) {
         return new Promise(async (resolve, reject) => {
-            let ugc = _ugc.map(item => item.trim());
             let locations = [];
-            for (let i = 0; i < this.areas.length; i++) {
-                let id = this.areas[i].id;
-                let location = this.areas[i].location;
-                if (ugc.includes(id)) { locations.push(location) }
+            for (let i = 0; i < _ugc.length; i++) {
+                let id = _ugc[i].trim();
+                let located = await Database.SendDatabaseQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id])
+                if (located.length > 0) {
+                    locations.push(located[0].location);
+                }
             }
             locations = [...new Set(locations)];
             resolve(locations);
