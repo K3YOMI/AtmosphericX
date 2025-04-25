@@ -102,7 +102,7 @@ class Listener {
         let action = data.action
         let tracking = data.tracking
         let find = cache.wire.features.findIndex(feature => feature !== undefined && feature.tracking == tracking)
-        if (action == `Expired` || action == `Cancelled`) {
+        if (action == `Expired` || action == `Cancelled` || action == `Cancel`) {
             if (find != -1) {
                 cache.wire.features[find] = undefined 
                 Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`)
@@ -112,13 +112,11 @@ class Listener {
         }
         if (action == `Extended` || action == `Updated` || action == `Correction` || action == `Upgraded`) {
             if (find != -1) {    
-                let prior_locations = data.properties.areaDesc + " - " + cache.wire.features[find].properties.areaDesc;
                 let new_history = cache.wire.features[find].history.concat(data.history);
                 let prior_sender = cache.wire.features[find].properties.senderName;
                 new_history = new_history.sort((a, b) => new Date(b.time) - new Date(a.time));
                 cache.wire.features[find] = data;
                 cache.wire.features[find].properties.senderName = prior_sender;
-                cache.wire.features[find].properties.areaDesc = prior_locations;
                 cache.wire.features[find].properties.parameters = data.properties.parameters;
                 cache.wire.features[find].history = new_history;
                 Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);
@@ -127,7 +125,7 @@ class Listener {
                 Hooks.PrintLog(`${this.name}`, `[!] [${type}] ${action} Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
             }
         }
-        if (action == `Issued`) {
+        if (action == `Issued` || action == `Alert`) {
             if (find != -1) {
                 cache.wire.features[find] = data;
                 Hooks.PrintLog(`${this.name}`, `[!] [${type}] [Cache] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);

@@ -30,7 +30,6 @@ class AlertBuilder {
         this.message = _metdata.message
         this.attributes = _metdata.attributes
         this.xml = _metdata.xml
-        this.alerts = []
         if (!this.xml) {this._RawTextProduct()}
         if (this.xml) {this._XmlProduct()}
     }
@@ -44,11 +43,11 @@ class AlertBuilder {
       */
 
     async _RawTextProduct() {
-        let start = new Date().getTime()
         let message = this.message.split(/(?=\$\$)/g)
         let messages = message.map(msg => msg.trim());
         let configurations = cache.configurations.definitions
         for (let i = 0; i < messages.length; i++) {
+            let start = new Date().getTime()
             let msg = message[i]
             let vtec_h = new VTECParser(msg, configurations)
             let ugc_h = new UGCParser(msg, configurations)
@@ -68,6 +67,7 @@ class AlertBuilder {
                     tracking: vtec.tracking_id,
                     action: vtec.event_status,
                     history: [{desc: msg, act: vtec.event_status, time: new Date(this.attributes.issue)}],
+                    compile_time: `0ms`,
                     properties: {
                         areaDesc: ugc.locations.join(`; `) || `N/A`,
                         expires: new Date(vtec.expires) == `Invalid Date` ? new Date(new Date().getTime() + 9999999 * 60 * 60 * 1000) : new Date(vtec.expires),
@@ -91,15 +91,14 @@ class AlertBuilder {
                     },
                     type: `Feature`,
                 }
-                this.alerts.push(alert)
+                let filter = await Parsing._FilterNWSAlertsv2([alert])
+                let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
+                if (filterd.length == 0) { continue }
+                alert.compile_time = `${new Date().getTime() - start}ms`
+                await NOAAWeatherWireService.ProcessValidAlert(alert, `RAW`, `${alert.compile_time}`)
+                await new Promise(resolve => setTimeout(resolve, 1))
             }
         }
-        let filter = await Parsing._FilterNWSAlertsv2(this.alerts)
-        let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
-        for (let i = 0; i < filterd.length; i++) {
-            NOAAWeatherWireService.ProcessValidAlert(filterd[i], `RAW`, `${new Date().getTime() - start}ms`)
-        }
-        return filterd
     }
 
     /**
@@ -130,6 +129,7 @@ class AlertBuilder {
             tracking: tracking,
             action: action,
             history: [{desc: result.alert.info[0].description[0], act: action, time: new Date(this.attributes.issue)}],
+            compile_time: `0ms`,
             properties: {
                 areaDesc: result.alert.info[0].area[0].areaDesc[0],
                 expires: result.alert.info[0].expires[0],
@@ -151,13 +151,12 @@ class AlertBuilder {
         if (result.alert.info[0].area[0].polygon != undefined) {
             alert.geometry = { type: "Polygon", coordinates: [result.alert.info[0].area[0].polygon[0].split(" ").map(coord => {const [lat, lon] = coord.split(",").map(parseFloat);return [lon, lat];})], };
         } 
-        this.alerts.push(alert)
-        let filter = await Parsing._FilterNWSAlertsv2(this.alerts)
+        let filter = await Parsing._FilterNWSAlertsv2([alert])
         let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
-        for (let i = 0; i < filterd.length; i++) {
-            NOAAWeatherWireService.ProcessValidAlert(filterd[i], `XML`, `${new Date().getTime() - start}ms`)
-        }
-        return filterd
+        if (filterd.length == 0) { return }
+        alert.compile_time = `${new Date().getTime() - start}ms`
+        await NOAAWeatherWireService.ProcessValidAlert(alert, `XML`, `${alert.compile_time}`)
+        await new Promise(resolve => setTimeout(resolve, 1))
     }
 }
 
