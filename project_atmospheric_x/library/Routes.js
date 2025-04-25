@@ -174,7 +174,7 @@ class Routes {
         return new Promise(async (resolve) => {
             if (!cache.ws_clients || cache.ws_clients.length === 0) { resolve(`No clients to sync`); return; }
             await Hooks._GetRandomAlert()
-            let cfg = await Hooks.CallClientConfigurations();
+            let cfg = JSON.stringify(await Hooks.CallClientConfigurations())
             for (let i = 0; i < cache.ws_clients.length; i++) {
                 const client = cache.ws_clients[i];
                 if (client.readyState === websocket.OPEN) {
@@ -184,7 +184,7 @@ class Routes {
                     }
                     cache.ws_client_ratelimit = cache.ws_client_ratelimit.filter((entry) => entry.ws !== client);
                     cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });
-                    client.send(JSON.stringify(cfg, null, 4));
+                    await client.send(cfg);
                 }
             }
             resolve(`Message synced to all clients`);    
