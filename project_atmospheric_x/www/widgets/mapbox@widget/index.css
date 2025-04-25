@@ -1,0 +1,7 @@
+body, html { margin: 0;  background-color: #191A1A; padding: 0}
+
+.widgets-custom-popup .mapboxgl-popup-content { width: 400px; background-color: rgba(0, 0, 0, 0.85); color: #f0f0f0; padding: 10px 15px; font-size: 17px; font-family: SofiaSansSemiCondensed-Bold; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);}
+.widgets-custom-popup .mapboxgl-popup-content a { margin: 5px 0 0 0; line-height: 1.5; color: #dcdcdc;}
+.widgets-custom-popup .mapboxgl-popup-close-button { font-size: 16px; color: #ffffff; background-color: transparent; border: none; cursor: pointer; position: absolute; top: 5px; right: 5px; width: 25px; height: 25px; border-radius: 50%;}
+.widgets-custom-popup .mapboxgl-popup-close-button:hover { background-color: rgba(255, 0, 0, 0.512); }
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/notification@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+
+    <script src="../../assets/javascript/ElementsClass.js"></script>
+    <script src="../../assets/javascript/AlertsClass.js"></script>
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <body></body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let alert_class = new Alerts(library)
+            let element_class = new Elements(library)
+            let configurable_elements = global.configurations.widget_settings.notification.elements
+            library.CreateNewElement(configurable_elements.notification_base)
+            library.CreateNewElement(configurable_elements.notification_title)
+            library.CreateNewElement(configurable_elements.notification_divider)
+            library.CreateNewElement(configurable_elements.notification_subtitle)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                let storage = await alert_class.SyncAlerts()
+                element_class.UpdateNotification(configurable_elements.notification_base.id, configurable_elements.notification_title.id, configurable_elements.notification_subtitle.id)
+                alert_class.TriggerDynamicColors()
+            })
+        })
+    </script>
+</html>

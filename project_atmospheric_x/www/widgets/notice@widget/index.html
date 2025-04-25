@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/notice@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+
+    <script src="../../assets/javascript/ElementsClass.js"></script>
+    <script src="../../assets/javascript/AlertsClass.js"></script>
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <body>
+        <div id="notice_base" class="notice_base", style="display: none;">
+            <div style="height: 50px; width: 400px;"><h1 class="notice_title" id="p_title"></h1></div>
+            <div class="p_boxdark" style="height: 50px; width: 400px;"><h1 class="notice_subtitle" id="p_expires"></h1></div>
+            <div class="p_boxlight" style="height: 80px; width: 400px;"><h1 class="notice_subtitle" id="p_locations"></h1></div>
+            <div class="p_boxdark" style="height: 50px; width: 400px;"><h1 class="notice_subtitle" id="p_maxhail"></h1></div>
+            <div class="p_boxlight" style="height: 50px; width: 400px;"><h1 class="notice_subtitle" id="p_maxgusts"></h1></div>
+            <div class="p_boxdark" style="height: 50px; width: 400px;"><h1 class="notice_subtitle" id="p_tortag"></h1></div>
+            <div class="p_boxlight" style="height: 50px; width: 400px;"><h1 class="notice_subtitle" id="p_dmgtag"></h1></div>
+        </div>
+    </body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let alert_class = new Alerts(library)
+            let element_class = new Elements(library)
+
+     
+            document.addEventListener('onCacheUpdate', async (event) => {
+                let storage = await alert_class.SyncAlerts()
+                let warnings = [`Tornado Emergency`, `Confirmed Tornado Warning`, `Particularly Dangerous Situation`, `Radar Indicated Tornado Warning`, `Severe Thunderstorm Warning (Destructive)`];
+                let alert = null;
+                for (let warning of warnings) {
+                    let find = global.active.find((alert) => alert.details.name == warning);
+                    if (find) {
+                        alert = find;
+                        break;
+                    }
+                }
+                if (alert) {
+                    document.getElementById('notice_base').style.display = 'block'
+                    document.getElementById('p_title').innerHTML = alert.details.name
+                    document.getElementById('p_expires').innerHTML = `EXPIRES: ${alert.details.expires}`
+                    document.getElementById('p_locations').innerHTML = `LOCATIONS: ${alert.details.locations.toUpperCase()}`
+                    document.getElementById('p_maxhail').innerHTML = `MAX HAIL: ${alert.details.hail} in`
+                    document.getElementById('p_maxgusts').innerHTML = `MAX GUSTS: ${alert.details.wind} MPH`
+                    document.getElementById('p_tortag').innerHTML = `TORNADO THREAT: ${alert.details.tornado.toUpperCase()}`
+                    document.getElementById('p_dmgtag').innerHTML = `DAMAGE THREAT: ${alert.details.thunderstorm.toUpperCase()}`
+                } else {
+                    document.getElementById('notice_base').style.display = 'none'
+                }
+                alert_class.TriggerDynamicColors()
+            })
+        })
+    </script>
+</html>

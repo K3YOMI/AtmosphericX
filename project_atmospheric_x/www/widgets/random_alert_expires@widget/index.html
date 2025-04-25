@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/random_alert_expires@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <script src="../../assets/javascript/ElementsClass.js"></script>
+    <script src="../../assets/javascript/AlertsClass.js"></script>
+    <body></body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let element_class = new Elements(library)
+            let alert_class = new Alerts(library)
+            let configurable_elements = global.configurations.widget_settings.random_expires.elements
+            let configurable = global.configurations.widget_settings.random_expires
+            let aniamtions = configurable.animations
+            let max_length = configurable.max_text_length
+            let element;
+            if (configurable.marquee) library.CreateNewElement(Object.assign(configurable_elements.expires, { type: 'marquee' }), ['line-height', 'width']);
+            if (!configurable.marquee) { library.CreateNewElement(configurable_elements.expires) }
+            element = document.getElementById(configurable_elements.expires.id)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                await alert_class.SyncAlerts()
+                if (element == undefined) { return }
+                if (global.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; return }
+                let rng = await library.GetTimeInformation(global.random.details.expires)
+                if (isNaN(rng.unix)) { element.innerHTML = `Invalid Time`; return }
+                let time = rng.unix 
+                let date = new Date(time * 1000)
+
+                let formattedDate = date.toLocaleString('en-US', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }).replace(',', '')
+                rng = `${formattedDate.split('at')[0].trim()} ${formattedDate.split('at')[1].trim()}`
+
+                element_class.RandomAlertUpdate(configurable_elements.expires.id, `${rng}`, max_length, aniamtions[0], aniamtions[1])  
+            })
+        })
+    </script>
+</html>

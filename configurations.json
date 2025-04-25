@@ -1,16 +1,16 @@
 {
-    "hosting:settings": {
-        "https:enabled": false,
-        "https:port": 8080,
-        "http:port": 80,
-        "cookie:maxage": 86400000,
-        "ssl:path": {
-            "ssl:key": "./cert/generated.key",
-            "ssl:cert": "./cert/generated.crt"
+    "hosting": {
+        "https": false,
+        "https_port": 8080,
+        "http_port": 80,
+        "session_maxage": 86400000,
+        "cert_path": {
+            "key": "./cert/generated.key",
+            "cert": "./cert/generated.crt"
         }
     },
-    "overlay:settings": {
-        "color:scheme": [
+    "overlay_settings": {
+        "color_scheme": [
             { "type": "Tornado Emergency", "color": { "light": "rgb(209,38,215)", "dark": "rgb(159,37,163)" }},
             { "type": "Particularly Dangerous Situation", "color": { "light": "rgb(214,56,54)", "dark": "rgb(163,25,25)" }},
             { "type": "Hurricane Warning", "color": { "light": "rgb(249,56,54)", "dark": "rgb(203,25,25)" }},
@@ -19,88 +19,131 @@
             { "type": "Snow Squall Warning", "color": { "light": "rgb(249,56,54)", "dark": "rgb(203,25,25)" }},
             { "type": "Severe Thunderstorm Warning", "color": { "light": "rgb(248,160,42)", "dark": "rgb(248,106,42)" }},
             { "type": "Flash Flood Warning", "color": { "light": "rgb(102,209,60)", "dark": "rgb(73,155,40)" }},
-            { "type": "Special Marine Warning", "color": { "light": "rgb(42,81,224)", "dark": "rgb(28,61,181)" }}
-        ]
+            { "type": "Special Marine Warning", "color": { "light": "rgb(42,81,224)", "dark": "rgb(28,61,181)" }},
+            { "type": "Default", "color": { "light": "rgb(42,81,224)", "dark": "rgb(28,61,181)" }}
+        ] 
     },
-    "application:api": {
-        "primary:api": {
-            "nws:api": {
-                "nws:enable": true,
-                "nws:cachetime": 29,
-                "nws:api": "https://api.weather.gov/alerts/active",
-                "nws:state": "",
-                "nws:forecastoffice": [],
-                "nws:same": [],
-                "nws:zone": []
+    "sources": {
+        "filter": {
+            "forecast_office_filter": [],
+            "ugc_filter": []
+        },
+        "primary_sources": {
+            "national_weather_service": {
+                "enabled": true,
+                "cache_time": 29,
+                "endpoint": "https://api.weather.gov/alerts/active",
+                "state_filter": ""
             },
-            "allisonhouse:warnings": {
-                "allisonhouse:warnings:enable": false,
-                "allisonhouse:warnings:cachetime": 29,
-                "allisonhouse:warnings:api": "https://warnings.allisonhouse.com"
-            },
-            "cod:warnings": {
-                "cod:warnings:enable": false,
-                "cod:warnings:cachetime": 29,
-                "cod:warnings:api": "https://warnings.cod.edu"
+            "noaa_weather_wire_service": {
+                "enabled": false,
+                "cache_time": 0,
+                "endpoint": "xmpp://nwws-oi.weather.gov",
+                "domain": "nwws-oi.weather.gov",    
+                "xml_alerts": false,
+                "credentials": {
+                    "username": "USERNAME_HERE",
+                    "password": "PASSWORD_HERE"
+                }
             }
         },
-        "misc:api": {
-            "lsr:reports": {
-                "lsr:reports:enable": false,
-                "lsr:reports:state": "",
-                "lsr:reports:hours": 1,
-                "lsr:reports:cachetime": 1799,
-                "lsr:reports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+        "miscellaneous_sources": {
+            "iem_local_storm_reports": {
+                "enabled": false,
+                "abbreviated_state": "",
+                "data_retention_hours": 24,
+                "cache_time": 1799,
+                "endpoint": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
             },
-            "mPing:reports": {
-                "mPing:reports:enable": false,
-                "mPing:reports:cachetime": 1799,
-                "mPing:reports:api": "https://placefilenation.com/Placefiles/mping_60min.php"
+            "mping_reports": {
+                "enabled": false,
+                "cache_time": 1799,
+                "endpoint": "https://placefilenation.com/Placefiles/mping_60min.php"
             },
-            "grlevelx:reports": {
-                "grlevelx:reports:enable": true,
-                "grlevelx:reports:cachetime": 1799,
-                "grlevelx:reports:api": "https://www.grlevelx.com/lsr/lsr_latest.txt"
+            "grlevelx_reports": {
+                "enabled": true,
+                "cache_time": 1799,
+                "endpoint": "https://www.grlevelx.com/lsr/lsr_latest.txt"
             },
-            "spotternetwork:members": {
-                "spotternetwork:members:enable": true,
-                "spotternetwork:members:cachetime": 29,
-                "spotternetwork:members:api": "https://www.spotternetwork.org/feeds/gr.txt",
-                "spotternetwork:tracking": "SPOTTER_NAME_HERE"
+            "spotter_network": {
+                "enabled": true,
+                "cache_time": 29,
+                "endpoint": "https://www.spotternetwork.org/feeds/gr.txt"
             },
-            "radar:layer": {
-                "radar:layer:enable": true,
-                "radar:layer:api": "https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png"
+            "nexrad_stations": {
+                "enabled": true,
+                "cache_time": 1799,
+                "endpoint": "https://api.weather.gov/radar/stations"
             },
-            "spc:meoscale:convective:disscussion": {
-                "spc:meoscale:convective:disscussion:enable": true,
-                "spc:meoscale:convective:disscussion:cachetime": 119,
-                "spc:meoscale:convective:disscussion:api": "https://placefilenation.com/Placefiles/mcd.php"
+            "spc_mesoscale_discussions": {
+                "enabled": true,
+                "cache_time": 119,
+                "endpoint": "https://placefilenation.com/Placefiles/mcd.php"
             },
-            "lightning:reports": {
-                "lightning:reports:enable": true,
-                "lightning:reports:cachetime": 119,
-                "lightning:reports:api": "https://placefilenation.com/Placefiles/20lightning.php"
+            "lightning_reports": {
+                "enabled": true,
+                "cache_time": 119,
+                "endpoint": "https://placefilenation.com/Placefiles/20lightning.php"
             }
         }
     },
-    "application:information": {
-        "application:location": "County, ST",
-        "application:timezone": "America/Chicago",
-        "application:12hour": false,
-        "application:useragent": "AtmosphericX/v6.0.0"
+    "project_settings": {
+        "http_useragent": "AtmosphericX/v7.0.0",
+        "global_update": 10,
+        "websocket_timeout": 2,
+        "priority_alerts": true,
+        "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
+        "alerts": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning", "Areal Flood Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","911 Telephone Outage Emergency","Administrative Message","Air Quality Alert","Air Stagnation Advisory","Arroyo And Small Stream Flood Advisory","Ashfall Advisory","Ashfall Warning","Avalanche Advisory","Avalanche Warning","Avalanche Watch","Beach Hazards Statement","Blizzard Warning","Blizzard Watch","Blowing Dust Advisory","Blowing Dust Warning","Brisk Wind Advisory","Child Abduction Emergency","Civil Danger Warning","Civil Emergency Message","Coastal Flood Advisory","Coastal Flood Statement","Coastal Flood Warning","Coastal Flood Watch","Dense Fog Advisory","Dense Smoke Advisory","Dust Advisory","Dust Storm Warning","Earthquake Warning","Evacuation - Immediate","Excessive Heat Warning","Excessive Heat Watch","Extreme Cold Warning","Extreme Cold Watch","Extreme Fire Danger","Extreme Wind Warning","Fire Warning","Fire Weather Watch","Flash Flood Statement","Flash Flood Warning","Flash Flood Watch","Flood Advisory","Flood Statement","Flood Warning","Flood Watch","Freeze Warning","Freeze Watch","Freezing Fog Advisory","Freezing Rain Advisory","Freezing Spray Advisory","Frost Advisory","Gale Warning","Gale Watch","Hard Freeze Warning","Hard Freeze Watch","Hazardous Materials Warning","Hazardous Seas Warning","Hazardous Seas Watch","Hazardous Weather Outlook","Heat Advisory","Heavy Freezing Spray Warning","Heavy Freezing Spray Watch","High Surf Advisory","High Surf Warning","High Wind Warning","High Wind Watch","Hurricane Force Wind Warning","Hurricane Force Wind Watch","Hurricane Local Statement","Hurricane Warning","Hurricane Watch","Hydrologic Advisory","Hydrologic Outlook","Ice Storm Warning","Lake Effect Snow Advisory","Lake Effect Snow Warning","Lake Effect Snow Watch","Lake Wind Advisory","Lakeshore Flood Advisory","Lakeshore Flood Statement","Lakeshore Flood Warning","Lakeshore Flood Watch","Law Enforcement Warning","Local Area Emergency","Low Water Advisory","Marine Weather Statement","Nuclear Power Plant Warning","Radiological Hazard Warning","Red Flag Warning","Rip Current Statement","Severe Thunderstorm Warning","Severe Thunderstorm Watch","Severe Weather Statement","Shelter In Place Warning","Short Term Forecast","Small Craft Advisory","Small Craft Advisory For Hazardous Seas","Small Craft Advisory For Rough Bar","Small Craft Advisory For Winds","Small Stream Flood Advisory","Snow Squall Warning","Special Marine Warning","Special Weather Statement","Storm Surge Warning","Storm Surge Watch","Storm Warning","Storm Watch","Test","Tornado Warning","Tornado Watch","Tropical Depression Local Statement","Tropical Storm Local Statement","Tropical Storm Warning","Tropical Storm Watch","Tsunami Advisory","Tsunami Warning","Tsunami Watch","Typhoon Local Statement","Typhoon Warning","Typhoon Watch","Urban And Small Stream Flood Advisory","Volcano Warning","Wind Advisory","Wind Chill Advisory","Wind Chill Warning","Wind Chill Watch","Winter Storm Warning","Winter Storm Watch","Winter Weather Advisory"],
+        "beep_only": false,
+        "show_updates": true,
+        "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"]
     },
-     "request:settings": {
-        "request:refresh_synced": 30,
-        "request:query_sycned": 10,
-        "request:outbreakmode": true,
-        "request:outbreakalerts": ["Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
-        "request:allalerts": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","911 Telephone Outage Emergency","Administrative Message","Air Quality Alert","Air Stagnation Advisory","Arroyo And Small Stream Flood Advisory","Ashfall Advisory","Ashfall Warning","Avalanche Advisory","Avalanche Warning","Avalanche Watch","Beach Hazards Statement","Blizzard Warning","Blizzard Watch","Blowing Dust Advisory","Blowing Dust Warning","Brisk Wind Advisory","Child Abduction Emergency","Civil Danger Warning","Civil Emergency Message","Coastal Flood Advisory","Coastal Flood Statement","Coastal Flood Warning","Coastal Flood Watch","Dense Fog Advisory","Dense Smoke Advisory","Dust Advisory","Dust Storm Warning","Earthquake Warning","Evacuation - Immediate","Excessive Heat Warning","Excessive Heat Watch","Extreme Cold Warning","Extreme Cold Watch","Extreme Fire Danger","Extreme Wind Warning","Fire Warning","Fire Weather Watch","Flash Flood Statement","Flash Flood Warning","Flash Flood Watch","Flood Advisory","Flood Statement","Flood Warning","Flood Watch","Freeze Warning","Freeze Watch","Freezing Fog Advisory","Freezing Rain Advisory","Freezing Spray Advisory","Frost Advisory","Gale Warning","Gale Watch","Hard Freeze Warning","Hard Freeze Watch","Hazardous Materials Warning","Hazardous Seas Warning","Hazardous Seas Watch","Hazardous Weather Outlook","Heat Advisory","Heavy Freezing Spray Warning","Heavy Freezing Spray Watch","High Surf Advisory","High Surf Warning","High Wind Warning","High Wind Watch","Hurricane Force Wind Warning","Hurricane Force Wind Watch","Hurricane Local Statement","Hurricane Warning","Hurricane Watch","Hydrologic Advisory","Hydrologic Outlook","Ice Storm Warning","Lake Effect Snow Advisory","Lake Effect Snow Warning","Lake Effect Snow Watch","Lake Wind Advisory","Lakeshore Flood Advisory","Lakeshore Flood Statement","Lakeshore Flood Warning","Lakeshore Flood Watch","Law Enforcement Warning","Local Area Emergency","Low Water Advisory","Marine Weather Statement","Nuclear Power Plant Warning","Radiological Hazard Warning","Red Flag Warning","Rip Current Statement","Severe Thunderstorm Warning","Severe Thunderstorm Watch","Severe Weather Statement","Shelter In Place Warning","Short Term Forecast","Small Craft Advisory","Small Craft Advisory For Hazardous Seas","Small Craft Advisory For Rough Bar","Small Craft Advisory For Winds","Small Stream Flood Advisory","Snow Squall Warning","Special Marine Warning","Special Weather Statement","Storm Surge Warning","Storm Surge Watch","Storm Warning","Storm Watch","Test","Tornado Warning","Tornado Watch","Tropical Depression Local Statement","Tropical Storm Local Statement","Tropical Storm Warning","Tropical Storm Watch","Tsunami Advisory","Tsunami Warning","Tsunami Watch","Typhoon Local Statement","Typhoon Warning","Typhoon Watch","Urban And Small Stream Flood Advisory","Volcano Warning","Wind Advisory","Wind Chill Advisory","Wind Chill Warning","Wind Chill Watch","Winter Storm Warning","Winter Storm Watch","Winter Weather Advisory"],
-        "request:beeponly": false,
-        "request:updates": true,
-        "request:alwaysrun": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"]
+    "definitions": {
+        "vtec_regexp": "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z",
+        "ugc_start_regexp": "(\\w{2}[CZ](\\d{3}((-|>)\\s?(\n\n)?))+)",
+        "ugc_end_regexp": "(\\d{6}(-|>)\\s?(\n\n)?)",
+        "cancel_signatures": [ "has been cancelled", "will be allowed to expire", "has diminished", "and no longer", "has been replaced", "The threat has ended", "has weakened below severe" ],
+        "status_signatures": { "NEW": "Issued", "CON": "Updated", "EXT": "Extended", "EXA": "Extended", "EXB": "Extended", "UPG": "Upgraded", "COR": "Correction", "ROU": "Routine", "CAN": "Cancelled", "EXP": "Expired" },
+        "event_codes": { "AF": "Ashfall", "AS": "Air Stagnation", "BH": "Beach Hazard", "BW": "Brisk Wind", "BZ": "Blizzard", "CF": "Coastal Flood", "DF": "Debris Flow", "DS": "Dust Storm", "EC": "Extreme Cold", "EH": "Excessive Heat", "EW": "Extreme Wind", "FA": "Areal Flood", "FF": "Flash Flood", "FG": "Dense Fog", "FL": "Flood", "FR": "Frost", "FW": "Fire Weather", "FZ": "Freeze", "GL": "Gale", "HF": "Hurricane Force Wind", "HT": "Heat", "HU": "Hurricane", "HW": "High Wind", "HY": "Hydrologic", "HZ": "Hard Freeze", "IS": "Ice Storm", "LE": "Lake Effect Snow", "LO": "Low Water", "LS": "Lakeshore Flood", "LW": "Lake Wind", "MA": "Special Marine", "MF": "Dense Fog", "MH": "Ashfall", "MS": "Dense Smoke", "RB": "Small Craft for Rough Bar", "RP": "Rip Current Risk", "SC": "Small Craft", "SE": "Hazardous Seas", "SI": "Small Craft for Winds", "SM": "Dense Smoke", "SQ": "Snow Squall", "SR": "Storm", "SS": "Storm Surge", "SU": "High Surf", "SV": "Severe Thunderstorm", "SW": "Small Craft for Hazardous Seas", "TO": "Tornado", "TR": "Tropical Storm", "TS": "Tsunami", "TY": "Typhoon", "UP": "Heavy Freezing Spray", "WC": "Wind Chill", "WI": "Wind", "WS": "Winter Storm", "WW": "Winter Weather", "ZF": "Freezing Fog", "ZR": "Freezing Rain", "ZY": "Freezing Spray" },
+        "event_types": { "W": "Warning", "F": "Forecast", "A": "Watch", "O": "Outlook", "Y": "Advisory", "N": "Synopsis", "S": "Statement"},
+        "tag_definitions": {
+            "a large and extremely dangerous tornado": "Large and Dangerous Tornado",
+            "This is a PARTICULARLY DANGEROUS SITUATION": "Particularly Dangerous Situation",
+            "Radar indicated rotation": "Radar Indicated Tornado",
+            "Weather spotters confirmed tornado": "Confirmed by Storm Spotters",
+            "a severe thunderstorm capable of producing a tornado": "Developing Tornado",
+            "Law enforcement confirmed tornado": "Reported by Law Enforcement",
+            "a tornado is on the ground": "Confirmed Tornado",
+            "Weather spotters reported funnel cloud": "Confirmed Funnel Cloud by Storm Spotters",
+            "Public confirmed tornado": "Public reports of Tornado",
+            "tornado was reported briefly on the ground": "Tornado no longer on ground",
+            "spotters indicate that a funnel cloud continues with this storm": "Funnel Cloud Continues",
+            "A tornado may develop at any time": "Potentional still exists for Tornado to form",
+            "life-threatening situation": "Life Threating Situation",
+            "complete destruction is possible": "Extremly Damaging Tornado",
+            "potentially deadly tornado": "Deadly Tornado",
+            "Radar indicated": "Radar Indicated",
+            "Hail damage to vehicles is expected": "Damaging to Vehicles",
+            "Expect wind damage": "Wind Damage",
+            "People and animals outdoors will be injured": "Capable of Injuring People and Animals",
+            "Trained weather spotters": "Confirmed by Storm Spotters",
+            "SOURCE...Public": "Confirmed by Public",
+            "A Tornado Watch remains in effect": "Active Tornado Watch",
+            "Tennis ball size hail": "Tennis Ball Size Hail",
+            "Baseball size hail": "Baseball Size Hail",
+            "Golf ball size hail": "Golf Ball Size Hail",
+            "Quarter size hail": "Quarter Size Hail",
+            "Ping pong ball size hail": "Ping Pong Ball Size Hail",
+            "Nickel size hail": "Nickel Size Hail",
+            "Doppler radar.": "Confirmed by Radar",
+            "Doppler radar and automated gauges.": "Confirmed by Radar and Gauges",
+            "Flash flooding caused by thunderstorms.": "Caused by Thunderstorm",
+            "SOURCE...Emergency management.": "Confirmed by Emergency Management",
+            "Flash flooding caused by heavy rain.": "Caused by heavy rain",
+            "SOURCE...Law enforcement reported.": "Confirmed by Law Enforcement"
+        }
     },
-    "spc:outlooks": [
+    "spc_outlooks": [
         { "day": 1, "title": "Day 1 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day1otlk.gif" },
         { "day": 2, "title": "Day 2 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day2otlk.gif" },
         { "day": 3, "title": "Day 3 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day3otlk.gif" },
@@ -111,7 +154,7 @@
         { "day": 2, "title": "Day 2 Wind Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_wind.gif" },
         { "day": 2, "title": "Day 2 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" }
     ],
-    "external:services": [
+    "third_party_services": [
         { "title": "Live Storm Chasing",    "url": "https://livestormchasing.com/", "image": "/assets/media/dashboard/storm-live-logo.png" },
         { "title": "Mesoscale Analysis",    "url": "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", "image": "/assets/media/dashboard/mesoscale-logo.png" },
         { "title": "Nexlab",                "url": "https://weather.cod.edu/#", "image": "/assets/media/dashboard/nexlab-logo.png" },
@@ -121,13 +164,510 @@
         { "title": "Hodographs",            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", "image": "/assets/media/dashboard/pivotal-weather.png" },
         { "title": "WeatherWise",           "url": "https://web.weatherwise.app", "image": "/assets/media/dashboard/weather-wise.png" }
     ],
-    "application:sounds": {
-        "application:beep": "/assets/media/audio/tones/beep-tone.mp3",
-        "application:eas": "/assets/media/audio/tones/eas-tone.mp3",
-        "application:siren": "/assets/media/audio/tones/tore-tone.mp3",
-        "application:amber": "/assets/media/audio/tones/amber-tone.mp3"
+    "widget_settings": {
+        "mapbox": {
+            "api_key": "MAPBOX_API_KEY_HERE",
+            "default_station": "KLOT",
+            "show_stations": false,
+            "spotter_network_settings": {
+                "spotter_network_tracking": "SPOTTER_NAME_HERE",
+                "spotter_network_tracking_zoom": 13,
+                "spotter_network_filters": {
+                    "offline": false,
+                    "idle": false,
+                    "active": false,
+                    "streaming": true
+                },
+                "spotter_scheme": {
+                    "default": { "color": "red", "fillColor": "red", "fillOpacity": 0.1, "radius": 50 },
+                    "idle": { "color": "yellow", "fillColor": "yellow", "fillOpacity": 0.1, "radius": 50 },
+                    "active": { "color": "green", "fillColor": "green", "fillOpacity": 0.1, "radius": 50 },
+                    "streaming": { "color": "blue", "fillColor": "blue", "fillOpacity": 0.1, "radius": 50 }
+                }
+            },
+            "color_scheme": [
+                { "type": "Tornado Emergency", "color": { "color": "rgb(209,38,215)" }},
+                { "type": "Particularly Dangerous Situation", "color": { "color": "rgb(214,56,54)" }},
+                { "type": "Hurricane Warning", "color": { "color": "rgb(249,56,54)" }},
+                { "type": "Confirmed Tornado Warning", "color": { "color": "rgb(255, 4, 0)"}},
+                { "type": "Tornado Warning", "color": { "color": "rgb(182, 85, 83)" }},
+                { "type": "Flash Flood Emergency", "color": { "color": "rgb(249,56,54)" }},
+                { "type": "Snow Squall Warning", "color": { "color": "rgb(249,56,54)" } },
+                { "type": "Severe Thunderstorm Warning", "color": { "color": "rgb(248,160,42)" }},
+                { "type": "Flash Flood Warning", "color": { "color": "rgb(102,209,60)" }},
+                { "type": "Special Marine Warning", "color": { "color": "rgb(42,81,224)" }},
+                { "type": "Default", "color": { "color": "rgb(255, 255, 255)" }}
+            ],
+            "settings": {
+                "container": "p_map",
+                "style": "mapbox://styles/mapbox/dark-v10",
+                "zoom": 5,
+                "center": [-93.9254114, 42.0171798],
+                "pitch": 30,
+                "bearing": -1,
+                "preserveDrawingBuffer": true
+            },
+            "elements": {
+                "mapbox_base": {
+                    "name": "Mapbox Base",
+                    "type": "div",
+                    "id": "p_map",
+                    "class": "p_map",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "position": "absolute",
+                        "top": "0",
+                        "bottom": "0",
+                        "width": "100%"
+                    }
+                },
+                "radar_site": {
+                    "name": "NXRAD Site",
+                    "type": "div",
+                    "id": "p_station",
+                    "class": "p_station",
+                    "content": "",
+                    "parent": "",
+                    "attributes": {},
+                    "style": {
+                        "background-color": "rgba(0, 0, 0, 0.84)",
+                        "color": "white",
+                        "padding": "5px 10px",
+                        "border-radius": "15px",
+                        "text-align": "center",
+                        "font-size": "12px",
+                        "box-shadow": "0 2px 6px rgba(0, 0, 0, 0.3)",
+                        "transition": "background-color 0.3s ease"
+                    }
+                }
+            }
+        },
+        "notification": {
+            "max_title_length": 20,
+            "max_text_length": 920,
+            "elements": {
+                "notification_base": {
+                    "name": "Notification Box",
+                    "type": "div",
+                    "id": "p_header",
+                    "class": "p_boxlight",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "height": "235px",
+                        "width": "956px",
+                        "background-color": "rgb(42,81,224)",
+                        "border-style": "solid",
+                        "border-width": "5px",
+                        "border-color": "rgb(255, 255, 255)",
+                        "padding": "10px",
+                        "opacity": "0.95",
+                        "display": "none"
+                    }
+                },
+                "notification_title": {
+                    "name": "Notification Title",
+                    "type": "h1",
+                    "id": "p_title",
+                    "class": "text1",
+                    "content": "",
+                    "parent": "p_header",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "35px",
+                        "font-weight": "bold",
+                        "overflow": "hidden",
+                        "text-align": "center",
+                        "color": "white",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "text-shadow": "2px 2px 15px #00000069"
+                    }
+                },
+                "notification_divider": {
+                    "name": "Notification Divider",
+                    "type": "hr",
+                    "id": "p_divider",
+                    "class": "not-defined-hr",
+                    "content": "",
+                    "parent": "p_header",
+                    "attributes": {},
+                    "style": {
+                        "border-color": "white",
+                        "width": "90%"
+                    }
+                },
+                "notification_subtitle": {
+                    "name": "Notification Subtitle",
+                    "type": "p",
+                    "id": "p_subtitle",
+                    "class": "text2",
+                    "content": "",
+                    "parent": "p_header",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "15px",
+                        "overflow": "hidden",
+                        "color": "white",
+                        "text-align": "center",
+                        "word-wrap": "break-word",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'", 
+                        "text-shadow": "2px 2px 15px #00000069"
+                    }
+                }
+            }
+        },
+        "header": {
+            "max_header_length": 15,
+            "rotate_through_alerts": {
+                "enabled": false,
+                "cycled_types": [
+                    "Tornado Emergency",
+                    "Particularly Dangerous Situation",
+                    "Confirmed Tornado Warning",
+                    "Destructive Severe Thunderstorm Warning",
+                    "Radar Indicated Tornado Warning",
+                    "Flash Flood Emergency",
+                    "Special Marine Warning"
+                ]
+            },
+            "elements": {
+                "header_title": {
+                    "name": "Header Title",
+                    "type": "p",
+                    "id": "p_header",
+                    "class": "text1",
+                    "content": "Syncing...",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                       "font-size": "35px",
+                        "line-height": "35px",
+                        "width": "100%",
+                        "text-align": "center",
+                        "overflow": "hidden",
+                        "color": "white",
+                        "word-wrap": "break-word",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'", 
+                        "text-shadow": "5px 5px 15px #000000",
+                        "margin-bottom": "0",
+                        "position": "absolute",
+                        "top": "25%",
+                        "left": "50%",
+                        "transform": "translate(-50%, -50%)"
+                    }
+                }
+            }
+        },
+        "time_date": {
+            "standard_time": true,
+            "timezone": "America/Chicago",
+            "elements": {
+                "time": {
+                    "name": "Time Text",
+                    "type": "p",
+                    "id": "p_time",
+                    "class": "text1",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "35px",
+                        "font-weight": "bold",
+                        "overflow": "hidden",
+                        "text-align": "center",
+                        "color": "white",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'", 
+                        "text-shadow": "2px 2px 15px #00000069"
+                    }
+                },
+                "date": {
+                    "name": "Date Text",
+                    "type": "p",
+                    "id": "p_date",
+                    "class": "text2",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "35px",
+                        "font-weight": "bold",
+                        "overflow": "hidden",
+                        "text-align": "center",
+                        "color": "white",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'", 
+                        "text-shadow": "2px 2px 15px #00000069"
+                    }
+                }
+            }
+        },
+        "random_location": {
+            "max_text_length": 90,
+            "animations": ["fadeOutUp", "fadeInDown"],
+            "marquee": false,
+            "elements": {
+                "location": {
+                    "name": "Location text",
+                    "type": "p",
+                    "id": "p_location",
+                    "class": "text1",
+                    "content": "Syncing...",
+                    "parent": "body",
+                    "attributes": {
+                        "scrollamount": 15,
+                        "direction": "left",
+                        "loop": "infinite"
+                    },
+                    "style": {
+                        "font-size": "40px",
+                        "line-height": "5px",
+                        "text-align": "left",
+                        "color": "white",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "text-shadow": "5px 5px 15px #000000",
+                        "margin-bottom": "0",
+                        "position": "absolute",
+                        "top": "50%",
+                        "left": "0",
+                        "transform": "translate(0, -50%)"
+                    }
+                }
+            }
+        },
+        "random_description": {
+            "max_text_length": 500,
+            "animations": ["fadeOutUp", "fadeInDown"],
+            "marquee": false,
+            "elements": {
+                "description": {
+                    "name": "Description text",
+                    "type": "p",
+                    "id": "p_description",
+                    "class": "text1",
+                    "content": "Syncing...",
+                    "parent": "body",
+                    "attributes": {
+                        "scrollamount": 15,
+                        "direction": "left",
+                        "loop": "infinite"
+                    },
+                    "style": {
+                        "font-size": "30px",
+                        "line-height": "50px",
+                        "text-align": "left",
+                        "color": "white",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "text-shadow": "5px 5px 15px #000000",
+                        "margin-bottom": "0",
+                        "position": "absolute",
+                        "top": "50%",
+                        "left": "0",
+                        "transform": "translate(0%, 0%)"
+                    }
+                }
+            }
+        },
+        "random_alert": {
+            "max_text_length": 75,
+            "animations": ["fadeOut", "fadeIn"],
+            "marquee": false,
+            "auto_position": true,
+            "elements": {
+                "alert": {
+                    "name": "Alert Name text",
+                    "type": "p",
+                    "id": "p_alert",
+                    "class": "text1",
+                    "content": "Syncing...",
+                    "parent": "body",
+                    "attributes": {
+                        "scrollamount": 15,
+                        "direction": "left",
+                        "loop": "infinite"
+                    },
+                    "style": {
+                        "font-size": "150px",
+                        "line-height": "150px",
+                        "width": "100%",
+                        "text-align": "center",
+                        "overflow": "hidden",
+                        "color": "white",
+                        "word-wrap": "break-word",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'", 
+                        "text-shadow": "5px 5px 15px #000000",
+                        "margin-bottom": "0",
+                        "position": "absolute",
+                        "top": "35%",
+                        "left": "0%"
+                       
+                    }
+                }
+            }
+        },
+        "random_expires": {
+            "max_text_length": 32,
+            "animations": ["fadeOut", "fadeIn"],
+            "marquee": false,
+            "elements": {
+                "expires": {
+                    "name": "Expires text",
+                    "type": "p",
+                    "id": "p_expires",
+                    "class": "text1",
+                    "content": "Syncing...",
+                    "parent": "body",
+                    "attributes": {
+                        "scrollamount": 15,
+                        "direction": "left",
+                        "loop": "infinite"
+                    },
+                    "style": {
+                        "font-size": "30px",
+                        "overflow": "hidden",
+                        "color": "black",
+                        "text-align": "center",
+                        "word-wrap": "break-word",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'", 
+                        "text-shadow": "2px 2px 15px #00000069"
+                    }
+                }
+            }
+        },
+        "table": {
+            "max_alerts_shown": 15,
+            "max_char_per_row": 20,
+            "elements": {
+                "table": {
+                    "name": "Alert Table",
+                    "type": "table",
+                    "id": "p_table",
+                    "class": "data",
+                    "content": "Syncing...",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "21px",
+                        "width": "500px",
+                        "overflow": "hidden",
+                        "color": "white",
+                        "text-align": "center",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "margin-left": "auto",
+                        "margin-right": "auto"
+                    }
+                }
+            }
+        },
+        "spc": {
+            "elements": {
+                "image": {
+                    "name": "SPC Image",
+                    "type": "img",
+                    "id": "spc_image",
+                    "class": "",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "display": "block",
+                        "width": "1920px",
+                        "height": "1080px",
+                        "border-radius": "8px"
+                    }
+                },
+                "type": {
+                    "attributes": {},
+                    "name": "SPC Text",
+                    "type": "p",
+                    "id": "spc_text",
+                    "class": "text",
+                    "content": "",
+                    "parent": "body",
+                    "style": {
+                        "font-size": "90px",
+                        "padding": "15px",
+                        "top": "-100px",
+                        "right": "0",
+                        "position": "absolute",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "background-color": "rgba(0, 0, 0, 0.562)",
+                        "color": "white"
+                    }
+                }
+            }
+        },
+        "alert": {
+            "max_text_length": 80,
+            "elements": {
+                "title": {
+                    "name": "Alert Title",
+                    "type": "p",
+                    "id": "alert_title",
+                    "class": "text1",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "60px",
+                        "font-weight": "bold",
+                        "position": "absolute",
+                        "text-align": "center",
+                        "overflow": "hidden",
+                        "margin-left": "-50px",
+                        "margin-top": "90px",
+                        "width": "1500px",
+                        "overflow-wrap": "break-word",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "color": "white",
+                        "text-shadow": "2px 2px 5px #000000"
+                    }
+                },
+                "description": {
+                    "name": "Location Text",
+                    "type": "p",
+                    "id": "alert_description",
+                    "class": "text2",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {
+                        "font-size": "30px",
+                        "position": "absolute",
+                        "text-align": "center",
+                        "overflow": "hidden",
+                        "margin-left": "-50px",
+                        "margin-top": "205px",
+                        "width": "1500px",
+                        "overflow-wrap": "break-word",
+                        "font-family": "'SofiaSansSemiCondensed-Bold'",
+                        "color": "rgb(255, 255, 255)"
+                    }
+                },
+                "box": {
+                    "name": "Alert Box",
+                    "type": "img",
+                    "id": "alert_notification",
+                    "class": "",
+                    "content": "",
+                    "parent": "body",
+                    "attributes": {},
+                    "style": {}
+                }
+            }
+        },
+        "notice": {
+           "NOTE": "This needs to be done, but not a priority right now."
+        }
     },
-    "application:banners": {
+    "tone_sounds": {
+        "beep": "/assets/media/audio/tones/beep-tone.mp3",
+        "eas": "/assets/media/audio/tones/eas-tone.mp3",
+        "siren": "/assets/media/audio/tones/tore-tone.mp3",
+        "amber": "/assets/media/audio/tones/amber-tone.mp3"
+    },
+    "alert_banners": {
         "Tornado Warning": "/assets/media/gif/red_box.gif",
         "Radar Indicated Tornado Warning": "/assets/media/gif/red_box.gif",
         "Confirmed Tornado Warning": "/assets/media/gif/red_warning.gif",
@@ -146,7 +686,7 @@
         "Earthquake Warning": "/assets/media/gif/red_warning.gif",
         "UNK": "/assets/media/gif/red_warning.gif"
     },
-    "application:warnings": {
+    "alert_dictionary": {
         "Tornado Emergency": {
             "triggered": "Tornado Emergency",
             "new": "/assets/media/audio/tor/tor-upgraded.mp3",
@@ -297,16 +837,6 @@
             "eas": false,
             "autobeep": false
         },
-        "Earthquake Warning": {
-            "triggered": "Earthquake Warning",
-            "new": "/assets/media/audio/tones/beep-tone.mp3",
-            "update": "/assets/media/audio/tones/beep-tone.mp3",
-            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
-            "card": "Earthquake Warning",
-            "siren": false,
-            "eas": false,
-            "autobeep": true
-        },
         "UNK": {
             "triggered": "Unknown Event",
             "new": "/assets/media/audio/unk/unk-issued.mp3",
@@ -318,57 +848,220 @@
             "autobeep": false
         }
     },
-    "application:states": [
-        {"name": "Alabama", "abbreviation": "AL"},
-        {"name": "Alaska", "abbreviation": "AK"},
-        {"name": "Arizona", "abbreviation": "AZ"},
-        {"name": "Arkansas", "abbreviation": "AR"},
-        {"name": "California", "abbreviation": "CA"},
-        {"name": "Colorado", "abbreviation": "CO"},
-        {"name": "Connecticut", "abbreviation": "CT"},
-        {"name": "Delaware", "abbreviation": "DE"},
-        {"name": "Florida", "abbreviation": "FL"},
-        {"name": "Georgia", "abbreviation": "GA"},
-        {"name": "Hawaii", "abbreviation": "HI"},
-        {"name": "Idaho", "abbreviation": "ID"},
-        {"name": "Illinois", "abbreviation": "IL"},
-        {"name": "Indiana", "abbreviation": "IN"},
-        {"name": "Iowa", "abbreviation": "IA"},
-        {"name": "Kansas", "abbreviation": "KS"},
-        {"name": "Kentucky", "abbreviation": "KY"},
-        {"name": "Louisiana", "abbreviation": "LA"},
-        {"name": "Maine", "abbreviation": "ME"},
-        {"name": "Maryland", "abbreviation": "MD"},
-        {"name": "Massachusetts", "abbreviation": "MA"},
-        {"name": "Michigan", "abbreviation": "MI"},
-        {"name": "Minnesota", "abbreviation": "MN"},
-        {"name": "Mississippi", "abbreviation": "MS"},
-        {"name": "Missouri", "abbreviation": "MO"},
-        {"name": "Montana", "abbreviation": "MT"},
-        {"name": "Nebraska", "abbreviation": "NE"},
-        {"name": "Nevada", "abbreviation": "NV"},
-        {"name": "New Hampshire", "abbreviation": "NH"},
-        {"name": "New Jersey", "abbreviation": "NJ"},
-        {"name": "New Mexico", "abbreviation": "NM"},
-        {"name": "New York", "abbreviation": "NY"},
-        {"name": "North Carolina", "abbreviation": "NC"},
-        {"name": "North Dakota", "abbreviation": "ND"},
-        {"name": "Ohio", "abbreviation": "OH"},
-        {"name": "Oklahoma", "abbreviation": "OK"},
-        {"name": "Oregon", "abbreviation": "OR"},
-        {"name": "Pennsylvania", "abbreviation": "PA"},
-        {"name": "Rhode Island", "abbreviation": "RI"},
-        {"name": "South Carolina", "abbreviation": "SC"},
-        {"name": "South Dakota", "abbreviation": "SD"},
-        {"name": "Tennessee", "abbreviation": "TN"},
-        {"name": "Texas", "abbreviation": "TX"},
-        {"name": "Utah", "abbreviation": "UT"},
-        {"name": "Vermont", "abbreviation": "VT"},
-        {"name": "Virginia", "abbreviation": "VA"},
-        {"name": "Washington", "abbreviation": "WA"},
-        {"name": "West Virginia", "abbreviation": "WV"},
-        {"name": "Wisconsin", "abbreviation": "WI"},
-        {"name": "Wyoming", "abbreviation": "WY"},
-        {"name": "Other", "abbreviation": "Other"}
+    "nexrad_stations": [
+        {"station": "KBGM","x": -75.98472,"y": 42.1996899},
+        {"station": "KMVX","x": -97.32499,"y": 47.52805},
+        {"station": "KHPX","x": -87.2849899,"y": 36.73666},
+        {"station": "KRGX","x": -119.46202,"y": 39.75405},
+        {"station": "KFSD","x": -96.72888,"y": 43.58777},
+        {"station": "TEWR","x": -74.27,"y": 40.593},
+        {"station": "KCAE","x": -81.11861,"y": 33.9486},
+        {"station": "TLVE","x": -82.008,"y": 41.29},
+        {"station": "TMSP","x": -92.933,"y": 44.871},
+        {"station": "KMKX","x": -88.55055,"y": 42.96777},
+        {"station": "KDIX","x": -74.41072,"y": 39.94694},
+        {"station": "PAKC","x": -156.62942,"y": 58.67944},
+        {"station": "PABC","x": -161.87637,"y": 60.79194},
+        {"station": "KBOX","x": -71.13686,"y": 41.95577},
+        {"station": "KGRR","x": -85.54488,"y": 42.89388},
+        {"station": "KFTG","x": -104.5458,"y": 39.78663},
+        {"station": "KLCH","x": -93.21588,"y": 30.1253},
+        {"station": "KYUX","x": -114.65668,"y": 32.49527},
+        {"station": "KSHV","x": -93.84124,"y": 32.45083},
+        {"station": "KSRX","x": -94.36188,"y": 35.29041},
+        {"station": "TJFK","x": -73.881,"y": 40.589},
+        {"station": "TMCO","x": -81.3259999,"y": 28.344},
+        {"station": "KICX","x": -112.86221,"y": 37.59104},
+        {"station": "KMOB","x": -88.23972,"y": 30.67944},
+        {"station": "KMRX","x": -83.40194,"y": 36.16833},
+        {"station": "KVBX","x": -120.3979,"y": 34.83855},
+        {"station": "KJGX","x": -83.35111,"y": 32.67499},
+        {"station": "KIWA","x": -111.66999,"y": 33.28916},
+        {"station": "KLOT","x": -88.08444,"y": 41.6044399},
+        {"station": "KPOE","x": -92.97583,"y": 31.15527},
+        {"station": "KEAX","x": -94.26446,"y": 38.81024},
+        {"station": "PAHG","x": -151.35144,"y": 60.72591},
+        {"station": "TTUL","x": -95.827,"y": 36.071},
+        {"station": "TJUA","x": -66.07817,"y": 18.1156599},
+        {"station": "KDVN","x": -90.58083,"y": 41.61166},
+        {"station": "KLVX","x": -85.9438799,"y": 37.97527},
+        {"station": "KHNX","x": -119.63213,"y": 36.31416},
+        {"station": "KLWX","x": -77.4875,"y": 38.9761},
+        {"station": "KGWX","x": -88.32919,"y": 33.89691},
+        {"station": "KDDC","x": -99.96888,"y": 37.76083},
+        {"station": "KDMX","x": -93.7228499,"y": 41.7311},
+        {"station": "PHKM","x": -155.77776,"y": 20.12527},
+        {"station": "KDLH","x": -92.20971,"y": 46.83694},
+        {"station": "KEVX","x": -85.92166,"y": 30.56503},
+        {"station": "TORD","x": -87.858,"y": 41.797},
+        {"station": "KMAF","x": -102.18924,"y": 31.94346},
+        {"station": "KVNX","x": -98.12749,"y": 36.74083},
+        {"station": "KOTX","x": -117.62582,"y": 47.6805499},
+        {"station": "KBBX","x": -121.63165,"y": 39.49611},
+        {"station": "TADW","x": -76.845,"y": 38.695},
+        {"station": "TCLT","x": -80.885,"y": 35.337},
+        {"station": "KGRK","x": -97.3827699,"y": 30.72166},
+        {"station": "TSTL","x": -90.489,"y": 38.805},
+        {"station": "KEWX","x": -98.0286,"y": 29.70405},
+        {"station": "KRAX","x": -78.49,"y": 35.66527},
+        {"station": "KLNX","x": -100.57621,"y": 41.95794},
+        {"station": "KLBB","x": -101.81416,"y": 33.65413},
+        {"station": "TSJU","x": -66.179,"y": 18.474},
+        {"station": "HWPA2","x": -151.46,"y": 59.65},
+        {"station": "KPDT","x": -118.8529,"y": 45.69055},
+        {"station": "KGSP","x": -82.21983,"y": 34.8833},
+        {"station": "KEOX","x": -85.45938,"y": 31.46055},
+        {"station": "KBIS","x": -100.76027,"y": 46.7708299},
+        {"station": "TDFW","x": -96.918,"y": 33.065},
+        {"station": "PAIH","x": -146.3010899,"y": 59.46194},
+        {"station": "KBYX","x": -81.7033299,"y": 24.59694},
+        {"station": "KJAX","x": -81.7019,"y": 30.48463},
+        {"station": "KFDX","x": -103.61888,"y": 34.63416},
+        {"station": "TSLC","x": -111.93,"y": 40.967},
+        {"station": "TPHX","x": -112.163,"y": 33.421},
+        {"station": "KESX","x": -114.89138,"y": 35.70111},
+        {"station": "TCMH","x": -82.715,"y": 40.006},
+        {"station": "KDYX","x": -99.25416,"y": 32.53833},
+        {"station": "KTBW","x": -82.40194,"y": 27.70527},
+        {"station": "TMSY","x": -90.403,"y": 30.022},
+        {"station": "KDFX","x": -100.28027,"y": 29.2725},
+        {"station": "TBNA","x": -86.662,"y": 35.9799999},
+        {"station": "TMIA","x": -80.491,"y": 25.758},
+        {"station": "TATL","x": -84.262,"y": 33.647},
+        {"station": "KMUX","x": -121.89843,"y": 37.15522},
+        {"station": "KBRO","x": -97.4186,"y": 25.91555},
+        {"station": "RKJK","x": 126.62222,"y": 35.9241699},
+        {"station": "KAKQ","x": -77.0074999,"y": 36.98388},
+        {"station": "KBMX","x": -86.76972,"y": 33.17194},
+        {"station": "TPIT","x": -80.486,"y": 40.501},
+        {"station": "TMDW","x": -87.73,"y": 41.651},
+        {"station": "KABR","x": -98.41305,"y": 45.45583},
+        {"station": "KSFX","x": -112.68612,"y": 43.10559},
+        {"station": "KSOX","x": -117.63599,"y": 33.81773},
+        {"station": "KTLH","x": -84.32889,"y": 30.39749},
+        {"station": "KHGX","x": -95.07888,"y": 29.47194},
+        {"station": "KAMX","x": -80.41305,"y": 25.61055},
+        {"station": "KMTX","x": -112.44777,"y": 41.26277},
+        {"station": "TDAY","x": -84.123,"y": 40.022},
+        {"station": "KEPZ","x": -106.69799,"y": 31.87305},
+        {"station": "KLZK","x": -92.26194,"y": 34.83638},
+        {"station": "KHTX","x": -86.0836099,"y": 34.9305499},
+        {"station": "KEYX","x": -117.56074,"y": 35.09777},
+        {"station": "KSGF","x": -93.40027,"y": 37.23527},
+        {"station": "KBLX","x": -108.60679,"y": 45.85377},
+        {"station": "KPUX","x": -104.18138,"y": 38.45944},
+        {"station": "KHDX","x": -106.12002,"y": 33.07699},
+        {"station": "KINX","x": -95.56413,"y": 36.17499},
+        {"station": "KIWX","x": -85.7,"y": 41.3586},
+        {"station": "KGGW","x": -106.62468,"y": 48.20635},
+        {"station": "KNQA","x": -89.87333,"y": 35.34472},
+        {"station": "TDAL","x": -96.968,"y": 32.926},
+        {"station": "RODN","x": 127.90972,"y": 26.3019399},
+        {"station": "TPBI","x": -80.273,"y": 26.688},
+        {"station": "KCLX","x": -81.04219,"y": 32.65552},
+        {"station": "KIND","x": -86.28027,"y": 39.70749},
+        {"station": "TTPA","x": -82.518,"y": 27.86},
+        {"station": "KOKX","x": -72.8639199,"y": 40.8655199},
+        {"station": "KGLD","x": -101.70027,"y": 39.36694},
+        {"station": "KVTX","x": -119.1786,"y": 34.41166},
+        {"station": "KICT","x": -97.44305,"y": 37.65444},
+        {"station": "TDEN","x": -104.526,"y": 39.728},
+        {"station": "TPHL","x": -75.069,"y": 39.949},
+        {"station": "ROCO2","x": -97.45,"y": 35.2299999},
+        {"station": "TCVG","x": -84.58,"y": 38.898},
+        {"station": "KDOX","x": -75.44,"y": 38.82555},
+        {"station": "TBWI","x": -76.63,"y": 39.09},
+        {"station": "KRIW","x": -108.47729,"y": 43.0661},
+        {"station": "KVAX","x": -83.0018,"y": 30.89027},
+        {"station": "KABX","x": -106.82388,"y": 35.14972},
+        {"station": "KNKX","x": -117.04193,"y": 32.91888},
+        {"station": "PACG","x": -135.5291499,"y": 56.85277},
+        {"station": "KMSX","x": -113.9861,"y": 47.0411},
+        {"station": "KGRB","x": -88.1110999,"y": 44.49862},
+        {"station": "KATX","x": -122.49568,"y": 48.19461},
+        {"station": "TSDF","x": -85.61,"y": 38.046},
+        {"station": "KCRP","x": -97.51083,"y": 27.78388},
+        {"station": "TLAS","x": -115.007,"y": 36.144},
+        {"station": "TFLL","x": -80.344,"y": 26.143},
+        {"station": "TIAD","x": -77.529,"y": 39.084},
+        {"station": "KSJT","x": -100.49221,"y": 31.37111},
+        {"station": "TDTW","x": -83.515,"y": 42.111},
+        {"station": "KPBZ","x": -80.21794,"y": 40.53166},
+        {"station": "TMEM","x": -89.993,"y": 34.896},
+        {"station": "KPAH","x": -88.77194,"y": 37.06833},
+        {"station": "KHDC","x": -90.4074,"y": 30.5196},
+        {"station": "KRTX","x": -122.96499,"y": 45.71499},
+        {"station": "TMCI","x": -94.742,"y": 39.498},
+        {"station": "KFCX","x": -80.27416,"y": 37.02416},
+        {"station": "KARX","x": -91.1911,"y": 43.82277},
+        {"station": "KJKL","x": -83.31305,"y": 37.5908299},
+        {"station": "KGYX","x": -70.25636,"y": 43.8913},
+        {"station": "KAMA","x": -101.70927,"y": 35.23333},
+        {"station": "KFSX","x": -111.19843,"y": 34.57433},
+        {"station": "KMPX","x": -93.56552,"y": 44.84888},
+        {"station": "TIAH","x": -95.5669999,"y": 30.065},
+        {"station": "TICH","x": -97.437,"y": 37.507},
+        {"station": "KCXX","x": -73.16639,"y": 44.5111},
+        {"station": "KDGX","x": -89.98444,"y": 32.27999},
+        {"station": "KLSX","x": -90.68277,"y": 38.69888},
+        {"station": "KGJX","x": -108.21375,"y": 39.06222},
+        {"station": "KOAX","x": -96.3668,"y": 41.32027},
+        {"station": "PHMO","x": -157.18026,"y": 21.13277},
+        {"station": "KMXX","x": -85.78975,"y": 32.53664},
+        {"station": "KCBX","x": -116.23602,"y": 43.49021},
+        {"station": "KRLX","x": -81.72277,"y": 38.3111},
+        {"station": "TIDS","x": -86.436,"y": 39.637},
+        {"station": "KLTX","x": -78.42916,"y": 33.98916},
+        {"station": "KILX","x": -89.3367899,"y": 40.15049},
+        {"station": "KDTX","x": -83.47166,"y": 42.69999},
+        {"station": "KLRX","x": -116.80277,"y": 40.73972},
+        {"station": "TDCA","x": -76.962,"y": 38.759},
+        {"station": "KENX","x": -74.06408,"y": 42.58655},
+        {"station": "RKSG","x": 127.28556,"y": 37.2075699},
+        {"station": "TMKE","x": -88.046,"y": 42.819},
+        {"station": "KOHX","x": -86.5625,"y": 36.24722},
+        {"station": "KMAX","x": -122.71735,"y": 42.08111},
+        {"station": "KFDR","x": -98.97666,"y": 34.36219},
+        {"station": "KMQT","x": -87.54833,"y": 46.5311},
+        {"station": "KCBW","x": -67.80642,"y": 46.03916},
+        {"station": "KBUF","x": -78.73694,"y": 42.9486},
+        {"station": "KTFX","x": -111.38527,"y": 47.45972},
+        {"station": "THOU","x": -95.242,"y": 29.516},
+        {"station": "KDAX","x": -121.67782,"y": 38.50111},
+        {"station": "KTLX","x": -97.27775,"y": 35.33305},
+        {"station": "KTWX","x": -96.23249,"y": 38.99694},
+        {"station": "PAEC","x": -165.29498,"y": 64.51139},
+        {"station": "TOKC","x": -97.51,"y": 35.276},
+        {"station": "KEMX","x": -110.63027,"y": 31.89361},
+        {"station": "PHWA","x": -155.56887,"y": 19.095},
+        {"station": "KFWS","x": -97.30313,"y": 32.57277},
+        {"station": "TBOS","x": -70.933,"y": 42.158},
+        {"station": "KUDX","x": -102.82999,"y": 44.12471},
+        {"station": "PHKI","x": -159.55249,"y": 21.89389},
+        {"station": "TRDU","x": -78.697,"y": 36.002},
+        {"station": "KMLB","x": -80.6544399,"y": 28.11305},
+        {"station": "KCYS","x": -104.8061,"y": 41.15194},
+        {"station": "KFFC","x": -84.56583,"y": 33.36333},
+        {"station": "AWPA2","x": -149.78,"y": 61.15},
+        {"station": "KVWX","x": -87.72452,"y": 38.26024},
+        {"station": "KAPX","x": -84.71953,"y": 44.90634},
+        {"station": "KCCX","x": -78.00389,"y": 40.92305},
+        {"station": "KBHX","x": -124.29215,"y": 40.49833},
+        {"station": "KILN","x": -83.82166,"y": 39.42027},
+        {"station": "PGUA","x": 144.81112,"y": 13.45583},
+        {"station": "KCLE","x": -81.86,"y": 41.41305},
+        {"station": "KUEX","x": -98.44194,"y": 40.32083},
+        {"station": "PAPD","x": -147.5014,"y": 65.03511},
+        {"station": "TLKA2","x": -150.4199999,"y": 62.31},
+        {"station": "KMHX","x": -76.87639,"y": 34.77583},
+        {"station": "KMBX","x": -100.86443,"y": 48.39249},
+        {"station": "KTYX","x": -75.68,"y": 43.75582},
+        {"station": "KLGX","x": -124.10663,"y": 47.11689},
+        {"station": "KJAX","x": -81.7019,"y": 30.48463},
+        {"station": "KGRR","x": -85.54488,"y": 42.89388},
+        {"station": "KJAX","x": -81.7019,"y": 30.48463},
+        {"station": "KGRR","x": -85.54488,"y": 42.89388},
+        {"station": "KJAX","x": -81.7019,"y": 30.48463},
+        {"station": "KGRR","x": -85.54488,"y": 42.89388}
     ]
 }

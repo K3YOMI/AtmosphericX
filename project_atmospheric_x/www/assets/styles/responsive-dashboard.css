@@ -1,0 +1,9 @@
+@media (max-width: 1024px) {
+    .interactive-sidebar { width: 30%; transform: translateX(-100%); }
+    .sidebar-title { font-size: 1.3em; }
+    .sidebar-logo { width: 200px; height: auto; }
+    .wrapper { width: 80%; margin-left: 80px; }
+    .data-card-parent { padding-right: 30px; }
+    .popup-box { width: auto; margin-left: -125px; scale: 0.8; }
+    .hamburger-menu { display: block; position: fixed; top: 0px; left: 0px; border-radius: 5px; font-size: 1.2em; padding: 20px; z-index: 2; }
+}

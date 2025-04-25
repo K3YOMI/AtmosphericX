@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/date@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <body></body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let configurable_elements = global.configurations.widget_settings.time_date.elements
+            library.CreateNewElement(configurable_elements.date)
+            setInterval(async () => {
+                let time = await library.GetTimeInformation()
+                document.getElementById(configurable_elements.date.id).innerHTML = time.date
+            }, 1)  
+        })
+    </script>
+</html>

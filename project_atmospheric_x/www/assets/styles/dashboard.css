@@ -1,0 +1,289 @@
+@font-face { font-family: SofiaSansSemiCondensed-Bold; src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf') }
+
+
+
+
+/* Scrollbar Styles and Global Styles */
+
+*:not(body):not(.popup-box *) {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(82, 82, 82, 0.671) rgba(0, 0, 0, 0);
+}
+
+html { touch-action: manipulation; }
+
+body {
+    background-color: #161616;
+    margin: 0; padding: 0;
+    color: rgb(153, 153, 153);
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    font-display: swap;
+    overflow-x: hidden;
+}
+i {
+    font-size: 1.2em; padding: 10px;
+    vertical-align: middle;
+    text-align: left;
+    width: 12px; height: 21px;
+    display: flex; justify-content: center;
+    align-items: center;
+}
+
+/* Sidebar Styles */
+
+.interactive-sidebar {
+    background-color: rgb(25, 25, 25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+    text-align: left;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    max-height: 100vh;
+}
+
+.hamburger-menu {
+    position: fixed;
+    display: none;
+    top: 0px; left: 0px;
+    border-radius: 5px;
+    padding: 10px;
+    z-index: 2;
+    font-size: 1.5em;
+}
+
+.sidebar-title {
+    color: rgb(255, 255, 255);
+    font-size: 2.0em;
+    margin: 0;
+    padding: 0;
+    padding-top: 10px;
+    text-align: center;
+}
+.sidebar-logo {
+    width: 120px;
+    height: 120px;
+    align-self: center;
+    margin-bottom: 1px;
+    animation: rainbow-shadow 1s infinite alternate;
+}
+.sidebar-hr {
+    border: 0;
+    height: 1px;
+    background-color: rgb(255, 255, 255);
+    width: 90%;
+}
+.sidebar-item {
+    text-align: left;
+    align-self: flex-start;
+    display: flex;
+    width: 70%;
+    align-items: center;
+    gap: 10px;
+    zoom: 1.0;
+    transition: 0.1s ease-in-out;
+}
+.sidebar-footer {
+    margin-top: auto;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.8em;
+    color: rgb(153, 153, 153);
+}
+
+/* Primary Styles */
+
+.title-dashboard {
+    color: rgb(255, 255, 255);
+    font-size: 2.5em;
+    margin: 0; padding: 0;
+    padding-top: 30px;
+}
+.subtitle-dashboard {
+    color: rgb(153, 153, 153);
+    font-size: 1.5em;
+    margin: 0;
+    padding: 0;
+    padding-top: 10px;
+}
+.wrapper {
+    zoom: 1.0;
+    width: 80%;
+    position: relative;
+    margin: auto;
+    margin-right: calc(10% - 120px);
+}
+.grid-area {
+    background-color: rgba(54, 54, 54, 0.027);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 70px;
+    padding: 20px;
+    width: 98%;
+}
+.data-card-parent {
+    background-color: rgba(32, 32, 32, 0.208);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+    border-radius: 10px;
+    margin-left: -25px;
+    padding: 20px;
+    align-items: center;
+    transition: 0.4s ease-in-out;
+    zoom: 0.8;
+    width: 100%;
+}
+.data-card {
+    background-color: rgb(21, 21, 21);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+    border-radius: 10px;
+    margin-left: -25px;
+    padding: 20px;
+    align-items: center;
+    transition: 0.4s ease-in-out;
+    zoom: 0.8;
+    width: 100%;
+}
+.data-card-title {
+    color: rgb(153, 153, 153);
+    margin: 0;
+    padding: 0;
+    font-size: 1.8em;
+}
+.data-card-description {
+    font-size: 1.5em;
+    color: rgb(153, 153, 153);
+    padding: 0;
+}
+
+/* Miscellaneous Styles */
+
+.general-hr {
+    border: 0; margin-bottom: 5px;
+    height: 3px; background-color: rgb(255, 255, 255);
+    width: 100%;
+}
+.spcial-image {
+    filter: grayscale(100);
+    transition: 0.3s;
+    width: 100%;
+}
+
+
+/* Popup Styles */
+
+.popup-box {
+    position: fixed;
+    top: 50%; left: 55%; width: auto;
+    height: auto; transform: translate(-50%, -50%);
+    background-color: rgb(25, 25, 25);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+    border-radius: 10px; padding: 20px;
+    z-index: 1000;
+}
+.popup-title {
+    font-size: 1.4em;
+    color: rgb(255, 255, 255);
+    margin: 0; padding: 0;
+    user-select: none;
+}
+.popup-description {
+    font-size: 1em;
+    background-color: rgb(32, 32, 32, 0.208);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+    padding: 10px; border-radius: 5px;
+    color: rgb(153, 153, 153);
+    padding: 20px;
+    user-select: none;
+}
+.popup-inputs {
+    display: grid; grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto; grid-gap: 40px;
+}
+.popup-close {
+    position: absolute;
+    top: 2px; right: 2px;
+    background: none; border: none;
+    font-size: 1.5em;
+    color: rgb(255, 0, 0);
+    cursor: pointer;
+}
+.popup-input, .popup-select {
+    padding: 10px; border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.222);
+    background-color: rgb(32, 32, 32);
+    color: rgb(255, 255, 255);
+    font-size: 1em; outline: none;
+}
+.popup-input { width: auto; }
+.popup-select { width:auto; }
+
+
+/* Button Styles */
+
+.button-ok {
+    background-color: rgb(64, 104, 0);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: 0.3s ease-in-out;
+}
+.button-danger {
+    background-color: rgb(150, 9, 9);
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: 0.3s ease-in-out;
+}
+
+
+
+/* Hover Effects */
+
+.sidebar-item:hover {
+    color: rgb(255, 255, 255); cursor: pointer;
+    transition: 0.4s ease-in-out; transform: scale(1.02);
+}
+.data-card:hover {
+    background-color: rgb(54, 54, 54);
+    transition: 0.4s ease-in-out;
+    cursor: pointer;
+}
+.button-ok:hover {
+    background-color: rgb(86, 140, 0);
+    color: rgb(255, 255, 255);
+    transition: 0.3s ease-in-out;
+}
+.button-danger:hover {
+    background-color: rgb(200, 9, 9);
+    color: rgb(255, 255, 255);
+    transition: 0.3s ease-in-out;
+}
+.spcial-image:hover {
+    cursor: pointer;
+    filter: grayscale(0);
+    transition: 0.3s;
+}
+
+/* Animations Setting */
+
+@keyframes rainbow-shadow {
+    0% {filter: drop-shadow(0 0 5px rgb(91, 205, 250));}
+    25% {filter: drop-shadow(0 0 5px rgb(245, 169, 184));}
+    50% {filter: drop-shadow(0 0 5px rgb(255, 255, 255));}
+    75% {filter: drop-shadow(0 0 5px rgb(245, 169, 184));}
+    100% {filter: drop-shadow(0 0 5px rgb(91, 205, 250));}
+}

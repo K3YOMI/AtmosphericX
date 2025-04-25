@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/mapbox@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <script src="../../assets/javascript/MapboxClass.js"></script>
+    <script src="../../assets/javascript/AlertsClass.js"></script>
+    <body></body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let alert_class = new Alerts(library)
+            let configurable_elements = global.configurations.widget_settings.mapbox.elements
+            library.CreateNewElement(configurable_elements.mapbox_base)
+            let mapbox_class = new Mapbox(library)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                await alert_class.SyncAlerts()
+                mapbox_class.UpdateThread()
+            })
+        })
+    </script>
+</html>

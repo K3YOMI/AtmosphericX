@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/random_alert_title@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <script src="../../assets/javascript/ElementsClass.js"></script>
+    <script src="../../assets/javascript/AlertsClass.js"></script>
+    <body></body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let element_class = new Elements(library)
+            let alert_class = new Alerts(library)
+            let configurable_elements = global.configurations.widget_settings.random_alert.elements
+            let configurable = global.configurations.widget_settings.random_alert
+            let aniamtions = configurable.animations
+            let max_length = configurable.max_text_length
+            let auto_pos = configurable.auto_position
+            let element;
+            if (configurable.marquee) library.CreateNewElement(Object.assign(configurable_elements.alert, { type: 'marquee' }), ['line-height', 'width']);
+            if (!configurable.marquee) { library.CreateNewElement(configurable_elements.alert) }
+            element = document.getElementById(configurable_elements.alert.id)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                await alert_class.SyncAlerts()
+                if (element == undefined) { return }
+                if (global.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; if (auto_pos) { element.style.top = "35%" }; return }
+                if (auto_pos) {element.style.top = (global.random.details.name.length > 32) ? "29%" : "35%"}
+                element_class.RandomAlertUpdate(configurable_elements.alert.id, global.random.details.name, max_length, aniamtions[0], aniamtions[1])
+            })
+        })
+    </script>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/spc@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/LibraryClass.js"></script>
+    <script src="../../assets/javascript/ElementsClass.js"></script>
+    <script src="../../assets/javascript/AlertsClass.js"></script>
+    <body></body>
+    <script>
+        let library = new Library()
+        library.CreateSession().then(() => {
+            let element_class = new Elements(library)
+            let alert_class = new Alerts(library)
+            let configurable_elements = global.configurations.widget_settings.spc.elements
+            library.CreateNewElement(configurable_elements.image)
+            library.CreateNewElement(configurable_elements.type)
+            element_class.UpdateSPC(configurable_elements.image.id, configurable_elements.type.id)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                await alert_class.SyncAlerts()
+                element_class.UpdateSPC(configurable_elements.image.id, configurable_elements.type.id)
+            })
+        })
+    </script>
+</html>
