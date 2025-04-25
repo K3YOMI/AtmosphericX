@@ -174,20 +174,20 @@ class Routes {
         return new Promise(async (resolve) => {
             if (!cache.ws_clients || cache.ws_clients.length === 0) { resolve(`No clients to sync`); return; }
             await Hooks._GetRandomAlert()
-            let cfg = JSON.stringify(await Hooks.CallClientConfigurations())
+            let cfg = await Hooks.CallClientConfigurations(); 
+            cfg = JSON.stringify(cfg)
             for (let i = 0; i < cache.ws_clients.length; i++) {
-                const client = cache.ws_clients[i];
+                let client = cache.ws_clients[i];
                 if (client.readyState === websocket.OPEN) {
-                    const last_message = cache.ws_client_ratelimit.find((entry) => entry.ws === client);
-                    if (_timeout == true && last_message && (Date.now() - last_message.time) < cache.configurations.project_settings.websocket_timeout * 1000) {
-                        continue;
-                    }
+                    let last_message = cache.ws_client_ratelimit.find((entry) => entry.ws === client);
+                    if (_timeout == true && last_message && (Date.now() - last_message.time) < cache.configurations.project_settings.websocket_timeout * 1000) { continue; }
                     cache.ws_client_ratelimit = cache.ws_client_ratelimit.filter((entry) => entry.ws !== client);
                     cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });
-                    await client.send(cfg);
+                    client.send(cfg);
                 }
-            }
-            resolve(`Message synced to all clients`);    
+            }  
+            cfg = undefined
+            resolve(`Message synced to all clients`);
         });
     }
 
@@ -210,9 +210,8 @@ class Routes {
             wss.on(`connection`, async (ws) => {
                 if (!cache.ws_clients.includes(ws)) { cache.ws_clients.push(ws); }
                 ws.on('close', () => { cache.ws_clients = cache.ws_clients.filter((client) => client !== ws) });
-                let cfg = await Hooks.CallClientConfigurations();
                 cache.ws_client_ratelimit.push({ws, time: Date.now()});
-                ws.send(JSON.stringify(cfg, null, 4));
+                await ws.send(JSON.stringify(await Hooks.CallClientConfigurations(), null, 4));
             });
             resolve(`OK`);
         });

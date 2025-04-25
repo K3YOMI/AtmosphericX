@@ -122,13 +122,16 @@ class ProductInterpreter {
       */ 
 
     async CreateNewAlert() {
-        let type = await this._GetCallType() // TODO: Use if statements to determine which type alert, by default we will start with basic alerts...
-        if (type == `alert`) { new AlertBuilder({message: this.message, attributes: this.attributes, xml: this.xml}) }
-        if (type == `local storm report`) { } // TODO: Add LSR support
-        if (type == `md`) { } // TODO: Add MD support
-        if (type == `outlook`) { } // TODO: Add Outlook support
-        if (type == `special weather statement`) { } // TODO: Add SPS support
-        if (type == `test message`) { } // TODO: Add SPS support
+        return new Promise(async (resolve, reject) => {
+            let type = await this._GetCallType() // TODO: Use if statements to determine which type alert, by default we will start with basic alerts...
+            if (type == `alert`) { new AlertBuilder({message: this.message, attributes: this.attributes, xml: this.xml}) }
+            if (type == `local storm report`) { } // TODO: Add LSR support
+            if (type == `md`) { } // TODO: Add MD support
+            if (type == `outlook`) { } // TODO: Add Outlook support
+            if (type == `special weather statement`) { } // TODO: Add SPS support
+            if (type == `test message`) { } // TODO: Add SPS support
+            resolve()
+        })
     }
 }
 

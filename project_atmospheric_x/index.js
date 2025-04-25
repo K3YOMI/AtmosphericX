@@ -24,10 +24,7 @@ path = require(`path`)
 axios = require(`axios`)
 os = require(`os`)
 process = require(`process`)
-//"nexrad-level-2-data": "^2.4.2",
-//"nexrad-level-2-plot": "^2.6.4",
-// This will be disabled to prevent canvas issues on Windows + Linux...
-//nexrad_plot = require('nexrad-level-2-plot'); 
+//nexrad_plot = require('nexrad-level-2-plot');
 //nexrad_data = require('nexrad-level-2-data');
 xmpp = require('@xmpp/client');
 xml2js = require('xml2js');
@@ -116,6 +113,7 @@ let cmd_node = [
     }},
     {"cmd": "/help", "description": "Show help", "args": [], "example": "/help", "function": async () => {
         console.log(`\n`)
+        console.log(`Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MiB (${Math.round((os.totalmem() - os.freemem()) / os.totalmem() * 100) + '%'})`)
         console.log(`┌───────────────┬───────────────────────────┬──────────────────────────────────────┐`)
         console.log(`│ Command       │ Description               │ Usage                                │`)
         console.log(`├───────────────┼───────────────────────────┼──────────────────────────────────────┤`)
@@ -142,7 +140,3 @@ process.stdin.on(`data`, (data) => {
         Hooks.PrintLog(`AtmosphericX.CommandExecution`, `${d} is not a valid command, type /help for a list of commands`)
     }
 })
-
-
-
-

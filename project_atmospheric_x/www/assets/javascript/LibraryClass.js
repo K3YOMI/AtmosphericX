@@ -118,11 +118,12 @@ class Library {
 
             this.storage.socket.addEventListener(`close`, () => {
                 this.PrintLog(`Library.CreateSession`, `WebSocket connection dropped. Attempting to reconnect...`);
+                this.storage.socket.close()
                 setTimeout(() => {this.CreateSession()}, 1000);
             });  
             this.storage.socket.onmessage = async (event) => {
-                await this.UpdateCache(JSON.parse(event.data))
-                resolve(`Session created successfully`)
+                this.UpdateCache(JSON.parse(event.data))
+                resolve(`WebSocket connection established`)
             }
         })
     }

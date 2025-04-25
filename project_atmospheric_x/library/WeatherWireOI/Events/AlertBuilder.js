@@ -99,6 +99,7 @@ class AlertBuilder {
         for (let i = 0; i < filterd.length; i++) {
             await NOAAWeatherWireService.ProcessValidAlert(filterd[i], `RAW`, `${new Date().getTime() - start}ms`)
         }
+        return
     }
 
     /**
@@ -156,6 +157,7 @@ class AlertBuilder {
         for (let i = 0; i < filterd.length; i++) {
             await NOAAWeatherWireService.ProcessValidAlert(filterd[i], `XML`, `${new Date().getTime() - start}ms`)
         }
+        return
     }
 }
 
