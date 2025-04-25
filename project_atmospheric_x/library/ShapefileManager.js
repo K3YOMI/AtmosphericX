@@ -31,7 +31,7 @@ class ShapefileManager {
       * @function CreateZoneMap
       * @description Asynchronously processes a list of shapefiles to build a geographic zone map.
       * For each shapefile, it reads features and extracts location data such as county,
-      * zone, or state identifiers, then compiles these into an internal `areas` array.
+      * zone, or state identifiers, then compiles these into an the database.
       * Handles various property types including FIPS, STATE, FULLSTAID, and defaults to 
       * basic ID and NAME if none are present.
       *
@@ -39,8 +39,7 @@ class ShapefileManager {
       * @param {Array<Object>} [_shapefiles=[]] - An array of shapefile descriptors to be processed.
       * @param {string} _shapefiles[].file - The filename of the shapefile.
       * @param {string} _shapefiles[].id - A type identifier to help construct the zone ID.
-      * @returns {Promise<Array<Object>>} A promise that resolves to the populated `areas` array,
-      * each containing an `id`, `location`, and `geometry`.
+      * @returns {Promise<Array<Object>>} A promise that resolves
       */
 
 
@@ -98,11 +97,11 @@ class ShapefileManager {
     /**
       * @function GetCoordinates
       * @description Asynchronously retrieves the coordinates for a given list of UGC (Universal Geographic Code) identifiers.
-      * Searches through the internal `areas` array and extracts the coordinates of the first matching polygon.
+      * Searches through the internal database and extracts the coordinates of the first matching polygon.
       * Only the first matching polygon's coordinates are returned. Coordinates are returned in [longitude, latitude] format.
       * 
       * @async
-      * @param {Array<string>} [_ugc=[]] - An array of UGC zone identifiers to match against the `areas` list.
+      * @param {Array<string>} [_ugc=[]] - An array of UGC zone identifiers to match against the `shapefiles` table.
       * @returns {Promise<Array<Array<number>>>} A promise that resolves to an array of coordinates in [lon, lat] pairs,
       * corresponding to the matched polygon's outer ring.
       **/
@@ -128,10 +127,10 @@ class ShapefileManager {
     /**
       * @function GetLocations
       * @description Asynchronously retrieves unique location names for a given list of UGC (Universal Geographic Code) identifiers.
-      * Iterates through the internal `areas` array to find matches and compiles a deduplicated list of location names.
+      * Queries through the database to find matches and compiles a deduplicated list of location names.
       *
       * @async
-      * @param {Array<string>} [_ugc=[]] - An array of UGC zone identifiers to match against the `areas` list.
+      * @param {Array<string>} [_ugc=[]] - An array of UGC zone identifiers to match against the `shapefiles` table.
       * @returns {Promise<Array<string>>} A promise that resolves to an array of unique location names corresponding to the matched zones.
       */
 
