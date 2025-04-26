@@ -5789,7 +5789,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/alerts",
+                "url": "http://localhost:80/widgets/alert_bar",
                 "width": 1920,
                 "height": 1080,
                 "reroute_audio": true
@@ -5919,7 +5919,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/local_date"
+                "url": "http://localhost:80/widgets/date"
             },
             "mixers": 255,
             "sync": 0,
@@ -6202,7 +6202,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/random_description",
+                "url": "http://localhost:80/widgets/description",
                 "width": 2200,
                 "height": 1080
             },
@@ -6267,7 +6267,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/random_expires",
+                "url": "http://localhost:80/widgets/expires",
                 "width": 2200,
                 "height": 1080,
                 "css": "body { background-color: rgba(0, 0, 0, 0); margin: 0px auto; overflow: hidden; }"
@@ -6333,7 +6333,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/random_location",
+                "url": "http://localhost:80/widgets/location",
                 "width": 2500,
                 "height": 1080
             },
@@ -6398,7 +6398,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/random_title",
+                "url": "http://localhost:80/widgets/alert",
                 "width": 2200,
                 "height": 1080
             },
@@ -6526,7 +6526,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/local_time"
+                "url": "http://localhost:80/widgets/time"
             },
             "mixers": 255,
             "sync": 0,

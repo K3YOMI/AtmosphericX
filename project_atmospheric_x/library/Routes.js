@@ -128,18 +128,18 @@ class Routes {
 
     async CreateRoutes() {
         let parent = path.resolve(__dirname, `../`);
-        app.get(`/widgets/alerts`, async (req, res) => { res.sendFile(`${parent}/www/widgets/alert_bar@widget/index.html`)});
+        app.get(`/widgets/alert_bar`, async (req, res) => { res.sendFile(`${parent}/www/widgets/alert_bar@widget/index.html`)});
         app.get('/widgets/mapbox', (req, res) => res.sendFile(`${parent}/www/widgets/mapbox@widget/index.html`));
         app.get('/widgets/notice', (req, res) => res.sendFile(`${parent}/www/widgets/notice@widget/index.html`));
         app.get('/widgets/table', (req, res) => res.sendFile(`${parent}/www/widgets/table@widget/index.html`));
         app.get('/widgets/light', (req, res) => res.sendFile(`${parent}/www/widgets/color_scheme_light@widget/index.html`));
         app.get('/widgets/dark', (req, res) => res.sendFile(`${parent}/www/widgets/color_scheme_dark@widget/index.html`));
-        app.get('/widgets/random_description', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_description@widget/index.html`));
-        app.get('/widgets/random_title', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_title@widget/index.html`));
-        app.get('/widgets/random_location', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_location@widget/index.html`));
-        app.get('/widgets/random_expires', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_expires@widget/index.html`));
-        app.get('/widgets/local_time', (req, res) => res.sendFile(`${parent}/www/widgets/time@widget/index.html`));
-        app.get('/widgets/local_date', (req, res) => res.sendFile(`${parent}/www/widgets/date@widget/index.html`));
+        app.get('/widgets/description', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_description@widget/index.html`));
+        app.get('/widgets/alert', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_title@widget/index.html`));
+        app.get('/widgets/location', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_location@widget/index.html`));
+        app.get('/widgets/expires', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_expires@widget/index.html`));
+        app.get('/widgets/time', (req, res) => res.sendFile(`${parent}/www/widgets/time@widget/index.html`));
+        app.get('/widgets/date', (req, res) => res.sendFile(`${parent}/www/widgets/date@widget/index.html`));
         app.get('/widgets/header', (req, res) => res.sendFile(`${parent}/www/widgets/header@widget/index.html`));
         app.get('/widgets/notification', (req, res) => res.sendFile(`${parent}/www/widgets/notification@widget/index.html`));
         app.get('/widgets/spc', (req, res) => res.sendFile(`${parent}/www/widgets/spc@widget/index.html`));
