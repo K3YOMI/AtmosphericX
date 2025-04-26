@@ -149,7 +149,6 @@ class Routes {
         app.get('/registration', (req, res) => res.sendFile(`${parent}/www/portal/registration.html`));
         app.get(`/api/events`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(cache.alerts, null, 4)) });
         app.get(`/api/all`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(await Hooks.CallClientConfigurations(), null, 4)) });
-
         app.post(`/api/login`, async (req, res) => { this._Credentials(req, res, 0) });
         app.post(`/api/logout`, async (req, res) => { this._Credentials(req, res, 1) });
         app.post(`/api/register`, async (req, res) => { this._Credentials(req, res, 2) });
