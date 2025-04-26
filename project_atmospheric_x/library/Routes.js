@@ -66,12 +66,12 @@ class Routes {
                 },
                 name: `atmosx-cookie`
             }));
+            cache.ws = http.createServer(app).listen(_settings.http_port, () => {})
             if (_settings.https) { 
                 let https_options = { key: fs.readFileSync(_settings.cert_path.key), cert: fs.readFileSync(_settings.cert_path.cert) };
                 cache.ws = https.createServer(https_options, app).listen(_settings.https_port, () => {})
                 Hooks.PrintLog(`${this.name}.SecureHttp`, `HTTPS server started on port ${_settings.https_port}`);
             }
-            cache.ws = http.createServer(app).listen(_settings.http_port, () => {})
             Hooks.PrintLog(`${this.name}.NotSecureHttp`, `HTTP server started on port ${_settings.http_port}`);
             Hooks.Log(`${this.name}.Express : Express server has started`);
             resolve(`OK`)
