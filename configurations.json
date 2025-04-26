@@ -171,7 +171,7 @@
     ],
     "widget_settings": {
         "mapbox": {
-            "api_key": "",
+            "api_key": "MAPBOX_API_KEY_HERE",
             "default_station": "KLOT",
             "show_stations": true,
             "spotter_network_settings": {
