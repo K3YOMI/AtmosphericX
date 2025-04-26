@@ -1,1 +1,27 @@
-body, html { display: flex; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0); margin: 0; float: center; overflow: hidden;}
+body, html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    float: center;
+    overflow: hidden;
+}
+
+.text { 
+    font-size: 35px;
+    line-height: 35px;
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    color: white;
+    word-wrap: break-word;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    margin-bottom: 0;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0px 5px 0 5px;
+    text-shadow: 1px 1px 3px #00000069;
+}

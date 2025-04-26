@@ -8,19 +8,19 @@
     <script src="../../assets/javascript/LibraryClass.js"></script>
     <script src="../../assets/javascript/ElementsClass.js"></script>
     <script src="../../assets/javascript/AlertsClass.js"></script>
-    <body></body>
+    <body>
+        <img id="spc_image" class="spc_image"></img>
+        <p id="spc_type" class="text"></p>
+    </body>
     <script>
         let library = new Library()
         library.CreateSession().then(() => {
             let element_class = new Elements(library)
             let alert_class = new Alerts(library)
-            let configurable_elements = global.configurations.widget_settings.spc.elements
-            library.CreateNewElement(configurable_elements.image)
-            library.CreateNewElement(configurable_elements.type)
-            element_class.UpdateSPC(configurable_elements.image.id, configurable_elements.type.id)
+            element_class.UpdateSPC(`spc_image`, `spc_type` )
             document.addEventListener('onCacheUpdate', async (event) => {
                 await alert_class.SyncAlerts()
-                element_class.UpdateSPC(configurable_elements.image.id, configurable_elements.type.id)
+                element_class.UpdateSPC(`spc_image`, `spc_type` )
             })
         })
     </script>

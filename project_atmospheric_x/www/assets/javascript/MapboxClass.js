@@ -26,7 +26,8 @@ class Mapbox {
         this.library = _library
         this.storage = global
         this.widget = this.storage.configurations.widget_settings
-        this.nexrad = this.storage.configurations.nexrad_stations
+        this.colors = this.storage.configurations.overlay_settings.color_scheme
+        this.nexrad = static_nexrad_stations
         this.layers = [`mapbox-polygons`, `mapbox-nexread`, `mapbox-spotters`, `mapbox-reports`]
         this.name = `MapboxClass`
         this.library.PrintLog(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
@@ -34,7 +35,7 @@ class Mapbox {
         this.UpdateThread()
         document.addEventListener('onCacheUpdate', (event) => {
             this.widget = event.detail.configurations.widget_settings
-            this.nexrad = event.detail.configurations.nexrad_stations
+            this.colors = event.detail.configurations.overlay_settings.color_scheme
         })
     }
 
@@ -54,7 +55,8 @@ class Mapbox {
             while (!this.storage.mapbox.isStyleLoaded()) {
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
-            this._CreateLayers(this.layers);    }
+            this._CreateLayers(this.layers);    
+        }
     }
 
     /**
@@ -70,8 +72,8 @@ class Mapbox {
             let station = this.nexrad[i]
             let x = station.x 
             let y = station.y
-            let configurable_elements = this.widget.mapbox.elements
-            let div = await library.CreateNewElement(configurable_elements.radar_site)
+            let div = document.createElement('div')
+            div.className = 'stations'
             div.innerHTML = station.station
             new mapboxgl.Marker(div).setLngLat([x, y]).addTo(this.storage.mapbox)
             div.addEventListener('mouseenter', () => {
@@ -169,12 +171,6 @@ class Mapbox {
         let settings = this.widget.mapbox.spotter_network_settings
         let spotters = this.storage.spotters 
         let scheme = this.widget.mapbox.spotter_network_settings.spotter_scheme
-        let filters = this.widget.mapbox.spotter_network_settings.spotter_network_filters
-        let track = this.widget.mapbox.spotter_network_settings.spotter_network_tracking
-        if (!filters.active) {spotters = spotters.filter(spotter => spotter.active == 0)}
-        if (!filters.offline) {spotters = spotters.filter(spotter => spotter.offline == 0)}
-        if (!filters.idle) {spotters = spotters.filter(spotter => spotter.idle == 0)}
-        if (!filters.streaming) {spotters = spotters.filter(spotter => spotter.streaming == 1)}
         for (let i = 0; i < spotters.length; i++) {
             let spotter = spotters[i]
             let color = scheme.default.color;
@@ -233,7 +229,7 @@ class Mapbox {
 
     async _GenerateAlertPolys() {
         let active = this.storage.active;
-        let scheme = this.widget.mapbox.color_scheme
+        let scheme = this.colors
         let pin = false;
         active.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
         for (let i = 0; i < active.length; i++) {
@@ -241,15 +237,14 @@ class Mapbox {
             if (!alert.raw.geometry) { continue; }
             let location = alert.details.locations;
             let sender = alert.details.sender;
-            let event_color = scheme.find(color => alert.details.name.includes(color.type)) || 
-                              scheme.find(color => color.type === "Default");
+            let event_color = scheme.find(color => alert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type === "Default");
             let coords = alert.raw.geometry.coordinates[0].map(point => [point[0], point[1]]);
             if (!pin && this.storage.eagle == undefined) {
                 pin = true;
-                this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.color,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,true);
+                this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.light,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,true);
                 continue;
             }
-            this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.color,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,false);
+            this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.light,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,false);
         }
     }
 
@@ -298,7 +293,7 @@ class Mapbox {
       * @returns {Promise<void>} Resolves when the polygon has been added to the map.
       */
 
-    async _CreatePolygon(_layer = `default-layer`, _geometry, _border = scheme[0].color.color, _description = `No Description Available`, _autozoom = true) {
+    async _CreatePolygon(_layer = `default-layer`, _geometry, _border = `rgb(42,81,224)`, _description = `No Description Available`, _autozoom = true) {
         let id = Math.random().toString(36).substring(2, 15);
         if (!this.storage.mapbox.getLayer(_layer)) { return; }
         if (this.storage.polygons == undefined) { this.storage.polygons = []; }

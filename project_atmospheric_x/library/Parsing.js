@@ -227,6 +227,8 @@ class Parsing {
             let regular_expressionv3 = /Object:\s*([\d.-]+),([\d.-]+)\s*$/g;
             let regex = new RegExp(regular_expressionv1.source + '|' + regular_expressionv2.source + '|' + regular_expressionv3.source, 'gs');
             let spotters = [];
+            let config = cache.configurations.sources.miscellaneous_sources.spotter_network.spotter_network_filters
+
             let matches = [..._body.matchAll(regex)];
             for (const match of matches) {
                 let lat = parseFloat(match[1]);
@@ -237,6 +239,10 @@ class Parsing {
                 let is_streaming = meta.includes('Icon: 0,0,000,1,19') ? 1 : 0;
                 let is_idle = meta.includes('Icon: 0,0,000,6,6') ? 1 : 0;
                 let is_offline = meta.includes('Icon: 0,0,000,6,10') ? 1 : 0;
+                if (!config.active) { if (is_active == 1) { continue; } }
+                if (!config.streaming) { if (is_streaming == 1) { continue; } }
+                if (!config.idle) { if (is_idle == 1) { continue; } }
+                if (!config.offline) { if (is_offline == 1) { continue; } }
                 spotters.push({ lat: lat, lon: lon, description: description, streaming: is_streaming, active: is_active, idle: is_idle, offline: is_offline });
             }
             let unique = spotters.filter((thing, index, self) => index === self.findIndex((t) => (t.description === thing.description && t.lat === thing.lat && t.lon === thing.lon)));

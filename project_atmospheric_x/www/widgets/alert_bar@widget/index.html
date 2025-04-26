@@ -7,20 +7,21 @@
     <link rel="stylesheet" href="../../assets/styles/streaming.css">
     <script src="../../assets/javascript/AlertsClass.js"></script>
     <script src="../../assets/javascript/LibraryClass.js"></script>
-    <body></body>
+    <body>
+        <img id="alert_notification">
+            <p id="alert_title" class="text1"></p>
+            <p id="alert_description" class="text2"></p>
+        </img>
+    </body>
     <script>
         let library = new Library()
         library.CreateSession().then(() => {
             let alert_class = new Alerts(library, true)
-            let configurable_elements = global.configurations.widget_settings.alert.elements
-            library.CreateNewElement(configurable_elements.title)
-            library.CreateNewElement(configurable_elements.description)
-            library.CreateNewElement(configurable_elements.box)
             library.DetectMobileDevice() 
             document.addEventListener('onCacheUpdate', async (event) => {
-            let storage = await alert_class.SyncAlerts()
-            if (storage.length > 0) { await alert_class.QueryAlertsByQueue(storage) }
-        })
+                let storage = await alert_class.SyncAlerts()
+                if (storage.length > 0) { await alert_class.QueryAlertsByQueue(storage) }
+            })
         })
     </script>
 </html>

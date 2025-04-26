@@ -257,7 +257,7 @@ class Dashboard {
                 { id: `widget_notification_announcement_subtext`, type: `text`, className: `popup-input`, placeholder: `Announcement Widget Subtext Here`}, 
             ],
             selects: [
-                { id: `widget_alert_type`, className: `popup-select`, options: this.storage.configurations.alerts.map(alert => {return { name: alert, value: alert }})},
+                { id: `widget_alert_type`, className: `popup-select`, options: static_alerts.map(alert => {return { name: alert, value: alert }})},
                 { id: `widget_alert_status`, className: `popup-select`, options: [ { name: `Alert`, value: `Alert` }, { name: `Update`, value: `Update` } ]},
                 { id: `widget_alert_indicator`, className: `popup-select`, options: [ { name: `OBSERVED`, value: `OBSERVED` }, { name: `RADAR INDICATED`, value: `RADAR INDICATED` } ]},
             ]

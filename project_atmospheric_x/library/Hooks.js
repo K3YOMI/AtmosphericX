@@ -285,14 +285,6 @@ class Hooks {
       * 
       * @async
       * @returns {Promise<Object>} 
-      * A Promise that resolves to an object containing the full set of client configurations, 
-      * including alert data, project settings, and statistics.
-      * 
-      * **Configuration data includes:**
-      * - Project settings like `alert_dictionary`, `global_update`, `http_useragent`, and more.
-      * - Alert-related configurations such as `alert_banners`, `alert_dictionary`, `nexrad_stations`, etc.
-      * - Widget settings and third-party service configurations.
-      * - Alert data and project statistics.
       */
 
     async CallClientConfigurations() {
@@ -300,18 +292,12 @@ class Hooks {
             let client = {
                 configurations: {
                     warning: "This is configuration data routed from the server, please use this data for client development purposes only.",
-                    alerts: cache.configurations.project_settings.alerts,
-                    global_update: cache.configurations.project_settings.global_update,
-                    http_useragent: cache.configurations.project_settings.http_useragent,
                     use_web_tts: cache.configurations.project_settings.use_web_tts,
                     tone_sounds: cache.configurations.tone_sounds,
-                    alert_banners: cache.configurations.alert_banners,
-                    alert_dictionary: cache.configurations.alert_dictionary,
                     overlay_settings: cache.configurations.overlay_settings,
                     spc_outlooks: cache.configurations.spc_outlooks,
                     third_party_services: cache.configurations.third_party_services,
                     widget_settings: cache.configurations.widget_settings,
-                    nexrad_stations: cache.configurations.nexrad_stations,
                 },
             }
             client = { ...client, ...cache.alerts, statistics: cache.statistics }

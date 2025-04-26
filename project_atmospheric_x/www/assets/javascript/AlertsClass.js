@@ -114,19 +114,18 @@ class Alerts {
         if (this.storage.streaming) {
             this.storage.alerts_total++
             let max_description_size = this.storage.configurations.widget_settings.alert.max_text_length
+            let animation_style = this.storage.configurations.widget_settings.alert.animation_style
             let documentment_notification = document.getElementById(`alert_notification`)
             let notification_title = document.getElementById(`alert_title`)
             let notification_subtitle = document.getElementById(`alert_description`)
             documentment_notification.style.display = `block`
             documentment_notification.src = `${_gif}?=${this.storage.alerts_total}`
             if (_subtitle.length > max_description_size) { _subtitle = _subtitle.substring(0, max_description_size) + `...` }
+            notification_subtitle.style = animation_style
+            notification_title.style = animation_style
             setTimeout(() => {documentment_notification.style.display = `none`}, 6.8 * 1000)
-            setTimeout(() => {
-                notification_title.innerHTML = `<div class="alert_title" style="animation: fade 5s linear forwards; animation-delay: 0s;">${_title}</div>`;
-            }, 500)
-            setTimeout(() => {
-                notification_subtitle.innerHTML = `<div class="alert_description" style="animation: fade 4.5s linear forwards; animation-delay: 0s;">${_subtitle}</div>`;
-            }, 700)
+            setTimeout(() => {notification_title.textContent = _title; notification_subtitle.textContent = _subtitle}, 500)
+            setTimeout(() => {notification_title.textContent = ``; notification_subtitle.textContent = ``; notification_subtitle.style = ``; notification_title.style = ``;}, 5.9 * 1000)
         }
         setTimeout(() => {this.storage.query_running = false}, 6.8 * 1000)
     }

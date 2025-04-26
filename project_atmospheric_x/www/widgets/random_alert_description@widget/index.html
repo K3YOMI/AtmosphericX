@@ -8,7 +8,7 @@
     <script src="../../assets/javascript/LibraryClass.js"></script>
     <script src="../../assets/javascript/ElementsClass.js"></script>
     <script src="../../assets/javascript/AlertsClass.js"></script>
-    <body></body>
+    <body><p id="random_description" class="text">Awaiting Callback...</p></body>
     <script>
         let library = new Library()
         library.CreateSession().then(() => {
@@ -18,17 +18,12 @@
             let configurable = global.configurations.widget_settings.random_description
             let aniamtions = configurable.animations
             let max_length = configurable.max_text_length
-            let element;
-
-            if (configurable.marquee) library.CreateNewElement(Object.assign(configurable_elements.description, { type: 'marquee' }), ['line-height', 'width']);
-            if (!configurable.marquee) { library.CreateNewElement(configurable_elements.description) }
-            element = document.getElementById(configurable_elements.description.id)
+            let element = document.getElementById(`random_description`)
             
             document.addEventListener('onCacheUpdate', async (event) => {
                 await alert_class.SyncAlerts()
-                if (element == undefined) { return }
                 if (global.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; return }
-                element_class.RandomAlertUpdate(configurable_elements.description.id, global.random.details.description, max_length, aniamtions[0], aniamtions[1])
+                element_class.RandomAlertUpdate(`random_description`, global.random.details.description, max_length, aniamtions[0], aniamtions[1])
             })
         })
     </script>

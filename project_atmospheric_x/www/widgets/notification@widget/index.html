@@ -9,20 +9,21 @@
     <script src="../../assets/javascript/ElementsClass.js"></script>
     <script src="../../assets/javascript/AlertsClass.js"></script>
     <script src="../../assets/javascript/LibraryClass.js"></script>
-    <body></body>
+    <body>
+        <div id="notification_base" class="p_boxlight">
+            <div id="notification_title" class="text1"></div>
+            <hr id="notification_divider" class="divider"></hr>
+            <div id="notification_subtitle" class="text2"></div>
+        </div>
+    </body>
     <script>
         let library = new Library()
         library.CreateSession().then(() => {
             let alert_class = new Alerts(library)
             let element_class = new Elements(library)
-            let configurable_elements = global.configurations.widget_settings.notification.elements
-            library.CreateNewElement(configurable_elements.notification_base)
-            library.CreateNewElement(configurable_elements.notification_title)
-            library.CreateNewElement(configurable_elements.notification_divider)
-            library.CreateNewElement(configurable_elements.notification_subtitle)
             document.addEventListener('onCacheUpdate', async (event) => {
-                let storage = await alert_class.SyncAlerts()
-                element_class.UpdateNotification(configurable_elements.notification_base.id, configurable_elements.notification_title.id, configurable_elements.notification_subtitle.id)
+                await alert_class.SyncAlerts()
+                element_class.UpdateNotification(`notification_base`, `notification_title`, `notification_subtitle`)
                 alert_class.TriggerDynamicColors()
             })
         })

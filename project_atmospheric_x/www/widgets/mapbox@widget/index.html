@@ -10,13 +10,12 @@
     <script src="../../assets/javascript/LibraryClass.js"></script>
     <script src="../../assets/javascript/MapboxClass.js"></script>
     <script src="../../assets/javascript/AlertsClass.js"></script>
-    <body></body>
+    <script src="../../assets/javascript/Static.js"></script>
+    <body><div id="mapbox-container" class="mapbox-container"></div></body>
     <script>
         let library = new Library()
         library.CreateSession().then(() => {
             let alert_class = new Alerts(library)
-            let configurable_elements = global.configurations.widget_settings.mapbox.elements
-            library.CreateNewElement(configurable_elements.mapbox_base)
             let mapbox_class = new Mapbox(library)
             document.addEventListener('onCacheUpdate', async (event) => {
                 await alert_class.SyncAlerts()
