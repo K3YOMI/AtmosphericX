@@ -170,6 +170,7 @@ class Mapbox {
     async _GenerateSpotterPoints() {
         let settings = this.widget.mapbox.spotter_network_settings
         let spotters = this.storage.spotters 
+        let track = settings.spotter_network_tracking
         let scheme = this.widget.mapbox.spotter_network_settings.spotter_scheme
         for (let i = 0; i < spotters.length; i++) {
             let spotter = spotters[i]
