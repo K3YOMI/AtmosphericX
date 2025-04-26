@@ -67,7 +67,7 @@ AlertBuilder = require(`./library/WeatherWireOI/Events/AlertBuilder.js`)
 VTECParser = require(`./library/WeatherWireOI/Parsers/VTECParser.js`)
 UGCParser = require(`./library/WeatherWireOI/Parsers/UGCParser.js`)
 RawParser = require(`./library/WeatherWireOI/Parsers/RawParser.js`)
-
+Static = require(`./library/Static.js`)
 
 
 
@@ -76,65 +76,16 @@ Hooks.PrintLog(`Start.AtmosphericX`, `For a list of commands, type /help`)
 Hooks.StartProcess()
 
 
-
-let cmd_node = [
-    {"cmd": "/activate", "description": "Activates an account", "args": ["username", "enable"], "example": "/activate <username> <true/false>", "function": async (args) => {
-        let username = args[0]
-        let enable = (args[1] == `true`) ? 1 : 0
-        if (username != undefined && enable != undefined) {
-            Database.SendDatabaseQuery(`UPDATE accounts SET activated = ? WHERE username = ?`, [enable, username]).then((result) => {})
-            Hooks.Log(`AtmosphericX.CommandExecution : Account ${username} activation status is now set to ${enable}`)
-            Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Account ${username} activation status is now set to ${enable}`)
-        }
-    }},
-    {"cmd": "/del-account", "description": "Deletes an account", "args": ["username"], "example": "/activate <username>", "function": async (args) => {
-        let username = args[0]
-        if (username != undefined) {
-            Database.SendDatabaseQuery(`DELETE FROM accounts WHERE username = ?`, [username]).then((result) => {})
-            Hooks.Log(`AtmosphericX.CommandExecution : Account ${username} deleted`)
-            Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Account ${username} deleted`)
-        }
-    }},
-    {"cmd": "/force", "description": "Force update all clients", "args": [], "example": "/force", "function": async (args) => {
-        Hooks.RefreshConfigurations()
-        await Routes.SyncClients()
-        Hooks.Log(`AtmosphericX.CommandExecution : Force update all connected clients`)
-        Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Force update all connected clients`)
-    }},
-    {"cmd": "/debug-xml", "description": "Debug XML Alerts", "args": [], "example": "/debug-xml", "function": async (args) => {
-        NOAAWeatherWireService.CreateDebugAlert(`XML`)
-    }},
-    {"cmd": "/debug-raw", "description": "Debug Raw Alerts", "args": [], "example": "/debug-raw", "function": async (args) => {
-        NOAAWeatherWireService.CreateDebugAlert(`TEXT`)
-    }},
-    {"cmd": "/clear", "description": "Clear alerts", "args": [], "example": "/clear", "function": async (args) => {
-        console.clear()
-        Hooks._PrintLogo()
-    }},
-    {"cmd": "/help", "description": "Show help", "args": [], "example": "/help", "function": async () => {
-        console.log(`\n`)
-        console.log(`Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MiB (${Math.round((os.totalmem() - os.freemem()) / os.totalmem() * 100) + '%'})`)
-        console.log(`┌───────────────┬───────────────────────────┬──────────────────────────────────────┐`)
-        console.log(`│ Command       │ Description               │ Usage                                │`)
-        console.log(`├───────────────┼───────────────────────────┼──────────────────────────────────────┤`)
-        cmd_node.forEach((cmd) => {
-            console.log(`│ ${cmd.cmd.padEnd(13)} │ ${cmd.description.padEnd(25)} │ ${cmd.example.padEnd(36)} │`)
-        })
-        console.log(`└───────────────┴───────────────────────────┴──────────────────────────────────────┘`)
-    }},
-]
-
+// This calls from the Static.js file which stores all the commands...
 process.stdin.setEncoding(`utf8`)
 process.stdin.on(`data`, (data) => {
     let d = data.trim()
-    let find = cmd_node.find((x) => x.cmd == d.split(` `)[0])
+    let find = command_node.find((x) => x.cmd == d.split(` `)[0])
     if (d.startsWith(`/`)) {
         if (find) {
             let args = d.split(` `).slice(1)
             let func = find.function
-            if (func) {
-                func(args).then((result) => {})
-            }
+            if (func) { func(args).then((result) => {}) }
             return
         }
         Hooks.PrintLog(`AtmosphericX.CommandExecution`, `${d} is not a valid command, type /help for a list of commands`)
