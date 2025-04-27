@@ -111,7 +111,9 @@ class Library {
         return new Promise(async (resolve, reject) => {
             let hostname = window.location.hostname
             let port = window.location.port
-            this.storage.socket = new WebSocket(`ws://${hostname}:${port}`)
+            let protocol = window.location.protocol
+            if (protocol == `https:`) { protocol = `wss:` } else { protocol = `ws:` }
+            this.storage.socket = new WebSocket(`${protocol}//${hostname}:${port}`)
             this.storage.socket.addEventListener(`open`, () => {
                 this.PrintLog(`Library.CreateSession`, `WebSocket connection established`);
             });
