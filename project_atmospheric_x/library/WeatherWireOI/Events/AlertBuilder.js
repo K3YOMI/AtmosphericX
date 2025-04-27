@@ -11,6 +11,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../../../loader.js`)
+
 /**
   * @class AlertBuilder
   * @description The `AlertBuilder` class is responsible for constructing and processing weather alerts based on raw or XML messages. 
@@ -45,18 +47,18 @@ class AlertBuilder {
     async _RawTextProduct() {
         let message = this.message.split(/(?=\$\$)/g)
         let messages = message.map(msg => msg.trim());
-        let configurations = cache.configurations.definitions
+        let configurations = LOAD.cache.configurations.definitions
         for (let i = 0; i < messages.length; i++) {
             let start = new Date().getTime()
             let msg = message[i]
-            let vtec_h = new VTECParser(msg, configurations)
-            let ugc_h = new UGCParser(msg, configurations)
-            let raw_h = new RawParser(msg)
+            let vtec_h = new LOAD.Callbacks.VTECParser(msg, configurations)
+            let ugc_h = new LOAD.Callbacks.UGCParser(msg, configurations)
+            let raw_h = new LOAD.Callbacks.RawParser(msg)
             let vtec = await vtec_h.ParseVTEC()
             let ugc = await ugc_h.ParseUGC()
             if (vtec != null && ugc != null) {
                 let coords = await raw_h.GetPolygonCoordinatesByText()
-                if (coords.length == 0) { coords = await ShapefileManager.GetCoordinates(ugc.zones) }
+                if (coords.length == 0) { coords = await LOAD.Library.ShapefileManager.GetCoordinates(ugc.zones) }
                 let tornado = await raw_h.GetTornado()
                 let hail = await raw_h.GetHailSize()
                 let wind = await raw_h.GetWindGusts()
@@ -91,11 +93,11 @@ class AlertBuilder {
                     },
                     type: `Feature`,
                 }
-                let filter = await Parsing._FilterNWSAlertsv2([alert])
+                let filter = await LOAD.Library.Parsing._FilterNWSAlertsv2([alert])
                 let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
                 if (filterd.length == 0) { continue }
                 alert.compile_time = `${new Date().getTime() - start}ms`
-                await NOAAWeatherWireService.ProcessValidAlert(alert, `RAW`, `${alert.compile_time}`)
+                await LOAD.Library.NOAAWeatherWireService.ProcessValidAlert(alert, `RAW`, `${alert.compile_time}`)
                 await new Promise(resolve => setTimeout(resolve, 1))
             }
         }
@@ -112,7 +114,7 @@ class AlertBuilder {
     async _XmlProduct() {
         let start = new Date().getTime()
         let message = this.message.substring(this.message.indexOf(`<?xml version="1.0"`), this.message.length)
-        let xml_data = new xml2js.Parser()
+        let xml_data = new LOAD.Packages.XML2JS.Parser()
         let result = await xml_data.parseStringPromise(message)
         let tracking = result.alert.info[0].parameter.find(p => p.valueName[0] === "VTEC")?.value[0] || "N/A"
         let action = `N/A`
@@ -122,7 +124,7 @@ class AlertBuilder {
             let significance = vtec_parts[4]
             let etn = vtec_parts[5]
             tracking = `${office_id}-${significance}-${etn}`
-            action = cache.configurations.definitions.status_signatures[vtec_parts[1]]
+            action = LOAD.cache.configurations.definitions.status_signatures[vtec_parts[1]]
         }
         let alert = {
             id: `NWWS-OI-${tracking}`,
@@ -151,11 +153,11 @@ class AlertBuilder {
         if (result.alert.info[0].area[0].polygon != undefined) {
             alert.geometry = { type: "Polygon", coordinates: [result.alert.info[0].area[0].polygon[0].split(" ").map(coord => {const [lat, lon] = coord.split(",").map(parseFloat);return [lon, lat];})], };
         } 
-        let filter = await Parsing._FilterNWSAlertsv2([alert])
+        let filter = await LOAD.Library.Parsing._FilterNWSAlertsv2([alert])
         let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
         if (filterd.length == 0) { return }
         alert.compile_time = `${new Date().getTime() - start}ms`
-        await NOAAWeatherWireService.ProcessValidAlert(alert, `XML`, `${alert.compile_time}`)
+        await LOAD.Library.NOAAWeatherWireService.ProcessValidAlert(alert, `XML`, `${alert.compile_time}`)
         await new Promise(resolve => setTimeout(resolve, 1))
     }
 }

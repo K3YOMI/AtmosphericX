@@ -11,6 +11,7 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../../../loader.js`)
 
 /**
   * @class UGCParser
@@ -44,8 +45,8 @@ class UGCParser {
     async ParseUGC() {
         return new Promise(async (resolve, reject) => {
             let header = await this.GetHeader()
-            let zones = await ShapefileManager.GetZones(header)
-            let locations = await ShapefileManager.GetLocations(zones)
+            let zones = await LOAD.Library.ShapefileManager.GetZones(header)
+            let locations = await LOAD.Library.ShapefileManager.GetLocations(zones)
             if (zones.length > 0) {
                 this.ugc.zones = zones
                 this.ugc.locations = locations

@@ -13,6 +13,7 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
 
 /**
  * @module Formats
@@ -31,7 +32,7 @@ class Formats {
         this.author = `k3yomi@GitHub`
         this.production = true
         this.name = `Formats`;
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
     /**
@@ -140,9 +141,9 @@ class Formats {
 
     async _GetCustomEvent(_event=undefined) {
         if (_event == undefined) {return `Invalid Event Object`}
-        let audio_to_use = cache.configurations.tone_sounds.beep;
-        let event_action = cache.configurations.alert_dictionary[_event.properties.event];
-        let tag_dictionary = cache.configurations.definitions.tag_definitions
+        let audio_to_use = LOAD.cache.configurations.tone_sounds.beep;
+        let event_action = LOAD.cache.configurations.alert_dictionary[_event.properties.event];
+        let tag_dictionary = LOAD.cache.configurations.definitions.tag_definitions
 
 
         let tag = [`No Quick Tag Assigned`]
@@ -154,7 +155,7 @@ class Formats {
         }
 
         if (event_action == undefined) {
-            event_action = cache.configurations.alert_dictionary.UNK;
+            event_action = LOAD.cache.configurations.alert_dictionary.UNK;
             let new_alert = event_action.new;
             let update_alert = event_action.update;
             let cancel_alert = event_action.cancel;
@@ -182,10 +183,10 @@ class Formats {
                 message: _event.properties.messageType,
                 audiopresets: { new: new_alert, update: update_alert, cancel: cancel_alert },
                 audio: audio_to_use,
-                gif: cache.configurations.alert_banners.UNK,
-                eas: cache.configurations.alert_dictionary.UNK.eas,
-                siren: cache.configurations.alert_dictionary.UNK.siren,
-                autobeep: cache.configurations.alert_dictionary.UNK.autobeep,
+                gif: LOAD.cache.configurations.alert_banners.UNK,
+                eas: LOAD.cache.configurations.alert_dictionary.UNK.eas,
+                siren: LOAD.cache.configurations.alert_dictionary.UNK.siren,
+                autobeep: LOAD.cache.configurations.alert_dictionary.UNK.autobeep,
                 tag: tag,
             };
         } else {
@@ -216,7 +217,7 @@ class Formats {
                 message: _event.properties.messageType,
                 audiopresets: { new: new_alert, update: update_alert, cancel: cancel_alert },
                 audio: audio_to_use,
-                gif: cache.configurations.alert_banners[_event.properties.event],
+                gif: LOAD.cache.configurations.alert_banners[_event.properties.event],
                 eas: event_action.eas,
                 siren: event_action.siren,
                 autobeep: event_action.autobeep,
@@ -256,10 +257,10 @@ class Formats {
         try {
             let ignore_warning = false;
             let only_beep = false;
-            let audio_to_use = cache.configurations.tone_sounds.beep;
-            let beep_only_cfg = cache.configurations.project_settings.beep_only;
-            let filtered_events_cfg = cache.configurations.project_settings.ignore_restrictions;
-            let allow_updates_cfg = cache.configurations.project_settings.show_updates;
+            let audio_to_use = LOAD.cache.configurations.tone_sounds.beep;
+            let beep_only_cfg = LOAD.cache.configurations.project_settings.beep_only;
+            let filtered_events_cfg = LOAD.cache.configurations.project_settings.ignore_restrictions;
+            let allow_updates_cfg = LOAD.cache.configurations.project_settings.show_updates;
             let { hail, wind, tornado, thunderstorm} = await this._GetEventParameters(_event.properties.parameters);
 
             _event.properties.parameters.maxWindGust = wind;
@@ -275,7 +276,7 @@ class Formats {
             _event.properties.messageType = signature.message;
             if (beep_only_cfg == true) {
                 if (!filtered_events_cfg.includes(_event.properties.event)) {
-                    audio_to_use = cache.configurations.tone_sounds.beep;
+                    audio_to_use = LOAD.cache.configurations.tone_sounds.beep;
                     signature.audio = audio_to_use;
                     only_beep = true;
                 }
@@ -288,7 +289,7 @@ class Formats {
             if (signature.notifyCard == undefined) {
                 signature.notifyCard = _event.properties.event;
             }
-            if (cache.configurations.sources.primary_sources.noaa_weather_wire_service.enabled == true) {
+            if (LOAD.cache.configurations.sources.primary_sources.noaa_weather_wire_service.enabled == true) {
                 if (_event.action != undefined && _event.action != `N/A`) {_event.properties.messageType = _event.action}
             }
             return {
@@ -312,8 +313,8 @@ class Formats {
                 metadata: { ...signature, ignored: ignore_warning, only_beep: only_beep },
             };
         } catch (error) {
-            Hooks.Log(`${this.name}.Register : ${error.message}`);
-            Hooks.PrintLog(`${this.name}.Register`, `Error registering event: ${error.message}`);
+            LOAD.Library.Hooks.Log(`${this.name}.Register : ${error.message}`);
+            LOAD.Library.Hooks.PrintLog(`${this.name}.Register`, `Error registering event: ${error.message}`);
             return `Error processing event`;
         }
     }
@@ -351,49 +352,49 @@ class Formats {
     async build(_raw={}, wire=false) {
         try {
             if (_raw.wire != undefined && wire == true) {
-                let response = await Parsing._ReadNWSAlerts(_raw.wire);
-                cache.alerts.active = response.active;
-                cache.alerts.warnings = response.warnings;
-                cache.alerts.watches = response.watches; 
+                let response = await LOAD.Library.Parsing._ReadNWSAlerts(_raw.wire);
+                LOAD.cache.alerts.active = response.active;
+                LOAD.cache.alerts.warnings = response.warnings;
+                LOAD.cache.alerts.watches = response.watches; 
             }
             if (_raw.nws != undefined && _raw.nws.features.length > 0) {
-                let response = await Parsing._ReadNWSAlerts(_raw.nws);
-                cache.alerts.active = response.active;
-                cache.alerts.warnings = response.warnings;
-                cache.alerts.watches = response.watches;
+                let response = await LOAD.Library.Parsing._ReadNWSAlerts(_raw.nws);
+                LOAD.cache.alerts.active = response.active;
+                LOAD.cache.alerts.warnings = response.warnings;
+                LOAD.cache.alerts.watches = response.watches;
             }
             if (_raw.spotters != undefined) {
-                let response = await Parsing._ReadRawSpotterNetwork(_raw.spotters);
-                cache.alerts.spotters = response;
+                let response = await LOAD.Library.Parsing._ReadRawSpotterNetwork(_raw.spotters);
+                LOAD.cache.alerts.spotters = response;
             }
             if (_raw.mesoscale_discussions != undefined) {
-                let response = await Parsing._ReadRawMesoscaleDiscussions(_raw.mesoscale_discussions);
-                cache.alerts.mesoscale = response;
+                let response = await LOAD.Library.Parsing._ReadRawMesoscaleDiscussions(_raw.mesoscale_discussions);
+                LOAD.cache.alerts.mesoscale = response;
             }
             if (_raw.lightning != undefined) {
-                let response = await Parsing._ReadRawLightningReports(_raw.lightning);
-                cache.alerts.lightning = response;
+                let response = await LOAD.Library.Parsing._ReadRawLightningReports(_raw.lightning);
+                LOAD.cache.alerts.lightning = response;
             }
             if (_raw.mPing != undefined) {
-                let response = await Parsing._ReadRawMPingReports(_raw.mPing);
-                cache.alerts.reports = response;
+                let response = await LOAD.Library.Parsing._ReadRawMPingReports(_raw.mPing);
+                LOAD.cache.alerts.reports = response;
             }
             if (_raw.grxlsr != undefined) {
-                let response = await Parsing._ReadRawGRLevelXReports(_raw.grxlsr);
-                cache.alerts.reports = response;
+                let response = await LOAD.Library.Parsing._ReadRawGRLevelXReports(_raw.grxlsr);
+                LOAD.cache.alerts.reports = response;
             }
             if (_raw.lsr != undefined) {
-                let response = await Parsing._ReadIowaLocalStormReports(_raw.lsr.features);
-                cache.alerts.reports = response;
+                let response = await LOAD.Library.Parsing._ReadIowaLocalStormReports(_raw.lsr.features);
+                LOAD.cache.alerts.reports = response;
             }
             if (_raw.nwsstat != undefined && _raw.nwsstat.features.length > 0) {
-                let response = await Parsing._ReadRawStations(_raw.nwsstat);
-                cache.alerts.stations = response;
+                let response = await LOAD.Library.Parsing._ReadRawStations(_raw.nwsstat);
+                LOAD.cache.alerts.stations = response;
             }
-            await Routes.SyncClients()
+            await LOAD.Library.Routes.SyncClients()
         } catch (error) {
-            Hooks.Log(`${this.name}.Build : ${error.message}`)
-            Hooks.PrintLog(`${this.name}.Build`, `Error building alerts: ${error.message}`)
+            LOAD.Library.Hooks.Log(`${this.name}.Build : ${error.message}`)
+            LOAD.Library.Hooks.PrintLog(`${this.name}.Build`, `Error building alerts: ${error.message}`)
         }
     }
 }

@@ -11,6 +11,7 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../../../loader.js`)
 
 /**
   * @class RawParser

@@ -13,6 +13,9 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
+
+
 /**
  * @module Hooks
  * @description The Hooks module provides a collection of utility functions and methods for managing configurations, logging, 
@@ -34,36 +37,36 @@ class Hooks {
         this.author = `k3yomi@GitHub`
         this.production = true
         this.name = `Hooks`;
-        this.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
         this.RefreshConfigurations()
         this._PrintLogo()
+        this.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
     /**
      * @function _GetRandomAlert
-     * @description This function selects a random alert from the active and manual alert lists stored in the `cache.alerts` object. 
+     * @description This function selects a random alert from the active and manual alert lists stored in the `LOAD.cache.alerts` object. 
      * It maintains a pointer (`random_index`) that tracks which alert was selected last, ensuring that the next call
      * to this function selects the next alert in the list. If there are no active or manual alerts, it resets the random
      * selection state and returns `null`.
      * 
      * @returns {Promise<void>} 
-     * This function resolves with no value (`void`). It updates the `cache.alerts.random` object with the randomly selected alert 
+     * This function resolves with no value (`void`). It updates the `LOAD.cache.alerts.random` object with the randomly selected alert 
      * and increments the `random_index` to point to the next alert for the subsequent function call.
      */
 
     async _GetRandomAlert() {
         return new Promise(async (resolve, reject) => {
-            if (cache.alerts.active == undefined) { cache.alerts.active = [] }
-            let alerts_table = [...cache.alerts.active, ...[cache.alerts.manual]].filter(alert => alert && Object.keys(alert).length > 0);
+            if (LOAD.cache.alerts.active == undefined) { LOAD.cache.alerts.active = [] }
+            let alerts_table = [...LOAD.cache.alerts.active, ...[LOAD.cache.alerts.manual]].filter(alert => alert && Object.keys(alert).length > 0);
             if (alerts_table.length > 0) {
-                if (cache.alerts.random_index == undefined || cache.alerts.random_index >= alerts_table.length) {
-                    cache.alerts.random_index = 0;
+                if (LOAD.cache.alerts.random_index == undefined || LOAD.cache.alerts.random_index >= alerts_table.length) {
+                    LOAD.cache.alerts.random_index = 0;
                 }
-                cache.alerts.random = alerts_table[cache.alerts.random_index];
-                cache.alerts.random_index++;
+                LOAD.cache.alerts.random = alerts_table[LOAD.cache.alerts.random_index];
+                LOAD.cache.alerts.random_index++;
             } else {
-                cache.alerts.random = null;
-                cache.alerts.random_index = undefined;
+                LOAD.cache.alerts.random = null;
+                LOAD.cache.alerts.random_index = undefined;
             }
             resolve();
         });
@@ -80,19 +83,19 @@ class Hooks {
 
     async CleanupStorage() {
         let max_bytes = 25000000;
-        let directory = path.join(__dirname, `../../storage/nwws-oi`);
+        let directory = LOAD.Packages.PathSystem.join(__dirname, `../../storage/nwws-oi`);
         let files = [];
         let stack = [directory];
         while (stack.length > 0) {
             let currentDir = stack.pop();
-            fs.readdirSync(currentDir).forEach(file => {
-                let filePath = path.join(currentDir, file);
-                if (fs.statSync(filePath).isDirectory()) { stack.push(filePath); } else { files.push({ file: filePath, size: fs.statSync(filePath).size }); }
+            LOAD.Packages.FileSystem.readdirSync(currentDir).forEach(file => {
+                let filePath = LOAD.Packages.PathSystem.join(currentDir, file);
+                if (LOAD.Packages.FileSystem.statSync(filePath).isDirectory()) { stack.push(filePath); } else { files.push({ file: filePath, size: LOAD.Packages.FileSystem.statSync(filePath).size }); }
             });
         }
         if (files.length == 0) { return; }
         let file = files.find(file => file.size > max_bytes);
-        if (file) { fs.unlinkSync(file.file); }
+        if (file) { LOAD.Packages.FileSystem.unlinkSync(file.file); }
     }
 
     /**
@@ -110,16 +113,16 @@ class Hooks {
 
     async _PrintLogo() {
         console.clear()
-        console.log(fs.readFileSync(path.join(__dirname, `../../storage/logo`), `utf8`))
+        console.log(LOAD.Packages.FileSystem.readFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../storage/logo`), `utf8`))
     }
 
     /**
      * @function RefreshConfigurations
      * @description This function reads the `configurations.json` file located in the parent directory and parses its content 
-     * as a JSON object. The parsed data is then stored in the `cache.configurations` variable for further use.
+     * as a JSON object. The parsed data is then stored in the `LOAD.cache.configurations` variable for further use.
      * 
      * The function expects the `configurations.json` file to exist and be properly formatted as valid JSON.
-     * This function does not return any value but modifies the global `cache.configurations` object.
+     * This function does not return any value but modifies the global `LOAD.cache.configurations` object.
      * 
      * @returns {Promise<void>} 
      * This function does not return anything. It simply loads and parses the configuration file into memory.
@@ -130,7 +133,7 @@ class Hooks {
      */
 
     async RefreshConfigurations() {
-        cache.configurations = JSON.parse(fs.readFileSync(path.join(__dirname, `../../configurations.json`)))
+        LOAD.cache.configurations = JSON.parse(LOAD.Packages.FileSystem.readFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../configurations.json`)))
     }
 
     /**
@@ -169,8 +172,8 @@ class Hooks {
      */
 
     async Log(_message=`No message provided.`) {
-        if (fs.existsSync(path.join(__dirname, `../../storage/logs`)) == false) {fs.writeFileSync(path.join(__dirname, `../../storage/logs`), ``)}
-        fs.appendFileSync(path.join(__dirname, `../../storage/logs`), `[${new Date().toLocaleString()}] : ${_message}\n`)
+        if (LOAD.Packages.FileSystem.existsSync(LOAD.Packages.PathSystem.join(__dirname, `../../storage/logs`)) == false) {LOAD.Packages.FileSystem.writeFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../storage/logs`), ``)}
+        LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../storage/logs`), `[${new Date().toLocaleString()}] : ${_message}\n`)
     }
 
     /**
@@ -181,27 +184,27 @@ class Hooks {
      * 3. Sets up a periodic interval (every 100ms) to:
      *   - Call `_GetRandomAlert` periodically to update the random alert.
      *   - Check if it's time to refresh the synchronized requests based on the `global_update` configuration.
-     *   - If it's time to refresh, it ensures no other requests are being processed (`cache.requesting` flag), refreshes the configuration, updates random alert, and gathers stats.
-     *   - It then triggers the next API call and ensures no race conditions by using `setTimeout` to reset the `cache.requesting` flag after a brief period.
+     *   - If it's time to refresh, it ensures no other requests are being processed (`LOAD.cache.requesting` flag), refreshes the configuration, updates random alert, and gathers stats.
+     *   - It then triggers the next API call and ensures no race conditions by using `setTimeout` to reset the `LOAD.cache.requesting` flag after a brief period.
      * 
      * @returns {Promise<void>}
      * This function does not return any value but continuously updates the system at regular intervals.
      */
 
     async StartProcess() {
-        await APICalls.Next()
+        await LOAD.Library.APICalls.Next()
         await this.CleanupStorage()
         setInterval(async () => {
-            if (new Date().getSeconds() % cache.configurations.project_settings.global_update == 0) {
-                if (cache.requesting) {return}
-                cache.requesting = true
+            if (new Date().getSeconds() % LOAD.cache.configurations.project_settings.global_update == 0) {
+                if (LOAD.cache.requesting) {return}
+                LOAD.cache.requesting = true
                 await this.RefreshConfigurations()
                 await this.GetLatestHostingStats(true)
                 await this.CleanupStorage()
                 setTimeout(async () => { 
-                    await APICalls.Next()
-                    await APICalls.Next(cache.wire);
-                    cache.requesting = false; 
+                    await LOAD.Library.APICalls.Next()
+                    await LOAD.Library.APICalls.Next(LOAD.cache.wire);
+                    LOAD.cache.requesting = false; 
                 }, 1000);
             }   
         }, 100);
@@ -215,21 +218,21 @@ class Hooks {
       * The function checks the following:
       * - **CPU Load**: It retrieves the system's average CPU load for the last 1 minute and formats it as a percentage.
       * - **Memory Usage**: It calculates the percentage of memory used by subtracting the free memory from the total memory, and then calculating the percentage of memory usage.
-      * - **Operations & Requests Counters**: If specified by the `_operations` and `_requests` flags, it increments the respective counters in the `cache.statistics` object.
+      * - **Operations & Requests Counters**: If specified by the `_operations` and `_requests` flags, it increments the respective counters in the `LOAD.cache.statistics` object.
       * 
       * @param {boolean} _operations - Flag to increment the operations counter (defaults to `false`).
       * @param {boolean} _requests - Flag to increment the requests counter (defaults to `false`).
       * 
       * @returns {Promise<void>} 
-      * This function does not return any value, but updates the `cache.statistics` object with the current CPU, memory usage statistics, 
+      * This function does not return any value, but updates the `LOAD.cache.statistics` object with the current CPU, memory usage statistics, 
       * and increments the counters for operations and requests if the corresponding flags are set to `true`.
       */
 
     async GetLatestHostingStats(_operations, _requests) {
-        cache.statistics.cpu = (Math.round(os.loadavg()[0] * 100) + '%') == '0%' ? 'Unsupported (%)' : Math.round(os.loadavg()[0] * 100) + '%';
-        cache.statistics.memory = Math.round((os.totalmem() - os.freemem()) / os.totalmem() * 100) + '%';
-        if (_operations) { cache.statistics.operations++}
-        if (_requests) { cache.statistics.requests++}
+        LOAD.cache.statistics.cpu = (Math.round(LOAD.Packages.OS.loadavg()[0] * 100) + '%') == '0%' ? 'Unsupported (%)' : Math.round(LOAD.Packages.OS.loadavg()[0] * 100) + '%';
+        LOAD.cache.statistics.memory = Math.round((LOAD.Packages.OS.totalmem() - LOAD.Packages.OS.freemem()) / LOAD.Packages.OS.totalmem() * 100) + '%';
+        if (_operations) { LOAD.cache.statistics.operations++}
+        if (_requests) { LOAD.cache.statistics.requests++}
     }
 
     /**
@@ -254,13 +257,13 @@ class Hooks {
                     maxRedirects: 0,
                     timeout: 5000,
                     headers: { 
-                        'User-Agent': cache.configurations.project_settings.http_useragent, 
+                        'User-Agent': LOAD.cache.configurations.project_settings.http_useragent, 
                         'Accept': 'application/geo+json, text/plain', 
                         'Accept-Language': 'en-US',
                     }
                 }
                 if (_useragent != false) { details.headers['User-Agent'] = _useragent }
-                await axios.get(details.url, { headers: details.headers, maxRedirects: details.maxRedirects, timeout: details.timeout }).then((response) => {
+                await LOAD.Packages.Axios.get(details.url, { headers: details.headers, maxRedirects: details.maxRedirects, timeout: details.timeout }).then((response) => {
                     let data = response.data;
                     let error = response.error;
                     let code = response.status;
@@ -292,15 +295,15 @@ class Hooks {
             let client = {
                 configurations: {
                     warning: "This is configuration data routed from the server, please use this data for client development purposes only.",
-                    use_web_tts: cache.configurations.project_settings.use_web_tts,
-                    tone_sounds: cache.configurations.tone_sounds,
-                    overlay_settings: cache.configurations.overlay_settings,
-                    spc_outlooks: cache.configurations.spc_outlooks,
-                    third_party_services: cache.configurations.third_party_services,
-                    widget_settings: cache.configurations.widget_settings,
+                    use_web_tts: LOAD.cache.configurations.project_settings.use_web_tts,
+                    tone_sounds: LOAD.cache.configurations.tone_sounds,
+                    overlay_settings: LOAD.cache.configurations.overlay_settings,
+                    spc_outlooks: LOAD.cache.configurations.spc_outlooks,
+                    third_party_services: LOAD.cache.configurations.third_party_services,
+                    widget_settings: LOAD.cache.configurations.widget_settings,
                 },
             }
-            client = { ...client, ...cache.alerts, statistics: cache.statistics }
+            client = { ...client, ...LOAD.cache.alerts, statistics: LOAD.cache.statistics }
             resolve(client)
         })
     }
@@ -332,9 +335,9 @@ class Hooks {
       */
 
     async CreateManualAlert(_req, _res) {
-        let account = await Routes._DoesRequestHaveSession(_req);
+        let account = await LOAD.Library.Routes._DoesRequestHaveSession(_req);
         if (!account) {
-            Routes._GiveResponseToSession(_req, _res, { code: 403, message: `You do not have permission to access this resource.` });
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 403, message: `You do not have permission to access this resource.` });
             return;
         }
         let body = JSON.parse(await new Promise((resolve, reject) => {
@@ -342,17 +345,17 @@ class Hooks {
             _req.on(`data`, (data) => { body += data; });
             _req.on(`end`, () => { resolve(body); });
         }));
-        let registration = await Formats.RegisterEvent(body);
-        cache.alerts.manual = registration.details.locations !== "" ? registration : [];
-        Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Manual activation alert sent successfully.` });
-        if (cache.alerts.manual.length != 0) {
-            this.Log(`${this.name}.Manual : ${cache.accounts[_req.session.account].username} sent manual activation alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
-            this.PrintLog(`${this.name}.Manual`, `Manual activation alert sent successfully by ${cache.accounts[_req.session.account].username}`);
+        let registration = await LOAD.Library.Formats.RegisterEvent(body);
+        LOAD.cache.alerts.manual = registration.details.locations !== "" ? registration : [];
+        LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Manual activation alert sent successfully.` });
+        if (LOAD.cache.alerts.manual.length != 0) {
+            this.Log(`${this.name}.Manual : ${LOAD.cache.accounts[_req.session.account].username} sent manual activation alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
+            this.PrintLog(`${this.name}.Manual`, `Manual activation alert sent successfully by ${LOAD.cache.accounts[_req.session.account].username}`);
         } else {
-            this.Log(`${this.name}.Manual : ${cache.accounts[_req.session.account].username} cleared manual activation alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
-            this.PrintLog(`${this.name}.Manual`, `Manual activation alert cleared by ${cache.accounts[_req.session.account].username}`);
+            this.Log(`${this.name}.Manual : ${LOAD.cache.accounts[_req.session.account].username} cleared manual activation alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
+            this.PrintLog(`${this.name}.Manual`, `Manual activation alert cleared by ${LOAD.cache.accounts[_req.session.account].username}`);
         }
-        await Routes.SyncClients()
+        await LOAD.Library.Routes.SyncClients()
     }
 
     /**
@@ -361,7 +364,7 @@ class Hooks {
       * It first checks if the requestor has a valid session. If the session is valid, 
       * it processes the notification data. If both title and message are provided, 
       * it creates a notification and updates the cache with the notification details. 
-      * If either title or message is missing, it clears the notification from the cache.
+      * If either title or message is missing, it clears the notification from the LOAD.cache.
       * It then logs the action and sends a response to the client indicating success or failure.
       * 
       * @async
@@ -385,9 +388,9 @@ class Hooks {
       */
 
     async CreateNotification(_req, _res) {
-        let account = await Routes._DoesRequestHaveSession(_req);
+        let account = await LOAD.Library.Routes._DoesRequestHaveSession(_req);
         if (!account) {
-            Routes._GiveResponseToSession(_req, _res, { code: 403, message: `You do not have permission to access this resource.` });
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 403, message: `You do not have permission to access this resource.` });
             return;
         }
         let body = JSON.parse(await new Promise((resolve, reject) => {
@@ -398,17 +401,17 @@ class Hooks {
         let title = body.title;
         let message = body.message;
         if (message != '' && title != '') {
-            cache.alerts.broadcasts = { title: title, message: message };
-            Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Notification sent successfully.` });
-            this.Log(`${this.name}.Notification : ${cache.accounts[_req.session.account].username} sent a notification with title: ${title} and description: ${message} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
-            this.PrintLog(`${this.name}.Notification`, `Notification sent successfully by ${cache.accounts[_req.session.account].username} with title: ${title} and description: ${message}`);
+            LOAD.cache.alerts.broadcasts = { title: title, message: message };
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Notification sent successfully.` });
+            this.Log(`${this.name}.Notification : ${LOAD.cache.accounts[_req.session.account].username} sent a notification with title: ${title} and description: ${message} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
+            this.PrintLog(`${this.name}.Notification`, `Notification sent successfully by ${LOAD.cache.accounts[_req.session.account].username} with title: ${title} and description: ${message}`);
         } else { 
-            cache.alerts.broadcasts = {};
-            this.Log(`${this.name}.Notification : ${cache.accounts[_req.session.account].username} cleared the notification (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
-            this.PrintLog(`${this.name}.Notification`, `Notification cleared by ${cache.accounts[_req.session.account].username}`);
-            Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Notification cleared successfully.` });
+            LOAD.cache.alerts.broadcasts = {};
+            this.Log(`${this.name}.Notification : ${LOAD.cache.accounts[_req.session.account].username} cleared the notification (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
+            this.PrintLog(`${this.name}.Notification`, `Notification cleared by ${LOAD.cache.accounts[_req.session.account].username}`);
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Notification cleared successfully.` });
         }
-        await Routes.SyncClients()
+        await LOAD.Library.Routes.SyncClients()
     }
 
     /**
@@ -417,7 +420,7 @@ class Hooks {
       * It first checks if the requestor has a valid session. If the session is valid, 
       * it processes the status alert data. If the title is provided, it sets the status 
       * alert in the cache and logs the action. If the title is empty or undefined, 
-      * it clears the status alert from the cache. Afterward, it sends a response to the client 
+      * it clears the status alert from the LOAD.cache. Afterward, it sends a response to the client 
       * indicating success or failure, and syncs client data.
       * 
       * @async
@@ -442,9 +445,9 @@ class Hooks {
 
 
     async CreateStatusMarker(_req, _res) {
-        let account = await Routes._DoesRequestHaveSession(_req);
+        let account = await LOAD.Library.Routes._DoesRequestHaveSession(_req);
         if (!account) {
-            Routes._GiveResponseToSession(_req, _res, { code: 403, message: `You do not have permission to access this resource.` });
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 403, message: `You do not have permission to access this resource.` });
             return;
         }
         let body = JSON.parse(await new Promise((resolve, reject) => {
@@ -454,17 +457,17 @@ class Hooks {
         }));
         let title = body.title;
         if (title != "" && title != undefined) {
-            cache.alerts.status = title;
-            this.Log(`${this.name}.Status : ${cache.accounts[_req.session.account].username} sent status alert with title: ${title} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
-            this.PrintLog(`${this.name}.Status`, `Status alert sent successfully by ${cache.accounts[_req.session.account].username} with title: ${title}`);
-            Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Status alert sent successfully.` });
+            LOAD.cache.alerts.status = title;
+            this.Log(`${this.name}.Status : ${LOAD.cache.accounts[_req.session.account].username} sent status alert with title: ${title} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
+            this.PrintLog(`${this.name}.Status`, `Status alert sent successfully by ${LOAD.cache.accounts[_req.session.account].username} with title: ${title}`);
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Status alert sent successfully.` });
         } else {
-            cache.alerts.status = "";
-            this.Log(`${this.name}.Status : ${cache.accounts[_req.session.account].username} cleared status alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
-            this.PrintLog(`${this.name}.Status`, `Status alert cleared by ${cache.accounts[_req.session.account].username}`);
-            Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Status alert cleared successfully.` });
+            LOAD.cache.alerts.status = "";
+            this.Log(`${this.name}.Status : ${LOAD.cache.accounts[_req.session.account].username} cleared status alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
+            this.PrintLog(`${this.name}.Status`, `Status alert cleared by ${LOAD.cache.accounts[_req.session.account].username}`);
+            LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Status alert cleared successfully.` });
         }
-        await Routes.SyncClients()
+        await LOAD.Library.Routes.SyncClients()
     }
 }
 

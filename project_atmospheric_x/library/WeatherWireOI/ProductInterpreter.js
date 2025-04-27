@@ -11,6 +11,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../../loader.js`)
+
 /**
   * @class ProductInterpreter
   * @description A class responsible for interpreting and processing message stanzas in the weather wire format.
@@ -63,18 +65,18 @@ class ProductInterpreter {
                     this.attributes = cb.attrs
                     this.xml = this.message.includes(`<?xml version="1.0"`)
                     this.area_description = this.message.includes(`<areaDesc>`)
-                    this.vtec = this.message.match(cache.configurations.definitions.vtec_regexp)
+                    this.vtec = this.message.match(LOAD.cache.configurations.definitions.vtec_regexp)
                     let type = await this._GetCallType()
 
-                    if (cache.alerts.wire == undefined) { cache.alerts.wire = [] }
-                    if (cache.alerts.wire.length >= 64) { cache.alerts.wire.shift() }
-                    cache.alerts.wire.push({message: this.message, issued: new Date().toISOString()})
+                    if (LOAD.cache.alerts.wire == undefined) { LOAD.cache.alerts.wire = [] }
+                    if (LOAD.cache.alerts.wire.length >= 64) { LOAD.cache.alerts.wire.shift() }
+                    LOAD.cache.alerts.wire.push({message: this.message, issued: new Date().toISOString()})
 
-                    fs.appendFileSync(path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${type}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`)
-                    if (!this.vtec) { fs.appendFileSync(path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-global-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`); }
+                    LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${type}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`)
+                    if (!this.vtec) { LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-global-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`); }
                     if (this.attributes.awipsid) {
-                        if (this.xml && this.area_description) {fs.appendFileSync(path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-xml-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
-                        if (!this.xml && this.vtec) {fs.appendFileSync(path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
+                        if (this.xml && this.area_description) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-xml-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
+                        if (!this.xml && this.vtec) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
                         resolve({message: this.message, attributes: this.attributes, xml: this.xml, valid_xml_alert: this.area_description, type: type, ignore: false})
                     }
                 }
@@ -124,7 +126,7 @@ class ProductInterpreter {
     async CreateNewAlert() {
         return new Promise(async (resolve, reject) => {
             let type = await this._GetCallType() // TODO: Use if statements to determine which type alert, by default we will start with basic alerts...
-            if (type == `alert`) { new AlertBuilder({message: this.message, attributes: this.attributes, xml: this.xml}) }
+            if (type == `alert`) { new LOAD.Callbacks.AlertBuilder({message: this.message, attributes: this.attributes, xml: this.xml}) }
             if (type == `local storm report`) { } // TODO: Add LSR support
             if (type == `md`) { } // TODO: Add MD support
             if (type == `outlook`) { } // TODO: Add Outlook support

@@ -13,6 +13,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
+
 /**
  * @module Level2Nexrad
  * @description This module provides functionality to fetch and parse Level 2 Nexrad radar data from AWS S3 bucket.
@@ -37,7 +39,7 @@ class Level2Nexrad {
         this.author = `k3yomi@GitHub`;
         this.production = false
         this.name = `Level2Nexrad`;
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
     /**
@@ -67,14 +69,14 @@ class Level2Nexrad {
                     'file': lookup,
                     'high_res_reflectivity': Buffer.from(JSON.stringify(reflectivity)).toString('base64'),
                 }
-                cache.rdr.filter(rdr => rdr.file == lookup)[0].compressed = compressed
+                LOAD.cache.rdr.filter(rdr => rdr.file == lookup)[0].compressed = compressed
                 let end = new Date().getTime();
-                Hooks.Log(`Level2Nexrad : Radar data parsed for ${lookup} @ ${new Date().toLocaleString()} (${end - start} milliseconds)`)
-                Hooks.PrintLog(`Level2Nexrad`, `Radar data parsed for ${lookup} @ ${new Date().toLocaleString()} (${end - start} milliseconds)`)
+                LOAD.Library.Hooks.Log(`Level2Nexrad : Radar data parsed for ${lookup} @ ${new Date().toLocaleString()} (${end - start} milliseconds)`)
+                LOAD.Library.Hooks.PrintLog(`Level2Nexrad`, `Radar data parsed for ${lookup} @ ${new Date().toLocaleString()} (${end - start} milliseconds)`)
                 resolve(compressed);
             } else { 
-                if (cache.rdr.filter(rdr => rdr.file == _prefix).length != 0) {
-                    let compressed = cache.rdr.filter(rdr => rdr.file == _prefix)[0].compressed;
+                if (LOAD.cache.rdr.filter(rdr => rdr.file == _prefix).length != 0) {
+                    let compressed = LOAD.cache.rdr.filter(rdr => rdr.file == _prefix)[0].compressed;
                     resolve(compressed);    
                 }
                 else { resolve(null); return; }
@@ -97,12 +99,12 @@ class Level2Nexrad {
         return new Promise(async (resolve) => {
             try {
                 let link = `https://noaa-nexrad-level2.s3.amazonaws.com/?list-type=2&delimiter=%2F&prefix=${_prefix}`;
-                let response = await Hooks.CallHTTPS(link);
+                let response = await LOAD.Library.Hooks.CallHTTPS(link);
                 let regular_expression = /<Key>(.*?)<\/Key>/g;
                 let keys = response.match(regular_expression);
                 if (keys == null) { 
-                    Hooks.Log(`Level2Nexrad : No keys found for prefix ${_prefix}`); 
-                    Hooks.PrintLog(`Level2Nexrad`, `No keys found for prefix ${_prefix}`);
+                    LOAD.Library.Hooks.Log(`Level2Nexrad : No keys found for prefix ${_prefix}`); 
+                    LOAD.Library.Hooks.PrintLog(`Level2Nexrad`, `No keys found for prefix ${_prefix}`);
                     resolve(null); 
                     return;
                 }
@@ -111,7 +113,7 @@ class Level2Nexrad {
                 keys = keys.slice(0, 1);
                 resolve(keys[0]?.split('<Key>')[1]?.split('</Key>')[0]);
             } catch (error) {
-                Hooks.Log(`Level2Nexrad : Error fetching keys from S3: ${error}`);
+                LOAD.Library.Hooks.Log(`Level2Nexrad : Error fetching keys from S3: ${error}`);
                 resolve(null);
             }
         });
@@ -128,11 +130,11 @@ class Level2Nexrad {
 
     async _StreamLatestFromKey(_key) {
         return new Promise(async (resolve) => {
-            let isKeyCached = cache.rdr.filter(rdr => rdr.file == _key)
+            let isKeyCached = LOAD.cache.rdr.filter(rdr => rdr.file == _key)
             if (isKeyCached.length != 0) { resolve(null); return; }
-            cache.rdr.push({ file: _key, compressed: null });
+            LOAD.cache.rdr.push({ file: _key, compressed: null });
             let download_link = `https://noaa-nexrad-level2.s3.amazonaws.com/${_key}`;
-            let req = await axios.request({url: download_link, responseType: "arraybuffer", headers: {}, timeout: 10000});
+            let req = await LOAD.Packages.Axios.request({url: download_link, responseType: "arraybuffer", headers: {}, timeout: 10000});
             resolve(req.data)
         })
     }
@@ -195,8 +197,8 @@ class Level2Nexrad {
             let elevations = _cb.listElevations();
             let scans = _cb.getScans();
             if (!lon0 || !lat0) {
-                Hooks.Log(`Level2Nexrad : Invalid longitude or latitude in header.`);
-                Hooks.PrintLog(`Level2Nexrad`, `Invalid longitude or latitude in header.`);
+                LOAD.Library.Hooks.Log(`Level2Nexrad : Invalid longitude or latitude in header.`);
+                LOAD.Library.Hooks.PrintLog(`Level2Nexrad`, `Invalid longitude or latitude in header.`);
                 resolve({ type: "FeatureCollection", features: [] });
                 return;
             }
@@ -206,14 +208,14 @@ class Level2Nexrad {
                 let elevationIndex = header.elevation_number - 1;
                 let elevation = elevations[elevationIndex] || null;
                 if (elevation === null || isNaN(elevation)) {
-                    Hooks.Log(`Level2Nexrad : Invalid elevation for scan ${i}.`);
-                    Hooks.PrintLog(`Level2Nexrad`, `Invalid elevation for scan ${i}.`);
+                    LOAD.Library.Hooks.Log(`Level2Nexrad : Invalid elevation for scan ${i}.`);
+                    LOAD.Library.Hooks.PrintLog(`Level2Nexrad`, `Invalid elevation for scan ${i}.`);
                     continue;
                 }
                 let reflect_scan = _cb.getHighresReflectivity(i)?.moment_data;
                 if (!reflect_scan || reflect_scan.length === 0) {
-                    Hooks.Log(`Level2Nexrad : No reflectivity data for scan ${i}.`);
-                    Hooks.PrintLog(`Level2Nexrad`, `No reflectivity data for scan ${i}.`);
+                    LOAD.Library.Hooks.Log(`Level2Nexrad : No reflectivity data for scan ${i}.`);
+                    LOAD.Library.Hooks.PrintLog(`Level2Nexrad`, `No reflectivity data for scan ${i}.`);
                     continue;
              }  
                 let ranges = Array.from({ length: reflect_scan.length }, (_, j) => j * 250); // Assuming 250m range resolution
@@ -223,8 +225,8 @@ class Level2Nexrad {
                     }
                     let coordinates = this._CalculateCoordsByRadar(lon0, lat0, azimuth, elevation, ranges[a]);
                     if (!coordinates) {
-                        Hooks.Log(`Level2Nexrad : Invalid coordinates for scan ${i}, range ${a}.`);
-                        Hooks.PrintLog(`Level2Nexrad`, `Invalid coordinates for scan ${i}, range ${a}.`);
+                        LOAD.Library.Hooks.Log(`Level2Nexrad : Invalid coordinates for scan ${i}, range ${a}.`);
+                        LOAD.Library.Hooks.PrintLog(`Level2Nexrad`, `Invalid coordinates for scan ${i}, range ${a}.`);
                         continue;
                     }
                     features.push({

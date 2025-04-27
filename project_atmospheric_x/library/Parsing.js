@@ -13,6 +13,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
+
 /**
   * @module Parsing
   * @description 
@@ -27,7 +29,7 @@ class Parsing {
         this.author = `k3yomi@GitHub`
         this.production = true
         this.name = `Parsing`;
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
     /**
@@ -42,7 +44,7 @@ class Parsing {
 
     async _IsAlertCancelled(_alert=undefined) {
         if (_alert == undefined) { return true; }
-        let signatures = cache.configurations.definitions.cancel_signatures
+        let signatures = LOAD.cache.configurations.definitions.cancel_signatures
         let description = _alert.properties.description
         let type = _alert.properties.messageType
         let desc_cancel = signatures.filter(signature => description.toLowerCase().includes(signature.toLowerCase()))
@@ -83,8 +85,8 @@ class Parsing {
       */
 
     async _FilterNWSAlertsv1(alerts=[]) {
-        let forecast_office = cache.configurations.sources.filter.forecast_office_filter;
-        let zone_codes = cache.configurations.sources.filter.ugc_filter;
+        let forecast_office = LOAD.cache.configurations.sources.filter.forecast_office_filter;
+        let zone_codes = LOAD.cache.configurations.sources.filter.ugc_filter;
         if (forecast_office.length != 0) { alerts = alerts.filter(alert => forecast_office.includes(alert.properties.senderName)); }
         if (zone_codes.length != 0) { alerts = alerts.filter(alert => alert.properties.geocode.UGC.some(code => zone_codes.includes(code))); }
         return alerts;
@@ -108,8 +110,8 @@ class Parsing {
       */
 
     async _FilterNWSAlertsv2(alerts=[]) {
-        let priority = cache.configurations.project_settings.priority_alerts 
-        let allowed_events = cache.configurations.project_settings.priority
+        let priority = LOAD.cache.configurations.project_settings.priority_alerts 
+        let allowed_events = LOAD.cache.configurations.project_settings.priority
         if (priority == true) { alerts = alerts.filter(alert => allowed_events.includes(alert.properties.event)) }
         let time_filter = alerts.filter(alert => new Date(alert.properties.expires).getTime() / 1000 > new Date().getTime() / 1000); 
         let warnings = time_filter.filter(alert => alert.properties.event.includes('Warning'));
@@ -181,7 +183,7 @@ class Parsing {
             for (let i = 0; i < _array.length; i++) {
                 let index = _array[i];
                 let created_link = `${_api}/${index.id}`;
-                let response = await Hooks.CallHTTPS(created_link);
+                let response = await LOAD.Library.Hooks.CallHTTPS(created_link);
                 let values = {};
                 let chunks = 0;
                 response = response.split('\n');
@@ -227,7 +229,7 @@ class Parsing {
             let regular_expressionv3 = /Object:\s*([\d.-]+),([\d.-]+)\s*$/g;
             let regex = new RegExp(regular_expressionv1.source + '|' + regular_expressionv2.source + '|' + regular_expressionv3.source, 'gs');
             let spotters = [];
-            let config = cache.configurations.sources.miscellaneous_sources.spotter_network.spotter_network_filters
+            let config = LOAD.cache.configurations.sources.miscellaneous_sources.spotter_network.spotter_network_filters
 
             let matches = [..._body.matchAll(regex)];
             for (const match of matches) {
@@ -370,7 +372,7 @@ class Parsing {
                     lat: lat,
                     lon: lon
                 };
-                let registration = await Formats.RegisterEvent(build);
+                let registration = await LOAD.Library.Formats.RegisterEvent(build);
                 if (Object.keys(registration).length != 0) {
                     if (registration.details.ignored == true) { continue; }
                     reports.push(registration);
@@ -425,7 +427,7 @@ class Parsing {
                     lat: lat,
                     lon: lon
                 };
-                let registration = await Formats.RegisterEvent(build);
+                let registration = await LOAD.Library.Formats.RegisterEvent(build);
                 if (Object.keys(registration).length !== 0) {
                     if (registration.details.ignored === true) { continue; }
                     reports.push(registration);
@@ -475,7 +477,7 @@ class Parsing {
                     lat: properties.lat,
                     lon: properties.lon
                 };
-                let registration = await Formats.RegisterEvent(build);
+                let registration = await LOAD.Library.Formats.RegisterEvent(build);
                 if (Object.keys(registration).length !== 0) {
                     if (registration.details.ignored === true) { continue; }
                     reports.push(registration);
@@ -550,7 +552,7 @@ class Parsing {
                 }
                 if (await this._DoesAlertIDExist(temp_active, index.id)) { continue; }
                 index = JSON.parse(JSON.stringify(index));
-                let registration = await Formats.RegisterEvent(index);
+                let registration = await LOAD.Library.Formats.RegisterEvent(index);
                 if (Object.keys(registration).length != 0) {
                     if (registration.details.ignored == true) { continue; }
                     temp_warnings.push(registration);
@@ -564,7 +566,7 @@ class Parsing {
                 }
                 if (await this._DoesAlertIDExist(temp_active, index.id)) { continue; }
                 index = JSON.parse(JSON.stringify(index));
-                let registration = await Formats.RegisterEvent(index);
+                let registration = await LOAD.Library.Formats.RegisterEvent(index);
                 if (Object.keys(registration).length != 0) {
                     if (registration.details.ignored == true) { continue; }
                     temp_watches.push(registration);
@@ -578,7 +580,7 @@ class Parsing {
                 }
                 if (await this._DoesAlertIDExist(temp_active, index.id)) { continue; }
                 index = JSON.parse(JSON.stringify(index));
-                let registration = await Formats.RegisterEvent(index);
+                let registration = await LOAD.Library.Formats.RegisterEvent(index);
                 if (Object.keys(registration).length != 0) {
                     if (registration.details.ignored == true) { continue; }
                     temp_warnings.push(registration);

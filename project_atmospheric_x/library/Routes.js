@@ -13,6 +13,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
+
 /**
   * @class Routes
   * @description Handles the setup and management of the Express application, including middleware, 
@@ -31,8 +33,8 @@ class Routes {
         this.author = `k3yomi@GitHub`
         this.production = true
         this.name = `Routes`;
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
-        this.StartExpressJS(cache.configurations.hosting)
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        this.StartExpressJS(LOAD.cache.configurations.hosting)
         this.CreateMiddleware()
         this.CreateRoutes()
         this.CreateWebsocket()
@@ -42,7 +44,7 @@ class Routes {
       * @function StartExpressJS
       * @description Initializes and starts an Express.js HTTP/HTTPS server based on provided settings. 
       * Configures session handling with security options and sets up the server(s) to listen on the 
-      * designated ports. Logs the server start status and stores the server instance in the cache.
+      * designated ports. Logs the server start status and stores the server instance in the LOAD.cache.
       * 
       * @async
       * @param {Object} _settings 
@@ -55,9 +57,9 @@ class Routes {
 
     async StartExpressJS(_settings) {
         return new Promise((resolve, reject) => {
-            app = express()
-            app.use(session({
-                secret: cryptography.randomBytes(64).toString(`hex`),
+            LOAD.Static.Application = LOAD.Packages.Express()
+            LOAD.Static.Application.use(LOAD.Packages.ExpressSession({
+                secret: LOAD.Packages.Crypto.randomBytes(64).toString(`hex`),
                 resave: false,
                 saveUninitialized: true,
                 cookie: {
@@ -66,14 +68,14 @@ class Routes {
                 },
                 name: `atmosx-cookie`
             }));
-            cache.ws = http.createServer(app).listen(_settings.http_port, () => {})
+            LOAD.cache.ws = LOAD.Packages.HttpLib.createServer(LOAD.Static.Application).listen(_settings.http_port, () => {})
             if (_settings.https) { 
-                let https_options = { key: fs.readFileSync(_settings.cert_path.key), cert: fs.readFileSync(_settings.cert_path.cert) };
-                cache.ws = https.createServer(https_options, app).listen(_settings.https_port, () => {})
-                Hooks.PrintLog(`${this.name}.SecureHttp`, `HTTPS server started on port ${_settings.https_port}`);
+                let https_options = { key: LOAD.Packages.FileSystem.readFileSync(_settings.cert_path.key), cert: LOAD.Packages.FileSystem.readFileSync(_settings.cert_path.cert) };
+                LOAD.cache.ws = LOAD.Packages.HttpsLib.createServer(https_options, LOAD.Static.Application).listen(_settings.https_port, () => {})
+                LOAD.Library.Hooks.PrintLog(`${this.name}.SecureHttp`, `HTTPS server started on port ${_settings.https_port}`);
             }
-            Hooks.PrintLog(`${this.name}.NotSecureHttp`, `HTTP server started on port ${_settings.http_port}`);
-            Hooks.Log(`${this.name}.Express : Express server has started`);
+            LOAD.Library.Hooks.PrintLog(`${this.name}.NotSecureHttp`, `HTTP server started on port ${_settings.http_port}`);
+            LOAD.Library.Hooks.Log(`${this.name}.Express : Express server has started`);
             resolve(`OK`)
         })
     }
@@ -86,28 +88,28 @@ class Routes {
       * 
       * @async
       * @returns {Promise<void>} 
-      * A Promise that resolves once all middleware and routes have been initialized on the app.
+      * A Promise that resolves once all middleware and routes have been initialized on the LOAD.Static.Application.
       */
 
     async CreateMiddleware() {
-        let parent = path.resolve(__dirname, `../`);
-        app.use((req, res, next) => {
-            if (cache.accounts[req.session.account] != undefined) {
-                if (cache.accounts[req.session.account].useragent != req.headers['user-agent']) {
+        let parent = LOAD.Packages.PathSystem.resolve(__dirname, `../`);
+        LOAD.Static.Application.use((req, res, next) => {
+            if (LOAD.cache.accounts[req.session.account] != undefined) {
+                if (LOAD.cache.accounts[req.session.account].useragent != req.headers['user-agent']) {
                     this._RedirectSession(req, res, `${parent}/www/portal/login.html`, true);
                     return;
                 }
             }
-            Hooks.GetLatestHostingStats(false, true);
-            Hooks.Log(`${req.method} : ${req.url} : ${req.headers['user-agent']} : ${req.connection.remoteAddress} : ${req.headers.referer}`);
+            LOAD.Library.Hooks.GetLatestHostingStats(false, true);
+            LOAD.Library.Hooks.Log(`${req.method} : ${req.url} : ${req.headers['user-agent']} : ${req.connection.remoteAddress} : ${req.headers.referer}`);
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             next();
         });
-        app.use(`/assets`, express.static(parent + '/www/assets'));
-        app.use(`/obs`, express.static(parent + '/obs'));
-        app.use(`/widgets`, express.static(parent + '/www/widgets'));
-        app.get(`/`, async (req, res) => {
+        LOAD.Static.Application.use(`/assets`, LOAD.Packages.Express.static(parent + '/www/assets'));
+        LOAD.Static.Application.use(`/obs`, LOAD.Packages.Express.static(parent + '/obs'));
+        LOAD.Static.Application.use(`/widgets`, LOAD.Packages.Express.static(parent + '/www/widgets'));
+        LOAD.Static.Application.get(`/`, async (req, res) => {
             if (!await this._DoesRequestHaveSession(req)) {
                 return this._RedirectSession(req, res, `${parent}/www/portal/login.html`, true);
             }
@@ -123,40 +125,39 @@ class Routes {
       * 
       * @async
       * @returns {Promise<void>} 
-      * A Promise that resolves once all defined routes have been added to the Express app.
       */
 
     async CreateRoutes() {
-        let parent = path.resolve(__dirname, `../`);
-        app.get(`/widgets/alert_bar`, async (req, res) => { res.sendFile(`${parent}/www/widgets/alert_bar@widget/index.html`)});
-        app.get('/widgets/mapbox', (req, res) => res.sendFile(`${parent}/www/widgets/mapbox@widget/index.html`));
-        app.get('/widgets/notice', (req, res) => res.sendFile(`${parent}/www/widgets/notice@widget/index.html`));
-        app.get('/widgets/table', (req, res) => res.sendFile(`${parent}/www/widgets/table@widget/index.html`));
-        app.get('/widgets/light', (req, res) => res.sendFile(`${parent}/www/widgets/color_scheme_light@widget/index.html`));
-        app.get('/widgets/dark', (req, res) => res.sendFile(`${parent}/www/widgets/color_scheme_dark@widget/index.html`));
-        app.get('/widgets/description', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_description@widget/index.html`));
-        app.get('/widgets/alert', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_title@widget/index.html`));
-        app.get('/widgets/location', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_location@widget/index.html`));
-        app.get('/widgets/expires', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_expires@widget/index.html`));
-        app.get('/widgets/time', (req, res) => res.sendFile(`${parent}/www/widgets/time@widget/index.html`));
-        app.get('/widgets/date', (req, res) => res.sendFile(`${parent}/www/widgets/date@widget/index.html`));
-        app.get('/widgets/header', (req, res) => res.sendFile(`${parent}/www/widgets/header@widget/index.html`));
-        app.get('/widgets/watchdog', (req, res) => res.sendFile(`${parent}/www/widgets/watchdog@widget/index.html`));
-        app.get('/widgets/notification', (req, res) => res.sendFile(`${parent}/www/widgets/notification@widget/index.html`));
-        app.get('/widgets/spc', (req, res) => res.sendFile(`${parent}/www/widgets/spc@widget/index.html`));
-        app.get('/premade/stream', (req, res) => res.sendFile(`${parent}/www/widgets/@premade/stream_layout@widget/index.html`));
-        app.get('/premade/portable', (req, res) => res.sendFile(`${parent}/www/widgets/@premade/portable_layout@widget/index.html`));
-        app.get('/reset', (req, res) => res.sendFile(`${parent}/www/portal/reset.html`));
-        app.get('/registration', (req, res) => res.sendFile(`${parent}/www/portal/registration.html`));
-        app.get(`/api/events`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(cache.alerts, null, 4)) });
-        app.get(`/api/all`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(await Hooks.CallClientConfigurations(), null, 4)) });
-        app.post(`/api/login`, async (req, res) => { this._Credentials(req, res, 0) });
-        app.post(`/api/logout`, async (req, res) => { this._Credentials(req, res, 1) });
-        app.post(`/api/register`, async (req, res) => { this._Credentials(req, res, 2) });
-        app.post(`/api/reset`, async (req, res) => { this._Credentials(req, res, 3) });
-        app.post(`/api/manual`, async (req, res) => { Hooks.CreateManualAlert(req, res) });
-        app.post(`/api/notification`, async (req, res) => { Hooks.CreateNotification(req, res) });
-        app.post(`/api/status`, async (req, res) => { Hooks.CreateStatusMarker(req, res) });
+        let parent = LOAD.Packages.PathSystem.resolve(__dirname, `../`);
+        LOAD.Static.Application.get(`/widgets/alert_bar`, async (req, res) => { res.sendFile(`${parent}/www/widgets/alert_bar@widget/index.html`)});
+        LOAD.Static.Application.get('/widgets/mapbox', (req, res) => res.sendFile(`${parent}/www/widgets/mapbox@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/notice', (req, res) => res.sendFile(`${parent}/www/widgets/notice@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/table', (req, res) => res.sendFile(`${parent}/www/widgets/table@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/light', (req, res) => res.sendFile(`${parent}/www/widgets/color_scheme_light@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/dark', (req, res) => res.sendFile(`${parent}/www/widgets/color_scheme_dark@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/description', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_description@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/alert', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_title@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/location', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_location@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/expires', (req, res) => res.sendFile(`${parent}/www/widgets/random_alert_expires@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/time', (req, res) => res.sendFile(`${parent}/www/widgets/time@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/date', (req, res) => res.sendFile(`${parent}/www/widgets/date@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/header', (req, res) => res.sendFile(`${parent}/www/widgets/header@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/watchdog', (req, res) => res.sendFile(`${parent}/www/widgets/watchdog@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/notification', (req, res) => res.sendFile(`${parent}/www/widgets/notification@widget/index.html`));
+        LOAD.Static.Application.get('/widgets/spc', (req, res) => res.sendFile(`${parent}/www/widgets/spc@widget/index.html`));
+        LOAD.Static.Application.get('/premade/stream', (req, res) => res.sendFile(`${parent}/www/widgets/@premade/stream_layout@widget/index.html`));
+        LOAD.Static.Application.get('/premade/portable', (req, res) => res.sendFile(`${parent}/www/widgets/@premade/portable_layout@widget/index.html`));
+        LOAD.Static.Application.get('/reset', (req, res) => res.sendFile(`${parent}/www/portal/reset.html`));
+        LOAD.Static.Application.get('/registration', (req, res) => res.sendFile(`${parent}/www/portal/registration.html`));
+        LOAD.Static.Application.get(`/api/events`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(LOAD.cache.alerts, null, 4)) });
+        LOAD.Static.Application.get(`/api/all`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(await LOAD.Library.Hooks.CallClientConfigurations(), null, 4)) });
+        LOAD.Static.Application.post(`/api/login`, async (req, res) => { this._Credentials(req, res, 0) });
+        LOAD.Static.Application.post(`/api/logout`, async (req, res) => { this._Credentials(req, res, 1) });
+        LOAD.Static.Application.post(`/api/register`, async (req, res) => { this._Credentials(req, res, 2) });
+        LOAD.Static.Application.post(`/api/reset`, async (req, res) => { this._Credentials(req, res, 3) });
+        LOAD.Static.Application.post(`/api/manual`, async (req, res) => { LOAD.Library.Hooks.CreateManualAlert(req, res) });
+        LOAD.Static.Application.post(`/api/notification`, async (req, res) => { LOAD.Library.Hooks.CreateNotification(req, res) });
+        LOAD.Static.Application.post(`/api/status`, async (req, res) => { LOAD.Library.Hooks.CreateStatusMarker(req, res) });
     }
 
     /**
@@ -172,17 +173,17 @@ class Routes {
 
     async SyncClients(_timeout=true) {
         return new Promise(async (resolve) => {
-            if (!cache.ws_clients || cache.ws_clients.length === 0) { resolve(`No clients to sync`); return; }
-            await Hooks._GetRandomAlert()
-            let cfg = await Hooks.CallClientConfigurations(); 
+            if (!LOAD.cache.ws_clients || LOAD.cache.ws_clients.length === 0) { resolve(`No clients to sync`); return; }
+            await LOAD.Library.Hooks._GetRandomAlert()
+            let cfg = await LOAD.Library.Hooks.CallClientConfigurations(); 
             cfg = JSON.stringify(cfg)
-            for (let i = 0; i < cache.ws_clients.length; i++) {
-                let client = cache.ws_clients[i];
-                if (client.readyState === websocket.OPEN) {
-                    let last_message = cache.ws_client_ratelimit.find((entry) => entry.ws === client);
-                    if (_timeout == true && last_message && (Date.now() - last_message.time) < cache.configurations.project_settings.websocket_timeout * 1000) { continue; }
-                    cache.ws_client_ratelimit = cache.ws_client_ratelimit.filter((entry) => entry.ws !== client);
-                    cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });
+            for (let i = 0; i < LOAD.cache.ws_clients.length; i++) {
+                let client = LOAD.cache.ws_clients[i];
+                if (client.readyState === LOAD.Packages.Websocket.OPEN) {
+                    let last_message = LOAD.cache.ws_client_ratelimit.find((entry) => entry.ws === client);
+                    if (_timeout == true && last_message && (Date.now() - last_message.time) < LOAD.cache.configurations.project_settings.websocket_timeout * 1000) { continue; }
+                    LOAD.cache.ws_client_ratelimit = LOAD.cache.ws_client_ratelimit.filter((entry) => entry.ws !== client);
+                    LOAD.cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });
                     client.send(cfg);
                 }
             }  
@@ -204,14 +205,14 @@ class Routes {
 
     async CreateWebsocket() {
         return new Promise((resolve, reject) => {
-            const wss = new websocket.Server({ server: cache.ws });
-            cache.ws_clients = [];
-            cache.ws_client_ratelimit = [];
+            const wss = new LOAD.Packages.Websocket.Server({ server: LOAD.cache.ws });
+            LOAD.cache.ws_clients = [];
+            LOAD.cache.ws_client_ratelimit = [];
             wss.on(`connection`, async (ws) => {
-                if (!cache.ws_clients.includes(ws)) { cache.ws_clients.push(ws); }
-                ws.on('close', () => { cache.ws_clients = cache.ws_clients.filter((client) => client !== ws) });
-                cache.ws_client_ratelimit.push({ws, time: Date.now()});
-                await ws.send(JSON.stringify(await Hooks.CallClientConfigurations(), null, 4));
+                if (!LOAD.cache.ws_clients.includes(ws)) { LOAD.cache.ws_clients.push(ws); }
+                ws.on('close', () => { LOAD.cache.ws_clients = LOAD.cache.ws_clients.filter((client) => client !== ws) });
+                LOAD.cache.ws_client_ratelimit.push({ws, time: Date.now()});
+                await ws.send(JSON.stringify(await LOAD.Library.Hooks.CallClientConfigurations(), null, 4));
             });
             resolve(`OK`);
         });
@@ -334,7 +335,7 @@ class Routes {
         return new Promise(async (resolve, reject) => {
             try { 
                 if (_req == undefined || _res == undefined) { resolve(false); return; }
-                let parent = path.resolve(__dirname, `../`)
+                let parent = LOAD.Packages.PathSystem.resolve(__dirname, `../`)
                 let body = JSON.parse(await new Promise((resolve, reject) => {
                     let body = ``
                     _req.on(`data`, (data) => {body += data})
@@ -342,87 +343,87 @@ class Routes {
                 }))
                 if (_type == 0) {
                     let username = body.username;
-                    let hash = cryptography.createHash('sha256').update(body.password).digest('base64')
-                    let is_valid = await Database.SendDatabaseQuery(`SELECT * FROM accounts WHERE username = ? AND hash = ?`, [username, hash])
+                    let hash = LOAD.Packages.Crypto.createHash('sha256').update(body.password).digest('base64')
+                    let is_valid = await LOAD.Library.Database.SendDatabaseQuery(`SELECT * FROM accounts WHERE username = ? AND hash = ?`, [username, hash])
                     if (is_valid.length == 0) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Invalid username or password.`})
-                        Hooks.Log(`${this.name}.Account : Failed login attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                        Hooks.PrintLog(`${this.name}.Account`, `Failed login attempt for ${username}`)
+                        LOAD.Library.Hooks.Log(`${this.name}.Account : Failed login attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                        LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed login attempt for ${username}`)
                         return
                     }
                     if (is_valid[0].activated == 0) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Account not activated. Please contact project administrator to activate this account` });
                         return
                     }
-                    _req.session.account = `atmosx-cookie-${cryptography.randomBytes(64).toString('hex')}`
+                    _req.session.account = `atmosx-cookie-${LOAD.Packages.Crypto.randomBytes(64).toString('hex')}`
                     _req.session.save()
                     this._GiveResponseToSession(_req, _res, {code: 200, message: `Welcome back ${username}!`})
-                    Hooks.Log(`${this.name}.Account : ${username} logged in (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                    Hooks.PrintLog(`${this.name}.Account`, `${username} has logged in with the address ${_req.connection.remoteAddress}`)
-                    cache.accounts[_req.session.account] = {username: username, useragent: _req.headers['user-agent'], ip: _req.connection.remoteAddress}
+                    LOAD.Library.Hooks.Log(`${this.name}.Account : ${username} logged in (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `${username} has logged in with the address ${_req.connection.remoteAddress}`)
+                    LOAD.cache.accounts[_req.session.account] = {username: username, useragent: _req.headers['user-agent'], ip: _req.connection.remoteAddress}
                 }
                 if (_type == 1) {
-                    Hooks.Log(`${this.name}.Account : ${cache.accounts[_req.session.account].username} logged out (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                    Hooks.PrintLog(`${this.name}.Account`, `${cache.accounts[_req.session.account].username} logged out`)
-                    cache.accounts[_req.session.account] = undefined
+                    LOAD.Library.Hooks.Log(`${this.name}.Account : ${LOAD.cache.accounts[_req.session.account].username} logged out (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `${LOAD.cache.accounts[_req.session.account].username} logged out`)
+                    LOAD.cache.accounts[_req.session.account] = undefined
                     if (!await this._DoesRequestHaveSession(_req)) {this._GiveResponseToSession(_req, _res, {code: 403, message: `You are not logged in.`}); return;}
                     this._RedirectSession(_req, _res, `${parent}/www/portal/login.html`, true)
                 }
                 if (_type == 2) {
                     let username = body.username
-                    let hash = cryptography.createHash('sha256').update(body.password).digest('base64')
-                    let is_valid = await Database.SendDatabaseQuery(`SELECT * FROM accounts WHERE username = ?`, [username])
+                    let hash = LOAD.Packages.Crypto.createHash('sha256').update(body.password).digest('base64')
+                    let is_valid = await LOAD.Library.Database.SendDatabaseQuery(`SELECT * FROM accounts WHERE username = ?`, [username])
                     if (is_valid.length > 0) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Username already exists.`})
-                        Hooks.Log(`${this.name}.Account : Failed registration attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                        Hooks.PrintLog(`${this.name}.Account`, `Failed registration attempt for ${username}`)
+                        LOAD.Library.Hooks.Log(`${this.name}.Account : Failed registration attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                        LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed registration attempt for ${username}`)
                         return
                     }
                     if (username.length < 3 || username.length > 20) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Username must be between 3 and 20 characters.`})
-                        Hooks.Log(`${this.name}.Account : Failed registration attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                        Hooks.PrintLog(`${this.name}.Account`, `Failed registration attempt for ${username}`)
+                        LOAD.Library.Hooks.Log(`${this.name}.Account : Failed registration attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                        LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed registration attempt for ${username}`)
                         return
                     }
-                    let create = await Database.SendDatabaseQuery(`INSERT INTO accounts (username, hash, activated) VALUES (?, ?, ?)`, [username, hash, 0])
+                    let create = await LOAD.Library.Database.SendDatabaseQuery(`INSERT INTO accounts (username, hash, activated) VALUES (?, ?, ?)`, [username, hash, 0])
                     if (create == undefined) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Failed to create account.`})
-                        Hooks.Log(`${this.name}.Account : Failed registration attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                        Hooks.PrintLog(`${this.name}.Account`, `Failed registration attempt for ${username}`)
+                        LOAD.Library.Hooks.Log(`${this.name}.Account : Failed registration attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                        LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed registration attempt for ${username}`)
                         return
                     }
-                    Hooks.Log(`${this.name}.Account : ${username} registered (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                    Hooks.PrintLog(`${this.name}.Account`, `New account created: ${username}. To enable this account, please run /active <username> <true/false>`)
+                    LOAD.Library.Hooks.Log(`${this.name}.Account : ${username} registered (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `New account created: ${username}. To enable this account, please run /active <username> <true/false>`)
                     this._GiveResponseToSession(_req, _res, {code: 200, message: `Account created. Please contact project administrator to activate this account.`})
                 }
                 if (_type == 3) {
                     let username = body.username
-                    let hash = cryptography.createHash('sha256').update(body.password).digest('base64')
-                    let newhash = cryptography.createHash('sha256').update(body.new_password).digest('base64')
+                    let hash = LOAD.Packages.Crypto.createHash('sha256').update(body.password).digest('base64')
+                    let newhash = LOAD.Packages.Crypto.createHash('sha256').update(body.new_password).digest('base64')
 
-                    let is_valid = await Database.SendDatabaseQuery(`SELECT * FROM accounts WHERE username = ? AND hash = ?`, [username, hash])
+                    let is_valid = await LOAD.Library.Database.SendDatabaseQuery(`SELECT * FROM accounts WHERE username = ? AND hash = ?`, [username, hash])
                     if (is_valid.length == 0) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Username and password do not match.`})
-                        Hooks.Log(`${this.name}.Account : Failed password reset attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                        Hooks.PrintLog(`${this.name}.Account`, `Failed password reset attempt for ${username}`)
+                        LOAD.Library.Hooks.Log(`${this.name}.Account : Failed password reset attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                        LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed password reset attempt for ${username}`)
                         return
                     }
-                    let account = await Database.SendDatabaseQuery(`UPDATE accounts SET hash = ? WHERE username = ?`, [newhash, username])
+                    let account = await LOAD.Library.Database.SendDatabaseQuery(`UPDATE accounts SET hash = ? WHERE username = ?`, [newhash, username])
                     if (account == undefined) {
                         this._GiveResponseToSession(_req, _res, {code: 403, message: `Failed to reset password.`})
-                        Hooks.Log(`${this.name}.Account : Failed password reset attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                        Hooks.PrintLog(`${this.name}.Account`, `Failed password reset attempt for ${username}`)
+                        LOAD.Library.Hooks.Log(`${this.name}.Account : Failed password reset attempt for ${username} (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                        LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed password reset attempt for ${username}`)
                         return
                     }
                     this._GiveResponseToSession(_req, _res, {code: 200, message: `Password reset successfully.`})
-                    Hooks.Log(`${this.name}.Account : ${username} password reset (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
-                    Hooks.PrintLog(`${this.name}.Account`, `${username} password reset`)
+                    LOAD.Library.Hooks.Log(`${this.name}.Account : ${username} password reset (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`)
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `${username} password reset`)
      
                     return
                 }
             } catch (error) {
-                Hooks.PrintLog(`${this.name}.Account`, `Failed to process request - ${error}`)
-                Hooks.Log(`${this.name}.Account : Failed to process request - ${error}`)
+                LOAD.Library.Hooks.PrintLog(`${this.name}.Account`, `Failed to process request - ${error}`)
+                LOAD.Library.Hooks.Log(`${this.name}.Account : Failed to process request - ${error}`)
                 this._GiveResponseToSession(_req, _res, {code: 500, message: `Internal Server Error - Failed to process request.`})
                 resolve(`Internal Server Error - Failed to process request.`)
             }

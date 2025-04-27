@@ -11,6 +11,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../../../loader.js`)
+
 /**
   * @class VTECParser
   * @description A class responsible for parsing VTEC (Event) codes from a given message.

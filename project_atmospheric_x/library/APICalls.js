@@ -13,6 +13,7 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
 
 /**
  * @module APICalls
@@ -34,7 +35,7 @@ class APICalls {
         this.retries = 0;
         this.results = ``
         this.data = {}
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
     /**
@@ -54,7 +55,7 @@ class APICalls {
         let state = _handle.state_filter
         if (state && state !== 'ALL') { url += `/area/${state}`; }
         try {
-            let response = await Hooks.CallHTTPS(url);
+            let response = await LOAD.Library.Hooks.CallHTTPS(url);
             if (response != undefined && response.features) {
                 this.data.nws = response;
                 this.results += ` (NationalWeatherService: OK)`;
@@ -62,8 +63,8 @@ class APICalls {
             } else {
                 if (this.retries < 3) { 
                     this.retries++;
-                    Hooks.PrintLog(`${this.name}.NationalWeatherService`, `Retrying NationalWeatherService request... (${this.retries})`);
-                    Hooks.Log(`${this.name}.NationalWeatherService : ${response.error}`)
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.NationalWeatherService`, `Retrying NationalWeatherService request... (${this.retries})`);
+                    LOAD.Library.Hooks.Log(`${this.name}.NationalWeatherService : ${response.error}`)
                     await this._NationalWeatherServiceAlerts(_handle);
                 } else {
                     throw new Error('Invalid response');
@@ -71,8 +72,8 @@ class APICalls {
             }
         } catch (error) {
             this.resuslts += ` (NationalWeatherService: ERR)`;
-            Hooks.PrintLog(`${this.name}.NationalWeatherService`, `Failed to fetch data: ${error.message}`);
-            Hooks.Log(`${this.name}.NationalWeatherService : ${error.message}`);
+            LOAD.Library.Hooks.PrintLog(`${this.name}.NationalWeatherService`, `Failed to fetch data: ${error.message}`);
+            LOAD.Library.Hooks.Log(`${this.name}.NationalWeatherService : ${error.message}`);
             return
         }
     }
@@ -91,7 +92,7 @@ class APICalls {
     async _SpotterNetworkPlacefile(_handle) {
         let url = _handle.endpoint
         try {
-            let response = await Hooks.CallHTTPS(url);
+            let response = await LOAD.Library.Hooks.CallHTTPS(url);
             if (response != undefined) {
                 this.data.spotters = response;
                 this.results += ` (SpotterNetwork: OK)`; 
@@ -102,13 +103,13 @@ class APICalls {
         } catch (error) {
             if (this.retries < 3) {
                 this.retries++;
-                Hooks.PrintLog(`${this.name}.SpotterNetwork`, `Retrying SpotterNetwork request... (${this.retries})`);
-                Hooks.Log(`${this.name}.SpotterNetwork : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.SpotterNetwork`, `Retrying SpotterNetwork request... (${this.retries})`);
+                LOAD.Library.Hooks.Log(`${this.name}.SpotterNetwork : ${error.message}`);
                 await this._SpotterNetworkPlacefile(_handle);
             } else {
                 this.results += ` (SpotterNetwork: ERR)`;
-                Hooks.PrintLog(`${this.name}.SpotterNetwork`, `${error.message}`);
-                Hooks.Log(`${this.name}.SpotterNetwork : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.SpotterNetwork`, `${error.message}`);
+                LOAD.Library.Hooks.Log(`${this.name}.SpotterNetwork : ${error.message}`);
                 return
             }
         }
@@ -129,7 +130,7 @@ class APICalls {
     async _SPCMesoscaleDiscussionPlacefile(_handle) {
         let url = _handle.endpoint
             try {
-                let response = await Hooks.CallHTTPS(url);
+                let response = await LOAD.Library.Hooks.CallHTTPS(url);
                 if (response != undefined) {
                     this.data.mesoscale_discussions = response;
                     this.results += ` (MesoscaleDiscussion: OK)`;
@@ -140,13 +141,13 @@ class APICalls {
             } catch (error) {
                 if (this.retries < 3) {
                     this.retries++;
-                    Hooks.PrintLog(`${this.name}.MesoscaleDiscussion`, `Retrying MesoscaleDiscussion API request... (${this.retries})`);
-                    Hooks.Log(`${this.name}.MesoscaleDiscussion : ${error.message}`);
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.MesoscaleDiscussion`, `Retrying MesoscaleDiscussion API request... (${this.retries})`);
+                    LOAD.Library.Hooks.Log(`${this.name}.MesoscaleDiscussion : ${error.message}`);
                     await this._SPCMesoscaleDiscussionPlacefile(_handle);
                 } else {
                     this.results += ` (MesoscaleDiscussion: ERR)`;
-                    Hooks.PrintLog(`${this.name}.MesoscaleDiscussion`, `${error.message}`);
-                    Hooks.Log(`${this.name}.MesoscaleDiscussion : ${error.message}`);
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.MesoscaleDiscussion`, `${error.message}`);
+                    LOAD.Library.Hooks.Log(`${this.name}.MesoscaleDiscussion : ${error.message}`);
                     return
                 }
             }
@@ -169,7 +170,7 @@ class APICalls {
     async _LightningStrikesPlacefile(_handle) {
         let url = _handle.endpoint
         try {
-            let response = await Hooks.CallHTTPS(url);
+            let response = await LOAD.Library.Hooks.CallHTTPS(url);
             if (response != undefined) {
                 this.data.lightning = response;
                 this.results += ` (LightningStrikes: OK)`;
@@ -180,13 +181,13 @@ class APICalls {
         } catch (error) {
             if (this.retries < 3) {
                 this.retries++;
-                Hooks.PrintLog(`${this.name}.LightningStrikes`, `Retrying LightningStrikes API request... (${this.retries})`);
-                Hooks.Log(`${this.name}.LightningStrikes : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.LightningStrikes`, `Retrying LightningStrikes API request... (${this.retries})`);
+                LOAD.Library.Hooks.Log(`${this.name}.LightningStrikes : ${error.message}`);
                 await this._LightningStrikesPlacefile(_handle);
             } else {
                 this.results += ` (LightningStrikes: ERR)`;
-                Hooks.PrintLog(`${this.name}.LightningStrikes`, `${error.message}`);
-                Hooks.Log(`${this.name}.LightningStrikes : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.LightningStrikes`, `${error.message}`);
+                LOAD.Library.Hooks.Log(`${this.name}.LightningStrikes : ${error.message}`);
                 return
             }
         } 
@@ -208,7 +209,7 @@ class APICalls {
     async _mPingReports(_handle) {
         let url = _handle.endpoint
             try {
-                let response = await Hooks.CallHTTPS(url);
+                let response = await LOAD.Library.Hooks.CallHTTPS(url);
                 if (response != undefined) {
                     this.data.mPing = response;
                     this.results += ` (mPing: OK)`;
@@ -219,13 +220,13 @@ class APICalls {
             } catch (error) {
                 if (this.retries < 3) {
                     this.retries++;
-                    Hooks.PrintLog(`${this.name}.mPing`, `Retrying mPing request... (${this.retries})`);
-                    Hooks.Log(`${this.name}.mPing : ${error.message}`);
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.mPing`, `Retrying mPing request... (${this.retries})`);
+                    LOAD.Library.Hooks.Log(`${this.name}.mPing : ${error.message}`);
                     await this._mPingReports(_handle);
                 } else {
                     this.results += ` (mPing: ERR)`;
-                    Hooks.PrintLog(`${this.name}.mPing`, `${error.message}`);
-                    Hooks.Log(`${this.name}.mPing : ${error.message}`);
+                    LOAD.Library.Hooks.PrintLog(`${this.name}.mPing`, `${error.message}`);
+                    LOAD.Library.Hooks.Log(`${this.name}.mPing : ${error.message}`);
                     return
                 }
             }
@@ -248,7 +249,7 @@ class APICalls {
     async _GRLevelXReports(_handle) {
         let url = _handle.endpoint
         try {
-            let response = await Hooks.CallHTTPS(url);
+            let response = await LOAD.Library.Hooks.CallHTTPS(url);
             if (response != undefined) {
                 this.data.grxlsr = response;
                 this.results += ` (GRLevelXReports: OK)`;
@@ -259,13 +260,13 @@ class APICalls {
         } catch (error) {
             if (this.retries < 3) {
                 this.retries++;
-                Hooks.PrintLog(`${this.name}.GRLevelXReports`, `Retrying GRLevelXReports request... (${this.retries})`);
-                Hooks.Log(`${this.name}.GRLevelXReports : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.GRLevelXReports`, `Retrying GRLevelXReports request... (${this.retries})`);
+                LOAD.Library.Hooks.Log(`${this.name}.GRLevelXReports : ${error.message}`);
                 await this._GRLevelXReports(_handle);
             } else {
                 this.results += ` (GRLevelXReports: ERR)`;
-                Hooks.PrintLog(`${this.name}.GRLevelXReports`, `${error.message}`);
-                Hooks.Log(`${this.name}.GRLevelXReports : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.GRLevelXReports`, `${error.message}`);
+                LOAD.Library.Hooks.Log(`${this.name}.GRLevelXReports : ${error.message}`);
                 return
             }
         }
@@ -296,7 +297,7 @@ class APICalls {
             if (state != `ALL` && state != ``) {
                 url += `&states=${state}`;
             }
-            let response = await Hooks.CallHTTPS(url);
+            let response = await LOAD.Library.Hooks.CallHTTPS(url);
             if (response != undefined && response.features != undefined) {
                 this.data.lsr = response;
                 this.results += ` (IowaEM: OK)`;
@@ -307,13 +308,13 @@ class APICalls {
         } catch (error) {
             if (this.retries < 3) {
                 this.retries++;
-                Hooks.PrintLog(`${this.name}.IowaEM`, `Retrying IowaEM request... (${this.retries})`);
-                Hooks.Log(`${this.name}.IowaEM : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.IowaEM`, `Retrying IowaEM request... (${this.retries})`);
+                LOAD.Library.Hooks.Log(`${this.name}.IowaEM : ${error.message}`);
                 await this._IowaEnvironmentalMesonetReports(_handle);
             } else {
                 this.results += ` (IowaEM: ERR)`;
-                Hooks.PrintLog(`${this.name}.IowaEM`, `${error.message}`);
-                Hooks.Log(`${this.name}.IowaEM : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.IowaEM`, `${error.message}`);
+                LOAD.Library.Hooks.Log(`${this.name}.IowaEM : ${error.message}`);
                 return
             }
         }
@@ -332,7 +333,7 @@ class APICalls {
     async _NexradStations(_handle) {
         let url = _handle.endpoint
         try {
-            let response = await Hooks.CallHTTPS(url);
+            let response = await LOAD.Library.Hooks.CallHTTPS(url);
             if (response != undefined && response.features) {
                 this.data.nwsstat = response;
                 this.results += ` (NexradStations: OK)`;
@@ -343,13 +344,13 @@ class APICalls {
         } catch (error) {
             if (this.retries < 3) {
                 this.retries++;
-                Hooks.PrintLog(`${this.name}.NexradStations`, `Retrying NexradStations API request... (${this.retries})`);
-                Hooks.Log(`${this.name}.NexradStations : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.NexradStations`, `Retrying NexradStations API request... (${this.retries})`);
+                LOAD.Library.Hooks.Log(`${this.name}.NexradStations : ${error.message}`);
                 await this._NexradStations(_handle);
             } else {
                 this.results += ` (NexradStations: ERR)`;
-                Hooks.PrintLog(`${this.name}.NexradStations`, `${error.message}`);
-                Hooks.Log(`${this.name}.NexradStations : ${error.message}`);
+                LOAD.Library.Hooks.PrintLog(`${this.name}.NexradStations`, `${error.message}`);
+                LOAD.Library.Hooks.Log(`${this.name}.NexradStations : ${error.message}`);
                 return
             }
         }
@@ -383,7 +384,7 @@ class APICalls {
       */
 
     async Next(_raw=undefined, _force_fallback=false) {
-        let calls = cache.configurations.sources
+        let calls = LOAD.cache.configurations.sources
         let time = new Date()
         this.data = {}
         this.retries = 0
@@ -405,8 +406,8 @@ class APICalls {
                     let index = handles.findIndex(handle => handle.name === contradiction);
                     if (index !== -1 && handles[index].handle.enabled=== true) {
                         if (handle.handle.enabled === true) {
-                            Hooks.PrintLog(`${this.name}.Warning`, `Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
-                            Hooks.Log(`${this.name}.Warning : Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
+                            LOAD.Library.Hooks.PrintLog(`${this.name}.Warning`, `Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
+                            LOAD.Library.Hooks.Log(`${this.name}.Warning : Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
                             handles[index].handle.enabled = false;
                         }
                     }
@@ -414,33 +415,33 @@ class APICalls {
             })
             let active = handles.filter(handle => handle.handle.enabled == true)
             active.forEach(handle => {
-                if (cache.time[handle.name] == undefined) {cache.time[handle.name] = Date.now() - handle.timer * 1000}
+                if (LOAD.cache.time[handle.name] == undefined) {LOAD.cache.time[handle.name] = Date.now() - handle.timer * 1000}
             })
-            let ready = active.filter(handle => (Date.now() - cache.time[handle.name]) / 1000 >= handle.timer) // filter out the ones ready to be requested
+            let ready = active.filter(handle => (Date.now() - LOAD.cache.time[handle.name]) / 1000 >= handle.timer) // filter out the ones ready to be requested
             for (const handle of ready) {
-                cache.time[handle.name] = Date.now();
+                LOAD.cache.time[handle.name] = Date.now();
                 this.retries = 0
                 await this[handle.pointer](handle.handle);
             }    
         }
         if (_raw != undefined) { 
-            if (cache.time[`nwws`] == undefined) {cache.time[`nwws`] = 0}
-            if (cache.time[`nwws`] < Date.now() - calls.primary_sources.noaa_weather_wire_service.cache_time * 1000) {
-                cache.time[`nwws`] = Date.now()
+            if (LOAD.cache.time[`nwws`] == undefined) {LOAD.cache.time[`nwws`] = 0}
+            if (LOAD.cache.time[`nwws`] < Date.now() - calls.primary_sources.noaa_weather_wire_service.cache_time * 1000) {
+                LOAD.cache.time[`nwws`] = Date.now()
                 this.data.wire = _raw; 
             }
         }
         if (_force_fallback != false) { 
-            if (cache.time.national_weather_service == undefined) {cache.time.national_weather_service = Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000}
-            if (cache.time.national_weather_service < Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000) { 
-                cache.time.national_weather_service = Date.now()
+            if (LOAD.cache.time.national_weather_service == undefined) {LOAD.cache.time.national_weather_service = Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000}
+            if (LOAD.cache.time.national_weather_service < Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000) { 
+                LOAD.cache.time.national_weather_service = Date.now()
                 await this._NationalWeatherServiceAlerts(calls.primary_sources.national_weather_service);
             }
         }
         if (Object.keys(this.data).length > 0) {
-            if (this.results != ``) { Hooks.PrintLog(`${this.name}.Get`, `Cache updated (Taken ${((new Date() - time) / 1000).toFixed(2)}s) |${this.results}`) }
-            if (this.data.wire != undefined) { this.data.wire = {features: cache.wire.features.filter(feature => feature !== undefined && new Date(feature.properties.expires).getTime() / 1000 > new Date().getTime() / 1000)} }
-            return await Formats.build(this.data, calls.primary_sources.noaa_weather_wire_service.enabled)
+            if (this.results != ``) { LOAD.Library.Hooks.PrintLog(`${this.name}.Get`, `Cache updated (Taken ${((new Date() - time) / 1000).toFixed(2)}s) |${this.results}`) }
+            if (this.data.wire != undefined) { this.data.wire = {features: LOAD.cache.wire.features.filter(feature => feature !== undefined && new Date(feature.properties.expires).getTime() / 1000 > new Date().getTime() / 1000)} }
+            return await LOAD.Library.Formats.build(this.data, calls.primary_sources.noaa_weather_wire_service.enabled)
         }
         return `No cache update available`;
     }

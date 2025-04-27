@@ -11,6 +11,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../../loader.js`)
+
 /**
   * @module Listener
   * @description Initializes a new instance of the `WeatherWireListener` class.
@@ -23,7 +25,7 @@ class Listener {
         this.author = `k3yomi@GitHub`
         this.name = `WeatherWireListener`
         this.production = true
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
         this._CreateSession()
     }
 
@@ -34,7 +36,7 @@ class Listener {
       * sends presence information to the server, and listens for incoming alerts. It processes each alert based on its
       * format (XML or non-XML) and passes the data to a `ProductInterpreter` for further action. If an error occurs 
       * during the connection, the method logs the failure and attempts to enable fallback options.
-      * Additionally, the method invokes `ShapefileManager.CreateZoneMap` to initialize necessary geographic data.
+      * Additionally, the method invokes `LOAD.Library.ShapefileManager.CreateZoneMap` to initialize necessary geographic data.
       *
       * @async
       * @returns {Promise<void>} A promise that resolves once the session has been created and connected.
@@ -42,8 +44,8 @@ class Listener {
 
     async _CreateSession() {
         return new Promise(async (resolve, reject) => {
-            let wire_cfg = cache.configurations.sources.primary_sources.noaa_weather_wire_service
-            let nws_cfg = cache.configurations.sources.primary_sources.national_weather_service
+            let wire_cfg = LOAD.cache.configurations.sources.primary_sources.noaa_weather_wire_service
+            let nws_cfg = LOAD.cache.configurations.sources.primary_sources.national_weather_service
             let wire_enabled = wire_cfg.enabled 
             let wire_username = wire_cfg.credentials.username 
             let wire_password = wire_cfg.credentials.password
@@ -51,31 +53,31 @@ class Listener {
             let wire_xml = wire_cfg.xml_alerts
             let wire_domain = wire_cfg.domain
             if (!wire_enabled) { return }
-            let session = xmpp.client({service: wire_service, domain: wire_domain, username: wire_username, password: wire_password}).setMaxListeners(0);
+            let session = LOAD.Packages.XMPP.client({service: wire_service, domain: wire_domain, username: wire_username, password: wire_password}).setMaxListeners(0);
             session.on(`online`, async (_address) => {
-                session.send(xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${wire_username}-AtmosX`, xmlns: 'http://jabber.org/protocol/muc' }));
-                Hooks.PrintLog(`${this.name}`, `Connected to ${wire_domain}`)
+                session.send(LOAD.Packages.XMPP.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${wire_username}-AtmosX`, xmlns: 'http://jabber.org/protocol/muc' }));
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `Connected to ${wire_domain}`)
                 nws_cfg.enabled = false
                 wire_cfg.enabled = true
             })
             session.on(`error`, async () => {
-                Hooks.PrintLog(`${this.name}`, `Couldn't connect to ${wire_service}, enabling fallback and attempting to reconnect...`)
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `Couldn't connect to ${wire_service}, enabling fallback and attempting to reconnect...`)
                 nws_cfg.enabled = true
                 wire_cfg.enabled = false
-                APICalls.Next(undefined, true)
+                LOAD.Library.APICalls.Next(undefined, true)
                 process.on('uncaughtException', (err) => {})
             })
             session.on(`stanza`, async (_stanza) => {
-                let product = new ProductInterpreter(_stanza)
+                let product = new LOAD.Callbacks.ProductInterpreter(_stanza)
                 let message = await product.CompileMessage()
                 if (message.ignore || (message.xml == true && wire_xml == false)) { return }
                 if (message.ignore || (message.xml == false && wire_xml == true) ) { return }
                 if (message.xml == true && message.valid_xml_alert == false) { return }
                 await product.CreateNewAlert()
             })
-            await ShapefileManager.CreateZoneMap([{id: `C`, file: `USCounties`},{id: `Z`, file: `ForecastZones`},{id: `Z`, file: `FireZones`},{id: `Z`, file: `OffShoreZones`},{id: `Z`, file: `FireCounties`},{id: `Z`, file: `Marine`},])
-            Hooks.PrintLog(`${this.name}`, `Shapefiles have been already imported into the database`)
-            Hooks.PrintLog(`${this.name}`, `Attempting to connect to ${wire_service}...`)
+            await LOAD.Library.ShapefileManager.CreateZoneMap([{id: `C`, file: `USCounties`},{id: `Z`, file: `ForecastZones`},{id: `Z`, file: `FireZones`},{id: `Z`, file: `OffShoreZones`},{id: `Z`, file: `FireCounties`},{id: `Z`, file: `Marine`},])
+            LOAD.Library.Hooks.PrintLog(`${this.name}`, `Shapefiles have been already imported into the database`)
+            LOAD.Library.Hooks.PrintLog(`${this.name}`, `Attempting to connect to ${wire_service}...`)
             await session.start()
         })
     }
@@ -95,47 +97,47 @@ class Listener {
       */
 
     async ProcessValidAlert(_data, _type, _taken) {
-        if (_data == undefined) { await APICalls.Next(cache.wire); Hooks.PrintLog(`${this.name}`, `[!] ${_type} (${_taken})`); return }
+        if (_data == undefined) { await LOAD.Library.APICalls.Next(LOAD.cache.wire); LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] ${_type} (${_taken})`); return }
         let ms = _taken
         let type = _type
         let data = _data 
         let action = data.action
         let tracking = data.tracking
-        let find = cache.wire.features.findIndex(feature => feature !== undefined && feature.tracking == tracking)
+        let find = LOAD.cache.wire.features.findIndex(feature => feature !== undefined && feature.tracking == tracking)
         if (action == `Expired` || action == `Cancelled` || action == `Cancel`) {
             if (find != -1) {
-                cache.wire.features[find] = undefined 
-                Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`)
+                LOAD.cache.wire.features[find] = undefined 
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`)
             } else { 
-                Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} (No Action) >> ${data.properties.event} (${data.tracking}) (${ms})`)
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} (No Action) >> ${data.properties.event} (${data.tracking}) (${ms})`)
             }
         }
         if (action == `Extended` || action == `Updated` || action == `Correction` || action == `Upgraded`) {
             if (find != -1) {    
-                let new_history = cache.wire.features[find].history.concat(data.history);
-                let prior_sender = cache.wire.features[find].properties.senderName;
+                let new_history = LOAD.cache.wire.features[find].history.concat(data.history);
+                let prior_sender = LOAD.cache.wire.features[find].properties.senderName;
                 new_history = new_history.sort((a, b) => new Date(b.time) - new Date(a.time));
-                cache.wire.features[find] = data;
-                cache.wire.features[find].properties.senderName = prior_sender;
-                cache.wire.features[find].properties.parameters = data.properties.parameters;
-                cache.wire.features[find].history = new_history;
-                Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                LOAD.cache.wire.features[find] = data;
+                LOAD.cache.wire.features[find].properties.senderName = prior_sender;
+                LOAD.cache.wire.features[find].properties.parameters = data.properties.parameters;
+                LOAD.cache.wire.features[find].history = new_history;
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);
             } else { 
-                cache.wire.features.push(data);
-                Hooks.PrintLog(`${this.name}`, `[!] [${type}] ${action} Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                LOAD.cache.wire.features.push(data);
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] ${action} Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
             }
         }
         if (action == `Issued` || action == `Alert`) {
             if (find != -1) {
-                cache.wire.features[find] = data;
-                Hooks.PrintLog(`${this.name}`, `[!] [${type}] [Cache] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                LOAD.cache.wire.features[find] = data;
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] [Cache] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
             } else { 
-                Hooks.PrintLog(`${this.name}`, `[!] [${type}] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
-                cache.wire.features.push(data);
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                LOAD.cache.wire.features.push(data);
             }
         }
-        fs.appendFileSync(path.join(__dirname, `../../../storage/nwws-oi`, `parsed`, `nwws-parsed-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${JSON.stringify(data, null, 4)}\n\n`, `utf8`)
-        await APICalls.Next(cache.wire);
+        LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `parsed`, `nwws-parsed-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${JSON.stringify(data, null, 4)}\n\n`, `utf8`)
+        await LOAD.Library.APICalls.Next(LOAD.cache.wire);
     }
 
     /**
@@ -155,9 +157,9 @@ class Listener {
             let raw_alerts = [`raw_feed_exmaple.bin`]
             for (let i = 0; i < raw_alerts.length; i++) {
                 let attributes = { awipsid: `N/A`, issue: new Date().toISOString() }
-                let file = path.join(__dirname, `../../../storage/nwws-oi/`, `debugging`, raw_alerts[i])
-                let data = fs.readFileSync(file, `utf8`)
-                let product = new ProductInterpreter()
+                let file = LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi/`, `debugging`, raw_alerts[i])
+                let data = LOAD.Packages.FileSystem.readFileSync(file, `utf8`)
+                let product = new LOAD.Callbacks.ProductInterpreter()
                 await product.CompileMessage(true, { message: data, attributes: attributes, xml: false })
                 await product.CreateNewAlert()
             }
@@ -166,9 +168,9 @@ class Listener {
             let raw_alerts = [`xml_feed_example.xml`]
             for (let i = 0; i < raw_alerts.length; i++) {
                 let attributes = { awipsid: `N/A`, issue: new Date().toISOString() }
-                let file = path.join(__dirname, `../../../storage/nwws-oi/`, `debugging`, raw_alerts[i])
-                let data = fs.readFileSync(file, `utf8`)
-                let product = new ProductInterpreter()
+                let file = LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi/`, `debugging`, raw_alerts[i])
+                let data = LOAD.Packages.FileSystem.readFileSync(file, `utf8`)
+                let product = new LOAD.Callbacks.ProductInterpreter()
                 await product.CompileMessage(true, { message: data, attributes: attributes, xml: true })
                 await product.CreateNewAlert()
             }

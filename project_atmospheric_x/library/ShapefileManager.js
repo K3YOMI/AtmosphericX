@@ -11,6 +11,8 @@
     Version: v7.0.0                              
 */
 
+let LOAD = require(`../loader.js`)
+
 /**
   * @class ShapefileManager
   * @description Manages shapefile operations including reading shapefiles, extracting geographic data,
@@ -24,7 +26,7 @@ class ShapefileManager {
         this.author = `k3yomi@GitHub`
         this.name = `ShapefileManager`
         this.production = true
-        Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
+        LOAD.Library.Hooks.PrintLog(`${this.name}`, `Successfully initialized ${this.name} module`);
     }
 
     /**
@@ -37,7 +39,7 @@ class ShapefileManager {
       *
       * @async
       * @param {Array<Object>} [_shapefiles=[]] - An array of shapefile descriptors to be processed.
-      * @param {string} _shapefiles[].file - The filename of the shapefile.
+      * @param {string} _shapefiles[].file - The filename of the LOAD.Packages.Shapefile.
       * @param {string} _shapefiles[].id - A type identifier to help construct the zone ID.
       * @returns {Promise<Array<Object>>} A promise that resolves
       */
@@ -45,9 +47,9 @@ class ShapefileManager {
 
     async CheckShapefiles() {
         return new Promise(async (resolve, reject) => {
-            let res = await Database.SendDatabaseQuery(`SELECT name FROM sqlite_master WHERE type='table' AND name='shapefiles'`, [])
+            let res = await LOAD.Library.Database.SendDatabaseQuery(`SELECT name FROM sqlite_master WHERE type='table' AND name='shapefiles'`, [])
             if (res.length == 0) {
-                await Database.SendDatabaseQuery(`CREATE TABLE shapefiles (id TEXT PRIMARY KEY, location TEXT, geometry TEXT)`, [])
+                await LOAD.Library.Database.SendDatabaseQuery(`CREATE TABLE shapefiles (id TEXT PRIMARY KEY, location TEXT, geometry TEXT)`, [])
                 resolve(false)
             }
             resolve(true)
@@ -63,9 +65,9 @@ class ShapefileManager {
                 let file = shape_files[i].file
                 let type = shape_files[i].id
                 let filepath = `../storage/shapefiles/${file}`
-                let read = await shapefile.read(filepath, filepath)
+                let read = await LOAD.Packages.Shapefile.read(filepath, filepath)
                 let features = read.features
-                Hooks.PrintLog(`${this.name}`, `Importing shapefile ${file} (${type}) into database... This may take a moment.`)
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `Importing shapefile ${file} (${type}) into database... This may take a moment.`)
                 for (let a = 0; a < features.length; a++) {
                     let properties = features[a].properties
                     let fips_exists = properties.FIPS != undefined
@@ -74,19 +76,19 @@ class ShapefileManager {
                     if (fips_exists) {
                         let t = `${properties.STATE}${type}${properties.FIPS.substring(2)}`
                         let n = `${properties.COUNTYNAME}, ${properties.STATE}`
-                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
+                        await LOAD.Library.Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     } else if (state_exists) {
                         let t = `${properties.STATE}${type}${properties.ZONE}`
                         let n = `${properties.NAME}, ${properties.STATE}`
-                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
+                        await LOAD.Library.Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     } else if (full_state_id_exists) {
                         let t = `${properties.ST}${type}-NoZone`
                         let n = `${properties.NAME}, ${properties.STATE}`
-                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
+                        await LOAD.Library.Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     } else {
                         let t = properties.ID 
                         let n = properties.NAME
-                        await Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
+                        await LOAD.Library.Database.SendDatabaseQuery(`INSERT OR REPLACE INTO shapefiles (id, location, geometry) VALUES (?, ?, ?)`, [t, n, JSON.stringify(features[a].geometry)])
                     }
                 }
             }
@@ -111,7 +113,7 @@ class ShapefileManager {
             let coords = [];
             for (let i = 0; i < _ugc.length; i++) {
                 let id = _ugc[i].trim();
-                let located = await Database.SendDatabaseQuery(`SELECT geometry FROM shapefiles WHERE id = ?`, [id])
+                let located = await LOAD.Library.Database.SendDatabaseQuery(`SELECT geometry FROM shapefiles WHERE id = ?`, [id])
                 if (located.length > 0) {
                     let geo = JSON.parse(located[0].geometry);
                     if (geo && geo.type === "Polygon") {
@@ -139,7 +141,7 @@ class ShapefileManager {
             let locations = [];
             for (let i = 0; i < _ugc.length; i++) {
                 let id = _ugc[i].trim();
-                let located = await Database.SendDatabaseQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id])
+                let located = await LOAD.Library.Database.SendDatabaseQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id])
                 if (located.length > 0) {
                     locations.push(located[0].location);
                 }
