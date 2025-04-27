@@ -141,6 +141,7 @@ class Routes {
         app.get('/widgets/time', (req, res) => res.sendFile(`${parent}/www/widgets/time@widget/index.html`));
         app.get('/widgets/date', (req, res) => res.sendFile(`${parent}/www/widgets/date@widget/index.html`));
         app.get('/widgets/header', (req, res) => res.sendFile(`${parent}/www/widgets/header@widget/index.html`));
+        app.get('/widgets/watchdog', (req, res) => res.sendFile(`${parent}/www/widgets/watchdog@widget/index.html`));
         app.get('/widgets/notification', (req, res) => res.sendFile(`${parent}/www/widgets/notification@widget/index.html`));
         app.get('/widgets/spc', (req, res) => res.sendFile(`${parent}/www/widgets/spc@widget/index.html`));
         app.get('/premade/stream', (req, res) => res.sendFile(`${parent}/www/widgets/@premade/stream_layout@widget/index.html`));

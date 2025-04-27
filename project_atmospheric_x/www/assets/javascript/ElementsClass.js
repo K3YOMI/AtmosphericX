@@ -149,4 +149,22 @@ class Elements {
         document.getElementById(_id).style.animation = `${_anim_end} 0.3s linear forwards`;
         document.getElementById(_id).innerHTML = _text;
     }
+
+
+
+    /**
+     * @function Watchdog
+     * @description Updates the alert count for a specific alert type in the UI.
+     * 
+     * @async
+     * @param {string} _text - The ID of the DOM element to update with the alert count.
+     * @param {string} _parameter - The type of alert to count (e.g., "Warning", "Watch").
+     * @returns {Promise<void>}
+     */
+
+    async Watchdog(_text, _parameter) {
+        _parameter = _parameter.replace(/%20/g, ` `)
+        let active_alerts = this.storage.active.filter(alert => alert.details.name.includes(_parameter));
+        document.getElementById(_text).innerHTML = `${_parameter}(s): ${active_alerts.length} active`
+    }
 }
