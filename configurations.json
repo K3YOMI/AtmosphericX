@@ -157,7 +157,8 @@
         { "day": 1, "title": "Day 1 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day1probotlk_hail.gif" },
         { "day": 2, "title": "Day 2 Tornado Risk",    "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_torn.gif" },
         { "day": 2, "title": "Day 2 Wind Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_wind.gif" },
-        { "day": 2, "title": "Day 2 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" }
+        { "day": 2, "title": "Day 2 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" },
+        { "day": 3, "title": "Day 3 Probability",     "source": "https://www.spc.noaa.gov/products/outlook/day3prob.gif"}
     ],
     "third_party_services": [
         { "title": "Live Storm Chasing",    "url": "https://livestormchasing.com/", "image": "/assets/media/dashboard/storm-live-logo.png" },
