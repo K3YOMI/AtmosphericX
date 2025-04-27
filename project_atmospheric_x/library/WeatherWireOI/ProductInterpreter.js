@@ -97,19 +97,21 @@ class ProductInterpreter {
       */
 
     async _GetCallType() {
-        if (this.message == null || this.attributes == null) { return `Unknown` }
-        if (this.attributes.awipsid == "") { return `test message` }
-        let awips_name = {
-            SWOMCD: `md`, LSR: `local storm report`,
-            SPS: `special weather statement`, TAF: `terminal aerodrome forecast`,
-            RVS: `river statement`, RWR: `regional weather roundup`,
-            SFT: `tabular state forecast`, REC: `recreational report`,
-            PFM: `point forecast matrices`
-        };
-        for (let [prefix, type] of Object.entries(awips_name)) {
-            if (this.attributes.awipsid.startsWith(prefix)) { return type;}
-        }
-        return "alert" 
+        return new Promise((resolve, reject) => {
+            if (this.message == null || this.attributes == null) { resolve(`unknown`); return; }
+            if (this.attributes.awipsid == "") { resolve(`test message`); return; }
+            let awips_name = {
+                SWOMCD: `md`, LSR: `local storm report`,
+                SPS: `special weather statement`, TAF: `terminal aerodrome forecast`,
+                RVS: `river statement`, RWR: `regional weather roundup`,
+                SFT: `tabular state forecast`, REC: `recreational report`,
+                PFM: `point forecast matrices`
+            };
+            for (let [prefix, type] of Object.entries(awips_name)) {
+                if (this.attributes.awipsid.startsWith(prefix)) { resolve(type); return; }
+            }
+            resolve(`alert`)
+        })
     }
 
     /**
