@@ -53,21 +53,29 @@ class Listener {
             let wire_xml = wire_cfg.xml_alerts
             let wire_domain = wire_cfg.domain
             if (!wire_enabled) { return }
-            let session = LOAD.Packages.XMPP.client({service: wire_service, domain: wire_domain, username: wire_username, password: wire_password}).setMaxListeners(0);
-            session.on(`online`, async (_address) => {
-                session.send(LOAD.Packages.XMPP.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${wire_username}-AtmosX`, xmlns: 'http://jabber.org/protocol/muc' }));
+            LOAD.Static.WireSession = LOAD.Packages.XMPP.client({service: wire_service, domain: wire_domain, username: wire_username, password: wire_password}).setMaxListeners(0);
+
+            LOAD.Static.WireSession.on(`online`, async (_address) => {
+                LOAD.Static.WireSession.send(LOAD.Packages.XMPP.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${wire_username}-AtmosX`, xmlns: 'http://jabber.org/protocol/muc' }));
                 LOAD.Library.Hooks.PrintLog(`${this.name}`, `Connected to ${wire_domain}`)
                 nws_cfg.enabled = false
                 wire_cfg.enabled = true
             })
-            session.on(`error`, async () => {
+            LOAD.Static.WireSession.on(`error`, async () => {
                 LOAD.Library.Hooks.PrintLog(`${this.name}`, `Couldn't connect to ${wire_service}, enabling fallback and attempting to reconnect...`)
                 nws_cfg.enabled = true
                 wire_cfg.enabled = false
                 LOAD.Library.APICalls.Next(undefined, true)
                 process.on('uncaughtException', (err) => {})
             })
-            session.on(`stanza`, async (_stanza) => {
+            LOAD.Static.WireSession.on(`offline`, async () => {
+                LOAD.Library.Hooks.PrintLog(`${this.name}`, `Disconnected from ${wire_service}, enabling fallback`)
+                nws_cfg.enabled = true
+                wire_cfg.enabled = false
+                LOAD.Library.APICalls.Next(undefined, true)
+                process.on('uncaughtException', (err) => {})
+            })
+            LOAD.Static.WireSession.on(`stanza`, async (_stanza) => {
                 let product = new LOAD.Callbacks.ProductInterpreter(_stanza)
                 let message = await product.CompileMessage()
                 if (message.ignore || (message.xml == true && wire_xml == false)) { return }
@@ -78,7 +86,7 @@ class Listener {
             await LOAD.Library.ShapefileManager.CreateZoneMap([{id: `C`, file: `USCounties`},{id: `Z`, file: `ForecastZones`},{id: `Z`, file: `FireZones`},{id: `Z`, file: `OffShoreZones`},{id: `Z`, file: `FireCounties`},{id: `Z`, file: `Marine`},])
             LOAD.Library.Hooks.PrintLog(`${this.name}`, `Shapefiles have been already imported into the database`)
             LOAD.Library.Hooks.PrintLog(`${this.name}`, `Attempting to connect to ${wire_service}...`)
-            await session.start()
+            await LOAD.Static.WireSession.start()
         })
     }
 

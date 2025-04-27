@@ -42,6 +42,17 @@ command_node = [
         LOAD.Library.Hooks.Log(`AtmosphericX.CommandExecution : Force update all connected clients`)
         LOAD.Library.Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Force update all connected clients`)
     }},
+    {"cmd": "/safe-close", "description": "Close app safely", "args": [], "example": "/safe-close", "function": async (args) => {
+        if (LOAD.Static.WireSession != null) {
+            LOAD.Static.WireSession.send(LOAD.Packages.XMPP.xml('presence', { type: 'unavailable' }));
+            await LOAD.Static.WireSession.stop()
+        }
+        setTimeout(() => {
+            LOAD.Library.Hooks.Log(`AtmosphericX.CommandExecution : Application closed safely`)
+            LOAD.Library.Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Application closed safely`)
+            process.exit(0)
+        }, 1000)
+    }},
     {"cmd": "/debug-xml", "description": "Debug xML alerts", "args": [], "example": "/debug-xml", "function": async (args) => { LOAD.Library.NOAAWeatherWireService.CreateDebugAlert(`XML`)}},
     {"cmd": "/debug-raw", "description": "Debug raw alerts", "args": [], "example": "/debug-raw", "function": async (args) => {LOAD.Library.NOAAWeatherWireService.CreateDebugAlert(`TEXT`)}},
     {"cmd": "/clear", "description": "Clear console", "args": [], "example": "/clear", "function": async (args) => { console.clear(); LOAD.Library.Hooks._PrintLogo() }},
