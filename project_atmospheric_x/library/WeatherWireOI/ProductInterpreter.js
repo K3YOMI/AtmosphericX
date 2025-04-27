@@ -51,37 +51,41 @@ class ProductInterpreter {
 
     async CompileMessage(_debug=false, _metadata={}) {
         return new Promise(async (resolve, reject) => {
-            if (_debug) { 
-                this.message = _metadata.message
-                this.attributes = _metadata.attributes
-                this.xml = _metadata.xml
-                resolve({message: _metadata.message, attributes: _metadata.attributes, xml: _metadata.xml, ignore: false}); 
-                return 
-            }
-            if (this.stanza.is(`message`)) {
-                let cb = this.stanza.getChild(`x`)
-                if (cb && cb.children) {
-                    this.message = unescape(cb.children[0])
-                    this.attributes = cb.attrs
-                    this.xml = this.message.includes(`<?xml version="1.0"`)
-                    this.area_description = this.message.includes(`<areaDesc>`)
-                    this.vtec = this.message.match(LOAD.cache.configurations.definitions.vtec_regexp)
-                    let type = await this._GetCallType()
+            try {
+                if (_debug) { 
+                    this.message = _metadata.message
+                    this.attributes = _metadata.attributes
+                    this.xml = _metadata.xml
+                    resolve({message: _metadata.message, attributes: _metadata.attributes, xml: _metadata.xml, ignore: false}); 
+                    return 
+                }
+                if (this.stanza.is(`message`)) {
+                    let cb = this.stanza.getChild(`x`)
+                    if (cb && cb.children) {
+                        this.message = unescape(cb.children[0])
+                        this.attributes = cb.attrs
+                        this.xml = this.message.includes(`<?xml version="1.0"`)
+                        this.area_description = this.message.includes(`<areaDesc>`)
+                        this.vtec = this.message.match(LOAD.cache.configurations.definitions.vtec_regexp)
+                        let type = await this._GetCallType()
 
-                    if (LOAD.cache.alerts.wire == undefined) { LOAD.cache.alerts.wire = [] }
-                    if (LOAD.cache.alerts.wire.length >= 64) { LOAD.cache.alerts.wire.shift() }
-                    LOAD.cache.alerts.wire.push({message: this.message, issued: new Date().toISOString()})
+                        if (LOAD.cache.alerts.wire == undefined) { LOAD.cache.alerts.wire = [] }
+                        if (LOAD.cache.alerts.wire.length >= 64) { LOAD.cache.alerts.wire.shift() }
+                        LOAD.cache.alerts.wire.push({message: this.message, issued: new Date().toISOString()})
 
-                    LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${type}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`)
-                    if (!this.vtec) { LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-global-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`); }
-                    if (this.attributes.awipsid) {
-                        if (this.xml && this.area_description) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-xml-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
-                        if (!this.xml && this.vtec) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
-                        resolve({message: this.message, attributes: this.attributes, xml: this.xml, valid_xml_alert: this.area_description, type: type, ignore: false})
+                        LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${type}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`)
+                        if (!this.vtec) { LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-global-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`); }
+                        if (this.attributes.awipsid) {
+                            if (this.xml && this.area_description) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-xml-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
+                            if (!this.xml && this.vtec) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
+                            resolve({message: this.message, attributes: this.attributes, xml: this.xml, valid_xml_alert: this.area_description, type: type, ignore: false})
+                        }
                     }
                 }
+                resolve({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, ignore: true})
+            } catch (error) {
+                reject({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, ignore: true})
             }
-            resolve({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, ignore: true})
         })
     }
 
