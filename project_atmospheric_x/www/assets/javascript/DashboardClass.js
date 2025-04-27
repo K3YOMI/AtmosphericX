@@ -905,7 +905,8 @@ class Dashboard {
     async _SpawnGeneralSetupHub(_dir=`hub.plugins`) {
         document.getElementById(_dir).innerHTML = ``
         let url = window.location.hostname || 'localhost'; // Default to localhost if no hostname is specified
-        let port = window.location.port || '80'; // Default to 80 if no port is specified     
+        let port = window.location.port || '80'; // Default to 80 if no port is specified
+        let protocol = window.location.protocol || 'http'; // Default to http if no protocol is specified     
         this._InjectDataCard({
             title: `Download Latest Template`,
             content: `<button class="button-ok" style="width: 100%; margin-top: 5px;">Download</button>`,
@@ -928,7 +929,7 @@ class Dashboard {
                         }},
                     ],
                     inputs: [ 
-                        { id: `_obs_replace`, className: `popup-input`, placeholder: `${url}:${port}/`, value: `${url}:${port}/` },
+                        { id: `_obs_replace`, className: `popup-input`, placeholder: `${protocol}//${url}:${port}/`, value: `${protocol}//${url}:${port}/` },
                     ]
                 })
                 
