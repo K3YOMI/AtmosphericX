@@ -1,6 +1,6 @@
 {
-    "current_scene": "[Source] AtmosphericX v7 Template",
-    "current_program_scene": "[Source] AtmosphericX v7 Template",
+    "current_scene": "[Template] Default Overlay",
+    "current_program_scene": "[Template] Default Overlay",
     "scene_order": [
         {
             "name": "[Source] AtmosphericX v7 Template"
@@ -1451,7 +1451,7 @@
             "versioned_id": "group",
             "settings": {
                 "custom_size": true,
-                "cx": 1654,
+                "cx": 1754,
                 "cy": 1081,
                 "id_counter": 0,
                 "items": [
@@ -1814,12 +1814,12 @@
                             "y": -0.91666686534881592
                         },
                         "scale": {
-                            "x": 0.95125001668930054,
-                            "y": 0.95999997854232788
+                            "x": 0.95124995708465576,
+                            "y": 0.95999991893768311
                         },
                         "scale_rel": {
-                            "x": 0.95125001668930054,
-                            "y": 0.95999997854232788
+                            "x": 0.95124995708465576,
+                            "y": 0.95999991893768311
                         },
                         "bounds": {
                             "x": 0.0,
@@ -1894,6 +1894,61 @@
                             "duration": 0
                         },
                         "private_settings": {}
+                    },
+                    {
+                        "name": "[OV1] Alert Bar",
+                        "source_uuid": "0c1fafce-1207-4c0f-a598-787f3fa5237a",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 23,
+                        "group_item_backup": false,
+                        "pos": {
+                            "x": 594.9998779296875,
+                            "y": 819.0
+                        },
+                        "pos_rel": {
+                            "x": -0.67592614889144897,
+                            "y": 0.51666665077209473
+                        },
+                        "scale": {
+                            "x": 0.60364586114883423,
+                            "y": 0.6042553186416626
+                        },
+                        "scale_rel": {
+                            "x": 0.60364586114883423,
+                            "y": 0.6042553186416626
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
                     }
                 ]
             },
@@ -1924,7 +1979,9 @@
                 "libobs.show_scene_item.21": [],
                 "libobs.hide_scene_item.21": [],
                 "libobs.show_scene_item.22": [],
-                "libobs.hide_scene_item.22": []
+                "libobs.hide_scene_item.22": [],
+                "libobs.show_scene_item.23": [],
+                "libobs.hide_scene_item.23": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -1939,8 +1996,8 @@
             "versioned_id": "group",
             "settings": {
                 "custom_size": true,
-                "cx": 333,
-                "cy": 187,
+                "cx": 0,
+                "cy": 182,
                 "id_counter": 0,
                 "items": [
                     {
@@ -2369,6 +2426,37 @@
     },
     "version": 2,
     "sources": [
+        {
+            "prev_ver": 520093699,
+            "name": "[OV1] Alert Bar",
+            "uuid": "0c1fafce-1207-4c0f-a598-787f3fa5237a",
+            "id": "source-clone",
+            "versioned_id": "source-clone",
+            "settings": {
+                "clone": "[Source] Notification Alert Bar"
+            },
+            "mixers": 255,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 2,
+            "private_settings": {}
+        },
         {
             "prev_ver": 520093699,
             "name": "[OV1] Black Static",
@@ -4309,7 +4397,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": false
+                            "collapsed": true
                         }
                     },
                     {
@@ -5000,43 +5088,6 @@
         },
         {
             "prev_ver": 520093699,
-            "name": "[Source] Intro Video",
-            "uuid": "5623f48d-b90f-4d94-a087-92b651bb42f6",
-            "id": "ffmpeg_source",
-            "versioned_id": "ffmpeg_source",
-            "settings": {
-                "local_file": "D:/[Atmospheric X]/IMG_5028.MOV",
-                "looping": true,
-                "speed_percent": 179
-            },
-            "mixers": 255,
-            "sync": 0,
-            "flags": 0,
-            "volume": 0.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.mute": [],
-                "libobs.unmute": [],
-                "libobs.push-to-mute": [],
-                "libobs.push-to-talk": [],
-                "MediaSource.Restart": [],
-                "MediaSource.Play": [],
-                "MediaSource.Pause": [],
-                "MediaSource.Stop": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 520093699,
             "name": "[Source] Mapbox",
             "uuid": "d9e215c4-1ba8-41dd-bf6d-20800bb2fe42",
             "id": "browser_source",
@@ -5564,7 +5615,7 @@
             "versioned_id": "scene",
             "settings": {
                 "custom_size": false,
-                "id_counter": 22,
+                "id_counter": 23,
                 "items": [
                     {
                         "name": "[OV1] Template Source",
@@ -6422,8 +6473,8 @@
                             "y": -0.92222243547439575
                         },
                         "scale": {
-                            "x": 0.95125001668930054,
-                            "y": 0.95999997854232788
+                            "x": 0.95124995708465576,
+                            "y": 0.95999991893768311
                         },
                         "scale_rel": {
                             "x": 0.95124995708465576,
@@ -6504,6 +6555,61 @@
                         "private_settings": {}
                     },
                     {
+                        "name": "[OV1] Alert Bar",
+                        "source_uuid": "0c1fafce-1207-4c0f-a598-787f3fa5237a",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "scale_ref": {
+                            "x": 1920.0,
+                            "y": 1080.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 23,
+                        "group_item_backup": true,
+                        "pos": {
+                            "x": 593.0,
+                            "y": 816.0
+                        },
+                        "pos_rel": {
+                            "x": -0.6796296238899231,
+                            "y": 0.51111114025115967
+                        },
+                        "scale": {
+                            "x": 0.60364586114883423,
+                            "y": 0.6042553186416626
+                        },
+                        "scale_rel": {
+                            "x": 0.60364586114883423,
+                            "y": 0.6042553186416626
+                        },
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "bounds_rel": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
                         "name": "[Widgets]",
                         "source_uuid": "1e6dc9c4-f56e-4344-a5c9-f97fefbf1df5",
                         "visible": true,
@@ -6557,7 +6663,7 @@
                             "duration": 0
                         },
                         "private_settings": {
-                            "collapsed": true
+                            "collapsed": false
                         }
                     }
                 ]
