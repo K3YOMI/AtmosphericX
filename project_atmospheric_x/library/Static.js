@@ -42,6 +42,9 @@ command_node = [
         LOAD.Library.Hooks.Log(`AtmosphericX.CommandExecution : Force update all connected clients`)
         LOAD.Library.Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Force update all connected clients`)
     }},
+    {"cmd": "/clients", "description": "Get all clients", "args": [], "example": "/clients", "function": async (args) => {
+        LOAD.Library.Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Connected clients: ${LOAD.cache.clients.length == 0 ? `None` : LOAD.cache.clients.length}`)
+    }},
     {"cmd": "/safe-close", "description": "Close app safely", "args": [], "example": "/safe-close", "function": async (args) => {
         if (LOAD.Static.WireSession != null) {
             LOAD.Static.WireSession.send(LOAD.Packages.XMPP.xml('presence', { type: 'unavailable' }));
