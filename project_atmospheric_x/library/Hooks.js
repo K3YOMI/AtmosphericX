@@ -82,7 +82,7 @@ class Hooks {
       */
 
     async CleanupStorage() {
-        let max_bytes = 25000000;
+        let max_bytes = 10000000;
         let directory = LOAD.Packages.PathSystem.join(__dirname, `../../storage/nwws-oi`);
         let files = [];
         let stack = [directory];
