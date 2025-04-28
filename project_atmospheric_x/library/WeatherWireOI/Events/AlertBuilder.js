@@ -32,6 +32,7 @@ class AlertBuilder {
         this.message = _metdata.message
         this.attributes = _metdata.attributes
         this.xml = _metdata.xml
+        this.alerts = []
         if (!this.xml) {this._RawTextProduct()}
         if (this.xml) {this._XmlProduct()}
     }
@@ -45,62 +46,63 @@ class AlertBuilder {
       */
 
     async _RawTextProduct() {
-        let message = this.message.split(/(?=\$\$)/g)
-        let messages = message.map(msg => msg.trim());
-        let configurations = LOAD.cache.configurations.definitions
-        for (let i = 0; i < messages.length; i++) {
+        return new Promise(async (resolve, reject) => {
+            let message = this.message.split(/(?=\$\$)/g)
+            let messages = message.map(msg => msg.trim());
+            let configurations = LOAD.cache.configurations.definitions
             let start = new Date().getTime()
-            let msg = message[i]
-            let vtec_h = new LOAD.Callbacks.VTECParser(msg, configurations)
-            let ugc_h = new LOAD.Callbacks.UGCParser(msg, configurations)
-            let raw_h = new LOAD.Callbacks.RawParser(msg)
-            let vtec = await vtec_h.ParseVTEC()
-            let ugc = await ugc_h.ParseUGC()
-            if (vtec != null && ugc != null) {
-                let coords = await raw_h.GetPolygonCoordinatesByText()
-                if (coords.length == 0) { coords = await LOAD.Library.ShapefileManager.GetCoordinates(ugc.zones) }
-                let tornado = await raw_h.GetTornado()
-                let hail = await raw_h.GetHailSize()
-                let wind = await raw_h.GetWindGusts()
-                let damage = await raw_h.GetDamageThreat()
-                let office = (await raw_h.GetOfficeName() != `N/A` ? `${await raw_h.GetOfficeName()}` : `No Text Found`)
-                let alert = {
-                    id: `NWWS-OI-${vtec.tracking_id}`,
-                    tracking: vtec.tracking_id,
-                    action: vtec.event_status,
-                    history: [{desc: msg, act: vtec.event_status, time: new Date(this.attributes.issue)}],
-                    compile_time: `0ms`,
-                    properties: {
-                        areaDesc: ugc.locations.join(`; `) || `N/A`,
-                        expires: new Date(vtec.expires) == `Invalid Date` ? new Date(new Date().getTime() + 9999999 * 60 * 60 * 1000) : new Date(vtec.expires),
-                        sent: new Date(this.attributes.issue),
-                        messageType: vtec.event_status,
-                        event: `${vtec.event_name} ${vtec.event_significance}` || "N/A",
-                        sender: office,
-                        senderName: office == 'No Text Found' ? `No Text Found` : `NWS ${office}`,
-                        description: msg,
-                        geocode: { UGC: ugc.zones || [] },
-                        parameters: {
-                            tornadoDetection: tornado || "N/A",
-                            maxHailSize: hail || "N/A",
-                            maxWindGust: wind || "N/A",
-                            thunderstormDamageThreat: [damage || "N/A"],
+            for (let i = 0; i < messages.length; i++) {
+                let msg = message[i]
+                let vtec_h = new LOAD.Callbacks.VTECParser(msg, configurations)
+                let ugc_h = new LOAD.Callbacks.UGCParser(msg, configurations)
+                let raw_h = new LOAD.Callbacks.RawParser(msg)
+                let vtec = await vtec_h.ParseVTEC()
+                let ugc = await ugc_h.ParseUGC()
+                if (vtec != null && ugc != null) {
+                    let coords = await raw_h.GetPolygonCoordinatesByText()
+                    if (coords.length == 0) { coords = await LOAD.Library.ShapefileManager.GetCoordinates(ugc.zones) }
+                    let tornado = await raw_h.GetTornado()
+                    let hail = await raw_h.GetHailSize()
+                    let wind = await raw_h.GetWindGusts()
+                    let damage = await raw_h.GetDamageThreat()
+                    let office = (await raw_h.GetOfficeName() != `N/A` ? `${await raw_h.GetOfficeName()}` : `No Text Found`)
+                    let alert = {
+                        id: `NWWS-OI-${vtec.tracking_id}`,
+                        tracking: vtec.tracking_id,
+                        action: vtec.event_status,
+                        history: [{desc: msg, act: vtec.event_status, time: new Date(this.attributes.issue)}],
+                        properties: {
+                            areaDesc: ugc.locations.join(`; `) || `N/A`,
+                            expires: new Date(vtec.expires) == `Invalid Date` ? new Date(new Date().getTime() + 9999999 * 60 * 60 * 1000) : new Date(vtec.expires),
+                            sent: new Date(this.attributes.issue),
+                            messageType: vtec.event_status,
+                            event: `${vtec.event_name} ${vtec.event_significance}` || "N/A",
+                            sender: office,
+                            senderName: office == 'No Text Found' ? `No Text Found` : `NWS ${office}`,
+                            description: msg,
+                            geocode: { UGC: ugc.zones || [] },
+                            parameters: {
+                                tornadoDetection: tornado || "N/A",
+                                maxHailSize: hail || "N/A",
+                                maxWindGust: wind || "N/A",
+                                thunderstormDamageThreat: [damage || "N/A"],
+                            },
                         },
-                    },
-                    geometry: {
-                        type: `Polygon`,
-                        coordinates: [coords]
-                    },
-                    type: `Feature`,
+                        geometry: {
+                            type: `Polygon`,
+                            coordinates: [coords]
+                        },
+                        type: `Feature`,
+                    }
+                    this.alerts.push(alert)
                 }
-                let filter = await LOAD.Library.Parsing._FilterNWSAlertsv2([alert])
-                let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
-                if (filterd.length == 0) { continue }
-                alert.compile_time = `${new Date().getTime() - start}ms`
-                await LOAD.Library.NOAAWeatherWireService.ProcessValidAlert(alert, `RAW`, `${alert.compile_time}`)
-                await new Promise(resolve => setTimeout(resolve, 1))
             }
-        }
+            let filter = await LOAD.Library.Parsing._FilterNWSAlertsv2(this.alerts)
+            let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
+            if (filterd.length == 0) { resolve(); return }
+            await LOAD.Library.NOAAWeatherWireService.ProcessValidAlert(this.alerts, `RAW`, `${new Date().getTime() - start}ms`)
+            resolve()
+        })
     }
 
     /**
@@ -152,13 +154,13 @@ class AlertBuilder {
         }
         if (result.alert.info[0].area[0].polygon != undefined) {
             alert.geometry = { type: "Polygon", coordinates: [result.alert.info[0].area[0].polygon[0].split(" ").map(coord => {const [lat, lon] = coord.split(",").map(parseFloat);return [lon, lat];})], };
-        } 
-        let filter = await LOAD.Library.Parsing._FilterNWSAlertsv2([alert])
+        }
+        this.alerts.push(alert) 
+        let filter = await LOAD.Library.Parsing._FilterNWSAlertsv2(this.alerts)
         let filterd = filter.warnings.concat(filter.watches).concat(filter.unknown)
-        if (filterd.length == 0) { return }
-        alert.compile_time = `${new Date().getTime() - start}ms`
-        await LOAD.Library.NOAAWeatherWireService.ProcessValidAlert(alert, `XML`, `${alert.compile_time}`)
-        await new Promise(resolve => setTimeout(resolve, 1))
+        if (filterd.length == 0) { resolve(); return }
+        await LOAD.Library.NOAAWeatherWireService.ProcessValidAlert(this.alerts, `XML`, `${new Date().getTime() - start}ms`)
+        resolve()
     }
 }
 

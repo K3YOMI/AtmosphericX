@@ -292,19 +292,31 @@ class Hooks {
 
     async CallClientConfigurations() {
         return new Promise(async (resolve, reject) => {
-            let client = {
-                configurations: {
-                    warning: "This is configuration data routed from the server, please use this data for client development purposes only.",
-                    use_web_tts: LOAD.cache.configurations.project_settings.use_web_tts,
-                    tone_sounds: LOAD.cache.configurations.tone_sounds,
-                    overlay_settings: LOAD.cache.configurations.overlay_settings,
-                    spc_outlooks: LOAD.cache.configurations.spc_outlooks,
-                    third_party_services: LOAD.cache.configurations.third_party_services,
-                    widget_settings: LOAD.cache.configurations.widget_settings,
-                },
+            let public_configurations = {
+                warning: "This is configuration data routed from the server, please use this data for client development purposes only.",
+                tone_sounds: LOAD.cache.configurations.tone_sounds,
+                overlay_settings: LOAD.cache.configurations.overlay_settings,
+                spc_outlooks: LOAD.cache.configurations.spc_outlooks,
+                third_party_services: LOAD.cache.configurations.third_party_services,
+                widget_settings: LOAD.cache.configurations.widget_settings,
             }
-            client = { ...client, ...LOAD.cache.alerts, statistics: LOAD.cache.statistics }
-            resolve(client)
+            resolve({
+                configurations: public_configurations,
+                warnings: LOAD.cache.alerts.warnings,
+                watches: LOAD.cache.alerts.watches,
+                active: LOAD.cache.alerts.active,
+                manual: LOAD.cache.alerts.manual,
+                statistics: LOAD.cache.statistics,
+                wire: LOAD.cache.alerts.wire,
+                reports: LOAD.cache.alerts.reports,
+                broadcasts: LOAD.cache.alerts.broadcasts,
+                header: LOAD.cache.alerts.status,
+                random: LOAD.cache.alerts.random,
+                stations: LOAD.cache.alerts.stations,
+                spotters: LOAD.cache.alerts.spotters,
+                lightning: LOAD.cache.alerts.lightning,
+                mesoscale: LOAD.cache.alerts.mesoscale,
+            })
         })
     }
 

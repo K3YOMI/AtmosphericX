@@ -149,8 +149,6 @@ class Routes {
         LOAD.Static.Application.get('/premade/portable', (req, res) => res.sendFile(`${parent}/www/widgets/@premade/portable_layout@widget/index.html`));
         LOAD.Static.Application.get('/reset', (req, res) => res.sendFile(`${parent}/www/portal/reset.html`));
         LOAD.Static.Application.get('/registration', (req, res) => res.sendFile(`${parent}/www/portal/registration.html`));
-        LOAD.Static.Application.get(`/api/events`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(LOAD.cache.alerts, null, 4)) });
-        LOAD.Static.Application.get(`/api/all`, async (req, res) => { this._ReadFileForSession(req, res, JSON.stringify(await LOAD.Library.Hooks.CallClientConfigurations(), null, 4)) });
         LOAD.Static.Application.post(`/api/login`, async (req, res) => { this._Credentials(req, res, 0) });
         LOAD.Static.Application.post(`/api/logout`, async (req, res) => { this._Credentials(req, res, 1) });
         LOAD.Static.Application.post(`/api/register`, async (req, res) => { this._Credentials(req, res, 2) });
@@ -158,6 +156,75 @@ class Routes {
         LOAD.Static.Application.post(`/api/manual`, async (req, res) => { LOAD.Library.Hooks.CreateManualAlert(req, res) });
         LOAD.Static.Application.post(`/api/notification`, async (req, res) => { LOAD.Library.Hooks.CreateNotification(req, res) });
         LOAD.Static.Application.post(`/api/status`, async (req, res) => { LOAD.Library.Hooks.CreateStatusMarker(req, res) });
+    }
+
+
+    /**
+     * @function CreateClient
+     * @description Adds a WebSocket client to the cache and initializes a timer for it.
+     * 
+     * @param {WebSocket} _client - The WebSocket client to add.
+     * @returns {Promise<string>}
+     */
+
+    async CreateClient(_client=undefined) {
+        return new Promise(async (resolve, reject) => {
+            if (_client == undefined) { resolve(`Client is undefined`); return; }
+            if (LOAD.cache.clients == undefined) { LOAD.cache.clients = []; }
+            if (LOAD.cache.clients_timer == undefined) { LOAD.cache.clients_timer = []; }
+            LOAD.cache.clients.push(_client);
+            LOAD.cache.clients_timer.push({client: _client, timer: new Date().getTime()});
+            resolve(`Client created`);
+        });
+    }
+
+    /**
+     * @function RemoveClient
+     * @description Removes a WebSocket client from the cache and clears its associated timer.
+     * 
+     * @param {WebSocket} _client - The WebSocket client to remove.
+     * @returns {Promise<string>}
+     */
+
+    async RemoveClient(_client=undefined) {
+        return new Promise(async (resolve) => {
+            if (_client == undefined) { resolve(`Client is undefined`); return; }
+            if (LOAD.cache.clients == undefined) { LOAD.cache.clients = []; }
+            if (LOAD.cache.clients_timer == undefined) { LOAD.cache.clients_timer = []; }
+            let index = LOAD.cache.clients.indexOf(_client);
+            if (index > -1) {
+                LOAD.cache.clients.splice(index, 1);
+                LOAD.cache.clients_timer.splice(index, 1);
+                resolve(`Client removed`);
+            }
+            resolve(`Client not found`);
+        });
+    }
+
+    /**
+     * @function ClientTimeoutCheck
+     * @description Checks if a WebSocket client has timed out based on the last activity timestamp.
+     * 
+     * @param {WebSocket} _client - The WebSocket client to check for timeout.
+     * @returns {Promise<boolean>}
+     */
+
+    async ClientTimeoutCheck(_client = undefined) {
+        return new Promise(async (resolve) => {
+            if (_client == undefined) { resolve(true); return; }
+            let index = LOAD.cache.clients.indexOf(_client);
+            if (index > -1) {
+                let lastTimer = LOAD.cache.clients_timer[index].timer;
+                let currentTime = new Date().getTime();
+                if (currentTime - lastTimer < LOAD.cache.configurations.project_settings.websocket_timeout * 1000) {
+                    resolve(true);
+                } else {
+                    LOAD.cache.clients_timer[index].timer = currentTime; 
+                    resolve(false);
+                }
+            }
+            resolve(true);
+        });
     }
 
     /**
@@ -173,21 +240,22 @@ class Routes {
 
     async SyncClients(_timeout=true) {
         return new Promise(async (resolve) => {
-            if (!LOAD.cache.ws_clients || LOAD.cache.ws_clients.length === 0) { resolve(`No clients to sync`); return; }
-            await LOAD.Library.Hooks._GetRandomAlert()
-            let cfg = await LOAD.Library.Hooks.CallClientConfigurations(); 
-            cfg = JSON.stringify(cfg)
-            for (let i = 0; i < LOAD.cache.ws_clients.length; i++) {
-                let client = LOAD.cache.ws_clients[i];
-                if (client.readyState === LOAD.Packages.Websocket.OPEN) {
-                    let last_message = LOAD.cache.ws_client_ratelimit.find((entry) => entry.ws === client);
-                    if (_timeout == true && last_message && (Date.now() - last_message.time) < LOAD.cache.configurations.project_settings.websocket_timeout * 1000) { continue; }
-                    LOAD.cache.ws_client_ratelimit = LOAD.cache.ws_client_ratelimit.filter((entry) => entry.ws !== client);
-                    LOAD.cache.ws_client_ratelimit.push({ ws: client, time: Date.now() });
-                    client.send(cfg);
+            if (!LOAD.cache.clients || LOAD.cache.clients.length === 0) { resolve(`No clients to sync`); return; }
+            let alert = await LOAD.Library.Hooks._GetRandomAlert()
+            let dump = await LOAD.Library.Hooks.CallClientConfigurations(); 
+            for (let i = 0; i < LOAD.cache.clients.length; i++) {
+                if (LOAD.cache.clients[i].readyState == LOAD.Packages.Websocket.OPEN) {
+                    let client = LOAD.cache.clients[i];
+                    let timeout = await this.ClientTimeoutCheck(client);
+                    if (timeout) { continue; }
+                    for (let key in dump) {
+                        await client.send(JSON.stringify({value: dump[key], type: key, status: `fetch`}));
+                    }
+                    await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
+                } else {
+                    await this.RemoveClient(LOAD.cache.clients[i]);
                 }
-            }  
-            cfg = undefined
+            }
             resolve(`Message synced to all clients`);
         });
     }
@@ -204,15 +272,17 @@ class Routes {
       */
 
     async CreateWebsocket() {
-        return new Promise((resolve, reject) => {
-            const wss = new LOAD.Packages.Websocket.Server({ server: LOAD.cache.ws });
+        return new Promise(async (resolve, reject) => {
+            let websocket = new LOAD.Packages.Websocket.Server({ server: LOAD.cache.ws });
             LOAD.cache.ws_clients = [];
             LOAD.cache.ws_client_ratelimit = [];
-            wss.on(`connection`, async (ws) => {
-                if (!LOAD.cache.ws_clients.includes(ws)) { LOAD.cache.ws_clients.push(ws); }
-                ws.on('close', () => { LOAD.cache.ws_clients = LOAD.cache.ws_clients.filter((client) => client !== ws) });
-                LOAD.cache.ws_client_ratelimit.push({ws, time: Date.now()});
-                await ws.send(JSON.stringify(await LOAD.Library.Hooks.CallClientConfigurations(), null, 4));
+            websocket.on(`connection`, async (client) => {
+                let dump = await LOAD.Library.Hooks.CallClientConfigurations();
+                await this.CreateClient(client);
+                for (let key in dump) {
+                    await client.send(JSON.stringify({value: dump[key], type: key, status: `fetch`}));
+                }
+                await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
             });
             resolve(`OK`);
         });

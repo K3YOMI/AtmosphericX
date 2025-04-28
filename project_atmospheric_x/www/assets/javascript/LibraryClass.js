@@ -65,43 +65,9 @@ class Library {
     }
 
     /**
-      * @function UpdateCache
-      * @description Updates the internal storage with new data and dispatches a custom event notifying other components of the update.
-      * 
-      * @async
-      * @param {Object} _data - An object containing the new data to update the storage with.
-      * @returns {Promise<void>} Resolves when the cache has been successfully updated.
-      */
-
-    async UpdateCache(_data={}) {
-        return new Promise(async (resolve, reject) => {
-            this.storage.configurations = _data.configurations ? _data.configurations : []
-            this.storage.active = _data.active ? _data.active : []
-            this.storage.warnings = _data.warnings ? _data.warnings : []
-            this.storage.manual = _data.manual ? _data.manual : []
-            this.storage.watches = _data.watches ? _data.watches : []
-            this.storage.reports = _data.reports ? _data.reports : []
-            this.storage.broadcasts = _data.broadcasts ? _data.broadcasts : []
-            this.storage.header = _data.status ? _data.status : []
-            this.storage.random = _data.random ? _data.random : []
-            this.storage.stations = _data.stations ? _data.stations : []
-            this.storage.spotters = _data.spotters ? _data.spotters : []
-            this.storage.lightning = _data.lightning ? _data.lightning : []
-            this.storage.mesoscale = _data.mesoscale ? _data.mesoscale : []
-            this.storage.statistics = _data.statistics ? _data.statistics : []
-            this.storage.wire = _data.wire ? _data.wire : []
-            document.dispatchEvent(new CustomEvent('onCacheUpdate', { detail: _data }));
-            let entries = Object.keys(_data).reduce((sum, key) => { return sum + (_data[key] instanceof Array ? _data[key].length : 0); }, 0);
-            _data = JSON.stringify(_data);
-            let size = new Blob([_data]).size / (1024 * 1024);
-            this.PrintLog(`${this.name}.SetCache`, `Cache has been updated successfully - ${size.toFixed(2)} MB, ${entries} total entries`);        
-            resolve()
-        })
-    }
-
-    /**
       * @function CreateSession
-      * @description Creates a new session by and establishing a WebSocket connection to the server.
+      * @description Creates a new session by and establishing a WebSocket connection to the server. This also sets up event listeners for handling incoming messages 
+      * and connection status changes so we can update the internal storage accordingly.
       * 
       * @async
       * @returns {Promise<string>} Resolves with a success message upon session creation.
@@ -109,23 +75,29 @@ class Library {
 
     async CreateSession() {
         return new Promise(async (resolve, reject) => {
-            let hostname = window.location.hostname
-            let port = window.location.port
-            let protocol = window.location.protocol
-            if (protocol == `https:`) { protocol = `wss:` } else { protocol = `ws:` }
-            this.storage.socket = new WebSocket(`${protocol}//${hostname}:${port}`)
+            let url = `${window.location.protocol == `https:` ? `wss:` : `ws:`}//${window.location.hostname}:${window.location.port}`
+            this.storage.socket = new WebSocket(url)
             this.storage.socket.addEventListener(`open`, () => {
                 this.PrintLog(`Library.CreateSession`, `WebSocket connection established`);
             });
-
             this.storage.socket.addEventListener(`close`, () => {
                 this.PrintLog(`Library.CreateSession`, `WebSocket connection dropped. Attempting to reconnect...`);
                 this.storage.socket.close()
                 setTimeout(() => {this.CreateSession()}, 1000);
             });  
             this.storage.socket.onmessage = async (event) => {
-                this.UpdateCache(JSON.parse(event.data))
-                resolve(`WebSocket connection established`)
+                let data = JSON.parse(event.data)
+                let status = data.status
+                let type = data.type
+                let value = data.value
+                if (status == `fetch`) {
+                    if (value == undefined || value == ``) { this.storage[type] = [] } else { this.storage[type] = value }
+                }
+                if (status == `update`) {
+                    this.PrintLog(`Library.CreateSession`, `WebSocket Completed`)
+                    setTimeout(() => { document.dispatchEvent(new CustomEvent('onCacheUpdate', { detail: this.storage }));  }, 100)
+                    resolve(`WebSocket message received - ${type}`)
+                }
             }
         })
     }

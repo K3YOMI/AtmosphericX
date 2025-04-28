@@ -106,45 +106,47 @@ class Listener {
 
     async ProcessValidAlert(_data, _type, _taken) {
         if (_data == undefined) { await LOAD.Library.APICalls.Next(LOAD.cache.wire); LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] ${_type} (${_taken})`); return }
-        let ms = _taken
-        let type = _type
-        let data = _data 
-        let action = data.action
-        let tracking = data.tracking
-        let find = LOAD.cache.wire.features.findIndex(feature => feature !== undefined && feature.tracking == tracking)
-        if (action == `Expired` || action == `Cancelled` || action == `Cancel`) {
-            if (find != -1) {
-                LOAD.cache.wire.features[find] = undefined 
-                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`)
-            } else { 
-                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} (No Action) >> ${data.properties.event} (${data.tracking}) (${ms})`)
+        for (let i = 0; i < _data.length; i++) {
+            let ms = _taken
+            let type = _type
+            let data = _data[i]
+            let action = data.action
+            let tracking = data.tracking
+            let find = LOAD.cache.wire.features.findIndex(feature => feature !== undefined && feature.tracking == tracking)
+            if (action == `Expired` || action == `Cancelled` || action == `Cancel`) {
+                if (find != -1) {
+                    LOAD.cache.wire.features[find] = undefined 
+                    LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`)
+                } else { 
+                    LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} (No Action) >> ${data.properties.event} (${data.tracking}) (${ms})`)
+                }
+            }
+            if (action == `Extended` || action == `Updated` || action == `Correction` || action == `Upgraded`) {
+                if (find != -1) {    
+                    let new_history = LOAD.cache.wire.features[find].history.concat(data.history);
+                    let prior_sender = LOAD.cache.wire.features[find].properties.senderName;
+                    new_history = new_history.sort((a, b) => new Date(b.time) - new Date(a.time));
+                    LOAD.cache.wire.features[find] = data;
+                    LOAD.cache.wire.features[find].properties.senderName = prior_sender;
+                    LOAD.cache.wire.features[find].properties.parameters = data.properties.parameters;
+                    LOAD.cache.wire.features[find].history = new_history;
+                    LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                } else { 
+                    LOAD.cache.wire.features.push(data);
+                    LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] ${action} Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                }
+            }
+            if (action == `Issued` || action == `Alert`) {
+                if (find != -1) {
+                    LOAD.cache.wire.features[find] = data;
+                    LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] [Cache] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                } else { 
+                    LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
+                    LOAD.cache.wire.features.push(data);
+                }
             }
         }
-        if (action == `Extended` || action == `Updated` || action == `Correction` || action == `Upgraded`) {
-            if (find != -1) {    
-                let new_history = LOAD.cache.wire.features[find].history.concat(data.history);
-                let prior_sender = LOAD.cache.wire.features[find].properties.senderName;
-                new_history = new_history.sort((a, b) => new Date(b.time) - new Date(a.time));
-                LOAD.cache.wire.features[find] = data;
-                LOAD.cache.wire.features[find].properties.senderName = prior_sender;
-                LOAD.cache.wire.features[find].properties.parameters = data.properties.parameters;
-                LOAD.cache.wire.features[find].history = new_history;
-                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);
-            } else { 
-                LOAD.cache.wire.features.push(data);
-                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] ${action} Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
-            }
-        }
-        if (action == `Issued` || action == `Alert`) {
-            if (find != -1) {
-                LOAD.cache.wire.features[find] = data;
-                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] [Cache] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
-            } else { 
-                LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
-                LOAD.cache.wire.features.push(data);
-            }
-        }
-        LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `parsed`, `nwws-parsed-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${JSON.stringify(data, null, 4)}\n\n`, `utf8`)
+        LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `parsed`, `nwws-parsed-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${JSON.stringify(_data, null, 4)}\n\n`, `utf8`)
         await LOAD.Library.APICalls.Next(LOAD.cache.wire);
     }
 

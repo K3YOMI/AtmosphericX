@@ -56,7 +56,8 @@ class ProductInterpreter {
                     this.message = _metadata.message
                     this.attributes = _metadata.attributes
                     this.xml = _metadata.xml
-                    resolve({message: _metadata.message, attributes: _metadata.attributes, xml: _metadata.xml, ignore: false}); 
+                    this.vtec = this.message.match(LOAD.cache.configurations.definitions.vtec_regexp)
+                    resolve({message: _metadata.message, attributes: _metadata.attributes, xml: _metadata.xml, valid_vtec: true, ignore: false})
                     return 
                 }
                 if (this.stanza.is(`message`)) {
@@ -78,13 +79,13 @@ class ProductInterpreter {
                         if (this.attributes.awipsid) {
                             if (this.xml && this.area_description) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-xml-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
                             if (!this.xml && this.vtec) {LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`);}
-                            resolve({message: this.message, attributes: this.attributes, xml: this.xml, valid_xml_alert: this.area_description, type: type, ignore: false})
+                            resolve({message: this.message, attributes: this.attributes, xml: this.xml, valid_xml_alert: this.area_description, type: type, valid_vtec: this.vtec, ignore: false})
                         }
                     }
                 }
-                resolve({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, ignore: true})
+                resolve({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, valid_vtec: null, ignore: true})
             } catch (error) {
-                reject({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, ignore: true})
+                reject({message: null, attributes:null, xml: null, valid_xml_alert: null, type: null, valid_vtec: null, ignore: true})
             }
         })
     }
@@ -132,7 +133,7 @@ class ProductInterpreter {
     async CreateNewAlert() {
         return new Promise(async (resolve, reject) => {
             let type = await this._GetCallType() // TODO: Use if statements to determine which type alert, by default we will start with basic alerts...
-            if (type == `alert`) { new LOAD.Callbacks.AlertBuilder({message: this.message, attributes: this.attributes, xml: this.xml}) }
+            if (type == `alert`) { if (this.vtec != null) { new LOAD.Callbacks.AlertBuilder({message: this.message, attributes: this.attributes, xml: this.xml}) } }
             if (type == `local storm report`) { } // TODO: Add LSR support
             if (type == `md`) { } // TODO: Add MD support
             if (type == `outlook`) { } // TODO: Add Outlook support
