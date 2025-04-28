@@ -241,7 +241,7 @@ class Routes {
     async SyncClients(_timeout=true) {
         return new Promise(async (resolve) => {
             if (!LOAD.cache.clients || LOAD.cache.clients.length === 0) { resolve(`No clients to sync`); return; }
-            let alert = await LOAD.Library.Hooks._GetRandomAlert()
+            await LOAD.Library.Hooks._GetRandomAlert()
             let dump = await LOAD.Library.Hooks.CallClientConfigurations(); 
             for (let i = 0; i < LOAD.cache.clients.length; i++) {
                 if (LOAD.cache.clients[i].readyState == LOAD.Packages.Websocket.OPEN) {
@@ -249,13 +249,14 @@ class Routes {
                     let timeout = await this.ClientTimeoutCheck(client);
                     if (timeout) { continue; }
                     for (let key in dump) {
-                        await client.send(JSON.stringify({value: dump[key], type: key, status: `fetch`}));
+                        client.send(JSON.stringify({value: dump[key], type: key, status: `fetch`}));
                     }
                     await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
                 } else {
                     await this.RemoveClient(LOAD.cache.clients[i]);
                 }
             }
+            dump = null
             resolve(`Message synced to all clients`);
         });
     }
@@ -280,9 +281,10 @@ class Routes {
                 let dump = await LOAD.Library.Hooks.CallClientConfigurations();
                 await this.CreateClient(client);
                 for (let key in dump) {
-                    await client.send(JSON.stringify({value: dump[key], type: key, status: `fetch`}));
+                    client.send(JSON.stringify({value: dump[key], type: key, status: `fetch`}));
                 }
                 await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
+                dump = null
             });
             resolve(`OK`);
         });
@@ -499,7 +501,6 @@ class Routes {
             }
         })
     }
-
 }
 
 
