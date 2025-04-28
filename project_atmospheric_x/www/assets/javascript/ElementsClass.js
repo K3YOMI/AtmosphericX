@@ -158,13 +158,19 @@ class Elements {
      * 
      * @async
      * @param {string} _text - The ID of the DOM element to update with the alert count.
-     * @param {string} _parameter - The type of alert to count (e.g., "Warning", "Watch").
+     * @param {string} _parameter - The array of alert types to count.
      * @returns {Promise<void>}
      */
 
     async Watchdog(_text, _parameter) {
-        _parameter = _parameter.replace(/%20/g, ` `)
-        let active_alerts = this.storage.active.filter(alert => alert.details.name.includes(_parameter));
-        document.getElementById(_text).innerHTML = `${_parameter}(s): ${active_alerts.length} active`
+        let total = 0
+        let name = _parameter[0].replace(/%20/g, ` `)
+        for (let i = 0; i < _parameter.length; i++) {
+            let param = _parameter[i]
+            param = param.replace(/%20/g, ` `)
+            let active_alerts = this.storage.active.filter(alert => alert.details.name.includes(param));
+            total += active_alerts.length
+        }
+        document.getElementById(_text).innerHTML = `${name}(s): ${total} active`
     }
 }

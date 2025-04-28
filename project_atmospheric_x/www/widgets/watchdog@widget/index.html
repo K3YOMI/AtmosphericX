@@ -14,7 +14,8 @@
         library.CreateSession().then(() => {
             let alert_class = new Alerts(library)
             let element_class = new Elements(library)
-            let parameter = window.location.href.split('?')[1] || ''
+            let parameter = window.location.href.split('?')[1] || 'Tornado Warning'
+            parameter = parameter.split('&')
             document.addEventListener('onCacheUpdate', async (event) => {
                 await alert_class.SyncAlerts()
                 element_class.Watchdog(`watchdog`, parameter)
