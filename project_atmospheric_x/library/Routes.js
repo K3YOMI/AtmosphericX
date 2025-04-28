@@ -240,22 +240,23 @@ class Routes {
 
     async SyncClients(_timeout=true) {
         return new Promise(async (resolve) => {
-            if (!LOAD.cache.clients || LOAD.cache.clients.length === 0) { resolve(`No clients to sync`); return; }
+            if (!LOAD.cache.clients || LOAD.cache.clients.length === 0) { resolve(`No clients to sync`); LOAD.Static.CD_A = null; return; }
             await LOAD.Library.Hooks._GetRandomAlert()
-            LOAD.CD_A = await LOAD.Library.Hooks.CallClientConfigurations(); 
+            LOAD.Static.CD_A = await LOAD.Library.Hooks.CallClientConfigurations(); 
             for (let i = 0; i < LOAD.cache.clients.length; i++) {
                 if (LOAD.cache.clients[i].readyState == LOAD.Packages.Websocket.OPEN) {
                     let client = LOAD.cache.clients[i];
                     let timeout = await this.ClientTimeoutCheck(client);
                     if (timeout) { continue; }
-                    for (let key in LOAD.CD_A) {
-                        client.send(JSON.stringify({value: LOAD.CD_A[key], type: key, status: `fetch`}));
+                    for (let key in LOAD.Static.CD_A) {
+                        client.send(JSON.stringify({value: LOAD.Static.CD_A[key], type: key, status: `fetch`}));
                     }
                     await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
                 } else {
                     await this.RemoveClient(LOAD.cache.clients[i]);
                 }
             }
+            LOAD.Static.CD_A = null;
             resolve(`Message synced to all clients`);
         });
     }
@@ -277,10 +278,10 @@ class Routes {
             LOAD.cache.ws_clients = [];
             LOAD.cache.ws_client_ratelimit = [];
             websocket.on(`connection`, async (client) => {
-                LOAD.CD_A = await LOAD.Library.Hooks.CallClientConfigurations();
+                LOAD.Static.CD_A = await LOAD.Library.Hooks.CallClientConfigurations();
                 await this.CreateClient(client);
-                for (let key in LOAD.CD_A) {
-                    client.send(JSON.stringify({value: LOAD.CD_A[key], type: key, status: `fetch`}));
+                for (let key in LOAD.Static.CD_A) {
+                    client.send(JSON.stringify({value: LOAD.Static.CD_A[key], type: key, status: `fetch`}));
                 }
                 await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
             });

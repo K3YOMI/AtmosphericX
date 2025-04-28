@@ -18,6 +18,7 @@ let LOAD = require(`./loader.js`)
 
 LOAD.Static.Application = null
 LOAD.Static.WireSession = null
+LOAD.Static.CD_A = null
 
 
 LOAD.Packages.FileSystem = require(`fs`)
