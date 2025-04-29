@@ -142,8 +142,7 @@ class ShapefileManager {
             for (let i = 0; i < _ugc.length; i++) {
                 let id = _ugc[i].trim();
                 let located = await LOAD.Library.Database.SendDatabaseQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id])
-                if (located.length > 0) { locations.push(located[0].location); continue; }
-                locations.push(id)
+                if (located.length > 0) { locations.push(located[0].location); }
             }
             locations = [...new Set(locations)];
             resolve(locations);
