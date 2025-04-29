@@ -148,7 +148,7 @@ class Formats {
 
         let tag = [`No Quick Tag Assigned`]
         for (let [key, value] of Object.entries(tag_dictionary)) { 
-            if (_event.properties.description.includes(key)) { 
+            if (_event.properties.description.toLowerCase().includes(key.toLowerCase())) {
                 if (tag.includes(`No Quick Tag Assigned`)) {tag = []}
                 if (!tag.includes(value)) { tag.push(value); }
             } 
