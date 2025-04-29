@@ -778,7 +778,7 @@ class Dashboard {
                 content: discussion,
                 parent: _dir,
                 onclick: () => {
-                    this._InjectNotification({ title: `Mesoscale Discussion #${i + 1}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this._ClearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { navigator.clipboard.writeText(wire[i].message); } }]}); 
+                    this._InjectNotification({ title: `Mesoscale Discussion #${i + 1}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this._ClearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { navigator.clipboard.writeText(discussion); } }]}); 
                 }
             });
         }
