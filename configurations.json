@@ -41,6 +41,7 @@
                 "endpoint": "xmpp://nwws-oi.weather.gov",
                 "domain": "nwws-oi.weather.gov",    
                 "xml_alerts": false,
+                "ugc_polygons": false,
                 "credentials": {
                     "username": "USERNAME_HERE",
                     "password": "PASSWORD_HERE"

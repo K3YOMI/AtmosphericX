@@ -50,6 +50,7 @@ class AlertBuilder {
             let message = this.message.split(/(?=\$\$)/g)
             let messages = message.map(msg => msg.trim());
             let configurations = LOAD.cache.configurations.definitions
+            let wire = LOAD.cache.configurations.sources.primary_sources.noaa_weather_wire_service
             let start = new Date().getTime()
             for (let i = 0; i < messages.length; i++) {
                 let msg = message[i]
@@ -60,7 +61,7 @@ class AlertBuilder {
                 let ugc = await ugc_h.ParseUGC()
                 if (vtec != null && ugc != null) {
                     let coords = await raw_h.GetPolygonCoordinatesByText()
-                    if (coords.length == 0) { coords = await LOAD.Library.ShapefileManager.GetCoordinates(ugc.zones) }
+                    if (coords.length == 0 && wire.ugc_polygons == true) { coords = await LOAD.Library.ShapefileManager.GetCoordinates(ugc.zones) }
                     let tornado = await raw_h.GetTornado()
                     let hail = await raw_h.GetHailSize()
                     let wind = await raw_h.GetWindGusts()

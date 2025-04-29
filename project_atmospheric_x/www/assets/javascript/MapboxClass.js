@@ -249,25 +249,32 @@ class Mapbox {
             this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.light,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,false);
         }
         if (this.auto) {
-            let randomAlert = active[Math.floor(Math.random() * active.length)];
-            let coords = randomAlert.raw.geometry.coordinates[0].map(point => [point[0], point[1]]);
-            this.storage.mapbox.flyTo({
-                center: [coords[0][0], coords[0][1]],
-                zoom: 7,
-                speed: 0.05
-            });
-            let event_color = scheme.find(color => randomAlert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type === "Default");
-            let location = randomAlert.details.locations;
-            let sender = randomAlert.details.sender;
-            let name = randomAlert.details.name;
-            let type = randomAlert.details.type;
-            let issued = new Date(randomAlert.details.issued).toLocaleString();
-            let expires = new Date(randomAlert.details.expires).toLocaleString();  
-            let tags = randomAlert.details.tag;
-            let description = `<b>${name} (${type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Issued:</b> ${issued}<br><b>Expires:</b> ${expires}<br>Tags: ${tags}`;  this._CreatePolygon(`mapbox-polygons`, coords, event_color.color.light, description, true);
-            this._CreatePolygon(`mapbox-polygons`, coords, event_color.color.light, description, false);
-        }
-    }
+            let randomAlert;
+            let coords;
+            let attempts = 0;
+
+            // Ensure a valid polygon is found
+            do {
+                randomAlert = active[Math.floor(Math.random() * active.length)];
+                coords = randomAlert.raw.geometry?.coordinates?.[0]?.map(point => [point[0], point[1]]);
+                attempts++;
+            } while ((!coords || coords.length === 0) && attempts < active.length);
+
+            if (coords && coords.length > 0) {
+                let event_color = scheme.find(color => randomAlert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type === "Default");
+                let location = randomAlert.details.locations;
+                let sender = randomAlert.details.sender;
+                let name = randomAlert.details.name;
+                let type = randomAlert.details.type;
+                let issued = new Date(randomAlert.details.issued).toLocaleString();
+                let expires = new Date(randomAlert.details.expires).toLocaleString();
+                let tags = randomAlert.details.tag;
+                let description = `<b>${name} (${type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Issued:</b> ${issued}<br><b>Expires:</b> ${expires}<br>Tags: ${tags}`;
+                this._CreatePolygon(`mapbox-polygons`, coords, event_color.color.light, description, true, 0.5, 9);
+            } else {
+                console.warn("No valid alert polygon found.");
+            }
+        }  }
 
     /**
       * @function _GenerateStormReports
@@ -314,7 +321,7 @@ class Mapbox {
       * @returns {Promise<void>} Resolves when the polygon has been added to the map.
       */
 
-    async _CreatePolygon(_layer = `default-layer`, _geometry, _border = `rgb(42,81,224)`, _description = `No Description Available`, _autozoom = true) {
+    async _CreatePolygon(_layer = `default-layer`, _geometry, _border = `rgb(42,81,224)`, _description = `No Description Available`, _autozoom = true, ease=0.5, zoom=7) {
         let id = Math.random().toString(36).substring(2, 15);
         if (!this.storage.mapbox.getLayer(_layer)) { return; }
         if (this.storage.polygons == undefined) { this.storage.polygons = []; }
@@ -366,7 +373,7 @@ class Mapbox {
         if (_autozoom) { popup.addTo(this.storage.mapbox); }
 
         if (_autozoom) {
-            this.storage.mapbox.flyTo({ center: [centerLng, centerLat + 0.6], zoom: 7, speed: 0.5 });
+            this.storage.mapbox.flyTo({ center: [centerLng, centerLat], zoom: zoom, speed: ease });
 
             if (this.storage.eagle != undefined) { clearInterval(this.storage.eagle); }
         }
