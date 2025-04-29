@@ -137,7 +137,6 @@ class Listener {
                             let time1 = new Date(history1.time).getTime();
                             let time2 = new Date(history2.time).getTime();
                             let time_diff = Math.abs(time1 - time2);
-                            console.log(time_diff);
                             if (time_diff < 1000) {
                                 let combinedLocations = prior_locations + `; ` + LOAD.cache.wire.features[find].properties.areaDesc;
                                 let uniqueLocations = [...new Set(combinedLocations.split(';').map(location => location.trim()))];
