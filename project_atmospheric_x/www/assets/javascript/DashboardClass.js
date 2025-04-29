@@ -875,7 +875,8 @@ class Dashboard {
         if (wire.length == 0) {
             this._InjectDataCard({ title: `Awaiting NOAA Weather Wire Service...`,content: `<center>No NOAA Weather Wire Service Information Available<br>Do you have valid credentials and did you enable it?</center>`,parent: _dir})
         }
-        wire.reverse()
+        // Sort by issued.time
+        wire.sort((a, b) => new Date(b.issued) - new Date(a.issued))
         for (let i = 0; i < wire.length; i++) {
             let message = wire[i].message.replace(/\n/g, '<br>')
             let issued = await this.library.GetTimeInformation(wire[i].issued)
