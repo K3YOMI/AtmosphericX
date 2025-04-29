@@ -38,7 +38,7 @@ command_node = [
     }},
     {"cmd": "/force", "description": "Force update all clients", "args": [], "example": "/force", "function": async (args) => {
         LOAD.Library.Hooks.RefreshConfigurations()
-        await LOAD.Library.Routes.SyncClients()
+        LOAD.Library.Routes.SyncClients()
         LOAD.Library.Hooks.Log(`AtmosphericX.CommandExecution : Force update all connected clients`)
         LOAD.Library.Hooks.PrintLog(`AtmosphericX.CommandExecution`, `Force update all connected clients`)
     }},

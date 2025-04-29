@@ -209,17 +209,23 @@ class Routes {
      * @returns {Promise<boolean>}
      */
 
-    async ClientTimeoutCheck(_client = undefined) {
+    async ClientTimeoutCheck(_client = undefined, _type=undefined) {
         return new Promise(async (resolve) => {
             if (_client == undefined) { resolve(true); return; }
+            if (_type == undefined) { _type = `configurations`; }
             let index = LOAD.cache.clients.indexOf(_client);
             if (index > -1) {
-                let lastTimer = LOAD.cache.clients_timer[index].timer;
-                let currentTime = new Date().getTime();
-                if (currentTime - lastTimer < LOAD.cache.configurations.project_settings.websocket_timeout * 1000) {
-                    resolve(true);
-                } else {
-                    LOAD.cache.clients_timer[index].timer = currentTime; 
+                if (LOAD.cache.clients_timer[index][_type] == undefined) { LOAD.cache.clients_timer[index][_type] = {timer: new Date().getTime()}; }
+                let last_timer = LOAD.cache.clients_timer[index][_type].timer;
+                let current_time = new Date().getTime();
+                let table = LOAD.cache.configurations.project_settings.websocket_settings
+                let in_priority = table.priority_websockets.types.includes(_type)
+                let in_general = table.general_websockets.types.includes(_type)
+                let default_timer = 1
+                if (in_priority) { default_timer = table.priority_websockets.timeout }
+                if (in_general) { default_timer = table.general_websockets.timeout }
+                if (current_time - last_timer > default_timer * 1000) { // if this is greater than the timeout
+                    LOAD.cache.clients_timer[index][_type].timer = current_time;
                     resolve(false);
                 }
             }
@@ -238,7 +244,7 @@ class Routes {
       * A Promise that resolves with a status message indicating the result of the sync operation.
       */
 
-    async SyncClients(_timeout=true) {
+    async SyncClients() {
         return new Promise(async (resolve) => {
             if (!LOAD.cache.clients || LOAD.cache.clients.length === 0) { resolve(`No clients to sync`); LOAD.Static.CD_A = null; return; }
             await LOAD.Library.Hooks._GetRandomAlert()
@@ -246,12 +252,14 @@ class Routes {
             for (let i = 0; i < LOAD.cache.clients.length; i++) {
                 if (LOAD.cache.clients[i].readyState == LOAD.Packages.Websocket.OPEN) {
                     let client = LOAD.cache.clients[i];
-                    let timeout = await this.ClientTimeoutCheck(client);
-                    if (timeout) { continue; }
+                    let send = false
                     for (let key in LOAD.Static.CD_A) {
-                        client.send(JSON.stringify({value: LOAD.Static.CD_A[key], type: key, status: `fetch`}));
+                        let timeout = await this.ClientTimeoutCheck(client, key);
+                        if (timeout) { continue; }
+                        send = true
+                        client.send(JSON.stringify({value: LOAD.Static.CD_A[key], type: key, status: `fetch`}))
                     }
-                    await client.send(JSON.stringify({value: [], type: ``, status: `update`}));
+                    if (send) { client.send(JSON.stringify({value: [], type: ``, status: `update`})) }
                 } else {
                     await this.RemoveClient(LOAD.cache.clients[i]);
                 }

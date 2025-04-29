@@ -96,12 +96,21 @@
     "project_settings": {
         "http_useragent": "AtmosphericX/v7.0.0",
         "global_update": 10,
-        "websocket_timeout": 2,
         "priority_alerts": true,
         "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
         "beep_only": false,
         "show_updates": true,
-        "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"]
+        "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"],
+        "websocket_settings": {
+            "priority_websockets": {
+                "timeout": 1,
+                "types": ["warnings", "watches", "broadcasts", "header", "random", "active", "manual"]
+            },
+            "general_websockets": {
+                "timeout": 30,
+                "types": ["configurations", "statistics", "wire", "reports", "stations", "spotters", "lightning", "mesoscale"]
+            }
+        }
     },
     "definitions": {
         "vtec_regexp": "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z",
@@ -121,6 +130,7 @@
             "a tornado is on the ground": "Confirmed Tornado",
             "Weather spotters reported funnel cloud": "Confirmed Funnel Cloud by Storm Spotters",
             "Public confirmed tornado": "Public reports of Tornado",
+            "Radar Confirmed": "Radar Confirmed",
             "tornado was reported briefly on the ground": "Tornado no longer on ground",
             "spotters indicate that a funnel cloud continues with this storm": "Funnel Cloud Continues",
             "A tornado may develop at any time": "Potentional still exists for Tornado to form",

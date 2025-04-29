@@ -384,66 +384,70 @@ class APICalls {
       */
 
     async Next(_raw=undefined, _force_fallback=false) {
-        let calls = LOAD.cache.configurations.sources
-        let time = new Date()
-        this.data = {}
-        this.retries = 0
-        this.results = ``
-        let handles = [
-            {name: 'national_weather_service', handle: calls.primary_sources.national_weather_service, timer: calls.primary_sources.national_weather_service.cache_time, contradictions: [`noaa_weather_wire_service`], pointer: `_NationalWeatherServiceAlerts`},
-            {name: 'spotter_network', handle: calls.miscellaneous_sources.spotter_network, timer: calls.miscellaneous_sources.spotter_network.cache_time, contradictions: [], pointer: `_SpotterNetworkPlacefile`},
-            {name: 'spc_mesoscale_discussions', handle: calls.miscellaneous_sources.spc_mesoscale_discussions, timer: calls.miscellaneous_sources.spc_mesoscale_discussions.cache_time, contradictions: [], pointer: `_SPCMesoscaleDiscussionPlacefile`},
-            {name: 'lightning_reports', handle: calls.miscellaneous_sources.lightning_reports, timer: calls.miscellaneous_sources.lightning_reports.cache_time, contradictions: [], pointer: `_LightningStrikesPlacefile`},
-            {name: 'mping_reports', handle: calls.miscellaneous_sources.mping_reports, timer: calls.miscellaneous_sources.mping_reports.cache_time, contradictions: [`iem_local_storm_reports`, `grlevelx_reports`, `noaa_weather_wire_service_lsr`], pointer: `_mPingReports`},
-            {name: 'iem_local_storm_reports', handle: calls.miscellaneous_sources.iem_local_storm_reports, timer: calls.miscellaneous_sources.iem_local_storm_reports.cache_time, contradictions: [`mping_reports`, `grlevelx_reports`, `noaa_weather_wire_service_lsr`], pointer: `_IowaEnvironmentalMesonetReports`},
-            {name: 'grlevelx_reports', handle: calls.miscellaneous_sources.grlevelx_reports, timer: calls.miscellaneous_sources.grlevelx_reports.cache_time, contradictions: [`mping_reports`, `iem_local_storm_reports`, `noaa_weather_wire_service_lsr`], pointer: `_GRLevelXReports`},
-            {name: 'nexrad_stations', handle: calls.miscellaneous_sources.nexrad_stations, timer: calls.miscellaneous_sources.nexrad_stations.cache_time, contradictions: [], pointer: `_NexradStations`},
-            {name: 'noaa_weather_wire_service', handle: calls.primary_sources.noaa_weather_wire_service, timer: 1, contradictions: [`national_weather_service`], pointer: `_NullRoute`},        ];
-        if (_raw == undefined) {
-            handles.forEach(handle => {
-                let contradictions = handle.contradictions;
-                contradictions.forEach(contradiction => {
-                    let index = handles.findIndex(handle => handle.name === contradiction);
-                    if (index !== -1 && handles[index].handle.enabled=== true) {
-                        if (handle.handle.enabled === true) {
-                            LOAD.Library.Hooks.PrintLog(`${this.name}.Warning`, `Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
-                            LOAD.Library.Hooks.Log(`${this.name}.Warning : Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
-                            handles[index].handle.enabled = false;
+        return new Promise(async (resolve, reject) => {
+            let calls = LOAD.cache.configurations.sources
+            let time = new Date()
+            this.data = {}
+            this.retries = 0
+            this.results = ``
+            let handles = [
+                {name: 'national_weather_service', handle: calls.primary_sources.national_weather_service, timer: calls.primary_sources.national_weather_service.cache_time, contradictions: [`noaa_weather_wire_service`], pointer: `_NationalWeatherServiceAlerts`},
+                {name: 'spotter_network', handle: calls.miscellaneous_sources.spotter_network, timer: calls.miscellaneous_sources.spotter_network.cache_time, contradictions: [], pointer: `_SpotterNetworkPlacefile`},
+                {name: 'spc_mesoscale_discussions', handle: calls.miscellaneous_sources.spc_mesoscale_discussions, timer: calls.miscellaneous_sources.spc_mesoscale_discussions.cache_time, contradictions: [], pointer: `_SPCMesoscaleDiscussionPlacefile`},
+                {name: 'lightning_reports', handle: calls.miscellaneous_sources.lightning_reports, timer: calls.miscellaneous_sources.lightning_reports.cache_time, contradictions: [], pointer: `_LightningStrikesPlacefile`},
+                {name: 'mping_reports', handle: calls.miscellaneous_sources.mping_reports, timer: calls.miscellaneous_sources.mping_reports.cache_time, contradictions: [`iem_local_storm_reports`, `grlevelx_reports`, `noaa_weather_wire_service_lsr`], pointer: `_mPingReports`},
+                {name: 'iem_local_storm_reports', handle: calls.miscellaneous_sources.iem_local_storm_reports, timer: calls.miscellaneous_sources.iem_local_storm_reports.cache_time, contradictions: [`mping_reports`, `grlevelx_reports`, `noaa_weather_wire_service_lsr`], pointer: `_IowaEnvironmentalMesonetReports`},
+                {name: 'grlevelx_reports', handle: calls.miscellaneous_sources.grlevelx_reports, timer: calls.miscellaneous_sources.grlevelx_reports.cache_time, contradictions: [`mping_reports`, `iem_local_storm_reports`, `noaa_weather_wire_service_lsr`], pointer: `_GRLevelXReports`},
+                {name: 'nexrad_stations', handle: calls.miscellaneous_sources.nexrad_stations, timer: calls.miscellaneous_sources.nexrad_stations.cache_time, contradictions: [], pointer: `_NexradStations`},
+                {name: 'noaa_weather_wire_service', handle: calls.primary_sources.noaa_weather_wire_service, timer: 1, contradictions: [`national_weather_service`], pointer: `_NullRoute`},        
+            ];
+            if (_raw == undefined) {
+                handles.forEach(handle => {
+                    let contradictions = handle.contradictions;
+                    contradictions.forEach(contradiction => {
+                        let index = handles.findIndex(handle => handle.name === contradiction);
+                        if (index !== -1 && handles[index].handle.enabled=== true) {
+                            if (handle.handle.enabled === true) {
+                                LOAD.Library.Hooks.PrintLog(`${this.name}.Warning`, `Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
+                                LOAD.Library.Hooks.Log(`${this.name}.Warning : Conflicting API detected: ${handle.name} and ${contradiction}. Disabling ${contradiction}.`);
+                                handles[index].handle.enabled = false;
+                            }
                         }
-                    }
+                    })
                 })
-            })
-            let active = handles.filter(handle => handle.handle.enabled == true)
-            active.forEach(handle => {
-                if (LOAD.cache.time[handle.name] == undefined) {LOAD.cache.time[handle.name] = Date.now() - handle.timer * 1000}
-            })
-            let ready = active.filter(handle => (Date.now() - LOAD.cache.time[handle.name]) / 1000 >= handle.timer) // filter out the ones ready to be requested
-            for (const handle of ready) {
-                LOAD.cache.time[handle.name] = Date.now();
-                this.retries = 0
-                await this[handle.pointer](handle.handle);
-            }    
-        }
-        if (_raw != undefined) { 
-            if (LOAD.cache.time[`nwws`] == undefined) {LOAD.cache.time[`nwws`] = 0}
-            if (LOAD.cache.time[`nwws`] < Date.now() - calls.primary_sources.noaa_weather_wire_service.cache_time * 1000) {
-                LOAD.cache.time[`nwws`] = Date.now()
-                this.data.wire = _raw; 
+                let active = handles.filter(handle => handle.handle.enabled == true)
+                active.forEach(handle => {
+                    if (LOAD.cache.time[handle.name] == undefined) {LOAD.cache.time[handle.name] = Date.now() - handle.timer * 1000}
+                })
+                let ready = active.filter(handle => (Date.now() - LOAD.cache.time[handle.name]) / 1000 >= handle.timer) // filter out the ones ready to be requested
+                for (const handle of ready) {
+                    LOAD.cache.time[handle.name] = Date.now();
+                    this.retries = 0
+                    await this[handle.pointer](handle.handle);
+                }    
             }
-        }
-        if (_force_fallback != false) { 
-            if (LOAD.cache.time.national_weather_service == undefined) {LOAD.cache.time.national_weather_service = Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000}
-            if (LOAD.cache.time.national_weather_service < Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000) { 
-                LOAD.cache.time.national_weather_service = Date.now()
-                await this._NationalWeatherServiceAlerts(calls.primary_sources.national_weather_service);
+            if (_raw != undefined) { 
+                if (LOAD.cache.time[`nwws`] == undefined) {LOAD.cache.time[`nwws`] = 0}
+                if (LOAD.cache.time[`nwws`] < Date.now() - calls.primary_sources.noaa_weather_wire_service.cache_time * 1000) {
+                    LOAD.cache.time[`nwws`] = Date.now()
+                    this.data.wire = _raw; 
+                }
             }
-        }
-        if (Object.keys(this.data).length > 0) {
-            if (this.results != ``) { LOAD.Library.Hooks.PrintLog(`${this.name}.Get`, `Cache updated (Taken ${((new Date() - time) / 1000).toFixed(2)}s) |${this.results}`) }
-            if (this.data.wire != undefined) { this.data.wire = {features: LOAD.cache.wire.features.filter(feature => feature !== undefined && new Date(feature.properties.expires).getTime() / 1000 > new Date().getTime() / 1000)} }
-            return await LOAD.Library.Formats.build(this.data, calls.primary_sources.noaa_weather_wire_service.enabled)
-        }
-        return `No cache update available`;
+            if (_force_fallback != false) { 
+                if (LOAD.cache.time.national_weather_service == undefined) {LOAD.cache.time.national_weather_service = Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000}
+                if (LOAD.cache.time.national_weather_service < Date.now() - calls.primary_sources.national_weather_service.cache_time * 1000) { 
+                    LOAD.cache.time.national_weather_service = Date.now()
+                    await this._NationalWeatherServiceAlerts(calls.primary_sources.national_weather_service);
+                }
+            }
+            if (Object.keys(this.data).length > 0) {
+                if (this.results != ``) { LOAD.Library.Hooks.PrintLog(`${this.name}.Get`, `Cache updated (Taken ${((new Date() - time) / 1000).toFixed(2)}s) |${this.results}`) }
+                if (this.data.wire != undefined) { this.data.wire = {features: LOAD.cache.wire.features.filter(feature => feature !== undefined && new Date(feature.properties.expires).getTime() / 1000 > new Date().getTime() / 1000)} }
+                await LOAD.Library.Formats.build(this.data, calls.primary_sources.noaa_weather_wire_service.enabled)
+                return resolve(this.data)
+            }
+            resolve(`No cache update available`);
+        })
     }
 }
 

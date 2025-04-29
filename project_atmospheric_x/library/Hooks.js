@@ -202,8 +202,8 @@ class Hooks {
                 await this.GetLatestHostingStats(true)
                 await this.CleanupStorage()
                 setTimeout(async () => { 
-                    await LOAD.Library.APICalls.Next()
-                    await LOAD.Library.APICalls.Next(LOAD.cache.wire);
+                    LOAD.Library.APICalls.Next(LOAD.cache.wire);
+                    LOAD.Library.APICalls.Next()
                     LOAD.cache.requesting = false; 
                 }, 1000);
             }   
@@ -367,7 +367,7 @@ class Hooks {
             this.Log(`${this.name}.Manual : ${LOAD.cache.accounts[_req.session.account].username} cleared manual activation alert (IP: ${_req.connection.remoteAddress}, UA: ${_req.headers['user-agent']})`);
             this.PrintLog(`${this.name}.Manual`, `Manual activation alert cleared by ${LOAD.cache.accounts[_req.session.account].username}`);
         }
-        await LOAD.Library.Routes.SyncClients()
+        LOAD.Library.Routes.SyncClients()
     }
 
     /**
@@ -423,7 +423,7 @@ class Hooks {
             this.PrintLog(`${this.name}.Notification`, `Notification cleared by ${LOAD.cache.accounts[_req.session.account].username}`);
             LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Notification cleared successfully.` });
         }
-        await LOAD.Library.Routes.SyncClients()
+        LOAD.Library.Routes.SyncClients()
     }
 
     /**
@@ -479,7 +479,7 @@ class Hooks {
             this.PrintLog(`${this.name}.Status`, `Status alert cleared by ${LOAD.cache.accounts[_req.session.account].username}`);
             LOAD.Library.Routes._GiveResponseToSession(_req, _res, { code: 200, message: `Status alert cleared successfully.` });
         }
-        await LOAD.Library.Routes.SyncClients()
+        LOAD.Library.Routes.SyncClients()
     }
 }
 
