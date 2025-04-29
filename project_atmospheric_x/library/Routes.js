@@ -224,7 +224,7 @@ class Routes {
                 let default_timer = 1
                 if (in_priority) { default_timer = table.priority_websockets.timeout }
                 if (in_general) { default_timer = table.general_websockets.timeout }
-                if (current_time - last_timer > default_timer * 1000) { // if this is greater than the timeout
+                if (current_time - last_timer > default_timer * 1000) {
                     LOAD.cache.clients_timer[index][_type].timer = current_time;
                     resolve(false);
                 }

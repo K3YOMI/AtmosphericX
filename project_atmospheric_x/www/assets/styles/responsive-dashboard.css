@@ -4,6 +4,6 @@
     .sidebar-logo { width: 200px; height: auto; }
     .wrapper { width: 80%; margin-left: 80px; }
     .data-card-parent { padding-right: 30px; }
-    .popup-box { width: auto; margin-left: -125px; scale: 0.8; }
+    .popup-box { width: auto; margin-left: -100px; scale: 0.8; }
     .hamburger-menu { display: block; position: fixed; top: 0px; left: 0px; border-radius: 5px; font-size: 1.2em; padding: 20px; z-index: 2; }
 }

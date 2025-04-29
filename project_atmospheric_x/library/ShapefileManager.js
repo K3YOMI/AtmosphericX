@@ -118,7 +118,7 @@ class ShapefileManager {
                     let geo = JSON.parse(located[0].geometry);
                     if (geo && geo.type === "Polygon") {
                         coords = coords.concat(geo.coordinates[0].map(coord => [coord[0], coord[1]]));
-                        break; // Only return the first matching polygon's coordinates
+                        break;
                     }
                 }
             }

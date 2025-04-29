@@ -54,7 +54,6 @@ class Listener {
             let wire_domain = wire_cfg.domain
             if (!wire_enabled) { return }
             LOAD.Static.WireSession = LOAD.Packages.XMPP.client({service: wire_service, domain: wire_domain, username: wire_username, password: wire_password}).setMaxListeners(0);
-
             LOAD.Static.WireSession.on(`online`, async (_address) => {
                 LOAD.Static.WireSession.send(LOAD.Packages.XMPP.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${wire_username}-AtmosX`, xmlns: 'http://jabber.org/protocol/muc' }));
                 LOAD.Library.Hooks.PrintLog(`${this.name}`, `Connected to ${wire_domain}`)
@@ -122,14 +121,30 @@ class Listener {
                 }
             }
             if (action == `Extended` || action == `Updated` || action == `Correction` || action == `Upgraded`) {
-                if (find != -1) {    
+                if (find != -1) {  
                     let new_history = LOAD.cache.wire.features[find].history.concat(data.history);
                     let prior_sender = LOAD.cache.wire.features[find].properties.senderName;
+                    let prior_locations = LOAD.cache.wire.features[find].properties.areaDesc;
                     new_history = new_history.sort((a, b) => new Date(b.time) - new Date(a.time));
                     LOAD.cache.wire.features[find] = data;
                     LOAD.cache.wire.features[find].properties.senderName = prior_sender;
                     LOAD.cache.wire.features[find].properties.parameters = data.properties.parameters;
                     LOAD.cache.wire.features[find].history = new_history;
+                    for (let i = 0; i < new_history.length; i++) {
+                        for (let j = i + 1; j < new_history.length; j++) {
+                            let history1 = new_history[i];
+                            let history2 = new_history[j];
+                            let time1 = new Date(history1.time).getTime();
+                            let time2 = new Date(history2.time).getTime();
+                            let time_diff = Math.abs(time1 - time2);
+                            console.log(time_diff);
+                            if (time_diff < 1000) {
+                                let combinedLocations = prior_locations + `; ` + LOAD.cache.wire.features[find].properties.areaDesc;
+                                let uniqueLocations = [...new Set(combinedLocations.split(';').map(location => location.trim()))];
+                                LOAD.cache.wire.features[find].properties.areaDesc = uniqueLocations.join('; ');
+                            }
+                        }
+                    }
                     LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${ms})`);
                 } else { 
                     LOAD.cache.wire.features.push(data);
@@ -138,7 +153,6 @@ class Listener {
             }
             if (action == `Issued` || action == `Alert`) {
                 if (find != -1) {
-                    LOAD.cache.wire.features[find] = data;
                     LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] [Cache] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);
                 } else { 
                     LOAD.Library.Hooks.PrintLog(`${this.name}`, `[!] [${type}] New Alert Added >> ${data.properties.event} (${data.tracking}) (${ms})`);

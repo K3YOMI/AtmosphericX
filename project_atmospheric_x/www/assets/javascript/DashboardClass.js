@@ -194,8 +194,7 @@ class Dashboard {
         let state = menu.getAttribute(`data-state`);
         if (state == `open`) {
             menu.setAttribute(`data-state`, `closed`);
-            // change menu class to <i class="fa-solid fa-arrow-left"></i>
-            menu.style.transform = `translateX(-280%)`; // Keep a portion visible for clicking
+            menu.style.transform = `translateX(-280%)`;
             menu.style.transition = `transform 0.3s ease-in-out`;
             return;
         }
@@ -379,13 +378,22 @@ class Dashboard {
         popup.className = `popup-box`;
         popup.style.display = `block`;
         popup.innerHTML = `
-            <div class="popup-content">
-                <button class="popup-close" onclick="this.parentElement.parentElement.remove();">&times;</button>
-                <h1 id='_popup.title' class="popup-title">${_metadata.title}</h1>
-                <hr class="popup-hr">
-                <p id='_popup.description' class="popup-description" style="${_metadata.description.length > 500 ? 'max-height: 400px; overflow-y: auto;' : ''}">${_metadata.description}</p>
-                <div class="popup-inputs" style="grid-template-columns: repeat(${_metadata.rows}, 1fr);"></div>
-            </div>`;    
+        <div class="popup-content">
+            <button class="popup-close" onclick="this.parentElement.parentElement.remove();">&times;</button>
+            <h1 id='_popup.title' class="popup-title">${_metadata.title}</h1>
+            <hr class="popup-hr">
+            <p id='_popup.subtext' class="popup-description" style="${_metadata.subtext && _metadata.subtext.length > 250 ? 'max-height: 200px; overflow-y: auto;' : ''}">${_metadata.subtext || ''}</p>
+            <p id='_popup.description' class="popup-description" style="${_metadata.description.length > 250 ? 'max-height: 300px; overflow-y: auto;' : ''}">${_metadata.description}</p>
+            <div class="popup-inputs" style="grid-template-columns: repeat(${_metadata.rows}, 1fr);"></div>
+        </div>`;
+
+        if (_metadata.subtext == undefined || _metadata.subtext == ``) {
+            let subtextElement = popup.querySelector(`#_popup\\.subtext`);
+            if (subtextElement) {
+                subtextElement.remove();
+            }
+        }
+
         let popup_content = popup.querySelector(`.popup-inputs`);
         if (array_inputs) {
             array_inputs.forEach(input => {
@@ -535,7 +543,8 @@ class Dashboard {
             }
             let title = alert.details.name;
             let status = alert.details.type;
-            let location = alert.details.locations.substring(0, 55);
+            let location = alert.details.locations.substring(0, 65)
+            if (alert.details.locations.length > 65) { location = location + `...` }
             let issued = alert.details.issued;
             let expires = alert.details.expires;
             let wind = alert.details.wind;
@@ -569,10 +578,23 @@ class Dashboard {
                     let description_history = ``
                     for (let i = 0; i < history.length; i++) {
                         let segment = history[i]
-                        description_history += `\n\n==================== ${segment.act} ====================\n\n${segment.desc}`;
+                        let separator = "-".repeat(5)
+                        description_history += `\n\n${separator} ${segment.act} ${separator}\n\n${segment.desc}`;  
                     }
                     if (description_history == ``) { description_history = description }
-                    this._InjectNotification({ title: `${title} (${status})`,  description: description_history.replace(/\n/g, `<br>`), rows: 2,  parent: `_body.base`,  buttons: [ { name: `Close`, className: `button-danger`, function: () => { this._ClearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { navigator.clipboard.writeText(description_history); } }, ]});    
+                    let subtitle = `Locations: ${alert.details.locations}<br>Expires: ${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`
+                    this._InjectNotification({ 
+                        title: `${title} (${status})`, 
+                        subtext: subtitle,
+                        description: description_history.replace(/\n/g, `<br>`), 
+                        rows: 2, 
+                        parent: `_body.base`,  
+                        buttons: [
+                            { name: `Close`, className: `button-danger`, function: () => { this._ClearAllPopups(); } }, 
+                            { name: `Copy Card`, className: `button-ok`, function: () => { navigator.clipboard.writeText(subtitle.replace(/<br>/g, `\n`)) } },
+                            { name: `Copy Description`, className: `button-ok`, function: () => { navigator.clipboard.writeText(description) } },
+                            { name: `Copy History`, className: `button-ok`, function: () => { navigator.clipboard.writeText(description_history) } }
+                    ]});    
                 }
             });
         }
@@ -604,7 +626,8 @@ class Dashboard {
             let alert = alerts[i];
             let title = alert.details.name;
             let status = alert.details.type;
-            let location = alert.details.locations.substring(0, 55);
+            let location = alert.details.locations.substring(0, 65)
+            if (alert.details.locations.length > 65) { location = location + `...` }
             let issued = alert.details.issued;
             let expires = alert.details.expires;
             let wind = alert.details.wind;
@@ -625,26 +648,37 @@ class Dashboard {
             let hours = Math.floor(minutes / 60);
             seconds = seconds % 60;
             minutes = minutes % 60;
-
             if (!hail.includes(`IN`) && hail != `N/A`) { hail += ` IN`}
             if (!wind.includes(`MPH`) && wind != `N/A`) { wind += ` MPH`}
-
             let t_string = `Expires in: ${hours} hours ${minutes} minutes ${seconds} seconds`
             if (hours < 0) { t_string = `Expires in: Now`}
             if (hours > 9999) { t_string = `Expires in: Until Further Notice`}
             if (JSON.stringify(alert.details).toLowerCase().includes(_keyword.toLowerCase()) == false) { continue }
             this._InjectDataCard({
                 title: `${title} (${status})`,
-                content: `Location: ${location}<br>Issued: ${issued}<br>${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`,
+                content: `Location: ${location}<br>Issued: ${issued}<br>${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail}<br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`,
                 parent: _dir,
                 onclick: () => {
                     let description_history = ``
                     for (let i = 0; i < history.length; i++) {
                         let segment = history[i]
-                        description_history += `\n\n==================== ${segment.act} ====================\n\n${segment.desc}`;
+                        let separator = "-".repeat(5)
+                        description_history += `\n\n${separator} ${segment.act} ${separator}\n\n${segment.desc}`;  
                     }
                     if (description_history == ``) { description_history = description }
-                    this._InjectNotification({ title: `${title} (${status})`,  description: description_history.replace(/\n/g, `<br>`), rows: 2,  parent: `_body.base`,  buttons: [ { name: `Close`, className: `button-danger`, function: () => { this._ClearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { navigator.clipboard.writeText(description_history); } }, ]});    
+                    let subtitle = `Locations: ${alert.details.locations}<br>Expires: ${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`
+                    this._InjectNotification({ 
+                        title: `${title} (${status})`, 
+                        subtext: subtitle,
+                        description: description_history.replace(/\n/g, `<br>`), 
+                        rows: 2,  
+                        parent: `_body.base`,  
+                        buttons: [
+                            { name: `Close`, className: `button-danger`, function: () => { this._ClearAllPopups(); } }, 
+                            { name: `Copy Card`, className: `button-ok`, function: () => { navigator.clipboard.writeText(subtitle.replace(/<br>/g, `\n`)) } },
+                            { name: `Copy Description`, className: `button-ok`, function: () => { navigator.clipboard.writeText(description) } },
+                            { name: `Copy History`, className: `button-ok`, function: () => { navigator.clipboard.writeText(description_history) } }
+                    ]});    
                 }
             });
         }
@@ -875,7 +909,6 @@ class Dashboard {
         if (wire.length == 0) {
             this._InjectDataCard({ title: `Awaiting NOAA Weather Wire Service...`,content: `<center>No NOAA Weather Wire Service Information Available<br>Do you have valid credentials and did you enable it?</center>`,parent: _dir})
         }
-        // Sort by issued.time
         wire.sort((a, b) => new Date(b.issued) - new Date(a.issued))
         for (let i = 0; i < wire.length; i++) {
             let message = wire[i].message.replace(/\n/g, '<br>')
@@ -909,9 +942,9 @@ class Dashboard {
 
     async _SpawnGeneralSetupHub(_dir=`hub.plugins`) {
         document.getElementById(_dir).innerHTML = ``
-        let url = window.location.hostname || 'localhost'; // Default to localhost if no hostname is specified
-        let port = window.location.port || '80'; // Default to 80 if no port is specified
-        let protocol = window.location.protocol || 'http'; // Default to http if no protocol is specified     
+        let url = window.location.hostname || 'localhost';
+        let port = window.location.port || '80';
+        let protocol = window.location.protocol || 'http';  
         this._InjectDataCard({
             title: `Download Latest Template`,
             content: `<button class="button-ok" style="width: 100%; margin-top: 5px;">Download</button>`,

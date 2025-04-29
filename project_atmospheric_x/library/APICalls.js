@@ -419,7 +419,7 @@ class APICalls {
                 active.forEach(handle => {
                     if (LOAD.cache.time[handle.name] == undefined) {LOAD.cache.time[handle.name] = Date.now() - handle.timer * 1000}
                 })
-                let ready = active.filter(handle => (Date.now() - LOAD.cache.time[handle.name]) / 1000 >= handle.timer) // filter out the ones ready to be requested
+                let ready = active.filter(handle => (Date.now() - LOAD.cache.time[handle.name]) / 1000 >= handle.timer)
                 for (const handle of ready) {
                     LOAD.cache.time[handle.name] = Date.now();
                     this.retries = 0

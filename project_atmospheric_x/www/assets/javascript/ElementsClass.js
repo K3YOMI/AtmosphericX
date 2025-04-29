@@ -49,7 +49,7 @@ class Elements {
         let max_header_len = this.header_widget.max_header_length
         if (this.storage.header == ``) {
             let alert_rotate = this.header_widget.rotate_through_alerts 
-            let rng = Math.floor(Math.random() * 100) // 1 in 100 chance to rotate through alerts
+            let rng = Math.floor(Math.random() * 100)
             if (rng < 75) {
                 if (alert_rotate.enabled) {
                     let find_alert_types = alert_rotate.cycled_types
