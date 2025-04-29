@@ -169,7 +169,16 @@ class ShapefileManager {
             for (let i = 0; i < ugc_s.length; i++) {
                 if (/^[A-Z]/.test(ugc_s[i])) { 
                     state = ugc_s[i].substring(0, 2);
-                    zones.push(ugc_s[i]); 
+                    if (ugc_s[i].includes('>')) {
+                        let [start, end] = ugc_s[i].split('>');
+                        let startNum = parseInt(start.substring(3), 10);
+                        let endNum = parseInt(end, 10);
+                        for (let j = startNum; j <= endNum; j++) {
+                            zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
+                        }
+                    } else {
+                        zones.push(ugc_s[i]); 
+                    }
                     continue; 
                 }
                 if (ugc_s[i].includes('>')) {
@@ -177,7 +186,7 @@ class ShapefileManager {
                     let startNum = parseInt(start, 10);
                     let endNum = parseInt(end, 10);
                     for (let j = startNum; j <= endNum; j++) {
-                    zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
+                        zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
                     }
                 } else {
                     zones.push(`${state}${format}${ugc_s[i]}`);

@@ -148,18 +148,21 @@ class Alerts {
             let next = _queue.length - 1
             let alert = _queue[next]
             this._SendAlertByGif(alert.metadata.gif, `${alert.details.name} (${alert.details.type})`, alert.details.locations)
-            if (alert.metadata.autobeep) {
-                this.library.PlayAudio(this.storage.configurations.tone_sounds.beep, false)
-                if (!alert.metadata.onlyBeep) {
+            
+            if (!alert.metadata.onlyBeep) {
+                if (alert.metadata.autobeep) {
+                    this.library.PlayAudio(this.storage.configurations.tone_sounds.beep, false)
                     await this.library.CreateTimeout(1300) 
                     this.library.PlayAudio(alert.metadata.audio, false)
+                } else { 
+                    this.library.PlayAudio(alert.metadata.audio, false)
                 }
-            } else { 
-                this.library.PlayAudio(alert.metadata.audio, false)
-            }
-            if (alert.metadata.eas || alert.metadata.siren) {
-                await this.library.CreateTimeout(3800)
-                this.library.PlayAudio(alert.metadata.eas ? this.storage.configurations.tone_sounds.eas : this.storage.configurations.tone_sounds.siren, false) 
+                if (alert.metadata.eas || alert.metadata.siren) {
+                    await this.library.CreateTimeout(3800)
+                    this.library.PlayAudio(alert.metadata.eas ? this.storage.configurations.tone_sounds.eas : this.storage.configurations.tone_sounds.siren, false) 
+                }
+            } else {
+                this.library.PlayAudio(this.storage.configurations.tone_sounds.beep, false)
             }
             _queue.pop()
             resolve()

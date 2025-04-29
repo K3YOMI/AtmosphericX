@@ -22,12 +22,13 @@
   */
 
 class Mapbox { 
-    constructor(_library) {
+    constructor(_library, auto) {
         this.library = _library
         this.storage = global
         this.widget = this.storage.configurations.widget_settings
         this.colors = this.storage.configurations.overlay_settings.color_scheme
         this.nexrad = static_nexrad_stations
+        this.auto = auto
         this.layers = [`mapbox-polygons`, `mapbox-nexread`, `mapbox-spotters`, `mapbox-reports`]
         this.name = `MapboxClass`
         this.library.PrintLog(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
@@ -240,12 +241,31 @@ class Mapbox {
             let sender = alert.details.sender;
             let event_color = scheme.find(color => alert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type === "Default");
             let coords = alert.raw.geometry.coordinates[0].map(point => [point[0], point[1]]);
-            if (!pin && this.storage.eagle == undefined) {
+            if (!pin && this.storage.eagle == undefined && !this.auto) {
                 pin = true;
                 this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.light,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,true);
                 continue;
             }
             this._CreatePolygon(`mapbox-polygons`,coords,event_color.color.light,`<b>${alert.details.name} (${alert.details.type})</b><br>${location}<br><br><b>Sender:</b> ${sender}`,false);
+        }
+        if (this.auto) {
+            let randomAlert = active[Math.floor(Math.random() * active.length)];
+            let coords = randomAlert.raw.geometry.coordinates[0].map(point => [point[0], point[1]]);
+            this.storage.mapbox.flyTo({
+                center: [coords[0][0], coords[0][1]],
+                zoom: 7,
+                speed: 0.05
+            });
+            let event_color = scheme.find(color => randomAlert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type === "Default");
+            let location = randomAlert.details.locations;
+            let sender = randomAlert.details.sender;
+            let name = randomAlert.details.name;
+            let type = randomAlert.details.type;
+            let issued = new Date(randomAlert.details.issued).toLocaleString();
+            let expires = new Date(randomAlert.details.expires).toLocaleString();  
+            let tags = randomAlert.details.tag;
+            let description = `<b>${name} (${type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Issued:</b> ${issued}<br><b>Expires:</b> ${expires}<br>Tags: ${tags}`;  this._CreatePolygon(`mapbox-polygons`, coords, event_color.color.light, description, true);
+            this._CreatePolygon(`mapbox-polygons`, coords, event_color.color.light, description, false);
         }
     }
 
@@ -368,6 +388,7 @@ class Mapbox {
         }
         await this._WipePointsAndPolys(this.layers)
         await this._GenerateAlertPolys()
+        if (this.auto) { return }
         await this._GenerateSpotterPoints()
         await this._GenerateStormReports()
       

@@ -13,10 +13,11 @@
     <script src="../../assets/javascript/Static.js"></script>
     <body><div id="mapbox-container" class="mapbox-container"></div></body>
     <script>
+        let parameter = window.location.href.split('?')[1] || false
         let library = new Library()
         library.CreateSession().then(() => {
             let alert_class = new Alerts(library)
-            let mapbox_class = new Mapbox(library)
+            let mapbox_class = new Mapbox(library, parameter == `true` ? true : false)
             document.addEventListener('onCacheUpdate', async (event) => {
                 await alert_class.SyncAlerts()
                 mapbox_class.UpdateThread()
