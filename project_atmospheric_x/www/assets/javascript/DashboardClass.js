@@ -567,12 +567,12 @@ class Dashboard {
             minutes = minutes % 60;
             if (!hail.includes(`IN`) && hail != `N/A`) { hail += ` IN`}
             if (!wind.includes(`MPH`) && wind != `N/A`) { wind += ` MPH`}
-            let t_string = `Expires in: ${hours} hours ${minutes} minutes ${seconds} seconds`
-            if (hours < 0) { t_string = `Expires in: Now`}
-            if (hours > 9999) { t_string = `Expires in: Until Further Notice`}
+            let t_expires_string = `${hours} hours ${minutes} minutes ${seconds} seconds`
+            if (hours < 0) { t_expires_string = `Now`}
+            if (hours > 9999) { t_expires_string = `Until Further Notice`}
             this._InjectDataCard({
                 title: `${title} (${status})`,
-                content: `Location: ${location}<br>Issued: ${issued}<br>${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail}<br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`,
+                content: `Location: ${location}<br>Issued: ${issued}<br>Expires: ${t_expires_string}<br>Wind Gust: ${wind} <br>Hail: ${hail}<br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`,
                 parent: _dir,
                 onclick: () => {
                     let description_history = ``
@@ -582,7 +582,7 @@ class Dashboard {
                         description_history += `\n\n${separator} ${segment.act} ${separator}\n\n${segment.desc}`;  
                     }
                     if (description_history == ``) { description_history = description }
-                    let subtitle = `Locations: ${alert.details.locations}<br>Expires: ${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`
+                    let subtitle = `Locations: ${alert.details.locations}<br>Expires: ${t_expires_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`
                     this._InjectNotification({ 
                         title: `${title} (${status})`, 
                         subtext: subtitle,
@@ -650,13 +650,13 @@ class Dashboard {
             minutes = minutes % 60;
             if (!hail.includes(`IN`) && hail != `N/A`) { hail += ` IN`}
             if (!wind.includes(`MPH`) && wind != `N/A`) { wind += ` MPH`}
-            let t_string = `Expires in: ${hours} hours ${minutes} minutes ${seconds} seconds`
-            if (hours < 0) { t_string = `Expires in: Now`}
-            if (hours > 9999) { t_string = `Expires in: Until Further Notice`}
+            let t_expires_string = `${hours} hours ${minutes} minutes ${seconds} seconds`
+            if (hours < 0) { t_expires_string = `Now`}
+            if (hours > 9999) { t_expires_string = `Until Further Notice`}
             if (JSON.stringify(alert.details).toLowerCase().includes(_keyword.toLowerCase()) == false) { continue }
             this._InjectDataCard({
                 title: `${title} (${status})`,
-                content: `Location: ${location}<br>Issued: ${issued}<br>${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail}<br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`,
+                content: `Location: ${location}<br>Issued: ${issued}<br>Expires: ${t_expires_string}<br>Wind Gust: ${wind} <br>Hail: ${hail}<br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`,
                 parent: _dir,
                 onclick: () => {
                     let description_history = ``
@@ -666,7 +666,7 @@ class Dashboard {
                         description_history += `\n\n${separator} ${segment.act} ${separator}\n\n${segment.desc}`;  
                     }
                     if (description_history == ``) { description_history = description }
-                    let subtitle = `Locations: ${alert.details.locations}<br>Expires: ${t_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`
+                    let subtitle = `Locations: ${alert.details.locations}<br>Expires: ${t_expires_string}<br>Wind Gust: ${wind} <br>Hail: ${hail} <br>Damage Threat: ${dmg}<br>Tornado: ${tornado}<br>Tag: ${tag}<br>Sender: ${sender}<br>Tracking ID: ${id}`
                     this._InjectNotification({ 
                         title: `${title} (${status})`, 
                         subtext: subtitle,
