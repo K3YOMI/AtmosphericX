@@ -1,7 +1,7 @@
 {
     "hosting": {
         "https": false,
-        "https_port": 8080,
+        "https_port": 443,
         "http_port": 80,
         "session_maxage": 86400000,
         "cert_path": {

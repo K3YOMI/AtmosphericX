@@ -64,17 +64,18 @@ class Routes {
                 saveUninitialized: true,
                 cookie: {
                     maxAge: _settings.session_maxage, name: `session`,
-                    sameSite: `strict`, secure: _settings.https
+                    sameSite: `strict`, secure: _settings.https,
                 },
                 name: `atmosx-cookie`
             }));
-            LOAD.cache.ws = LOAD.Packages.HttpLib.createServer(LOAD.Static.Application).listen(_settings.http_port, () => {})
             if (_settings.https) { 
                 let https_options = { key: LOAD.Packages.FileSystem.readFileSync(_settings.cert_path.key), cert: LOAD.Packages.FileSystem.readFileSync(_settings.cert_path.cert) };
                 LOAD.cache.ws = LOAD.Packages.HttpsLib.createServer(https_options, LOAD.Static.Application).listen(_settings.https_port, () => {})
                 LOAD.Library.Hooks.PrintLog(`${this.name}.SecureHttp`, `HTTPS server started on port ${_settings.https_port}`);
+            } else { 
+                LOAD.cache.ws = LOAD.Packages.HttpLib.createServer(LOAD.Static.Application).listen(_settings.http_port, () => {})
+                LOAD.Library.Hooks.PrintLog(`${this.name}.NotSecureHttp`, `HTTP server started on port ${_settings.http_port}`);
             }
-            LOAD.Library.Hooks.PrintLog(`${this.name}.NotSecureHttp`, `HTTP server started on port ${_settings.http_port}`);
             LOAD.Library.Hooks.Log(`${this.name}.Express : Express server has started`);
             resolve(`OK`)
         })
@@ -104,6 +105,7 @@ class Routes {
             LOAD.Library.Hooks.Log(`${req.method} : ${req.url} : ${req.headers['user-agent']} : ${req.connection.remoteAddress} : ${req.headers.referer}`);
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
             next();
         });
         LOAD.Static.Application.use(`/assets`, LOAD.Packages.Express.static(parent + '/www/assets'));
@@ -336,7 +338,7 @@ class Routes {
 
     async _RedirectSession(_req, _res, _redirect, _kill) {
         if (_req == undefined || _res == undefined) { return }
-        if (_kill) { _req.session.destroy() }
+        if (_kill) { _req.session.destroy(); }
         _res.sendFile(`${_redirect}`);
     }
 
