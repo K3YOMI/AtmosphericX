@@ -56,7 +56,16 @@
                 
                 let rng_detail = global.random.details
                 let rng_expires = await library.GetTimeInformation(rng_detail.expires)
-                let string = `Expires @ ${rng_expires.time}`
+                if (!isNaN(rng_expires.unix)) { 
+                    let time = rng_expires.unix
+                    let date = new Date(time * 1000)
+                    let formattedDate = date.toLocaleString('en-US', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }).replace(',', '')
+                    rng_expires = `${formattedDate.split('at')[0].trim()} ${formattedDate.split('at')[1].trim()}`
+                    string = `${rng_expires}`
+                } else {
+                    string = `Invalid Time`
+                }
+
             
                 element_class.RandomAlertUpdate(`random_alert_location`, rng_detail.locations, global.configurations.widget_settings.random_location.max_text_length, global.configurations.widget_settings.random_location.animations[0], global.configurations.widget_settings.random_location.animations[1])
                 element_class.RandomAlertUpdate(`random_alert_title`, rng_detail.name, global.configurations.widget_settings.random_alert.max_title_length, global.configurations.widget_settings.random_alert.animations[0], global.configurations.widget_settings.random_alert.animations[1])
@@ -69,9 +78,6 @@
                 document.getElementById(`date`).innerHTML = time.date
                 document.getElementById(`time`).innerHTML = time.time
             }, 1)
-
-           
         })
-
     </script>
 </html>
