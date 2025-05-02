@@ -46,6 +46,7 @@ class Alerts {
       * Resolves with the updated alert queue.
       */
 
+
     async SyncAlerts() {
         return new Promise(async (resolve, reject) => {
             this.library.FetchStorage(`alerts_queue`)
@@ -83,13 +84,12 @@ class Alerts {
                     if (time_check < 600 && duplicate == undefined) {
                         this.storage.alerts_queue.push(alert)
                         this.storage.last_queries.push(alert)
-                    } else { 
-                        if (duplicate && time_check > 1600) { 
-                            let index = this.storage.last_queries.indexOf(duplicate)
-                            if (index > -1) {
-                                this.storage.last_queries.splice(index, 1)
-                            }
-                        }
+                    }
+                    if (duplicate && time_check > 600) { 
+                        let index = this.storage.last_queries.indexOf(duplicate)
+                        let index_queue = this.storage.alerts_queue.indexOf(duplicate)
+                        if (index_queue > -1) { this.storage.alerts_queue.splice(index_queue, 1)}
+                        if (index > -1) {this.storage.last_queries.splice(index, 1)}
                     }
                 }
             }

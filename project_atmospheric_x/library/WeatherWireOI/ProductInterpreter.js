@@ -71,7 +71,7 @@ class ProductInterpreter {
                         let type = await this._GetCallType()
 
                         if (LOAD.cache.alerts.wire == undefined) { LOAD.cache.alerts.wire = [] }
-                        if (LOAD.cache.alerts.wire.length >= 64) { LOAD.cache.alerts.wire.shift() }
+                        if (LOAD.cache.alerts.wire.length >= 20) { LOAD.cache.alerts.wire.shift() }
                         LOAD.cache.alerts.wire.push({message: this.message, issued: new Date().toISOString()})
 
                         LOAD.Packages.FileSystem.appendFileSync(LOAD.Packages.PathSystem.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${type}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${this.message}\n${JSON.stringify(this.attributes, null, 4)}\n`, `utf8`)
