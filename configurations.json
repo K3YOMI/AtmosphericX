@@ -5,8 +5,8 @@
         "http_port": 80,
         "session_maxage": 86400000,
         "cert_path": {
-            "key": "./cert/generated.key",
-            "cert": "./cert/generated.crt"
+            "key": "../storage/cert/cert.key",
+            "cert": "../storage/cert/cert.crt"
         }
     },
     "overlay_settings": {
@@ -25,7 +25,8 @@
     },
     "sources": {
         "filter": {
-            "forecast_office_filter": [],
+            "nws_office_exclude_filter": ["KWNS"],
+            "nws_office_filter": [],
             "ugc_filter": []
         },
         "primary_sources": {
@@ -33,7 +34,7 @@
                 "enabled": true,
                 "cache_time": 29,
                 "endpoint": "https://api.weather.gov/alerts/active",
-                "state_filter": ""
+                "state_filter": "ALL"
             },
             "noaa_weather_wire_service": {
                 "enabled": false,
@@ -43,12 +44,54 @@
                 "xml_alerts": false,
                 "ugc_polygons": false,
                 "credentials": {
-                    "username": "USERNAME_HERE",
-                    "password": "PASSWORD_HERE"
+                    "username": "NWWS_OI_USERNAME_HERE",
+                    "password": "NWWS_OI_PASSWORD_HERE"
+                },
+                "mail_settings": {
+                    "enabled": false,
+                    "provider": "smtp.gmail.com",
+                    "port": 465,
+                    "secure": true,
+                    "credentials": {
+                        "username": "SMTP_USERNAME_HERE",
+                        "password": "SMTP_PASSWORD_HERE"
+                    },
+                    "sender": {
+                        "name": "AtmosphericX",
+                        "email": "AtmosphericX@EmailServiceExample"
+                    },
+                    "recipient": "EMAIL_ADDRESS_HERE"
                 }
             }
         },
         "miscellaneous_sources": {
+            "location_services": {
+                "alert_filtering": false,
+                "max_miles": 50,
+                "realtimeirl": {
+                    "enabled": false,
+                    "cache_time": 119,
+                    "endpoint": "https://rtirl.com/api/pull?key=${X}",
+                    "pull_key": "PULL_KEY_HERE"
+                },
+                "spotter_network": {
+                    "enabled": true,
+                    "cache_time": 29,
+                    "endpoint": "https://www.spotternetwork.org/feeds/gr.txt",
+                    "tracking_name": "SPOTTER_ATTRIBUTE_HERE",
+                    "show_offline": false,
+                    "show_idle": false,
+                    "show_active": true,
+                    "show_streaming": true
+                },
+                "location_names": {
+                    "enabled": false,
+                    "cache_time": 119,
+                    "endpoint": "https://api.mapbox.com/geocoding/v5/mapbox.places/${X},${Y}.json?language=en&access_token=${Z}",
+                    "note": "You must have a VALID Mapbox API key to use this service. (Set the API key in the widgets config) Additionally, this only gets the raw text location (ex. 'Des Moines, IA')."
+                },
+                "note": "Realtimeirl and spotter network tracking can NOT be used at the same time for tracking. You must choose one or the other."
+            },
             "iem_local_storm_reports": {
                 "enabled": false,
                 "abbreviated_state": "",
@@ -66,56 +109,36 @@
                 "cache_time": 1799,
                 "endpoint": "https://www.grlevelx.com/lsr/lsr_latest.txt"
             },
-            "spotter_network": {
-                "enabled": true,
-                "cache_time": 29,
-                "endpoint": "https://www.spotternetwork.org/feeds/gr.txt",
-                "spotter_network_filters": {
-                    "offline": false,
-                    "idle": false,
-                    "active": true,
-                    "streaming": true
-                }
-            },
-            "nexrad_stations": {
-                "enabled": true,
-                "cache_time": 1799,
-                "endpoint": "https://api.weather.gov/radar/stations"
-            },
             "spc_mesoscale_discussions": {
                 "enabled": true,
                 "cache_time": 119,
                 "endpoint": "https://placefilenation.com/Placefiles/mcd.php"
-            },
-            "lightning_reports": {
-                "enabled": true,
-                "cache_time": 119,
-                "endpoint": "https://placefilenation.com/Placefiles/20lightning.php"
             }
         }
     },
     "project_settings": {
-        "http_useragent": "AtmosphericX/v7.0.0",
+        "http_useragent": "AtmosphericX/v7.0.5",
         "global_update": 10,
         "priority_alerts": true,
-        "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
+        "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Considerable Destructive Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
         "beep_only": false,
         "show_updates": true,
         "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"],
         "websocket_settings": {
             "priority_websockets": {
                 "timeout": 1,
-                "types": ["warnings", "watches", "broadcasts", "header", "random", "active", "manual"]
+                "types": ["notification", "header", "random", "active", "manual", "realtime"]
             },
             "general_websockets": {
                 "timeout": 30,
-                "types": ["configurations", "statistics", "wire", "reports", "stations", "spotters", "lightning", "mesoscale"]
+                "types": ["public", "wire", "reports", "spotters", "discussions"]
             }
         }
     },
     "definitions": {
         "vtec_regexp": "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z",
         "ugc_start_regexp": "(\\w{2}[CZ](\\d{3}((-|>)\\s?(\n\n)?))+)",
+        "wmo_regexp": "[A-Z0-9]{6}\\s[A-Z]{4}\\s\\d{6}",
         "ugc_end_regexp": "(\\d{6}(-|>)\\s?(\n\n)?)",
         "cancel_signatures": [ "has been cancelled", "will be allowed to expire", "has diminished", "and no longer", "has been replaced", "The threat has ended", "has weakened below severe" ],
         "status_signatures": { "NEW": "Issued", "CON": "Updated", "EXT": "Extended", "EXA": "Extended", "EXB": "Extended", "UPG": "Upgraded", "COR": "Correction", "ROU": "Routine", "CAN": "Cancelled", "EXP": "Expired" },
@@ -183,17 +206,13 @@
     ],
     "widget_settings": {
         "mapbox": {
-            "api_key": "MAPBOX_API_KEY_HERE",
-            "default_station": "KLOT",
-            "show_stations": true,
+            "api_key": "YOUR_MAPBOX_API_KEY_HERE",
             "spotter_network_settings": {
-                "spotter_network_tracking": "SPOTTER_NAME_HERE",
-                "spotter_network_tracking_zoom": 13,
                 "spotter_scheme": {
-                    "default": { "color": "red", "fillColor": "red", "fillOpacity": 0.1, "radius": 50 },
-                    "idle": { "color": "yellow", "fillColor": "yellow", "fillOpacity": 0.1, "radius": 50 },
-                    "active": { "color": "green", "fillColor": "green", "fillOpacity": 0.1, "radius": 50 },
-                    "streaming": { "color": "blue", "fillColor": "blue", "fillOpacity": 0.1, "radius": 50 }
+                    "default": { "color": "rgb(255, 0, 0)" },
+                    "idle": { "color": "rgb(255, 255, 0)" },
+                    "active": { "color": "rgb(0, 255, 0)" },
+                    "streaming": { "color": "rgb(0, 0, 255)" }
                 }
             },
             "settings": {
@@ -211,7 +230,7 @@
             "max_text_length": 920
         },
         "header": {
-            "max_header_length": 15,
+            "max_header_length": 99,
             "rotate_through_alerts": {
                 "enabled": false,
                 "cycled_types": [
@@ -219,6 +238,8 @@
                     "Particularly Dangerous Situation",
                     "Confirmed Tornado Warning",
                     "Destructive Severe Thunderstorm Warning",
+                    "Considerable Destructive Severe Thunderstorm Warning",
+                    "Severe Thunderstorm Warning",
                     "Radar Indicated Tornado Warning",
                     "Flash Flood Emergency",
                     "Special Marine Warning"
@@ -247,7 +268,7 @@
         },
         "table": {
             "max_alerts_shown": 15,
-            "max_char_per_row": 20
+            "max_char_per_row": 25
         },
         "spc": {
             "note": "No configuration needed"

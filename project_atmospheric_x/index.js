@@ -1,4 +1,3 @@
-
 /*
                                             _               _     __   __
          /\  | |                           | |             (_)    \ \ / /
@@ -10,28 +9,30 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub
-    Version: 7.0.0                              
+    Version: 7.0.5                             
 */
 
-let LOAD = require(`./loader.js`)
-require(`./library/Static.js`)
-require(`./bootloader.js`)
+let loader = require(`./loader.js`)
+require(`./bootstrap.js`)
 
-LOAD.Library.Hooks.PrintLog(`Start.AtmosphericX`, `Starting AtmosphericX...`)
-LOAD.Library.Hooks.PrintLog(`Start.AtmosphericX`, `For a list of commands, type /help`)
-LOAD.Library.Hooks.StartProcess()
 
-process.stdin.setEncoding(`utf8`)
-process.stdin.on(`data`, (data) => {
-    let d = data.trim()
-    let find = command_node.find((x) => x.cmd == d.split(` `)[0])
-    if (d.startsWith(`/`)) {
-        if (find) {
-            let args = d.split(` `).slice(1)
-            let func = find.function
-            if (func) { func(args).then((result) => {}) }
-            return
+return new Promise(async (resolve, reject) => {
+    loader.modules.hooks.createOutput(`AtmosphericX`, `Atmospheric X is starting...`)
+    loader.modules.hooks.createLog(`AtmosphericX`, `Atmospheric X is starting...`)
+    loader.modules.hooks.cleanTemp()
+    await loader.modules.webcalling.nextRun()
+    setInterval(async () => {
+        if (new Date().getSeconds() % loader.cache.configurations.project_settings.global_update == 0) {
+            if (loader.cache.isRequestingData) { return }
+            loader.cache.isRequestingData = true
+            loader.modules.hooks.reloadConfigurations()
+            loader.modules.hooks.cleanTemp()
+            setTimeout(() => {
+                loader.modules.webcalling.nextRun(loader.cache.twire)
+                loader.modules.webcalling.nextRun()
+                loader.cache.isRequestingData = false
+            }, 1000)
+            if (loader.static.wiresession !== undefined) { loader.modules.listener.reconnectSessionCheck() }
         }
-        LOAD.Library.Hooks.PrintLog(`AtmosphericX.CommandExecution`, `${d} is not a valid command, type /help for a list of commands`)
-    }
+    }, 100);
 })

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/random_alert_location@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/elements.js"></script>
+    <script src="../../assets/javascript/alerts.js"></script>
+    <body><p id="random_location" class="text">Awaiting Callback...</p></body>
+    <script>
+        let library = new Library()
+        library.createWebsocketSession([`public`, `random`, `active`, `manual`]).then(() => {
+            let element_class = new Elements(library)
+            let alert_class = new Alerts(library)
+            let configurable = library.storage.configurations.widget_settings.random_location
+            let aniamtions = configurable.animations
+            let max_length = configurable.max_text_length
+            let element = document.getElementById(`random_location`)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                alert_class.syncAlerts()
+                if (library.storage.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; return }
+                element_class.randomAlertUpdate(`random_location`, library.storage.random.details.locations, max_length, aniamtions[0], aniamtions[1])
+            })
+        })
+    </script>
+</html>

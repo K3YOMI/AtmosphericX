@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/alert_bar@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/alerts.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <body>
+        <img id="alert_notification">
+            <p id="alert_title" class="text1"></p>
+            <p id="alert_description" class="text2"></p>
+        </img>
+    </body>
+    <script>
+        let library = new Library()
+        library.createWebsocketSession([`public`, `active`, `manual`]).then(() => {
+            let alert_class = new Alerts(library, true)
+            library.detectMobileDevice() 
+            document.addEventListener('onCacheUpdate', async (event) => {
+                let storage = alert_class.syncAlerts()
+                if (storage.length > 0) { await alert_class.triggerAlertQueue(storage) }
+            })
+        })
+    </script>
+</html>

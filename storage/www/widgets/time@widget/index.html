@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/time@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <body><p id="time" class="time">...</p></body>
+    <script>
+        let library = new Library()
+        library.createWebsocketSession([`public`]).then(() => {
+            setInterval( () => {
+                let time = library.getTimeInformation()
+                if (time.length > 9) {
+                    document.getElementById(`time`).style.fontSize = "30px"
+                    document.getElementById(`time`).style.marginTop = "10px"
+                } else {
+                    document.getElementById(`time`).style.fontSize = "35px"
+                    document.getElementById(`time`).style.marginTop = "5px"
+                }
+                document.getElementById(`time`).innerHTML = time.time
+            }, 1)  
+        })
+    </script>
+</html>

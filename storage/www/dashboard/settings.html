@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>AtmosphericX - Dashboard</title>
+        <meta name="viewport" content="width=device-width initial-scale=0.5, maximum-scale=0.5, user-scalable=no minimal-ui">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="../assets/styles/dashboard.css">
+        <link rel="stylesheet" href="../assets/styles/responsive-dashboard.css">
+        <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+        <script src="../assets/javascript/library.js"></script>
+        <script src="../assets/javascript/dashboard.js"></script>
+        <script src="../assets/javascript/alerts.js"></script>
+        <script src="../../assets/javascript/static.js"></script>
+    </head>
+    <body id="_body.base"></body>
+    <script>
+        let dashboard_class;
+        let alert_class;
+        let library = new Library()
+        library.createWebsocketSession([`public`]).then(async () => {
+            dashboard_class = new Dashboard(library, false)
+            dashboard_class.triggerWidgetListener()
+        })
+    </script>
+</html>
