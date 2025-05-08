@@ -1,0 +1,51 @@
+body, html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    float: center;
+    overflow: hidden;
+}
+
+
+
+#notification_base {
+    height: 235px;
+    width: 956px;
+    background-color: rgb(42, 81, 224);
+    border-style: solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+    padding: 10px;
+    opacity: 0.95;
+    display: none;
+}
+
+
+.text1 {
+    font-size: 35px;
+    font-weight: bold;
+    overflow: hidden;
+    text-align: center;
+    color: white;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    padding: 0px 5px 0 5px;
+    text-shadow: 1px 1px 3px #00000069;
+}
+
+.divider { 
+    border-color: white;
+    width: 90%;
+}
+
+.text2 {
+    font-size: 15px;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+    word-wrap: break-word;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    padding: 0px 5px 0 5px;
+    text-shadow: 1px 1px 3px #00000069;
+}

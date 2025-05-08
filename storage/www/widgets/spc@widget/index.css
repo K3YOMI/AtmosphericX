@@ -1,0 +1,25 @@
+body, html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    float: center;
+    overflow: hidden;
+}
+.spc_image { 
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+.text { 
+    font-size: 90px;
+    padding: 15px;
+    top: -100px;
+    right: 0;
+    position: fixed;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    background-color: rgba(0, 0, 0, 0.562);
+    color: white;
+}

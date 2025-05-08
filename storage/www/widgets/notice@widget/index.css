@@ -1,0 +1,44 @@
+body, html { display: flex; justify-content: center; align-items: center; background-color: rgba(0, 0, 0, 0); margin: 0; float: center; overflow: hidden;}
+
+
+
+
+.notice_base { 
+    height: auto;
+    width: 400px;
+    background-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+    opacity: 0.95;
+}
+
+.notice_title { 
+    font-size: 21px;
+    font-weight: bold;
+    overflow: hidden;
+    text-align: left;
+    color: white;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    text-shadow: 2px 2px 15px #00000069;
+    position: relative;
+    padding-left: 10px;
+}
+
+.notice_divider { 
+    border-color: white;
+}
+
+.notice_subtitle { 
+    font-size: 20px;
+    font-weight: bold;
+    overflow: hidden;
+    text-align: left;
+    color: white;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    text-shadow: 2px 2px 15px #00000069;
+    position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
+    top: 0px;
+}

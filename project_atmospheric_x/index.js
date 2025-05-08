@@ -1,0 +1,38 @@
+/*
+                                            _               _     __   __
+         /\  | |                           | |             (_)    \ \ / /
+        /  \ | |_ _ __ ___   ___  ___ _ __ | |__   ___ _ __ _  ___ \ V / 
+       / /\ \| __| '_ ` _ \ / _ \/ __| '_ \| '_ \ / _ \ '__| |/ __| > <  
+      / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
+     /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
+                                     | |                                 
+                                     |_|                                                                                                                
+    
+    Written by: k3yomi@GitHub
+    Version: 7.0.5                             
+*/
+
+let loader = require(`./loader.js`)
+require(`./bootstrap.js`)
+
+
+return new Promise(async (resolve, reject) => {
+    loader.modules.hooks.createOutput(`AtmosphericX`, `Atmospheric X is starting...`)
+    loader.modules.hooks.createLog(`AtmosphericX`, `Atmospheric X is starting...`)
+    loader.modules.hooks.cleanTemp()
+    await loader.modules.webcalling.nextRun()
+    setInterval(async () => {
+        if (new Date().getSeconds() % loader.cache.configurations.project_settings.global_update == 0) {
+            if (loader.cache.isRequestingData) { return }
+            loader.cache.isRequestingData = true
+            loader.modules.hooks.reloadConfigurations()
+            loader.modules.hooks.cleanTemp()
+            setTimeout(() => {
+                loader.modules.webcalling.nextRun(loader.cache.twire)
+                loader.modules.webcalling.nextRun()
+                loader.cache.isRequestingData = false
+            }, 1000)
+            if (loader.static.wiresession !== undefined) { loader.modules.listener.reconnectSessionCheck() }
+        }
+    }, 100);
+})

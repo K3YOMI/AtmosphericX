@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/notification@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+
+    <script src="../../assets/javascript/elements.js"></script>
+    <script src="../../assets/javascript/alerts.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <body>
+        <div id="notification_base" class="p_boxlight">
+            <div id="notification_title" class="text1"></div>
+            <hr id="notification_divider" class="divider"></hr>
+            <div id="notification_subtitle" class="text2"></div>
+        </div>
+    </body>
+    <script>
+        let library = new Library()
+        library.createWebsocketSession([`public`, `notification`, `active`, `manual`]).then(() => {
+            let alert_class = new Alerts(library)
+            let element_class = new Elements(library)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                alert_class.syncAlerts()
+                element_class.updateNotification(`notification_base`, `notification_title`, `notification_subtitle`)
+                alert_class.triggerDynamicColors()
+            })
+        })
+    </script>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/mapbox@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="https://cdn.jsdelivr.net/npm/@rtirl/api@latest/lib/index.min.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/mapbox.js"></script>
+    <script src="../../assets/javascript/alerts.js"></script>
+    <script src="../../assets/javascript/static.js"></script>
+    <body>
+        <div id="mapbox-container" class="mapbox-container"></div>
+    </body>
+    <script>
+        let parameter = window.location.href.split('?')[1] || false
+        let library = new Library()
+        library.createWebsocketSession([`realtime`, `public`, `active`, `manual`, `spotters`, `reports`]).then(() => {
+            let alert_class = new Alerts(library)
+            let mapbox_class = new Mapbox(library, parameter == `true` ? true : false)
+            mapbox_class.updateThread()
+            document.addEventListener('onCacheUpdate', async (event) => {
+                alert_class.syncAlerts(true)
+                mapbox_class.updateThread()
+            })
+        })
+    </script>
+</html>

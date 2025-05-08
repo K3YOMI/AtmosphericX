@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/spc@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/streaming.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <script src="../../assets/javascript/elements.js"></script>
+    <script src="../../assets/javascript/alerts.js"></script>
+    <body>
+        <img id="spc_image" class="spc_image"></img>
+        <p id="spc_type" class="text"></p>
+    </body>
+    <script>
+        let library = new Library()
+        library.createWebsocketSession([`public`, `header`]).then(() => {
+            let element_class = new Elements(library)
+            let alert_class = new Alerts(library)
+            element_class.updateSPC(`spc_image`, `spc_type` )
+            document.addEventListener('onCacheUpdate', async (event) => {
+                element_class.updateSPC(`spc_image`, `spc_type` )
+            })
+        })
+    </script>
+</html>

@@ -1,2 +1,3 @@
-node_modules/
-README-REVAMPED.md
+project_atmospheric_x/node_modules
+storage/logs
+configurations.json

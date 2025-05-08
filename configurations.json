@@ -1,16 +1,16 @@
 {
-    "hosting:settings": {
-        "https:enabled": false,
-        "https:port": 8080,
-        "http:port": 80,
-        "cookie:maxage": 86400000,
-        "ssl:path": {
-            "ssl:key": "./cert/generated.key",
-            "ssl:cert": "./cert/generated.crt"
+    "hosting": {
+        "https": false,
+        "https_port": 443,
+        "http_port": 80,
+        "session_maxage": 86400000,
+        "cert_path": {
+            "key": "../storage/cert/cert.key",
+            "cert": "../storage/cert/cert.crt"
         }
     },
-    "overlay:settings": {
-        "color:scheme": [
+    "overlay_settings": {
+        "color_scheme": [
             { "type": "Tornado Emergency", "color": { "light": "rgb(209,38,215)", "dark": "rgb(159,37,163)" }},
             { "type": "Particularly Dangerous Situation", "color": { "light": "rgb(214,56,54)", "dark": "rgb(163,25,25)" }},
             { "type": "Hurricane Warning", "color": { "light": "rgb(249,56,54)", "dark": "rgb(203,25,25)" }},
@@ -19,88 +19,170 @@
             { "type": "Snow Squall Warning", "color": { "light": "rgb(249,56,54)", "dark": "rgb(203,25,25)" }},
             { "type": "Severe Thunderstorm Warning", "color": { "light": "rgb(248,160,42)", "dark": "rgb(248,106,42)" }},
             { "type": "Flash Flood Warning", "color": { "light": "rgb(102,209,60)", "dark": "rgb(73,155,40)" }},
-            { "type": "Special Marine Warning", "color": { "light": "rgb(42,81,224)", "dark": "rgb(28,61,181)" }}
-        ]
+            { "type": "Special Marine Warning", "color": { "light": "rgb(42,81,224)", "dark": "rgb(28,61,181)" }},
+            { "type": "Default", "color": { "light": "rgb(42,81,224)", "dark": "rgb(28,61,181)" }}
+        ] 
     },
-    "application:api": {
-        "primary:api": {
-            "nws:api": {
-                "nws:enable": true,
-                "nws:cachetime": 29,
-                "nws:api": "https://api.weather.gov/alerts/active",
-                "nws:state": "",
-                "nws:forecastoffice": [],
-                "nws:same": [],
-                "nws:zone": []
+    "sources": {
+        "filter": {
+            "nws_office_exclude_filter": ["KWNS"],
+            "nws_office_filter": [],
+            "ugc_filter": []
+        },
+        "primary_sources": {
+            "national_weather_service": {
+                "enabled": true,
+                "cache_time": 29,
+                "endpoint": "https://api.weather.gov/alerts/active",
+                "state_filter": "ALL"
             },
-            "allisonhouse:warnings": {
-                "allisonhouse:warnings:enable": false,
-                "allisonhouse:warnings:cachetime": 29,
-                "allisonhouse:warnings:api": "https://warnings.allisonhouse.com"
-            },
-            "cod:warnings": {
-                "cod:warnings:enable": false,
-                "cod:warnings:cachetime": 29,
-                "cod:warnings:api": "https://warnings.cod.edu"
+            "noaa_weather_wire_service": {
+                "enabled": false,
+                "cache_time": 0,
+                "endpoint": "xmpp://nwws-oi.weather.gov",
+                "domain": "nwws-oi.weather.gov",    
+                "xml_alerts": false,
+                "ugc_polygons": false,
+                "credentials": {
+                    "username": "NWWS_OI_USERNAME_HERE",
+                    "password": "NWWS_OI_PASSWORD_HERE"
+                },
+                "mail_settings": {
+                    "enabled": false,
+                    "provider": "smtp.gmail.com",
+                    "port": 465,
+                    "secure": true,
+                    "credentials": {
+                        "username": "SMTP_USERNAME_HERE",
+                        "password": "SMTP_PASSWORD_HERE"
+                    },
+                    "sender": {
+                        "name": "AtmosphericX",
+                        "email": "AtmosphericX@EmailServiceExample"
+                    },
+                    "recipient": "EMAIL_ADDRESS_HERE"
+                }
             }
         },
-        "misc:api": {
-            "lsr:reports": {
-                "lsr:reports:enable": false,
-                "lsr:reports:state": "",
-                "lsr:reports:hours": 1,
-                "lsr:reports:cachetime": 1799,
-                "lsr:reports:api": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
+        "miscellaneous_sources": {
+            "location_services": {
+                "alert_filtering": false,
+                "max_miles": 50,
+                "realtimeirl": {
+                    "enabled": false,
+                    "cache_time": 119,
+                    "endpoint": "https://rtirl.com/api/pull?key=${X}",
+                    "pull_key": "PULL_KEY_HERE"
+                },
+                "spotter_network": {
+                    "enabled": true,
+                    "cache_time": 29,
+                    "endpoint": "https://www.spotternetwork.org/feeds/gr.txt",
+                    "tracking_name": "SPOTTER_ATTRIBUTE_HERE",
+                    "show_offline": false,
+                    "show_idle": false,
+                    "show_active": true,
+                    "show_streaming": true
+                },
+                "location_names": {
+                    "enabled": false,
+                    "cache_time": 119,
+                    "endpoint": "https://api.mapbox.com/geocoding/v5/mapbox.places/${X},${Y}.json?language=en&access_token=${Z}",
+                    "note": "You must have a VALID Mapbox API key to use this service. (Set the API key in the widgets config) Additionally, this only gets the raw text location (ex. 'Des Moines, IA')."
+                },
+                "note": "Realtimeirl and spotter network tracking can NOT be used at the same time for tracking. You must choose one or the other."
             },
-            "mPing:reports": {
-                "mPing:reports:enable": false,
-                "mPing:reports:cachetime": 1799,
-                "mPing:reports:api": "https://placefilenation.com/Placefiles/mping_60min.php"
+            "iem_local_storm_reports": {
+                "enabled": false,
+                "abbreviated_state": "",
+                "data_retention_hours": 24,
+                "cache_time": 1799,
+                "endpoint": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
             },
-            "grlevelx:reports": {
-                "grlevelx:reports:enable": true,
-                "grlevelx:reports:cachetime": 1799,
-                "grlevelx:reports:api": "https://www.grlevelx.com/lsr/lsr_latest.txt"
+            "mping_reports": {
+                "enabled": false,
+                "cache_time": 1799,
+                "endpoint": "https://placefilenation.com/Placefiles/mping_60min.php"
             },
-            "spotternetwork:members": {
-                "spotternetwork:members:enable": true,
-                "spotternetwork:members:cachetime": 29,
-                "spotternetwork:members:api": "https://www.spotternetwork.org/feeds/gr.txt",
-                "spotternetwork:tracking": "SPOTTER_NAME_HERE"
+            "grlevelx_reports": {
+                "enabled": true,
+                "cache_time": 1799,
+                "endpoint": "https://www.grlevelx.com/lsr/lsr_latest.txt"
             },
-            "radar:layer": {
-                "radar:layer:enable": true,
-                "radar:layer:api": "https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/nexrad-n0q-900913/{z}/{x}/{y}.png"
-            },
-            "spc:meoscale:convective:disscussion": {
-                "spc:meoscale:convective:disscussion:enable": true,
-                "spc:meoscale:convective:disscussion:cachetime": 119,
-                "spc:meoscale:convective:disscussion:api": "https://placefilenation.com/Placefiles/mcd.php"
-            },
-            "lightning:reports": {
-                "lightning:reports:enable": true,
-                "lightning:reports:cachetime": 119,
-                "lightning:reports:api": "https://placefilenation.com/Placefiles/20lightning.php"
+            "spc_mesoscale_discussions": {
+                "enabled": true,
+                "cache_time": 119,
+                "endpoint": "https://placefilenation.com/Placefiles/mcd.php"
             }
         }
     },
-    "application:information": {
-        "application:location": "County, ST",
-        "application:timezone": "America/Chicago",
-        "application:12hour": false,
-        "application:useragent": "AtmosphericX/v6.0.0"
+    "project_settings": {
+        "http_useragent": "AtmosphericX/v7.0.5",
+        "global_update": 10,
+        "priority_alerts": true,
+        "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Considerable Destructive Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
+        "beep_only": false,
+        "show_updates": true,
+        "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"],
+        "websocket_settings": {
+            "priority_websockets": {
+                "timeout": 1,
+                "types": ["notification", "header", "random", "active", "manual", "realtime"]
+            },
+            "general_websockets": {
+                "timeout": 30,
+                "types": ["public", "wire", "reports", "spotters", "discussions"]
+            }
+        }
     },
-     "request:settings": {
-        "request:refresh_synced": 30,
-        "request:query_sycned": 10,
-        "request:outbreakmode": true,
-        "request:outbreakalerts": ["Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
-        "request:allalerts": ["Tornado Emergency", "Particularly Dangerous Situation", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","911 Telephone Outage Emergency","Administrative Message","Air Quality Alert","Air Stagnation Advisory","Arroyo And Small Stream Flood Advisory","Ashfall Advisory","Ashfall Warning","Avalanche Advisory","Avalanche Warning","Avalanche Watch","Beach Hazards Statement","Blizzard Warning","Blizzard Watch","Blowing Dust Advisory","Blowing Dust Warning","Brisk Wind Advisory","Child Abduction Emergency","Civil Danger Warning","Civil Emergency Message","Coastal Flood Advisory","Coastal Flood Statement","Coastal Flood Warning","Coastal Flood Watch","Dense Fog Advisory","Dense Smoke Advisory","Dust Advisory","Dust Storm Warning","Earthquake Warning","Evacuation - Immediate","Excessive Heat Warning","Excessive Heat Watch","Extreme Cold Warning","Extreme Cold Watch","Extreme Fire Danger","Extreme Wind Warning","Fire Warning","Fire Weather Watch","Flash Flood Statement","Flash Flood Warning","Flash Flood Watch","Flood Advisory","Flood Statement","Flood Warning","Flood Watch","Freeze Warning","Freeze Watch","Freezing Fog Advisory","Freezing Rain Advisory","Freezing Spray Advisory","Frost Advisory","Gale Warning","Gale Watch","Hard Freeze Warning","Hard Freeze Watch","Hazardous Materials Warning","Hazardous Seas Warning","Hazardous Seas Watch","Hazardous Weather Outlook","Heat Advisory","Heavy Freezing Spray Warning","Heavy Freezing Spray Watch","High Surf Advisory","High Surf Warning","High Wind Warning","High Wind Watch","Hurricane Force Wind Warning","Hurricane Force Wind Watch","Hurricane Local Statement","Hurricane Warning","Hurricane Watch","Hydrologic Advisory","Hydrologic Outlook","Ice Storm Warning","Lake Effect Snow Advisory","Lake Effect Snow Warning","Lake Effect Snow Watch","Lake Wind Advisory","Lakeshore Flood Advisory","Lakeshore Flood Statement","Lakeshore Flood Warning","Lakeshore Flood Watch","Law Enforcement Warning","Local Area Emergency","Low Water Advisory","Marine Weather Statement","Nuclear Power Plant Warning","Radiological Hazard Warning","Red Flag Warning","Rip Current Statement","Severe Thunderstorm Warning","Severe Thunderstorm Watch","Severe Weather Statement","Shelter In Place Warning","Short Term Forecast","Small Craft Advisory","Small Craft Advisory For Hazardous Seas","Small Craft Advisory For Rough Bar","Small Craft Advisory For Winds","Small Stream Flood Advisory","Snow Squall Warning","Special Marine Warning","Special Weather Statement","Storm Surge Warning","Storm Surge Watch","Storm Warning","Storm Watch","Test","Tornado Warning","Tornado Watch","Tropical Depression Local Statement","Tropical Storm Local Statement","Tropical Storm Warning","Tropical Storm Watch","Tsunami Advisory","Tsunami Warning","Tsunami Watch","Typhoon Local Statement","Typhoon Warning","Typhoon Watch","Urban And Small Stream Flood Advisory","Volcano Warning","Wind Advisory","Wind Chill Advisory","Wind Chill Warning","Wind Chill Watch","Winter Storm Warning","Winter Storm Watch","Winter Weather Advisory"],
-        "request:beeponly": false,
-        "request:updates": true,
-        "request:alwaysrun": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Destructive Severe Thunderstorm Warning"]
+    "definitions": {
+        "vtec_regexp": "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z",
+        "ugc_start_regexp": "(\\w{2}[CZ](\\d{3}((-|>)\\s?(\n\n)?))+)",
+        "wmo_regexp": "[A-Z0-9]{6}\\s[A-Z]{4}\\s\\d{6}",
+        "ugc_end_regexp": "(\\d{6}(-|>)\\s?(\n\n)?)",
+        "cancel_signatures": [ "has been cancelled", "will be allowed to expire", "has diminished", "and no longer", "has been replaced", "The threat has ended", "has weakened below severe" ],
+        "status_signatures": { "NEW": "Issued", "CON": "Updated", "EXT": "Extended", "EXA": "Extended", "EXB": "Extended", "UPG": "Upgraded", "COR": "Correction", "ROU": "Routine", "CAN": "Cancelled", "EXP": "Expired" },
+        "event_codes": { "AF": "Ashfall", "AS": "Air Stagnation", "BH": "Beach Hazard", "BW": "Brisk Wind", "BZ": "Blizzard", "CF": "Coastal Flood", "DF": "Debris Flow", "DS": "Dust Storm", "EC": "Extreme Cold", "EH": "Excessive Heat", "EW": "Extreme Wind", "FA": "Areal Flood", "FF": "Flash Flood", "FG": "Dense Fog", "FL": "Flood", "FR": "Frost", "FW": "Fire Weather", "FZ": "Freeze", "GL": "Gale", "HF": "Hurricane Force Wind", "HT": "Heat", "HU": "Hurricane", "HW": "High Wind", "HY": "Hydrologic", "HZ": "Hard Freeze", "IS": "Ice Storm", "LE": "Lake Effect Snow", "LO": "Low Water", "LS": "Lakeshore Flood", "LW": "Lake Wind", "MA": "Special Marine", "MF": "Dense Fog", "MH": "Ashfall", "MS": "Dense Smoke", "RB": "Small Craft for Rough Bar", "RP": "Rip Current Risk", "SC": "Small Craft", "SE": "Hazardous Seas", "SI": "Small Craft for Winds", "SM": "Dense Smoke", "SQ": "Snow Squall", "SR": "Storm", "SS": "Storm Surge", "SU": "High Surf", "SV": "Severe Thunderstorm", "SW": "Small Craft for Hazardous Seas", "TO": "Tornado", "TR": "Tropical Storm", "TS": "Tsunami", "TY": "Typhoon", "UP": "Heavy Freezing Spray", "WC": "Wind Chill", "WI": "Wind", "WS": "Winter Storm", "WW": "Winter Weather", "ZF": "Freezing Fog", "ZR": "Freezing Rain", "ZY": "Freezing Spray" },
+        "event_types": { "W": "Warning", "F": "Forecast", "A": "Watch", "O": "Outlook", "Y": "Advisory", "N": "Synopsis", "S": "Statement"},
+        "tag_definitions": {
+            "A LARGE AND EXTREMELY DANGEROUS TORNADO": "Large and Dangerous Tornado",
+            "THIS IS A PARTICULARLY DANGEROUS SITUATION": "Particularly Dangerous Situation",
+            "RADAR INDICATED ROTATION": "Radar Indicated Tornado",
+            "WEATHER SPOTTERS CONFIRMED TORNADO": "Confirmed by Storm Spotters",
+            "A SEVERE THUNDERSTORM CAPABLE OF PRODUCING A TORNADO": "Developing Tornado",
+            "LAW ENFORCEMENT CONFIRMED TORNADO": "Reported by Law Enforcement",
+            "A TORNADO IS ON THE GROUND": "Confirmed Tornado",
+            "WEATHER SPOTTERS REPORTED FUNNEL CLOUD": "Confirmed Funnel Cloud by Storm Spotters",
+            "PUBLIC CONFIRMED TORNADO": "Public reports of Tornado",
+            "RADAR CONFIRMED": "Radar Confirmed",
+            "TORNADO WAS REPORTED BRIEFLY ON THE GROUND": "Tornado no longer on ground",
+            "SPOTTERS INDICATE THAT A FUNNEL CLOUD CONTINUES WITH THIS STORM": "Funnel Cloud Continues",
+            "A TORNADO MAY DEVELOP AT ANY TIME": "Potentional still exists for Tornado to form",
+            "LIFE-THREATENING SITUATION": "Life Threating Situation",
+            "COMPLETE DESTRUCTION IS POSSIBLE": "Extremly Damaging Tornado",
+            "POTENTIALLY DEADLY TORNADO": "Deadly Tornado",
+            "RADAR INDICATED": "Radar Indicated",
+            "HAIL DAMAGE TO VEHICLES IS EXPECTED": "Damaging to Vehicles",
+            "EXPECT WIND DAMAGE": "Wind Damage",
+            "PEOPLE AND ANIMALS OUTDOORS WILL BE INJURED": "Capable of Injuring People and Animals",
+            "TRAINED WEATHER SPOTTERS": "Confirmed by Storm Spotters",
+            "SOURCE...PUBLIC": "Confirmed by Public",
+            "A TORNADO WATCH REMAINS IN EFFECT": "Active Tornado Watch",
+            "TENNIS BALL SIZE HAIL": "Tennis Ball Size Hail",
+            "BASEBALL SIZE HAIL": "Baseball Size Hail",
+            "GOLF BALL SIZE HAIL": "Golf Ball Size Hail",
+            "QUARTER SIZE HAIL": "Quarter Size Hail",
+            "PING PONG BALL SIZE HAIL": "Ping Pong Ball Size Hail",
+            "NICKEL SIZE HAIL": "Nickel Size Hail",
+            "DOPPLER RADAR.": "Confirmed by Radar",
+            "DOPPLER RADAR AND AUTOMATED GAUGES.": "Confirmed by Radar and Gauges",
+            "FLASH FLOODING CAUSED BY THUNDERSTORMS.": "Caused by Thunderstorm",
+            "SOURCE...EMERGENCY MANAGEMENT.": "Confirmed by Emergency Management",
+            "FLASH FLOODING CAUSED BY HEAVY RAIN.": "Caused by heavy rain",
+            "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement"
+        }
     },
-    "spc:outlooks": [
+    "spc_outlooks": [
         { "day": 1, "title": "Day 1 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day1otlk.gif" },
         { "day": 2, "title": "Day 2 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day2otlk.gif" },
         { "day": 3, "title": "Day 3 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day3otlk.gif" },
@@ -109,9 +191,10 @@
         { "day": 1, "title": "Day 1 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day1probotlk_hail.gif" },
         { "day": 2, "title": "Day 2 Tornado Risk",    "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_torn.gif" },
         { "day": 2, "title": "Day 2 Wind Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_wind.gif" },
-        { "day": 2, "title": "Day 2 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" }
+        { "day": 2, "title": "Day 2 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" },
+        { "day": 3, "title": "Day 3 Probability",     "source": "https://www.spc.noaa.gov/products/outlook/day3prob.gif"}
     ],
-    "external:services": [
+    "third_party_services": [
         { "title": "Live Storm Chasing",    "url": "https://livestormchasing.com/", "image": "/assets/media/dashboard/storm-live-logo.png" },
         { "title": "Mesoscale Analysis",    "url": "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", "image": "/assets/media/dashboard/mesoscale-logo.png" },
         { "title": "Nexlab",                "url": "https://weather.cod.edu/#", "image": "/assets/media/dashboard/nexlab-logo.png" },
@@ -121,13 +204,87 @@
         { "title": "Hodographs",            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", "image": "/assets/media/dashboard/pivotal-weather.png" },
         { "title": "WeatherWise",           "url": "https://web.weatherwise.app", "image": "/assets/media/dashboard/weather-wise.png" }
     ],
-    "application:sounds": {
-        "application:beep": "/assets/media/audio/tones/beep-tone.mp3",
-        "application:eas": "/assets/media/audio/tones/eas-tone.mp3",
-        "application:siren": "/assets/media/audio/tones/tore-tone.mp3",
-        "application:amber": "/assets/media/audio/tones/amber-tone.mp3"
+    "widget_settings": {
+        "mapbox": {
+            "api_key": "YOUR_MAPBOX_API_KEY_HERE",
+            "spotter_network_settings": {
+                "spotter_scheme": {
+                    "default": { "color": "rgb(255, 0, 0)" },
+                    "idle": { "color": "rgb(255, 255, 0)" },
+                    "active": { "color": "rgb(0, 255, 0)" },
+                    "streaming": { "color": "rgb(0, 0, 255)" }
+                }
+            },
+            "settings": {
+                "container": "mapbox-container",
+                "style": "mapbox://styles/mapbox/dark-v10",
+                "zoom": 5,
+                "center": [-93.9254114, 42.0171798],
+                "pitch": 30,
+                "bearing": -1,
+                "preserveDrawingBuffer": true
+            }
+        },
+        "notification": {
+            "max_title_length": 20,
+            "max_text_length": 920
+        },
+        "header": {
+            "max_header_length": 99,
+            "rotate_through_alerts": {
+                "enabled": false,
+                "cycled_types": [
+                    "Tornado Emergency",
+                    "Particularly Dangerous Situation",
+                    "Confirmed Tornado Warning",
+                    "Destructive Severe Thunderstorm Warning",
+                    "Considerable Destructive Severe Thunderstorm Warning",
+                    "Severe Thunderstorm Warning",
+                    "Radar Indicated Tornado Warning",
+                    "Flash Flood Emergency",
+                    "Special Marine Warning"
+                ]
+            }
+        },
+        "time_date": {
+            "standard_time": true,
+            "timezone": "America/Chicago"
+        },
+        "random_location": {
+            "max_text_length": 90,
+            "animations": ["fadeOutUp", "fadeInDown"]
+        },
+        "random_description": {
+            "max_text_length": 500,
+            "animations": ["fadeOutUp", "fadeInDown"]
+        },
+        "random_alert": {
+            "max_text_length": 75,
+            "animations": ["fadeOut", "fadeIn"]
+        },
+        "random_expires": {
+            "max_text_length": 32,
+            "animations": ["fadeOut", "fadeIn"]
+        },
+        "table": {
+            "max_alerts_shown": 15,
+            "max_char_per_row": 25
+        },
+        "spc": {
+            "note": "No configuration needed"
+        },
+        "alert": {
+            "max_text_length": 80,
+            "animation_style": "animation: fade 6.0s ease-in-out; animation-fill-mode: forwards; animation-delay: 0s; transition: all 0.3s ease-in-out; opacity: 1;"
+        }
     },
-    "application:banners": {
+    "tone_sounds": {
+        "beep": "/assets/media/audio/tones/beep-tone.mp3",
+        "eas": "/assets/media/audio/tones/eas-tone.mp3",
+        "siren": "/assets/media/audio/tones/tore-tone.mp3",
+        "amber": "/assets/media/audio/tones/amber-tone.mp3"
+    },
+    "alert_banners": {
         "Tornado Warning": "/assets/media/gif/red_box.gif",
         "Radar Indicated Tornado Warning": "/assets/media/gif/red_box.gif",
         "Confirmed Tornado Warning": "/assets/media/gif/red_warning.gif",
@@ -146,7 +303,7 @@
         "Earthquake Warning": "/assets/media/gif/red_warning.gif",
         "UNK": "/assets/media/gif/red_warning.gif"
     },
-    "application:warnings": {
+    "alert_dictionary": {
         "Tornado Emergency": {
             "triggered": "Tornado Emergency",
             "new": "/assets/media/audio/tor/tor-upgraded.mp3",
@@ -297,16 +454,6 @@
             "eas": false,
             "autobeep": false
         },
-        "Earthquake Warning": {
-            "triggered": "Earthquake Warning",
-            "new": "/assets/media/audio/tones/beep-tone.mp3",
-            "update": "/assets/media/audio/tones/beep-tone.mp3",
-            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
-            "card": "Earthquake Warning",
-            "siren": false,
-            "eas": false,
-            "autobeep": true
-        },
         "UNK": {
             "triggered": "Unknown Event",
             "new": "/assets/media/audio/unk/unk-issued.mp3",
@@ -317,58 +464,5 @@
             "eas": false,
             "autobeep": false
         }
-    },
-    "application:states": [
-        {"name": "Alabama", "abbreviation": "AL"},
-        {"name": "Alaska", "abbreviation": "AK"},
-        {"name": "Arizona", "abbreviation": "AZ"},
-        {"name": "Arkansas", "abbreviation": "AR"},
-        {"name": "California", "abbreviation": "CA"},
-        {"name": "Colorado", "abbreviation": "CO"},
-        {"name": "Connecticut", "abbreviation": "CT"},
-        {"name": "Delaware", "abbreviation": "DE"},
-        {"name": "Florida", "abbreviation": "FL"},
-        {"name": "Georgia", "abbreviation": "GA"},
-        {"name": "Hawaii", "abbreviation": "HI"},
-        {"name": "Idaho", "abbreviation": "ID"},
-        {"name": "Illinois", "abbreviation": "IL"},
-        {"name": "Indiana", "abbreviation": "IN"},
-        {"name": "Iowa", "abbreviation": "IA"},
-        {"name": "Kansas", "abbreviation": "KS"},
-        {"name": "Kentucky", "abbreviation": "KY"},
-        {"name": "Louisiana", "abbreviation": "LA"},
-        {"name": "Maine", "abbreviation": "ME"},
-        {"name": "Maryland", "abbreviation": "MD"},
-        {"name": "Massachusetts", "abbreviation": "MA"},
-        {"name": "Michigan", "abbreviation": "MI"},
-        {"name": "Minnesota", "abbreviation": "MN"},
-        {"name": "Mississippi", "abbreviation": "MS"},
-        {"name": "Missouri", "abbreviation": "MO"},
-        {"name": "Montana", "abbreviation": "MT"},
-        {"name": "Nebraska", "abbreviation": "NE"},
-        {"name": "Nevada", "abbreviation": "NV"},
-        {"name": "New Hampshire", "abbreviation": "NH"},
-        {"name": "New Jersey", "abbreviation": "NJ"},
-        {"name": "New Mexico", "abbreviation": "NM"},
-        {"name": "New York", "abbreviation": "NY"},
-        {"name": "North Carolina", "abbreviation": "NC"},
-        {"name": "North Dakota", "abbreviation": "ND"},
-        {"name": "Ohio", "abbreviation": "OH"},
-        {"name": "Oklahoma", "abbreviation": "OK"},
-        {"name": "Oregon", "abbreviation": "OR"},
-        {"name": "Pennsylvania", "abbreviation": "PA"},
-        {"name": "Rhode Island", "abbreviation": "RI"},
-        {"name": "South Carolina", "abbreviation": "SC"},
-        {"name": "South Dakota", "abbreviation": "SD"},
-        {"name": "Tennessee", "abbreviation": "TN"},
-        {"name": "Texas", "abbreviation": "TX"},
-        {"name": "Utah", "abbreviation": "UT"},
-        {"name": "Vermont", "abbreviation": "VT"},
-        {"name": "Virginia", "abbreviation": "VA"},
-        {"name": "Washington", "abbreviation": "WA"},
-        {"name": "West Virginia", "abbreviation": "WV"},
-        {"name": "Wisconsin", "abbreviation": "WI"},
-        {"name": "Wyoming", "abbreviation": "WY"},
-        {"name": "Other", "abbreviation": "Other"}
-    ]
+    }
 }

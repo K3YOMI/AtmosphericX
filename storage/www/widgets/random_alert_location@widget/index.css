@@ -1,0 +1,25 @@
+body, html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    float: center;
+    overflow: hidden;
+}
+
+.text { 
+    font-size: 40px;
+    line-height: 5px;
+    text-align: left;
+    color: white;
+    font-family: 'SofiaSansSemiCondensed-Bold';
+    padding: 0px 5px 0 5px;
+    margin-bottom: 0;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    padding: 0px 5px 0 5px;
+    text-shadow: 1px 1px 3px #00000069;
+}
