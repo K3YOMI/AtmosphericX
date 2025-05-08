@@ -187,10 +187,10 @@ class Parsing {
             }
 
 
-            if (isActive == 1 && filters.show_active == false) { continue; }
-            if (isStreaming == 1 && filters.show_streaming == false) { continue; }
-            if (isIdle == 1 && filters.show_idle == false) { continue; }
-            if (isActive == 0 && isStreaming == 0 && isIdle == 0 && filters.show_offline == false) { continue; }
+            if (isActive == 1 && locationServices.spotter_network.show_active == false) { continue; }
+            if (isStreaming == 1 && locationServices.spotter_network.show_streaming == false) { continue; }
+            if (isIdle == 1 && locationServices.spotter_network.show_idle == false) { continue; }
+            if (isActive == 0 && isStreaming == 0 && isIdle == 0 && locationServices.spotter_network.show_offline == false) { continue; }
             spotters.push({ lat: lat, lon: lon, description: description, active: isActive, streaming: isStreaming, idle: isIdle })
         }
         let uniqueFilter = spotters.filter((thing, index, self) => index === self.findIndex((t) => (t.description === thing.description && t.lat === thing.lat && t.lon === thing.lon)));
