@@ -292,8 +292,9 @@ class Parsing {
         let tAlerts = []
         let features = alerts.features.filter(feature => feature !== undefined);   
         let filtering = this.filterAlerts(features)
-        for (let i = 0; i < filtering.length; i++) {
-            let index = filtering[i]
+        let coordFilter = this.coordsToMiles(filtering)
+        for (let i = 0; i < coordFilter.length; i++) {
+            let index = coordFilter[i]
             if (index.properties.description != null) { if (this.isAlreadyCancelled(index)) { continue; } }
             if (this.doesAlertExist(tAlerts, index.id)) { continue; }
             index = JSON.parse(JSON.stringify(index));

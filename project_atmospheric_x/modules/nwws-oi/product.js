@@ -38,8 +38,9 @@ class Products {
                 let isXml = metadata.xml 
                 let attributes = metadata.attributes
                 let message = stanza
-                let vtec = message.match(loader.cache.configurations.definitions.vtec_regexp)
-                return {message: message,  attributes: attributes, xml: isXml, hasXmlDescription: false, hasVtec: vtec, type: `alert`, ignore: false}
+                let hasVtec = message.match(loader.cache.configurations.definitions.vtec_regexp)
+                let areaDesc = message.includes(`<areaDesc>`)
+                return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec, type: `alert`,ignore: false}
             }
             if (stanza.is(`message`)) {
                 let cb = stanza.getChild(`x`)

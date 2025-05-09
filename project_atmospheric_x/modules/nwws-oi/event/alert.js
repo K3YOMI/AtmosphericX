@@ -146,8 +146,9 @@ class AlertBuilder {
             alert.geometry = { type: "Polygon", coordinates: [result.alert.info[0].area[0].polygon[0].split(" ").map(coord => {let [lat, lon] = coord.split(",").map(parseFloat);return [lon, lat];})], };
         }
         let filter = loader.modules.parsing.filterAlerts([alert]);
-        if (filter.length === 0) { return; }
-        loader.modules.listener.processValidAlerts(filter, `XML`, `${new Date().getTime() - start}ms`);
+        let coordFilter = loader.modules.parsing.coordsToMiles(filter)
+        if (coordFilter.length == 0) { return }
+        loader.modules.listener.processValidAlerts(coordFilter, `XML`, `${new Date().getTime() - start}ms`);
     }
 }
 

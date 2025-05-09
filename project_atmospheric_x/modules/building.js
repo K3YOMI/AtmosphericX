@@ -165,7 +165,6 @@ class Building {
         event.properties.areaDesc = this.formatLocations(event.properties.areaDesc)
         event.properties.event = this.getEventSignificance(event)
         let eventActions = this.getEventActions(event)
-        event.properties.event = eventActions.name
         event.properties.parameters.maxWindGust = wind
         event.properties.parameters.maxHailSize = hail
         event.properties.parameters.tornadoDetection = tornado
@@ -188,6 +187,7 @@ class Building {
                 event.properties.messageType = event.action
             }
         }
+        event.properties.event = eventActions.name
         return {
             raw: event,
             details: {

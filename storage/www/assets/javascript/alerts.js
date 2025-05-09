@@ -10,7 +10,7 @@
                                      | |                                 
                                      |_|                                                                                                                
     Written by: k3yomi@GitHub
-    version: v7.0.5                              
+    Version: v7.0.5                              
 */
 
 
@@ -49,19 +49,17 @@ class Alerts {
         let activeAlerts = this.storage.active
         if (manualAlerts.length != 0) { 
             let data = manualAlerts
-            if (!data.metadata.ignored) {
-                let isWarning = data.details.name.includes(`Warning`) // Unused but may be useful in the future
-                let isWatch = data.details.name.includes(`Watch`) // Unused but may be useful in the future
-                let isEmergency = data.details.name.includes(`Emergency`) || data.details.name.includes(`Particularly Dangerous Situation`) // Unused but may be useful in the future
-                if (this.storage.alertManual != data.details.name + `-` + data.details.locations + `-` + data.details.type) {
-                    this.storage.alertManual = data.details.name + `-` + data.details.locations + `-` + data.details.type
-                    this.storage.alertsQueue.push(data)
-                    if (isDashboard) { this.library.createNotification(`<span style="color: red;">${data.details.name}</span> has been <span style="color: green;">${data.details.type}</span>`) }
-                }
-                // check if in active
-                let isInActive = this.storage.active.find(x => x.details.name == data.details.name && x.details.locations == data.details.locations)
-                if (isInActive == undefined) { this.storage.active.push(data) }
+            let isWarning = data.details.name.includes(`Warning`) // Unused but may be useful in the future
+            let isWatch = data.details.name.includes(`Watch`) // Unused but may be useful in the future
+            let isEmergency = data.details.name.includes(`Emergency`) || data.details.name.includes(`Particularly Dangerous Situation`) // Unused but may be useful in the future
+            if (this.storage.alertManual != data.details.name + `-` + data.details.locations + `-` + data.details.type) {
+                this.storage.alertManual = data.details.name + `-` + data.details.locations + `-` + data.details.type
+                if (!data.metadata.ignored) { this.storage.alertsQueue.push(data) }
+                if (isDashboard) { this.library.createNotification(`<span style="color: red;">${data.details.name}</span> has been <span style="color: green;">${data.details.type}</span>`) }
             }
+            // check if in active
+            let isInActive = this.storage.active.find(x => x.details.name == data.details.name && x.details.locations == data.details.locations)
+            if (isInActive == undefined) { this.storage.active.push(data) }
         }
         if (activeAlerts.length != 0) { 
             for (let i = 0; i < activeAlerts.length; i++) { 
