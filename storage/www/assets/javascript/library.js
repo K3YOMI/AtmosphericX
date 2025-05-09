@@ -74,7 +74,7 @@ class Library {
     createWebsocketSession = async function(requestedCache=[`active`, `public`]) {
         return new Promise((resolve, reject) => {
             let newConnection = true
-            let websocketUrl = `${window.location.protocol == `https:` ? `wss:` : `ws:`}//${window.location.hostname}:${window.location.port}`
+            let websocketUrl = `${window.location.protocol == `https:` ? `wss:` : `ws:`}//${window.location.hostname}:${window.location.port}/ws`
             this.storage.websocket = new WebSocket(websocketUrl)
             this.storage.websocket.addEventListener(`open`, (event) => {
                 this.createOutput(`Library.CreateWebsocketSession`, `WebSocket connection has been established`)

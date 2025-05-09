@@ -115,6 +115,7 @@ class Routes {
             },
             name: `atmosx-session`
         }))
+        loader.static.express.set('trust proxy', 1)
         if (loader.cache.configurations.hosting.https) { 
             let httpsOptions = { 
                 key: loader.packages.fs.readFileSync(loader.cache.configurations.hosting.cert_path.key),

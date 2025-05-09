@@ -32,11 +32,10 @@ class Websockets {
       */
 
     createWebsocketServer = function() {
-        loader.static.socket = new loader.packages.ws.Server({ server: loader.static.websocket })
+        loader.static.socket = new loader.packages.ws.Server({ server: loader.static.websocket, path: '/ws' })
         loader.static.socket.on(`connection`, (client) => { 
             this.onConnection(client) 
             client.on(`message`, (message) => { this.onMessage(client, message) })
-            client.on(`disconnect`, () => { this.onClose(client) })
             client.on(`close`, () => { this.onClose(client) })
         })
         loader.static.socket.on(`close`, (client) => { this.onClose(client) })
