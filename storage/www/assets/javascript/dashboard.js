@@ -669,11 +669,12 @@ class Dashboard {
      */
 
     copyTextToClipboard = function(text) {
-        window.navigator.clipboard.writeText(text).then(() => {
+        try {
+        window.navigator.clipboard.writeText(text)
             this.library.createNotification(`<span style="color: green;">Copied</span> to clipboard!`);
-        }).catch(err => {
-            this.library.createNotification(`You must enable <span style="color: red;">clipboard</span> permissions in your browser settings!`);
-        });
+        } catch (err) {
+            this.library.createNotification(`You must enable <span style="color: red;">clipboard</span> permissions in your browser settings or be on a secure https session!`);
+        }
     }
 
     /**
