@@ -33,7 +33,6 @@ const static_alerts = [
     "Tornado Warning",
     "Snow Squall Warning",
     "Earthquake Warning",
-    "911 Telephone Outage Emergency",
     "Administrative Message",
     "Air Quality Alert",
     "Air Stagnation Advisory",

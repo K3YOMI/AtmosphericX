@@ -10,7 +10,7 @@
                                      | |                                 
                                      |_|                                                                                                                
     Written by: k3yomi@GitHub
-    Version: v7.0.5                              
+    version: v7.0.5                              
 */
 
 
