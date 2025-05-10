@@ -3,7 +3,6 @@
         "https": false,
         "https_port": 443,
         "http_port": 80,
-        "session_maxage": 86400000,
         "cert_path": {
             "key": "../storage/cert/cert.key",
             "cert": "../storage/cert/cert.crt"

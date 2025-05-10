@@ -110,7 +110,7 @@ class Routes {
             resave: false,
             saveUninitialized: false,
             cookie: {
-                maxAge: loader.cache.configurations.hosting.session_maxage,
+                maxAge: null,
                 name: `session`,
                 sameSite: `strict`,
                 httpOnly: true,
