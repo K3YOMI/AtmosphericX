@@ -21,7 +21,6 @@ class Listener {
         this.name = `Listener`;
         loader.modules.hooks.createOutput(this.name, `Successfully initialized ${this.name} module`);
         loader.modules.hooks.createLog(this.name, `Successfully initialized ${this.name} module`);
-        this.createSession()
     }
 
 

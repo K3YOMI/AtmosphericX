@@ -161,8 +161,6 @@ class Alerts {
 
 
             eventTags = JSON.stringify(eventTags).replace(/\"/g, ``).replace(/,/g, `, `).replace(/\[/g, ``).replace(/\]/g, ``)
-            if (!maxHailSize.includes(`IN`) && maxHailSize != `N/A`) { maxHailSize = maxHailSize + ` IN.` }
-            if (!maxWindGust.includes(`MPH`) && maxWindGust != `N/A`) { maxWindGust = maxWindGust + ` MPH` }
             if (locationsImpacted.length > maxDescriptionLength) {locationsImpacted = locationsImpacted.substring(0, maxDescriptionLength) + `...`;}
 
             let colorScheme = this.storage.configurations.overlay_settings.color_scheme;

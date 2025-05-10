@@ -21,6 +21,7 @@ return new Promise(async (resolve, reject) => {
     loader.modules.hooks.createLog(`AtmosphericX`, `Atmospheric X is starting...`)
     loader.modules.hooks.cleanTemp()
     await loader.modules.webcalling.nextRun()
+    loader.modules.listener.createSession()
     setInterval(async () => {
         if (new Date().getSeconds() % loader.cache.configurations.project_settings.global_update == 0) {
             if (loader.cache.isRequestingData) { return }

@@ -52,7 +52,7 @@ class Building {
     getEventParameters = function(event) { 
         let hailSize = event.properties.parameters.maxHailSize ? `${event.properties.parameters.maxHailSize}` : `N/A`
         let windGust = event.properties.parameters.maxWindGust ? `${event.properties.parameters.maxWindGust}` : `N/A`
-        let tornadoThreat = event.properties.parameters.tornadoDetection || `N/A`
+        let tornadoThreat = event.properties.parameters.tornadoDetection || event.properties.parameters.waterspoutDetection || `N/A`
         let thunderstormThreat = event.properties.parameters.thunderstormDamageThreat || [`N/A`]
         return { hail: hailSize, wind: windGust, tornado: tornadoThreat, thunderstorm: thunderstormThreat }
     }

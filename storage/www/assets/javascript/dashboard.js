@@ -328,8 +328,6 @@ class Dashboard {
             if (hours < 0) { timeString = `Now...`}
             if (hours > 9999) { timeString = `Until further notice...`}
             eventTags = JSON.stringify(eventTags).replace(/\"/g, ``).replace(/,/g, `, `).replace(/\[/g, ``).replace(/\]/g, ``)
-            if (!maxHailSize.includes(`IN`) && maxHailSize != `N/A`) { maxHailSize = maxHailSize + ` IN.` }
-            if (!maxWindGust.includes(`MPH`) && maxWindGust != `N/A`) { maxWindGust = maxWindGust + ` MPH` }
             if (locationsImpacted.length > 65) { locationsImpacted = locationsImpacted.substring(0, 65) + `...` }
             if (!recentOnly) { if (JSON.stringify(alert.details).toLowerCase().includes(searchTerm.toLowerCase()) == false) { continue } }
             this.injectCardData({
