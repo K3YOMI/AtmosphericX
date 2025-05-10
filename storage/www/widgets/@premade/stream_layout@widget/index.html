@@ -68,7 +68,7 @@
                     element_class.randomAlertUpdate(`random_alert_expires`, string, library.storage.configurations.widget_settings.random_expires.max_expires_length, library.storage.configurations.widget_settings.random_expires.animations[0], library.storage.configurations.widget_settings.random_expires.animations[1])
                     if (rng_detail.name.length > 32) { document.getElementById(`random_alert_title`).style.marginTop = "1015px"; } else { document.getElementById(`random_alert_title`).style.marginTop = "1023px"; }
                 }
-                if (storage.length > 0) { await alert_class.triggerAlertQueue(storage) }
+                if (storage.length > 0) { await alert_class.triggerAlertQueue() }
             })
             setInterval(() => {
                 let time = library.getTimeInformation()

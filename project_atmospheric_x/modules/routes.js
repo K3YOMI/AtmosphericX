@@ -44,7 +44,8 @@ class Routes {
             if (!hasSession.success) { return loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/portal/login.html`, true); }
             loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/dashboard/settings.html`, false)
         })
-        loader.static.express.get(`/widgets/alert_bar`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_bar@widget/index.html`)})
+        loader.static.express.get(`/widgets/alert_bar_old`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_bar@widget/index.html`)})
+        loader.static.express.get(`/widgets/alert_bar`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_barv2@widget/index.html`)})
         loader.static.express.get('/widgets/mapbox', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/mapbox@widget/index.html`));
         loader.static.express.get('/widgets/notice', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/notice@widget/index.html`));
         loader.static.express.get('/widgets/table', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/table@widget/index.html`));

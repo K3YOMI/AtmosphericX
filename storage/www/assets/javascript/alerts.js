@@ -61,11 +61,11 @@ class Alerts {
             let isInActive = this.storage.active.find(x => x.details.name == data.details.name && x.details.locations == data.details.locations)
             if (isInActive == undefined) { this.storage.active.push(data) }
         }
-        if (activeAlerts.length != 0) { 
-            for (let i = 0; i < activeAlerts.length; i++) { 
-                let data = activeAlerts[i]
+        if (this.storage.active.length != 0) { 
+            for (let i = 0; i < this.storage.active.length; i++) { 
+                let data = this.storage.active[i]
                 let emergencyAlertPlayed = this.storage.emergencyAlerts.find(x => x == `${data.details.name}-${data.details.locations}`)
-                let isDuplicate = this.storage.lastQueue.find(x => x.details.name == data.details.name && x.details.locations == data.details.locations && x.details.type == data.details.type && x.details.description == data.details.description)
+                let isDuplicate = this.storage.lastQueue.find(x => x.details.name == data.details.name && x.details.description == data.details.description && x.details.type == data.details.type && x.details.issued == data.details.issued && x.details.expires == data.details.expires)
                 let currentTime = new Date().getTime() / 1000
                 let timeCheck = currentTime - new Date(data.details.issued).getTime() / 1000
                 let canBePushed = (timeCheck < 200 && isDuplicate == undefined) ? true : false 
@@ -122,20 +122,108 @@ class Alerts {
     };
 
     /**
+      * @function createAnimatedAlertv2
+      * @description This is the version 2 of the alert function. This doesn't use a GIF but rather a div and animations...
+      * This is a more efficient way instead of calling 90 different gifs and wasting resources. Plus we can use CSS and style 
+      * the alert to your liking!
+      * 
+      * @param {Object} alert - The alert object containing details about the alert.
+      */
+
+    createAnimatedAlertv2 = function(alert) {
+        if (this.storage.isStreaming) {
+            let timeExpiresString = `Invalid Time`
+            let timeIssuedString = `Invalid Time`
+
+            let configuration = this.storage.configurations.widget_settings.alert;
+            let maxDescriptionLength = configuration.max_text_length;
+            let eventName = alert.details.name 
+            let eventStatus = alert.details.type
+            let locationsImpacted = alert.details.locations
+            let eventIssued = alert.details.issued == undefined ? `No date found` : alert.details.issued
+            let eventExpires = alert.details.expires
+            let maxWindGust = alert.details.wind
+            let maxHailSize = alert.details.hail
+            let damageThreat = alert.details.thunderstorm
+            let tornadoIndicator = alert.details.tornado
+            let fullSendName = alert.details.sender
+            let eventTags = alert.details.tag == undefined ? `No tags found` : alert.details.tag
+            let eventExpiresTime = library.getTimeInformation(eventExpires)
+            let eventIssuedTime = library.getTimeInformation(eventIssued)
+            timeExpiresString = `${eventExpiresTime.date}, ${eventExpiresTime.time}`
+            timeIssuedString = `${eventIssuedTime.date}, ${eventIssuedTime.time}`
+            if (isNaN(eventExpiresTime.unix)) { timeExpiresString = `Invalid Time` }
+            if (isNaN(eventIssuedTime.unix)) { timeIssuedString = `Invalid Time` }
+
+            let expiresHours = Math.floor((new Date(eventExpiresTime.unix * 1000) - new Date()) / 3600000);  
+            if (expiresHours < 0) { timeExpiresString = `Now...`}
+            if (expiresHours > 9999) { timeExpiresString = `Until further notice...`}
+
+
+            eventTags = JSON.stringify(eventTags).replace(/\"/g, ``).replace(/,/g, `, `).replace(/\[/g, ``).replace(/\]/g, ``)
+            if (!maxHailSize.includes(`IN`) && maxHailSize != `N/A`) { maxHailSize = maxHailSize + ` IN.` }
+            if (!maxWindGust.includes(`MPH`) && maxWindGust != `N/A`) { maxWindGust = maxWindGust + ` MPH` }
+            if (locationsImpacted.length > maxDescriptionLength) {locationsImpacted = locationsImpacted.substring(0, maxDescriptionLength) + `...`;}
+
+            let colorScheme = this.storage.configurations.overlay_settings.color_scheme;
+            let getColor = colorScheme.find(type => eventName.includes(type.type)) || colorScheme.find(type => type.type == `Default`);
+            let colorLight = getColor.color.light;
+            let colorDark = getColor.color.dark;
+
+            let domNotification = document.querySelector('.alert-box');
+            let domHeader = document.querySelector('.alert-header');
+            let domTitle = document.getElementById('event-name');
+            let domLocations = document.getElementById('event-locations');
+            let domMaxHail = document.getElementById('event-max-hail');
+            let domMaxGusts = document.getElementById('event-max-wind');
+            let domTornaod = document.getElementById('event-tornado');
+            let domDmg = document.getElementById('event-damage');
+            let domExpires = document.getElementById('event-expires-time');
+            let domIssued = document.getElementById('event-issued-time');
+            let domSender = document.getElementById('event-sender');
+            let domTags = document.getElementById('event-tags');
+  
+            domNotification.style.display = 'block';
+            domNotification.style.animation = 'fadeInDown 0.9s ease-in-out';
+            domNotification.style.boxShadow = `0 0 20px ${colorDark}`;
+            domNotification.style.background = `linear-gradient(to bottom, ${colorLight}, ${colorDark})`; 
+            domHeader.style.backgroundColor = colorDark;
+            
+            domTitle.textContent = `${eventName} (${eventStatus})`;
+            domLocations.innerHTML = `${locationsImpacted || 'N/A'}`;
+            domMaxHail.textContent = `${maxHailSize || 'N/A'}`;
+            domMaxGusts.textContent = `${maxWindGust || 'N/A'}`;
+            domTornaod.textContent = `${tornadoIndicator || 'N/A'}`;
+            domDmg.textContent = `${damageThreat || 'N/A'}`;
+            domSender.textContent = `${fullSendName || 'N/A'}`;
+            domExpires.innerHTML = `${timeExpiresString || 'N/A'}`;
+            domIssued.innerHTML = `${timeIssuedString || 'N/A'}`;
+            domTags.innerHTML = `${eventTags || 'N/A'}`;
+            setTimeout(() => {
+                domNotification.style.animation = 'fadeOut 1s ease-in-out';
+                setTimeout(() => { domNotification.style.display = 'none'; alertTitle.textContent = ''; alertDescription.textContent = ''; domNotification.style.backgroundColor = ''; domNotification.style.animation = ''; }, 900);
+            }, 6 * 1000);
+        }  
+        setTimeout(() => { this.storage.isQueryRunning = false; }, 6.8 * 1000);
+    }
+
+
+    /**
       * @function triggerAlertQueue
       * @description Processes and plays the next alert in the provided queue with associated media and UI effects.
       * 
       * @async
       * @param {Array} alertQueue - The queue of alerts to process.
+      * @param {boolean} [v2=false] - If true, uses the v2 alert display method.
       */
 
-    triggerAlertQueue = async function(alertQueue=[], v2=false) {
+    triggerAlertQueue = async function(v2=false) {
         if (this.storage.isQueryRunning == undefined) { this.storage.isQueryRunning = false }
-        if (alertQueue.length == 0) { return }
+        if (this.storage.alertsQueue.length == 0) { return }
         if (this.storage.isQueryRunning == true) { return } else { this.storage.isQueryRunning = true }
-        let nextAlert = alertQueue.length - 1
-        let currentAlert = alertQueue[nextAlert]
-        if (v2) { this.createAnimatedAlertv2(currentAlert.metadata.color, currentAlert) }
+        let nextAlert = this.storage.alertsQueue.length - 1
+        let currentAlert = this.storage.alertsQueue[nextAlert]
+        if (v2) { this.createAnimatedAlertv2(currentAlert) }
         if (!v2) { this.createAnimatedAlert(currentAlert.metadata.gif, `${currentAlert.details.name} (${currentAlert.details.type})`, currentAlert.details.locations) }
         if (!currentAlert.metadata.onlyBeep) { 
             if (currentAlert.metadata.autobeep) { 
@@ -152,7 +240,7 @@ class Alerts {
         } else {
             this.library.playAudio(this.storage.configurations.tone_sounds.beep, false)
         }
-        alertQueue.pop()
+        this.storage.alertsQueue.splice(nextAlert, 1)
         return
     }
 

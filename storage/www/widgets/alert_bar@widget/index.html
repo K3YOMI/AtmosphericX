@@ -20,7 +20,7 @@
             library.detectMobileDevice() 
             document.addEventListener('onCacheUpdate', async (event) => {
                 let storage = alert_class.syncAlerts()
-                if (storage.length > 0) { await alert_class.triggerAlertQueue(storage) }
+                if (storage.length > 0) { await alert_class.triggerAlertQueue() }
             })
         })
     </script>
