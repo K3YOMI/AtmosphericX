@@ -87,6 +87,7 @@ class Routes {
             loader.modules.hooks.createLog(this.name, `${request.method} : ${request.url} : ${request.headers['user-agent']} : ${request.connection.remoteAddress} : ${request.headers.referer}`)
             response.setHeader('Access-Control-Allow-Origin', '*');
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            response.setHeader('Access-Control-Allow-Credentials', 'true');
             response.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
             next()
         })
@@ -106,11 +107,12 @@ class Routes {
         loader.static.express.use(loader.packages.expressSession({
             secret: loader.packages.crypto.randomBytes(32).toString('hex'),
             resave: false,
-            saveUninitialized: true,
+            saveUninitialized: false,
             cookie: {
                 maxAge: loader.cache.configurations.hosting.session_maxage,
                 name: `session`,
                 sameSite: `strict`,
+                httpOnly: true,
                 secure: loader.cache.configurations.hosting.https
             },
             name: `atmosx-session`

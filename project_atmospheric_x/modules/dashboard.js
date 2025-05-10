@@ -171,6 +171,7 @@ class Dashboard {
                 return {success: true, message: `Login successful`};
             }
             if (action == 1) { // Logout (1)
+                request.session.destroy();
                 if (request.session.account == undefined) {
                     loader.modules.hooks.createOutput(this.name, `Attempted logout with no session`);
                     loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted logout with no session`);
@@ -178,7 +179,6 @@ class Dashboard {
                     return {success: false, message: `No session found`};
                 }
                 let account = loader.static.accounts.find(a => a.session == request.session.account);
-                request.session.destroy();
                 loader.modules.hooks.createOutput(this.name, `${account.username} logged out successfully`);
                 loader.modules.hooks.createLog(this.name, `INFO`, `${account.username} logged out successfully`);
                 loader.static.accounts = loader.static.accounts.filter(a => a.session != request.session.account);
@@ -290,7 +290,7 @@ class Dashboard {
       */
 
     redirectSession = function(request, response, redirectUrl, killSession=false) { 
-        if (killSession) { request.session.destroy() }
+        if (killSession) { request.session.destroy(); response.clearCookie(`atmosx-session`) }
         response.sendFile(redirectUrl)
         return {success: true, message: `Redirected to ${redirectUrl}`}
     }
