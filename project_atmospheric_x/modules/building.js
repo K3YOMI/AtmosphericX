@@ -206,7 +206,7 @@ class Building {
                 tag: eventTags,
                 link: event.id,
             },
-            metadata: { ...eventActions, ignored: ignoreWarning, only_beep: onlyBeep },
+            metadata: { ...eventActions, ignored: ignoreWarning, onlyBeep: onlyBeep },
         };
     }
 
