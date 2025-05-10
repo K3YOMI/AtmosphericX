@@ -340,7 +340,7 @@ class Dashboard {
                     for (let i = 0; i < eventHistory.length; i++) {
                         let descriptionSegement = eventHistory[i]
                         let genericDashline = "-".repeat(5)
-                        eventHistoryString += `\n${genericDashline} ${descriptionSegement.act} (${descriptionSegement.time}) ${genericDashline}\n\n${descriptionSegement.desc}`;  
+                        eventHistoryString += `\n\n${genericDashline} ${descriptionSegement.act} (${descriptionSegement.time}) ${genericDashline}\n\n${descriptionSegement.desc}`;  
                     }
                     if (eventHistoryString == ``) { eventHistoryString = currentDescription } 
                     let eventSubtitle = `Event: ${eventName} (${eventStatus})<br>Locations: ${alert.details.locations}<br>Issued: ${eventIssued}<br>Expires in: ${timeString}<br>Wind Gust: ${maxWindGust} <br>Hail: ${maxHailSize}<br>Damage Threat: ${damageThreat}<br>Tornado: ${tornadoIndicator}<br>Tag: ${eventTags}<br>Sender: ${fullSendName}<br>Tracking ID: ${eventTrackingID}`
