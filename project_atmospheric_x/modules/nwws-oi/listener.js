@@ -36,13 +36,14 @@ class Listener {
         let wireEnabled = wireCfg.enabled
         let wireUsername = wireCfg.credentials.username 
         let wirePassword = wireCfg.credentials.password
+        let displayName = wireCfg.credentials.display
         let wireService = wireCfg.endpoint
         let wireXml = wireCfg.xml_alerts
         let wireDomain = wireCfg.domain
         if (!wireEnabled) { return }
         loader.static.wiresession = loader.packages.xmpp.client({reconnect: true, service: wireService, domain: wireDomain, username: wireUsername, password: wirePassword}).setMaxListeners(0);
         loader.static.wiresession.on(`online`, async (_address) => {
-            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${wireUsername}`, xmlns: 'http://jabber.org/protocol/muc' }));
+            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${displayName}`, xmlns: 'http://jabber.org/protocol/muc' }));
             loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain}`)
             loader.cache.timeSinceLastStanza = new Date().getTime()
             loader.cache.hasConnectedBefore = true

@@ -45,7 +45,8 @@
                 "ugc_polygons": false,
                 "credentials": {
                     "username": "NWWS_OI_USERNAME_HERE",
-                    "password": "NWWS_OI_PASSWORD_HERE"
+                    "password": "NWWS_OI_PASSWORD_HERE",
+                    "display": "AtmosphericX (DISPLAY_NAME_HERE)"
                 },
                 "mail_settings": {
                     "enabled": false,

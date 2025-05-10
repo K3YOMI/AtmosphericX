@@ -38,8 +38,8 @@ class RawParsing {
         let lines = message.split('\n');
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].includes(string)) {
-                return lines[i].replace(string, '').replace(/^\s+|\s+$/g, '').replace(/(?:<\d+\s*MPH\s*>|MPH|IN|FT|MILE|NM|SM|in)/g, '').replace(`<`, '').trim()
-            }
+                return lines[i].replace(string, '').replace(/^\s+|\s+$/g, '').replace(/(?:<\d+\s*MPH\s*>|MPH|IN|FT|MILE|NM|SM|in)\b/g, '').replace(`<`, '').trim()
+            }  
         }
         return null
     }
