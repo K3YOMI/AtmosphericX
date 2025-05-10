@@ -57,6 +57,7 @@ class UGCParsing {
             let id = zones[i].trim();
             let located = await loader.modules.database.runQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id])
             if (located.length > 0) { locations.push(located[0].location); }
+            if (located.length === 0) { locations.push(id); }
         }
         locations = [...new Set(locations)];
         return locations

@@ -48,18 +48,20 @@ class AlertBuilder {
         let messages = message.map(msg => msg.trim());
         let wire = loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service
         let start = new Date().getTime()
+        let defaultWmo = metadata.message.match(new RegExp(loader.cache.configurations.definitions.wmo_regexp, "gimu"));
         let alerts = []
         for (let i = 0; i < messages.length; i++) {
             let msg = messages[i]
             let vtec = await loader.modules.vtec.getVTEC(msg)
             let ugc = await loader.modules.ugc.getUGC(msg)
             if (vtec != null && ugc != null) { 
+                if (vtec.wmo != null) { defaultWmo = vtec.wmo }
                 let getCoords = loader.modules.raw.getPolygonCoordinatesByText(msg)
                 let getTornado = loader.modules.raw.getStringByLine(msg, `TORNADO...`) ? loader.modules.raw.getStringByLine(msg, `TORNADO...`) : loader.modules.raw.getStringByLine(msg, `WATERSPOUT...`)
                 let getMaxHailSize = loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`) ? loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`) : loader.modules.raw.getStringByLine(msg, `HAIL...`)
                 let getMaxWindGusts = loader.modules.raw.getStringByLine(msg, `MAX WIND GUST...`) ? loader.modules.raw.getStringByLine(msg, `MAX WIND GUST...`) : loader.modules.raw.getStringByLine(msg, `WIND...`)
                 let getTStormDamageThreat = loader.modules.raw.getStringByLine(msg, `THUNDERSTORM DAMAGE THREAT...`)
-                let senderOffice = loader.modules.raw.getOfficeName(msg)
+                let senderOffice = loader.modules.raw.getOfficeName(msg) ? loader.modules.raw.getOfficeName(msg) : vtec.trackingId.split(`-`)[0]
                 if (getCoords.length == 0 && wire.ugc_polygons) { getCoords = await loader.modules.ugc.getCoordinates(ugc.zones) }
                 let alert = {
                     id: `NWWS-OI-${vtec.trackingId}`,
@@ -73,11 +75,11 @@ class AlertBuilder {
                         messageType: vtec.eventStatus,
                         event: `${vtec.eventName} ${vtec.eventSignificance}` || `No Event Found`,
                         sender: senderOffice,
-                        senderName: senderOffice == `No Office Found` ? `No Office Found` : `NWS ${senderOffice}`,
+                        senderName: `NWS ${senderOffice}`,
                         description: msg,
                         geocode: { UGC: ugc.zones || []},
                         parameters: { 
-                            WMOidentifier: [vtec.wmo == null ? `N/A` : vtec.wmo[0] || `N/A`],
+                            WMOidentifier: vtec.wmo && vtec.wmo[0] ? [vtec.wmo[0]] : (defaultWmo && defaultWmo[0] ? [defaultWmo[0]] : [`N/A`]),
                             tornadoDetection: getTornado || `N/A`,
                             maxHailSize: getMaxHailSize || `N/A`,
                             maxWindGust: getMaxWindGusts || `N/A`,

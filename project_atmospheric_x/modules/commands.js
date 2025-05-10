@@ -30,6 +30,7 @@ class Commands {
             {command: `/safe-close`, description: `Close app safely`, function: `sendExitSignal`},
             {command: `/debug-xml`, description: `Debug XML alerts`, function: `sendDebugXmlSignal`},
             {command: `/debug-raw`, description: `Debug raw alerts`, function: `sendDebugRawSignal`},
+            {command: `/debug-ugc`, description: `Debug raw alerts`, function: `sendDebugUgcSignal`},
             {command: `/clear`, description: `Clear console`, function: `sendClearSignal`},
             {command: `/memory-dump`, description: `Create a memory dump`, function: `sendMemoryDumpSignal`},
             {command: `/hammer-time`, description: `Stress testing`, function: `sendHammerSignal`},
@@ -46,6 +47,17 @@ class Commands {
         let totalClients = loader.static.webSocketClients.length
         loader.modules.hooks.createOutput(this.name, `Total clients: ${totalClients}`)
     }
+
+
+    sendDebugUgcSignal = async function(args) {
+		let start = new Date().getTime()
+    	let ugc = args[0]
+      	if (ugc != undefined) {
+        	let zones = loader.modules.ugc.getZones(ugc)
+			let locations = await loader.modules.ugc.getLocations(zones)
+			loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${new Date().getTime() - start}ms)`)
+      	}
+  	}
 
     /**
       * @function sendDebugRawSignal

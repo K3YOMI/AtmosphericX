@@ -124,13 +124,12 @@ class Listener {
                     newHistory = newHistory.sort((a, b) => new Date(b.time) - new Date(a.time))
                     loader.cache.twire.features[find] = data
                     loader.cache.twire.features[find].history = newHistory
-                    let vCurrentTime = new Date().getTime()
                     for (let i = 0; i < newHistory.length; i++) {
                         for (let j = 0; j < newHistory.length; j++) {
                             let vTime = new Date(newHistory[i].time).getTime()
                             let cTime = new Date(newHistory[j].time).getTime()
                             let vTimeDiff = Math.abs(vTime - cTime)
-                            if (vTimeDiff < 1000 && vCurrentTime - vTimeDiff < 1000) { 
+                            if (vTimeDiff < 1000) {
                                 let combinedLocations = newLocations + `; ` + loader.cache.twire.features[find].properties.areaDesc
                                 let uniqueLocations = [...new Set(combinedLocations.split(';').map(location => location.trim()))];
                                 loader.cache.twire.features[find].properties.areaDesc = uniqueLocations.join('; ')

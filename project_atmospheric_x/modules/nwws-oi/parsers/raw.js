@@ -56,7 +56,7 @@ class RawParsing {
         let v2 = this.getStringByLine(message, `NWS STORM PREDICTION CENTER `)
         if (v1) { return v1 }
         if (v2) { return v2 }
-        return `No Office Found`
+        return null
     }
 
     /**
