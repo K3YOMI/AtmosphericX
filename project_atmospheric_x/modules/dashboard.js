@@ -171,11 +171,11 @@ class Dashboard {
                 return {success: true, message: `Login successful`};
             }
             if (action == 1) { // Logout (1)
-                request.session.destroy();
                 if (request.session.account == undefined) {
                     loader.modules.hooks.createOutput(this.name, `Attempted logout with no session`);
                     loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted logout with no session`);
                     this.giveResponse(request, response, {statusCode: 401, message: `No session found`});
+                    request.session.destroy();
                     return {success: false, message: `No session found`};
                 }
                 let account = loader.static.accounts.find(a => a.session == request.session.account);
@@ -183,6 +183,7 @@ class Dashboard {
                 loader.modules.hooks.createLog(this.name, `INFO`, `${account.username} logged out successfully`);
                 loader.static.accounts = loader.static.accounts.filter(a => a.session != request.session.account);
                 this.giveResponse(request, response, {statusCode: 200, message: `Logout successful`});
+                request.session.destroy();
                 return {success: true, message: `Logout successful`};
             }
             if (action == 2) { // Register (2)
