@@ -57,7 +57,7 @@ class VTECParsing {
       */
 
     getTrackingId = function(vtec) {
-        return `${vtec[2]}-${vtec[4]}-${vtec[5]}`
+        return `${vtec[2]}-${vtec[3]}-${vtec[4]}-${vtec[5]}`
     }
 
     /**

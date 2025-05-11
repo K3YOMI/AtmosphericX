@@ -117,7 +117,7 @@ class AlertBuilder {
         let action = `N/A`;
         if (tracking !== `N/A`) {
             let splitVTEC = tracking.split(`.`);
-            tracking = `${splitVTEC[2]}-${splitVTEC[4]}-${splitVTEC[5]}`;
+            tracking = `${splitVTEC[2]}-${splitVTEC[3]}-${splitVTEC[4]}-${splitVTEC[5]}`;
             action = loader.cache.configurations.definitions.status_signatures[splitVTEC[1]];
         }
         let alert = {
