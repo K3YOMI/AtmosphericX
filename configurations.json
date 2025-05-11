@@ -183,16 +183,20 @@
         }
     },
     "spc_outlooks": [
-        { "day": 1, "title": "Day 1 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day1otlk.gif" },
-        { "day": 2, "title": "Day 2 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day2otlk.gif" },
-        { "day": 3, "title": "Day 3 Categorial Risk", "source": "https://www.spc.noaa.gov/products/outlook/day3otlk.gif" },
-        { "day": 1, "title": "Day 1 Tornado Risk",    "source": "https://www.spc.noaa.gov/products/outlook/day1probotlk_torn.gif" },
-        { "day": 1, "title": "Day 1 Wind Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day1probotlk_wind.gif" },
-        { "day": 1, "title": "Day 1 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day1probotlk_hail.gif" },
-        { "day": 2, "title": "Day 2 Tornado Risk",    "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_torn.gif" },
-        { "day": 2, "title": "Day 2 Wind Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_wind.gif" },
-        { "day": 2, "title": "Day 2 Hail Risk",       "source": "https://www.spc.noaa.gov/products/outlook/day2probotlk_hail.gif" },
-        { "day": 3, "title": "Day 3 Probability",     "source": "https://www.spc.noaa.gov/products/outlook/day3prob.gif"}
+        { "day": 1, "title": "Severe Weather Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/state/swody1.png" },
+        { "day": 2, "title": "Severe Weather Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/state/swody2.png" },
+        { "day": 3, "title": "Severe Weather Outlook (Day 3)", "source": "https://www.spc.noaa.gov/partners/outlooks/state/swody3.png" },
+        { "day": 1, "title": "Severe Wind Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody1_WIND.png?"},
+        { "day": 1, "title": "Severe Hail Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody1_HAIL.png?"},
+        { "day": 1, "title": "Tornado Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody1_TORN.png?"},
+        { "day": 2, "title": "Severe Wind Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody2_WIND.png?"},
+        { "day": 2, "title": "Severe Hail Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody2_HAIL.png?"},
+        { "day": 2, "title": "Tornado Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody2_TORN.png?"},
+        { "day": 4, "title": "Severe Weather Outlook (Day 4)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody4_PROB.png"},
+        { "day": 5, "title": "Severe Weather Outlook (Day 5)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody5_PROB.png"},
+        { "day": 6, "title": "Severe Weather Outlook (Day 6)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody6_PROB.png"},
+        { "day": 7, "title": "Severe Weather Outlook (Day 7)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody7_PROB.png"},
+        { "day": 8, "title": "Severe Weather Outlook (Day 8)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody8_PROB.png"}
     ],
     "third_party_services": [
         { "title": "Live Storm Chasing",    "url": "https://livestormchasing.com/", "image": "/assets/media/dashboard/storm-live-logo.png" },
