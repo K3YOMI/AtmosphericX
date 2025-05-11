@@ -5,6 +5,7 @@
     .wrapper { width: 80%; margin-left: 80px; }
     .data-card-parent { padding-right: 40px; }
     .popup-box { width: 75%; margin-left: -20px; }
+    .popup-description { font-size: 0.6em; }
     .hamburger-menu { display: block; position: fixed; top: 0px; left: 0px; border-radius: 5px; font-size: 1.2em; padding: 20px; z-index: 2; }
     .data-card-video { width: 100%; height: 100%; }
     .notification { font-size: 0.7em; width: 400px; margin-left: -175px; }
