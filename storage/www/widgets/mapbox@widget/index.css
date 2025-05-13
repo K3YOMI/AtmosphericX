@@ -1,6 +1,6 @@
 body, html { margin: 0;  background-color: #191A1A; padding: 0}
 
-.widgets-custom-popup .mapboxgl-popup-content { width: 400px; background-color: rgba(26, 25, 25, 0.473); color: #f0f0f0; padding: 10px 15px; font-size: 17px; font-family: SofiaSansSemiCondensed-Bold; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0);}
+.widgets-custom-popup .mapboxgl-popup-content { width: 400px; background-color: rgba(26, 25, 25, 0.473); color: #f0f0f0; padding: 10px 15px; font-size: 17px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0);}
 .widgets-custom-popup .mapboxgl-popup-content a { margin: 5px 0 0 0; line-height: 1.5; color: #dcdcdc;}
 .widgets-custom-popup .mapboxgl-popup-close-button { opacity: 0;}
 .widgets-custom-popup .mapboxgl-popup-tip { border-width: 0; }

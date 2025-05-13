@@ -13,7 +13,6 @@ body, html {
     max-width: 900px;
     margin: auto;
     overflow: hidden;
-    font-family: 'SofiaSansSemiCondensed-Bold';
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.973);
     position: absolute;
     width: 100%;
@@ -54,4 +53,9 @@ body, html {
     display: flex;
     align-items: center;
     gap: 6px;
+}
+
+.alert-icon {
+    width: 200px;
+    height: 200px;
 }

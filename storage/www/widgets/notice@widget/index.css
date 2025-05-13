@@ -19,7 +19,6 @@ body, html { display: flex; justify-content: center; align-items: center; backgr
     overflow: hidden;
     text-align: left;
     color: white;
-    font-family: 'SofiaSansSemiCondensed-Bold';
     text-shadow: 2px 2px 15px #00000069;
     position: relative;
     padding-left: 10px;
@@ -35,7 +34,6 @@ body, html { display: flex; justify-content: center; align-items: center; backgr
     overflow: hidden;
     text-align: left;
     color: white;
-    font-family: 'SofiaSansSemiCondensed-Bold';
     text-shadow: 2px 2px 15px #00000069;
     position: relative;
     padding-left: 10px;

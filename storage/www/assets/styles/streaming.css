@@ -3,6 +3,10 @@
     src: url('/assets/fonts/SofiaSansSemiCondensed-Bold.ttf');
 }  
 
+* {
+    font-family: "SofiaSansSemiCondensed-Bold", Arial, sans-serif;
+}
+
 .p_boxdark { 
     background-color: rgba(28,61,181);
     display: block;
@@ -17,7 +21,6 @@
     transition-duration: 1s;
     overflow: hidden;
 }
-
 
 .notification { 
     position: fixed;
@@ -35,14 +38,11 @@
     z-index: 10000;
     width: 500px;
     text-align: center;
-    font-family: Arial, sans-serif;
     font-size: 14px;
     border: #ffffff42;
     border-style: solid;
     border-width: 1px;
 }
-
-
 
 @keyframes fade {
     0% {opacity: 0;}

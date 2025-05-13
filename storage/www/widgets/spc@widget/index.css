@@ -19,7 +19,6 @@ body, html {
     top: -100px;
     right: 0;
     position: fixed;
-    font-family: 'SofiaSansSemiCondensed-Bold';
     background-color: rgba(0, 0, 0, 0.562);
     color: white;
 }

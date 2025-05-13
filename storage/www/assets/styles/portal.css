@@ -1,7 +1,4 @@
-@font-face {
-    font-family: SofiaSansSemiCondensed-Bold;
-    src: url('../fonts/SofiaSansSemiCondensed-Bold.ttf');
-}
+
 .bg {  
     background: url('/assets/media/dashboard/login-bg.png') no-repeat center center fixed; 
     background-size: cover;   
@@ -13,7 +10,6 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'SofiaSansSemiCondensed-Bold';
     background-color: #151414;
     color: #fff;
 }

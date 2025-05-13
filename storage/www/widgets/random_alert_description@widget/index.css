@@ -13,12 +13,10 @@ body, html {
     line-height: 50px;
     text-align: left;
     color: white;
-    font-family: 'SofiaSansSemiCondensed-Bold';
     margin-bottom: 0;
     position: absolute;
-    top: 50%;
+    top: 53%;
     left: 0;
-    transform: translate(0%, 0%);
     padding: 0px 5px 0 5px;
     text-shadow: 1px 1px 3px #00000069;
 }
