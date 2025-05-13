@@ -248,7 +248,8 @@
         let alert_class;
         let library = new Library()
         if (window.innerWidth <= 1270) { document.getElementById(`._nonchild_atmosx_dashboard`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-
+        if (window.innerWidth <= 1270) { document.getElementById(`hub.plugins`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
+        if (window.innerWidth <= 1270) { document.getElementById(`hub.support`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         library.createWebsocketSession([`public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)
