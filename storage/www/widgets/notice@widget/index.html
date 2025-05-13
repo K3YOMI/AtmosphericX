@@ -42,11 +42,11 @@
                     document.getElementById('notice_base').style.display = 'block'
                     document.getElementById('p_title').innerHTML = alert.details.name
                     document.getElementById('p_expires').innerHTML = `EXPIRES: ${alert.details.expires}`
-                    document.getElementById('p_locations').innerHTML = `LOCATIONS: ${alert.details.locations.toUpperCase()}`
-                    document.getElementById('p_maxhail').innerHTML = `MAX HAIL: ${alert.details.hail} in`
-                    document.getElementById('p_maxgusts').innerHTML = `MAX GUSTS: ${alert.details.wind} MPH`
-                    document.getElementById('p_tortag').innerHTML = `TORNADO THREAT: ${alert.details.tornado.toUpperCase()}`
-                    document.getElementById('p_dmgtag').innerHTML = `DAMAGE THREAT: ${alert.details.thunderstorm.toUpperCase()}`
+                    document.getElementById('p_locations').innerHTML = `LOCATIONS: ${alert.details.locations}`
+                    document.getElementById('p_maxhail').innerHTML = `MAX HAIL: ${alert.details.hail}`
+                    document.getElementById('p_maxgusts').innerHTML = `MAX GUSTS: ${alert.details.wind}`
+                    document.getElementById('p_tortag').innerHTML = `TORNADO THREAT: ${alert.details.tornado}`
+                    document.getElementById('p_dmgtag').innerHTML = `DAMAGE THREAT: ${alert.details.thunderstorm}`
                 } else {
                     document.getElementById('notice_base').style.display = 'none'
                 }
