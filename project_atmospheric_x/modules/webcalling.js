@@ -204,7 +204,6 @@ class Webcalling {
             } 
             if (Object.keys(this.data).length > 0) {
                 if (this.results != ``) { loader.modules.hooks.createOutput(`${this.name}.Get`, `Cache updated (Taken ${((new Date() - time) / 1000).toFixed(2)}s) |${this.results}`) }
-                if (this.data[`NoaaWeatherWireService`] != undefined) { this.data[`NoaaWeatherWireService`] = {features: loader.cache.twire.features.filter(feature => feature !== undefined && new Date(feature.properties.expires).getTime() / 1000 > new Date().getTime() / 1000)} }
                 loader.modules.building.buildCache(this.data, loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service.enabled)
                 resolve({success: true, message: this.data})
             }
