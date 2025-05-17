@@ -60,7 +60,7 @@ class AlertBuilder {
                 let getTornado = loader.modules.raw.getStringByLine(msg, `TORNADO...`) ? loader.modules.raw.getStringByLine(msg, `TORNADO...`) : loader.modules.raw.getStringByLine(msg, `WATERSPOUT...`)
                 let getMaxHailSize = loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`) ? loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`) : loader.modules.raw.getStringByLine(msg, `HAIL...`)
                 let getMaxWindGusts = loader.modules.raw.getStringByLine(msg, `MAX WIND GUST...`) ? loader.modules.raw.getStringByLine(msg, `MAX WIND GUST...`) : loader.modules.raw.getStringByLine(msg, `WIND...`)
-                let getTStormDamageThreat = loader.modules.raw.getStringByLine(msg, `THUNDERSTORM DAMAGE THREAT...`)
+                let damageThreat = loader.modules.raw.getStringByLine(msg, `DAMAGE THREAT...`)
                 let senderOffice = loader.modules.raw.getOfficeName(msg) ? loader.modules.raw.getOfficeName(msg) : vtec.trackingId.split(`-`)[0]
                 if (getCoords.length == 0 && wire.ugc_polygons) { getCoords = await loader.modules.ugc.getCoordinates(ugc.zones) }
                 let alert = {
@@ -83,7 +83,7 @@ class AlertBuilder {
                             tornadoDetection: getTornado || `N/A`,
                             maxHailSize: getMaxHailSize || `N/A`,
                             maxWindGust: getMaxWindGusts || `N/A`,
-                            thunderstormDamageThreat: [getTStormDamageThreat || `N/A`],
+                            thunderstormDamageThreat: [damageThreat || `N/A`],
                         },
                     },
                     geometry: {
@@ -140,7 +140,7 @@ class AlertBuilder {
                     tornadoDetection: result.alert.info[0].parameter.find(p => p.valueName[0] === "tornadoDetection")?.value[0] || result.alert.info[0].parameter.find(p => p.valueName[0] === "waterspoutDetection")?.value[0] || "N/A",
                     maxHailSize: result.alert.info[0].parameter.find(p => p.valueName[0] === "maxHailSize")?.value[0] || "N/A",
                     maxWindGust: result.alert.info[0].parameter.find(p => p.valueName[0] === "maxWindGust")?.value[0] || "N/A",
-                    thunderstormDamageThreat: [result.alert.info[0].parameter.find(p => p.valueName[0] === "thunderstormDamageThreat")?.value[0] || "N/A"],
+                    thunderstormDamageThreat: [result.alert.info[0].parameter.find(p => p.valueName[0] === "thunderstormDamageThreat")?.value[0] || result.alert.info[0].parameter.find(p => p.valueName[0] === "tornadoDamageThreat")?.value[0] || "N/A"],
                 },
             },
         };

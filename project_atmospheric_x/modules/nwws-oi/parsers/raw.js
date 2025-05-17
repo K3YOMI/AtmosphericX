@@ -28,7 +28,6 @@ class RawParsing {
     /**
       * @function getStringByLine
       * @description Get a string by line from the message and will replace the searched string with an empty string.
-      * This will also remove any MPH, IN, FT, MILE, NM, SM, in from the string so we can make it a number (if needed...)
       * 
       * @param {string} message - The message to search in
       * @param {string} string - The string to search for and replace (if needed)
@@ -38,7 +37,11 @@ class RawParsing {
         let lines = message.split('\n');
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].includes(string)) {
-                return lines[i].replace(string, '').replace(/^\s+|\s+$/g, '').replace(`<`, '').trim()
+                // replace everything before the string and after the string with an empty string
+                let start = lines[i].indexOf(string) + string.length;
+                let end = lines[i].length;
+                let result = lines[i].substring(start, end);
+                return result.replace(string, '').replace(/^\s+|\s+$/g, '').replace(`<`, '').trim()
             }  
         }
         return null

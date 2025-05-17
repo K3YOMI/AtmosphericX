@@ -53,8 +53,8 @@ class Building {
         let hailSize = event.properties.parameters.maxHailSize ? `${event.properties.parameters.maxHailSize}` : `N/A`
         let windGust = event.properties.parameters.maxWindGust ? `${event.properties.parameters.maxWindGust}` : `N/A`
         let tornadoThreat = event.properties.parameters.tornadoDetection || event.properties.parameters.waterspoutDetection || `N/A`
-        let thunderstormThreat = event.properties.parameters.thunderstormDamageThreat || [`N/A`]
-        return { hail: hailSize, wind: windGust, tornado: tornadoThreat, thunderstorm: thunderstormThreat }
+        let damageThreat = event.properties.parameters.thunderstormDamageThreat || event.properties.parameters.tornadoDamageThreat || [`N/A`]
+        return { hail: hailSize, wind: windGust, tornado: tornadoThreat, damage: damageThreat }
     }
 
     /**
@@ -160,7 +160,7 @@ class Building {
         let onlyDoBeeps = loader.cache.configurations.project_settings.beep_only
         let filteredEvents = loader.cache.configurations.project_settings.ignore_restrictions
         let filteredAllowUpdated = loader.cache.configurations.project_settings.show_updates
-        let {hail, wind, tornado, thunderstorm} = this.getEventParameters(event)
+        let {hail, wind, tornado, damage} = this.getEventParameters(event)
         let eventTags = this.getEventTag(event)
         event.properties.areaDesc = this.formatLocations(event.properties.areaDesc)
         event.properties.event = this.getEventSignificance(event)
@@ -168,7 +168,6 @@ class Building {
         event.properties.parameters.maxWindGust = wind
         event.properties.parameters.maxHailSize = hail
         event.properties.parameters.tornadoDetection = tornado
-        event.properties.parameters.thunderstormDamageThreat = thunderstorm[0]
         if (event.properties.description == undefined) { event.properties.description = `No description provided` }
         event.properties.messageType = eventActions.message
         if (onlyDoBeeps) {
@@ -201,7 +200,7 @@ class Building {
                 hail: event.properties.parameters.maxHailSize,
                 wind: event.properties.parameters.maxWindGust,
                 tornado: event.properties.parameters.tornadoDetection,
-                thunderstorm: event.properties.parameters.thunderstormDamageThreat,
+                damage: damage[0],
                 sender: event.properties.senderName,
                 tag: eventTags,
                 link: event.id,

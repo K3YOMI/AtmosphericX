@@ -311,7 +311,7 @@ class Dashboard {
             let eventExpires = alert.details.expires
             let maxWindGust = alert.details.wind
             let maxHailSize = alert.details.hail
-            let damageThreat = alert.details.thunderstorm
+            let damageThreat = alert.details.damage
             let tornadoIndicator = alert.details.tornado
             let fullSendName = alert.details.sender
             let eventTags = alert.details.tag == undefined ? `No tags found` : alert.details.tag

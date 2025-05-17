@@ -134,7 +134,6 @@ class Alerts {
         if (this.storage.isStreaming) {
             let timeExpiresString = `Invalid Time`
             let timeIssuedString = `Invalid Time`
-
             let configuration = this.storage.configurations.widget_settings.alert;
             let maxDescriptionLength = configuration.max_text_length;
             let eventName = alert.details.name 
@@ -144,7 +143,7 @@ class Alerts {
             let eventExpires = alert.details.expires
             let maxWindGust = alert.details.wind
             let maxHailSize = alert.details.hail
-            let damageThreat = alert.details.thunderstorm
+            let damageThreat = alert.details.damage
             let tornadoIndicator = alert.details.tornado
             let fullSendName = alert.details.sender
             let eventTags = alert.details.tag == undefined ? `No tags found` : alert.details.tag
