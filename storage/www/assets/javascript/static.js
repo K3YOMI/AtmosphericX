@@ -28,7 +28,7 @@ const static_alerts = [
     "Tornado Watch",
     "Special Marine Warning", "Areal Flood Warning",
     "Flash Flood Warning",
-    "Considerable Destructive Severe Thunderstorm Warning",
+    "Considerable Severe Thunderstorm Warning",
     "Severe Thunderstorm Warning",
     "Tornado Warning",
     "Snow Squall Warning",

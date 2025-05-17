@@ -120,10 +120,10 @@
         "http_useragent": "AtmosphericX/v7.0.5",
         "global_update": 10,
         "priority_alerts": true,
-        "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Considerable Destructive Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
+        "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Considerable Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
         "beep_only": false,
         "show_updates": true,
-        "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Considerable Destructive Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning"],
+        "ignore_restrictions": ["Radar Indicated Tornado Warning", "Confirmed Tornado Warning", "Flash Flood Emergency", "Particularly Dangerous Situation", "Tornado Emergency", "Considerable Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning"],
         "websocket_settings": {
             "priority_websockets": {
                 "timeout": 1,
@@ -244,7 +244,7 @@
                     "Particularly Dangerous Situation",
                     "Confirmed Tornado Warning",
                     "Destructive Severe Thunderstorm Warning",
-                    "Considerable Destructive Severe Thunderstorm Warning",
+                    "Considerable Severe Thunderstorm Warning",
                     "Severe Thunderstorm Warning",
                     "Radar Indicated Tornado Warning",
                     "Flash Flood Emergency",
@@ -298,7 +298,7 @@
         "Tornado Emergency": "/assets/media/gif/purple_warning.gif",
         "Particularly Dangerous Situation": "/assets/media/gif/red_warning.gif",
         "Severe Thunderstorm Warning": "/assets/media/gif/orange_box.gif",
-        "Considerable Destructive Severe Thunderstorm Warning": "/assets/media/gif/orange_box.gif",
+        "Considerable Severe Thunderstorm Warning": "/assets/media/gif/orange_box.gif",
         "Destructive Severe Thunderstorm Warning": "/assets/media/gif/red_warning.gif",
         "Severe Thunderstorm Watch": "/assets/media/gif/orange_box.gif",
         "Flash Flood Emergency": "/assets/media/gif/red_warning.gif",
@@ -360,8 +360,8 @@
             "eas": true,
             "autobeep": true
         },
-        "Considerable Destructive Severe Thunderstorm Warning": {
-            "triggered": "Considerable Destructive Severe Thunderstorm Warning",
+        "Considerable Severe Thunderstorm Warning": {
+            "triggered": "Considerable Severe Thunderstorm Warning",
             "new": "/assets/media/audio/svr/considerable-severe-issued.mp3",
             "update": "/assets/media/audio/svr/considerable-severe-updated.mp3",
             "cancel": "/assets/media/audio/tones/beep-tone.mp3",

@@ -75,7 +75,7 @@ class Building {
             if (event.properties.parameters.tornadoDetection == `OBSERVED`) { event.properties.event = `Confirmed Tornado Warning` }
         }
         if (event.properties.event == `Severe Thunderstorm Warning`) {
-            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) { event.properties.event = `Considerable Destructive Severe Thunderstorm Warning` }
+            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) { event.properties.event = `Considerable Severe Thunderstorm Warning` }
             if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) { event.properties.event = `Destructive Severe Thunderstorm Warning` }
         }
         return event.properties.event
