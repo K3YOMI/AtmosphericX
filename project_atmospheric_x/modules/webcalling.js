@@ -38,7 +38,7 @@ class Webcalling {
 
 
     featureRequest = async function(metadata, reqName, isNws=false, isIem=false) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve) => {
             try {
                 let url = metadata.endpoint
                 if (isNws && metadata.state_filter != `ALL`) { url += `/area/${metadata.state_filter}` }
@@ -60,7 +60,8 @@ class Webcalling {
                     this.retries++;
                     loader.modules.hooks.createOutput(`${this.name}.featureRequest`, `Retrying request for ${reqName} (${this.retries})`)
                     loader.modules.hooks.createLog(`${this.name}.featureRequest`, `Retrying request for ${reqName} (${this.retries})`)
-                    await this.featureRequest(metadata, reqName, isNws, isIem)
+                    let result = await this.featureRequest(metadata, reqName, isNws, isIem);
+                    resolve(result);
                 } else { 
                     this.results += ` (${reqName}: Failed)`;
                     loader.modules.hooks.createOutput(`${this.name}.featureRequest`, `Failed to get ${reqName} (x${this.retries})`)
@@ -83,7 +84,7 @@ class Webcalling {
       */
 
     genericRequest = async function(metadata, reqName, isNws=false, isIem=false, isLocationServices=false, isRealtimeIRL=false) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve) => {
             try {
                 let url = metadata.endpoint
                 if (isNws && metadata.state_filter != `ALL`) { url += `/area/${metadata.state_filter}` }
@@ -114,13 +115,14 @@ class Webcalling {
             } catch (error) {
                 if (this.retries < 3) {
                     this.retries++;
-                    loader.modules.hooks.createOutput(`${this.name}.featureRequest`, `Retrying request for ${reqName} (${this.retries})`)
-                    loader.modules.hooks.createLog(`${this.name}.featureRequest`, `Retrying request for ${reqName} (${this.retries})`)
-                    await this.featureRequest(metadata, reqName, isNws, isIem)
+                    loader.modules.hooks.createOutput(`${this.name}.genericRequest`, `Retrying request for ${reqName} (${this.retries})`)
+                    loader.modules.hooks.createLog(`${this.name}.genericRequest`, `Retrying request for ${reqName} (${this.retries})`)
+                    let result = await this.genericRequest(metadata, reqName, isNws, isIem, isLocationServices, isRealtimeIRL);
+                    resolve(result);
                 } else { 
                     this.results += ` (${reqName}: Failed)`;
-                    loader.modules.hooks.createOutput(`${this.name}.featureRequest`, `Failed to get ${reqName} (x${this.retries})`)
-                    loader.modules.hooks.createLog(`${this.name}.featureRequest`, `Failed to get ${reqName} (x${this.retries})`)
+                    loader.modules.hooks.createOutput(`${this.name}.genericRequest`, `Failed to get ${reqName} (x${this.retries})`)
+                    loader.modules.hooks.createLog(`${this.name}.genericRequest`, `Failed to get ${reqName} (x${this.retries})`)
                     resolve({success: false, message: error.message})
                 }
             }

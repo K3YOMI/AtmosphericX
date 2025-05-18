@@ -98,9 +98,10 @@ class Hooks {
                         'User-Agent': loader.cache.configurations.project_settings.http_useragent,
                         'Accept': 'application/geo+json, text/plain, */*; q=0.9',
                         'Accept-Language': 'en-US,en;q=0.9',
-                    }
+                    },
+                    httpsAgent: new loader.packages.https.Agent({ rejectUnauthorized: false })
                 }
-                await loader.packages.axios.get(details.url, {headers: details.headers, maxRedirects: details.maxRedirects, timeout: details.timeout}).then((response) => {
+                await loader.packages.axios.get(details.url, {headers: details.headers, maxRedirects: details.maxRedirects, timeout: details.timeout, httpsAgent: details.httpsAgent}).then((response) => {
                     let responseMessage = response.data 
                     let errorMessage = response.error
                     let statusCode = response.status
