@@ -253,7 +253,7 @@
         library.createWebsocketSession([`public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)
-            library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username')}</span>`)
+            library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username') || 'Default User'}</span>`)
             dashboard_class.UpdateThread()
             dashboard_class.spawnGeneralSetupHub()
             dashboard_class.spawnExternalServices()

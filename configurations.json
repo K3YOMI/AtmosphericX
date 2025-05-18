@@ -1,6 +1,7 @@
 {
     "hosting": {
         "https": false,
+        "portal": true,
         "https_port": 443,
         "http_port": 80,
         "cert_path": {

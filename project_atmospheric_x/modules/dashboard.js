@@ -276,6 +276,7 @@ class Dashboard {
       */
 
     hasCredentials = function(request, response) { 
+        if (!loader.cache.configurations.hosting.portal) { return {success: true, message: `Userless Session`}}
         if (request.session.account != undefined) { return {success: true, message: request.session.username} }
         return {success: false, message: `Session not found`}
     }

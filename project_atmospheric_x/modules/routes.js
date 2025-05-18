@@ -133,6 +133,9 @@ class Routes {
             loader.modules.hooks.createOutput(this.name, `HTTP server started on port ${loader.cache.configurations.hosting.http_port}`)
             loader.modules.hooks.createLog(this.name, `HTTP server started on port ${loader.cache.configurations.hosting.http_port}`)
         }
+        if (!loader.cache.configurations.hosting.portal) {
+            loader.modules.hooks.createOutput(this.name, `\n\n[SECURITY] THE PORTAL LOGIN PAGE IS DISABLED,\n\t   THIS IS NOT RECOMMENDED FOR PRODUCTION USE AS EVERYONE CAN ACCESS THE DASHBOARD WITHOUT AUTHENTICATION.\n\t   YOU CAN SIMPLY DO IP WHITELISTING THROUGH A WEB SERVER OR FIREWALL IF YOU WISH TO KEEP THIS OFF.\n\t   IF YOU WISH TO ENABLE THE PORTAL LOGIN PAGE, PLEASE SET THE PORTAL CONFIG TO TRUE IN THE CONFIGURATION FILE.\n\n`)
+        }
         return {status: true, message: `Express server created`}
     }
 }

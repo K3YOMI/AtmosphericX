@@ -266,7 +266,7 @@ class Dashboard {
       */
 
     triggerLocalStorageListener = function(usernameSpan=`_home.accountname`) {
-        document.getElementById(usernameSpan).innerHTML = localStorage.getItem('atmosx.cached.username') || `Unable to load username`
+        document.getElementById(usernameSpan).innerHTML = localStorage.getItem('atmosx.cached.username') || `Default User`
         if (localStorage.getItem('atmosx.cached.donationprompt') === null) {
             this.injectNotification({title: `Donations are appreciated`, description: `As the sole developer of this project, your donations would greatly help in maintaining and improving this project. Contributions would allow me to dedicate more time to development, cover hosting costs (if any), and implement new features to enhance your experience.`,rows: 2,parent: `_body.base`, buttons: [ { name: `No Thank You`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups()} }, { name: `I'd like to donate!`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups()} } ],inputs: [],selects: null})    
         }
