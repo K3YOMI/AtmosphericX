@@ -10,7 +10,7 @@
     "express-ws": "^5.0.2",
     "nodemailer": "^6.10.1",
     "shapefile": "^0.6.6",
-    "sqlite3": "^5.1.7",
+    "better-sqlite3": "^11.10.0",
     "xml2js": "^0.6.2"
   }
 }

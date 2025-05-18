@@ -28,17 +28,26 @@ class Database {
       * @function createDatabase
       * @description Creates a new SQLite database and initializes the accounts table with a root account.
       */
-    
+
     createDatabase = function() {
-        loader.packages.fs.writeFileSync(loader.packages.path.join(__dirname, `../../storage/database.db`), ``);
-        this.db = new loader.packages.sqlite3.Database(loader.packages.path.join(__dirname, `../../storage/database.db`));
-        this.db.serialize(async () => {
-            await this.db.run(`CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, hash TEXT NOT NULL, activated INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`)
-            await this.db.run(`INSERT INTO accounts (username, hash, activated) VALUES (?, ?, ?)`, [`root`, `hzf+LiRTX1pP+v335+TaeLSAWu136Ltqs26gebv7jBw=`, 1], (err) => {})
-            loader.modules.hooks.createLog(`${this.name}.createDatabase`, `Database created, created root account with the password: root`)
-            loader.modules.hooks.createOutput(`${this.name}.createDatabase`, `Database created, created root account with the password: root`)
-            return {status: true, message: `Database created`}
-        })
+        const dbPath = loader.packages.path.join(__dirname, `../../storage/database.db`);
+        this.db = new loader.packages.sqlite3(dbPath);
+        try {
+            this.db.prepare(`CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, hash TEXT NOT NULL, activated INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`).run();
+            const rootExists = this.db.prepare(`SELECT 1 FROM accounts WHERE username = ?`).get('root');
+            if (!rootExists) {
+                this.db.prepare(`INSERT INTO accounts (username, hash, activated) VALUES (?, ?, ?)`).run('root', 'hzf+LiRTX1pP+v335+TaeLSAWu136Ltqs26gebv7jBw=', 1);
+                loader.modules.hooks.createLog(`${this.name}.createDatabase`, `Database created, created root account with the password: root`);
+                loader.modules.hooks.createOutput(`${this.name}.createDatabase`, `Database created, created root account with the password: root`);
+            } else {
+                loader.modules.hooks.createLog(`${this.name}.createDatabase`, `Database created, root account already exists`);
+                loader.modules.hooks.createOutput(`${this.name}.createDatabase`, `Database created, root account already exists`);
+            }
+            return {status: true, message: `Database created`};
+        } catch (err) {
+            loader.modules.hooks.createLog(`${this.name}.createDatabase`, `Failed to create database: ${err.message}`);
+            return {status: false, message: `Failed to create database`};
+        }
     }
 
     /**
@@ -52,7 +61,7 @@ class Database {
             this.createDatabase(); 
             return {status: false, message: `Database does not exist, creating database...` }; 
         }
-        this.db = new loader.packages.sqlite3.Database(loader.packages.path.join(__dirname, `../../storage/database.db`));
+        this.db = new loader.packages.sqlite3(loader.packages.path.join(__dirname, `../../storage/database.db`));
         loader.modules.hooks.createOutput(this.name, `Database has successfully loaded`);
     }
 
@@ -65,13 +74,21 @@ class Database {
       * @return {Promise<Array>} - A promise that resolves to an array of rows returned by the query.
       */
 
-    runQuery = async function(query, params) { 
-        return new Promise((resolve, reject) => {
-            this.db.all(query, params, (err, rows) => {
-                if (err) { resolve([]); }
-                resolve(rows || []);
-            });
-        });
+    runQuery = function(query, params = []) { 
+        try {
+            if (!Array.isArray(params)) params = [];
+            let stmt = this.db.prepare(query);
+            if (/^\s*select/i.test(query)) {
+                let rows = stmt.all(...params);
+                return rows;
+            } else {
+                let result = stmt.run(...params);
+                return result;
+            }
+        } catch (err) {
+            loader.modules.hooks.createLog(`${this.name}.runQuery`, `Query failed: ${err.message}`);
+            return [];
+        }
     }
 }
 
