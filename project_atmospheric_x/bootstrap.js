@@ -30,7 +30,7 @@ loader.cache.hasConnectedBefore = false // Boolean to check if the wire server h
 
 loader.packages.fs = require(`fs`)
 loader.packages.path = require(`path`)
-loader.packages.sqlite3 = require(`sqlite3`)
+loader.packages.sqlite3 = require(`better-sqlite3`)
 loader.packages.express = require(`express`)
 loader.packages.expressSession = require(`express-session`)
 loader.packages.crypto = require(`crypto`)
