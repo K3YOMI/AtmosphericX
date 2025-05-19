@@ -214,8 +214,8 @@ class Parsing {
 
             if (locationServices.realtimeirl.enabled == false) {
                 if (locationServices.spotter_network.tracking_name != `SPOTTER_ATTRIBUTE_HERE` && locationServices.spotter_network.tracking_name != ``) {
-                    if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
                     if (description.toLowerCase().includes(locationServices.spotter_network.tracking_name.toLowerCase())) {
+                        if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
                         loader.cache.realtime.lat = lat;
                         loader.cache.realtime.lon = lon;
                         loader.cache.realtime.address = `N/A`;

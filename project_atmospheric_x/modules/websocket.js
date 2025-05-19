@@ -120,8 +120,9 @@ class Websockets {
                     canSend = true
                     loader.static.webSocketClientLimits[index][value].hasCalled = true
                     loader.static.webSocketClientLimits[index][value].time = currentTime
-                    if (loader.cache[value] == undefined) { loader.cache[value] = [] }
-                    client.send(JSON.stringify({messageType: `onCacheUpdate`, value: value, message: loader.cache[value]}))
+                    let tmp = undefined
+                    if (loader.cache[value] == undefined) { tmp = [] } else { tmp = loader.cache[value] }
+                    client.send(JSON.stringify({messageType: `onCacheUpdate`, value: value, message: tmp}))
                 }
             }
         }
