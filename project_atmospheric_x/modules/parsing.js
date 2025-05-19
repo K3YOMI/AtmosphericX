@@ -215,16 +215,16 @@ class Parsing {
             if (locationServices.realtimeirl.enabled == false) {
                 if (locationServices.spotter_network.tracking_name != `SPOTTER_ATTRIBUTE_HERE` && locationServices.spotter_network.tracking_name != ``) {
                     if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
-                    loader.cache.realtime.lat = lat;
-                    loader.cache.realtime.lon = lon;
-                    loader.cache.realtime.address = `N/A`;
-                    loader.cache.realtime.location = `N/A`;
-                    loader.cache.realtime.county = `N/A`;
-                    loader.cache.realtime.state = `N/A`;
+                    if (description.toLowerCase().includes(locationServices.spotter_network.tracking_name.toLowerCase())) {
+                        loader.cache.realtime.lat = lat;
+                        loader.cache.realtime.lon = lon;
+                        loader.cache.realtime.address = `N/A`;
+                        loader.cache.realtime.location = `N/A`;
+                        loader.cache.realtime.county = `N/A`;
+                        loader.cache.realtime.state = `N/A`;
+                    }
                 }
             }
-
-
             if (isActive == 1 && locationServices.spotter_network.show_active == false) { continue; }
             if (isStreaming == 1 && locationServices.spotter_network.show_streaming == false) { continue; }
             if (isIdle == 1 && locationServices.spotter_network.show_idle == false) { continue; }
