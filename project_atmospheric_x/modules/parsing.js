@@ -277,6 +277,7 @@ class Parsing {
                 i++;
             }
         }
+        objects = objects.filter((obj, index, self) => index === self.findIndex((t) => (t.id === obj.id)));
         objects = objects.filter(object => object.probability >= 50);
         return { success: true, message: objects };
     }
