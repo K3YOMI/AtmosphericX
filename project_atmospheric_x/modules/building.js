@@ -252,6 +252,10 @@ class Building {
                 loader.cache.realtime.county = rawData.LocationServices.features[4].text;
                 loader.cache.realtime.state = rawData.LocationServices.features[5].text;
             }
+            if (rawData.SpotterNetworkReports != undefined) {
+                let response = loader.modules.parsing.rawSpotterNetworkReports(rawData.SpotterNetworkReports);
+                loader.cache.reports = response.message
+            }
             if (rawData.mPingReports != undefined) {
                 let response = loader.modules.parsing.rawRawMpingReports(rawData.mPingReports);
                 loader.cache.reports = response.message

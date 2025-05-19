@@ -82,6 +82,44 @@ class Parsing {
     }
 
     /**
+      * @function rawSpotterNetworkReports
+      * @description Read the raw Spotter Network reports and parse them into an array of objects.
+      * 
+      * @param {string} messageBody - The raw Spotter Network reports to read
+      */
+
+    rawSpotterNetworkReports = function(messageBody = ``) {
+        let regex = /Icon:\s*([\d.-]+),([\d.-]+),\d+,\d+,\d+,"Reported By: ([^\n]*)\\n([^\n]*)\\nTime: ([^\n]*) UTC(?:\\nSize: ([^\\n]*))?\\nNotes:([\s\S]*?)"/g;
+        let matches = [...messageBody.matchAll(regex)];
+        let reports = [];
+        for (let i = 0; i < matches.length; i++) {
+            let match = matches[i];
+            let latitude = parseFloat(match[1]);
+            let longitude = parseFloat(match[2]);
+            let reporter = match[3].trim();
+            let eventType = match[4].trim();
+            let reportTime = match[5].trim();
+            let size = match[6] ? match[6].replace(/"/g, '').trim() : '';
+            let notes = match[7] ? match[7].replace(/\\n/g, ' ').replace(/"/g, '').trim() : '';
+            let description = `Reported By: ${reporter} | ${eventType}` + (size ? ` | Size: ${size}` : '') + (notes ? ` | Notes: ${notes}` : '');
+                reports.push({
+                location: `${latitude}, ${longitude}`,
+                latitude: latitude,
+                longitude: longitude,
+                issued: reportTime,
+                expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+                event: eventType,
+                reporter: reporter,
+                size: size,
+                notes: notes,
+                sender: "Spotter Network",
+                description: description
+            });
+        }
+        return { success: true, message: reports };
+    };
+
+    /**
       * @function readRawGrlevelXReports
       * @description Read the raw GrlevelX reports and parse them into an array of objects.
       * 

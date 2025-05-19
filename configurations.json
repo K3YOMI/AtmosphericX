@@ -102,12 +102,17 @@
             },
             "mping_reports": {
                 "enabled": false,
-                "cache_time": 1799,
+                "cache_time": 119,
                 "endpoint": "https://placefilenation.com/Placefiles/mping_60min.php"
             },
-            "grlevelx_reports": {
+            "spotter_network_reports": {
                 "enabled": true,
-                "cache_time": 1799,
+                "cache_time": 119,
+                "endpoint": "https://www.spotternetwork.org/feeds/reports.txt"
+            },
+            "grlevelx_reports": {
+                "enabled": false,
+                "cache_time": 119,
                 "endpoint": "https://www.grlevelx.com/lsr/lsr_latest.txt"
             },
             "spc_mesoscale_discussions": {
