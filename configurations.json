@@ -119,6 +119,16 @@
                 "enabled": true,
                 "cache_time": 119,
                 "endpoint": "https://placefilenation.com/Placefiles/mcd.php"
+            },
+            "tornado_probability": {
+                "enabled": false,
+                "cache_time": 119,
+                "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PTv3_LOOP"
+            },
+            "severe_probability": {
+                "enabled": false,
+                "cache_time": 119,
+                "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PSv3_LOOP"
             }
         }
     },
@@ -137,7 +147,7 @@
             },
             "general_websockets": {
                 "timeout": 30,
-                "types": ["public", "wire", "reports", "spotters", "discussions"]
+                "types": ["public", "wire", "reports", "spotters", "discussions", "severeProbability", "tornadoProbability"]
             }
         }
     },

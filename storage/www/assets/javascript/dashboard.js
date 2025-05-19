@@ -596,6 +596,60 @@ class Dashboard {
     }
 
     /**
+      * @function spawnTornadoProbabilities
+      * @description Displays tornado probabilities from cells
+      * 
+      * @param {string} [domDirectory=`child_atmosx_tor.statistics`] - The ID of the DOM element where the tornado probabilities will be injected. Defaults to `child_atmosx_nwws.reports`.
+      */
+
+    spawnTornadoProbabilities = function(domDirectory=`child_atmosx_tor.statistics`) {
+        document.getElementById(domDirectory).innerHTML = ``
+        let stats = this.storage.tornadoProbability 
+        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
+        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
+        if (stats.length == 0) {
+            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available<br>Did you enable it?</center>`, parent: domDirectory})
+            return
+        }
+        stats.sort((a, b) => b.probability - a.probability);
+        for (let i = 0; i < stats.length; i++) {
+            this.injectCardData({
+                title: `Percentage: ${stats[i].probability}% (${stats[i].id})`,
+                content: stats[i].description.replace(/\\n/g, '\n').replace(/\n/g, '<br>').replace(/"/g, "").replace(/'/g, "").substring(0, 500),
+                parent: domDirectory
+            });    
+        }
+    }
+
+    /**
+      * @function spawnSevereProbabilities
+      * @description Displays severe probabilities from cells
+      * 
+      * @param {string} [domDirectory=`child_atmosx_tor.statistics`] - The ID of the DOM element where the severe probabilities will be injected. Defaults to `child_atmosx_nwws.reports`.
+      */
+
+    spawnSevereProbabilities = function(domDirectory=`child_atmosx_svr.statistics`) {
+        document.getElementById(domDirectory).innerHTML = ``
+        let stats = this.storage.severeProbability 
+        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
+        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
+        if (stats.length == 0) {
+            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available<br>Did you enable it?</center>`, parent: domDirectory})
+            return
+        }
+        stats.sort((a, b) => b.probability - a.probability);
+        for (let i = 0; i < stats.length; i++) {
+            this.injectCardData({
+                title: `Percentage: ${stats[i].probability}% (${stats[i].id})`,
+                content: stats[i].description.replace(/\\n/g, '\n').replace(/\n/g, '<br>').replace(/"/g, "").replace(/'/g, "").substring(0, 500),
+                parent: domDirectory
+            });    
+        }
+    }
+
+    /**
       * @function spawnGeneralSetupHub
       * @description Displays a setup hub for general configurations, including downloading templates, plugins, and links to community resources.
       * 
@@ -691,6 +745,8 @@ class Dashboard {
         this.spawnMesoscaleDiscussions()
         this.spawnStormSpotterNetwork()
         this.spawnWireOpenInterface()
+        this.spawnTornadoProbabilities()
+        this.spawnSevereProbabilities()
         this.spawnAlertCards(`child_atmosx_alerts.global_alerts`, false, `_alerts.alert_search`, ``)
         this.spawnAlertCards(`child_atmosx_alerts.recent_alerts`, true, ``, ``)
         let elements = document.querySelectorAll(`[id^="child_atmosx_"]`)

@@ -233,7 +233,52 @@ class Parsing {
         }
         let uniqueFilter = spotters.filter((thing, index, self) => index === self.findIndex((t) => (t.description === thing.description && t.lat === thing.lat && t.lon === thing.lon)));
         return {success: true, message: uniqueFilter}
+    }
 
+    /**
+     * @function rawProbabilityReports
+     * @description Read the raw probability reports and parse them into an array of objects.
+     * 
+     * @param {string} messageBody - The raw probability reports to read
+     * @param {string} type - The type of probability report to read (severe or tornado)
+     */
+    
+    rawProbabilityReports = function(messageBody=``, type=`tornado`) {
+        let typeMap = { severe: { key: "PSv3", label: "Severe" }, tornado: { key: "ProbTor", label: "Tornado" }};
+        let objects = [];
+        let lines = messageBody.split('\n');
+        let i = 0;
+        while (i < lines.length) {
+            let line = lines[i];
+            if (line.startsWith("Color:")) {
+                let infoLine = lines[i + 1] || "";
+                let details = infoLine.match(/PSv3: ([\d.]+)%; PHv3: ([\d.]+)%; PWv3: ([\d.]+)%; PTv3: ([\d.]+)%|ProbTor: ([\d.]+)%/);
+                let objectId = infoLine.match(/Object ID: (\d+)/)?.[1] || "";
+                let meta = { 
+                    objectId: objectId, 
+                    info: infoLine, 
+                    PSv3: details && details[1] ? parseFloat(details[1]) : null, 
+                    PHv3: details && details[2] ? parseFloat(details[2]) : null, 
+                    PWv3: details && details[3] ? parseFloat(details[3]) : null, 
+                    PTv3: details && details[4] ? parseFloat(details[4]) : null,
+                    ProbTor: details && details[5] ? parseFloat(details[5]) : null
+                };
+                let coords = [];
+                let j = i + 2;
+                while (j < lines.length && !lines[j].startsWith("End:") && !lines[j].startsWith("Color:")) {
+                    let coordMatch = lines[j].match(/^\s*([-\d.]+),\s*([-\d.]+)/);
+                    if (coordMatch) { coords.push([parseFloat(coordMatch[2]), parseFloat(coordMatch[1])]); }
+                    j++;
+                }
+                let key = typeMap[type] ? typeMap[type].key : "PSv3";
+                if (meta[key] !== null) { objects.push({ id: meta.objectId, type: type, probability: meta[key], description: meta.info}); }
+                i = j;
+            } else {
+                i++;
+            }
+        }
+        objects = objects.filter(object => object.probability >= 50);
+        return { success: true, message: objects };
     }
 
     /**

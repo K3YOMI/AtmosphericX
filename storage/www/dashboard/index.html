@@ -35,6 +35,14 @@
                 <i class="fas fa-cloud-sun"></i>
                 <span>Discussions</span>
             </div>
+            <div class="sidebar-item" onclick="dashboard_class.navigationListener('_navigation.torProbability')">
+                <i class="fas fa-chart-bar"></i>
+                <span>TOR Probability</span>
+            </div>
+            <div class="sidebar-item" onclick="dashboard_class.navigationListener('_navigation.svrProbability')">
+                <i class="fas fa-chart-bar"></i>
+                <span>SVR Probability</span>
+            </div>
             <div class="sidebar-item" onclick="dashboard_class.navigationListener('_navigation.nwws')">
                 <i class="fas fa-comments"></i>
                 <span>NWWS-OI</span>
@@ -194,7 +202,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="_navigation.spotternetwork" style="display: none;" type="menu">
                 <h1 class="title-dashboard">Spotter Network</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
@@ -207,9 +214,6 @@
                     </div>
                 </div>
             </div>
-
-
-           
             <div id="_navigation.external" style="display: none;" type="menu">
                 <h1 class="title-dashboard">External Services</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
@@ -227,6 +231,26 @@
                         <h1 class="data-card-title">Latest NWWS Reports</span></h1>
                         <hr class="data-card-hr"> 
                         <div id="child_atmosx_nwws.reports" class="grid-area" style="grid-template-columns: repeat(1, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="_navigation.torProbability" style="display: none;" type="menu">
+                <h1 class="title-dashboard">Tornado Probability Statistics</h1>
+                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">Tornado Probability Statistics</span></h1>
+                        <hr class="data-card-hr"> 
+                        <div id="child_atmosx_tor.statistics" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="_navigation.svrProbability" style="display: none;" type="menu">
+                <h1 class="title-dashboard">Severe Probability Statistics</h1>
+                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">Severe Probability Statistics</span></h1>
+                        <hr class="data-card-hr"> 
+                        <div id="child_atmosx_svr.statistics" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
@@ -250,7 +274,7 @@
         if (window.innerWidth <= 1270) { document.getElementById(`._nonchild_atmosx_dashboard`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.plugins`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.support`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-        library.createWebsocketSession([`public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`tornadoProbability`, `severeProbability`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)
             library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username') || 'Default User'}</span>`)

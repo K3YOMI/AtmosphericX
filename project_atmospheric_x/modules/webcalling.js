@@ -164,7 +164,8 @@ class Webcalling {
                 {name: 'NoaaWeatherWireService', handle: sources.primary_sources.noaa_weather_wire_service, timer: 1, contradictions: [`NationalWeatherService`], pointer: `nullRoute`},        
                 {name: 'RealtimeIRL', handle: sources.miscellaneous_sources.location_services.realtimeirl, timer: sources.miscellaneous_sources.location_services.realtimeirl.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'LocationNames', handle: sources.miscellaneous_sources.location_services.location_names, timer: sources.miscellaneous_sources.location_services.location_names.cache_time, contradictions: [], pointer: `genericRequest`},        
-
+                {name: 'ProbTornado', handle: sources.miscellaneous_sources.tornado_probability, timer: sources.miscellaneous_sources.tornado_probability.cache_time, contradictions: [], pointer: `genericRequest`},        
+                {name: 'ProbSevere', handle: sources.miscellaneous_sources.severe_probability, timer: sources.miscellaneous_sources.severe_probability.cache_time, contradictions: [], pointer: `genericRequest`},     
             ];
             if (isNWWS == undefined) {
                 handles.forEach(handle => {

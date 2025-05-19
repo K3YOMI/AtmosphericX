@@ -268,6 +268,14 @@ class Building {
                 let response = loader.modules.parsing.rawIemReports(rawData.IEMReports.features);
                 loader.cache.reports = response.message
             }
+            if (rawData.ProbTornado != undefined) {
+                let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbTornado, `tornado`);
+                loader.cache.tornadoProbability = response.message
+            }
+            if (rawData.ProbSevere != undefined) {
+                let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`);
+                loader.cache.severeProbability = response.message
+            }
             loader.modules.websocket.onCacheReady()
             return {status: true, message: `Cache built successfully`}
         } catch (error) {
