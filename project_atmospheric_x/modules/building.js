@@ -65,11 +65,12 @@ class Building {
       * @param {object} event - The alert object to get the significance from
       */
 
-    getEventSignificance = function(event) { 
+    getEventSignificance = function(event, damage) { 
         let description = (event.properties.description == undefined) ? `No description provided` : event.properties.description.toLowerCase() 
         if (description.includes(`flash flood emergency`) && event.properties.event == `Flash Flood Warning`) { event.properties.event = `Flash Flood Emergency`}
-        if (description.includes(`tornado emergency`) && event.properties.event == `Tornado Warning`) { event.properties.event = `Tornado Emergency`}
-        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Warning`) { event.properties.event = `Particularly Dangerous Situation`}
+        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Warning` && damage == `CONSIDERABLE`) { event.properties.event = `Particularly Dangerous Situation`}
+        if (description.includes(`tornado emergency`) && event.properties.event == `Tornado Warning` && damage == `CATASTROPHIC`) { event.properties.event = `Tornado Emergency`}
+
         if (event.properties.event == `Tornado Warning`) {
             if (event.properties.parameters.tornadoDetection == `RADAR INDICATED`) { event.properties.event = `Radar Indicated Tornado Warning`}
             if (event.properties.parameters.tornadoDetection == `OBSERVED`) { event.properties.event = `Confirmed Tornado Warning` }
@@ -163,7 +164,7 @@ class Building {
         let {hail, wind, tornado, damage} = this.getEventParameters(event)
         let eventTags = this.getEventTag(event)
         event.properties.areaDesc = this.formatLocations(event.properties.areaDesc)
-        event.properties.event = this.getEventSignificance(event)
+        event.properties.event = this.getEventSignificance(event, damage)
         let eventActions = this.getEventActions(event)
         event.properties.parameters.maxWindGust = wind
         event.properties.parameters.maxHailSize = hail
