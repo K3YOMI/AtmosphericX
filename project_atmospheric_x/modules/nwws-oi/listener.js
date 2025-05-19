@@ -191,7 +191,7 @@ class Listener {
         if (alertType == `RAW`) {
             let raw_alerts = [`raw_feed_exmaple.bin`]
             for (let i = 0; i < raw_alerts.length; i++) {
-                let attributes = { awipsid: `N/A`, issue: new Date().toISOString() }
+                let attributes = { awipsid: `N/A`, issue: new Date(Date.now() - 299 * 1000).toISOString()} 
                 let file = loader.packages.path.join(__dirname, `../../../storage/nwws-oi/`, `debugging`, raw_alerts[i])
                 let data = loader.packages.fs.readFileSync(file, `utf8`)
                 let metadata = loader.modules.product.compileMessage(data, true, { attributes: attributes, xml: false })
@@ -201,7 +201,7 @@ class Listener {
         if (alertType == `XML`) {
             let raw_alerts = [`xml_feed_example.xml`]
             for (let i = 0; i < raw_alerts.length; i++) {
-                let attributes = { awipsid: `N/A`, issue: new Date().toISOString() }
+                let attributes = { awipsid: `N/A`, issue: new Date(Date.now() - 299 * 1000).toISOString()} 
                 let file = loader.packages.path.join(__dirname, `../../../storage/nwws-oi/`, `debugging`, raw_alerts[i])
                 let data = loader.packages.fs.readFileSync(file, `utf8`)
                 let metadata = loader.modules.product.compileMessage(data, true, { attributes: attributes, xml: true })
