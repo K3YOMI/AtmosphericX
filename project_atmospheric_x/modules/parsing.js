@@ -253,7 +253,8 @@ class Parsing {
             if (line.startsWith("Color:")) {
                 let infoLine = lines[i + 1] || "";
                 let details = infoLine.match(/PSv3: ([\d.]+)%; PHv3: ([\d.]+)%; PWv3: ([\d.]+)%; PTv3: ([\d.]+)%|ProbTor: ([\d.]+)%/);
-                let objectId = infoLine.match(/Object ID: (\d+)/)?.[1] || "";
+                let objectIdMatch = infoLine.match(/Object ID: (\d+)/);
+                let objectId = objectIdMatch ? objectIdMatch[1] : "";
                 let meta = { 
                     objectId: objectId, 
                     info: infoLine, 
