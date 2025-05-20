@@ -270,11 +270,11 @@ class Building {
             }
             if (rawData.ProbTornado != undefined) {
                 let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbTornado, `tornado`);
-                loader.cache.tornadoProbability = response.message
+                loader.cache.torprob = response.message
             }
             if (rawData.ProbSevere != undefined) {
                 let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`);
-                loader.cache.severeProbability = response.message
+                loader.cache.svrprob = response.message
             }
             loader.modules.websocket.onCacheReady()
             return {status: true, message: `Cache built successfully`}

@@ -604,7 +604,7 @@ class Dashboard {
 
     spawnTornadoProbabilities = function(domDirectory=`child_atmosx_tor.statistics`) {
         document.getElementById(domDirectory).innerHTML = ``
-        let stats = this.storage.tornadoProbability 
+        let stats = this.storage.torprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (stats.length == 0) {
@@ -631,7 +631,7 @@ class Dashboard {
 
     spawnSevereProbabilities = function(domDirectory=`child_atmosx_svr.statistics`) {
         document.getElementById(domDirectory).innerHTML = ``
-        let stats = this.storage.severeProbability 
+        let stats = this.storage.svrprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (stats.length == 0) {

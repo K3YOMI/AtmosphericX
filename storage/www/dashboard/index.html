@@ -274,7 +274,7 @@
         if (window.innerWidth <= 1270) { document.getElementById(`._nonchild_atmosx_dashboard`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.plugins`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.support`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-        library.createWebsocketSession([`tornadoProbability`, `severeProbability`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)
             library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username') || 'Default User'}</span>`)
