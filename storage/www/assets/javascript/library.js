@@ -10,7 +10,7 @@
                                      | |                                 
                                      |_|                                                                                                                
     Written by: k3yomi@GitHub
-    Version: v7.0.5                              
+    Version: v7.0.0                              
 */
 
 
@@ -56,8 +56,8 @@ class Library {
 
     createHttpRequest = async function(url=`/`) {
         return new Promise(async (resolve, reject) => {
-            await fetch(url).then(response => response.text()).then(data => {
-                resolve(data)
+            await fetch(url).then((response) => {
+                resolve(response)
             })
         })
     }

@@ -84,13 +84,20 @@
                 <span>Documentation</span>
             </div>
             <footer class="sidebar-footer">
-                <p>Project AtmosphericX <small>v7.0.5 (Public)</small><br><small>Created with ❤️ by k3yomi (KiyoWx)</small></p>
+                <p>Project AtmosphericX <small><span id='version'></span></small><br><small>Created with ❤️ by k3yomi (KiyoWx)</small></p>
             </footer>
         </div>
         <div class="wrapper">
             <div id="_navigation.home" style="display: block;" type="menu">
                 <h1 class="title-dashboard">Dashboard</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+
+                    <div class="data-card" id="data-card-headline-parent" style="display: none;"> 
+                        <p class="data-card-description">
+                            <span class="data-card-headline"></span>
+                        </p>
+                    </div>
+
                     <div class="data-card"> 
                         <h1 class="data-card-title">👋 Welcome back, <span id="_home.accountname">[Account Name]</span></h1>
                         <hr class="data-card-hr"> 
@@ -135,21 +142,7 @@
                     <div class="data-card"> 
                         <h1 class="data-card-title">Latest Changelogs</h1>
                         <hr class="data-card-hr"> 
-                        <p class="data-card-description">
-                            <ul>
-                                <small>Updated: Thursday, May 8th 2025</small>
-                                <li>Refactored and revamped client code for better maintainability and performance.</li>
-                                <li>Removed underscores from argument names and adopted camelCase naming convention.</li>
-                                <li>Removed lightning statistics and general device IO statistics sections.</li>
-                                <li>Combined dashboard alert functions into a single streamlined function.</li>
-                                <li>Unified login, register, and reset functionalities into a single cohesive flow.</li>
-                                <li>Revamped dashboard layout for improved user experience.</li>
-                                <li>Fixed mapbox causing high lag spikes (INP > 1000ms).</li>
-                                <li>Added a new notificiation system in dashboard/mapbox.</li>
-                                <li>Fixed NWWS XMPP Session reconnecting upon network loss.</li>
-                                <li>Added alert filtering and tracking by spotter network and realtimeirl.</li>
-                            </ul>
-                        </p>
+                        <p class="data-card-description" id="atmosx.header.https"></p>
                     </div>
                 </div>
             </div>
@@ -282,6 +275,23 @@
             dashboard_class.spawnGeneralSetupHub()
             dashboard_class.spawnExternalServices()
             dashboard_class.spawnStormPredictionCenterModels()
+            let response = await library.createHttpRequest(`https://k3yomi.github.io/update/atmosx_header.json`)
+            if (response.status == 200) {
+                response = await response.json()
+                response = response[library.storage.configurations.version]
+                document.getElementById('version').innerHTML = `v${library.storage.configurations.version}`
+                if (response && response.changelogs && Array.isArray(response.changelogs) && response.changelogs.length > 0) {
+                    document.getElementById('atmosx.header.https').innerHTML = `${response.updated} - v${response.version}<ul style="padding-left: 20px;">${response.changelogs.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                    if (response.headline != ``) {
+                        document.getElementById('data-card-headline-parent').style.display = 'block'
+                        document.querySelector('.data-card-headline').innerHTML = response.headline
+                    }
+                } else {
+                    document.getElementById('atmosx.header.https').innerHTML = `No changelogs available for this version.`;
+                }
+            } else {
+                document.getElementById('atmosx.header.https').innerHTML = `Failed to fetch changelogs`;
+            }
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts(true)
                 await dashboard_class.UpdateThread()

@@ -9,7 +9,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub
-    Version: 7.0.5                             
+    Version: v7.0.0                             
 */
 
 
@@ -175,8 +175,20 @@ class Hooks {
             third_party_services: loader.cache.configurations.third_party_services,
             widget_settings: loader.cache.configurations.widget_settings,
             realtime_irl: loader.cache.configurations.sources.miscellaneous_sources.realtime_irl,
+            version: this.getCurrentVersion(),
         }
         return {success: true, message: `Successfully reloaded configurations.`}
+    }
+
+    /**
+      * @function getCurrentVersion
+      * @description Gets the current version of the project from the version file.
+      * 
+      */
+
+    getCurrentVersion = function() {
+        let version = loader.packages.fs.readFileSync(loader.packages.path.join(__dirname, `../../version`), `utf-8`);
+        return version
     }
 
     /**

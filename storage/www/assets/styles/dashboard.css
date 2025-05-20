@@ -23,6 +23,14 @@ i {
     display: flex; justify-content: center;
     align-items: center;
 }
+a, a:visited {
+    color: rgb(153, 153, 153);
+    transition: color 0.2s;
+}
+a:hover, a:active, a:focus {
+    color: rgb(255, 255, 255);
+    text-decoration: underline;
+}
 
 /* Sidebar Styles */
 

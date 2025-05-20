@@ -10,7 +10,7 @@
                                      | |                                 
                                      |_|                                                                                                                
     Written by: k3yomi@GitHub
-    Version: v7.0.5                              
+    Version: v7.0.0                              
 */
 
 /**
@@ -274,7 +274,7 @@ class Mapbox {
             let color = `rgb(255, 0, 191)`
             let description = `You are here!`
             let dotPlots = [{ latitude: latitude, longitude: longitude, color: color, description: location, size: 10}]
-            this.storage.mapbox.flyTo({center: [longitude, latitude], zoom: 14, speed: 0.8, pitch: 1});
+            this.storage.mapbox.flyTo({center: [longitude, latitude], zoom: 9, speed: 0.8, pitch: 1});
             this.createDotSource(dotPlots, `realtimeirl-source`, `realtimeirl-layer`)
         }
     }

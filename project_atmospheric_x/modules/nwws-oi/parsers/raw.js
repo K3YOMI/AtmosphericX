@@ -11,7 +11,7 @@
                                      |_|                                                                                                                
     
     Written by: k3yomi@GitHub
-    Version: 7.0.5                             
+    Version: v7.0.0                             
 */
 
 

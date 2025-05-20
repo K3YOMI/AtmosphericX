@@ -10,7 +10,7 @@
                                      | |                                 
                                      |_|                                                                                                                
     Written by: k3yomi@GitHub
-    Version: v7.0.5
+    Version: v7.0.0
     
     
     All this literally does is hold information that we don't want to have to keep reloading through websockets...
