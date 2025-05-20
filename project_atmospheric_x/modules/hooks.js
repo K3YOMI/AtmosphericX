@@ -198,7 +198,7 @@ class Hooks {
 
     displayLogo = function() {
         console.clear()
-        console.log(loader.packages.fs.readFileSync(loader.packages.path.join(__dirname, `../../storage/logo`), `utf-8`));
+        console.log(loader.packages.fs.readFileSync(loader.packages.path.join(__dirname, `../../storage/logo`), `utf-8`).replace(`{VERSION}`, this.getCurrentVersion()))
         return {success: true, message: `Successfully displayed logo.`}
     }
 
