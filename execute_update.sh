@@ -53,6 +53,7 @@ commit_update() {
         fi
     else
         git fetch --all
+        git stash push -u -m "Auto-stash before update"
         git pull --rebase --prune origin main
         git clean -fd -e execute_update.sh
         for file in $(git ls-tree --name-only -r HEAD); do
@@ -61,6 +62,7 @@ commit_update() {
                 echo "[INFO] '$file' was missing and has been restored from the repository."
             fi
         done
+        git stash pop || echo "[INFO] No stashed changes to apply."
     fi
 
     echo "[INFO] Update complete. Please restart the application to apply changes."
