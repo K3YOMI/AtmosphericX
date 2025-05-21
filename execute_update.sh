@@ -1,7 +1,8 @@
+#!/bin/bash
 cat storage/logo | sed 's/ Version: {VERSION}//'
 
 VERSION=$(cat version)
-FULL_REWRITE=false
+FULL_REWRITE="false"
 
 fetch_changelogs() {
     local version="$1"
@@ -34,9 +35,8 @@ fetch_changelogs() {
     fi
     echo =============================== END OF LOG ==============================
 }
-
 commit_update() {
-    if [ "$FULL_REWRITE" = true ]; then
+    if [ "$FULL_REWRITE" = "true" ]; then
         echo "[WARNING] This update requires a full rewrite of your configurations and project files, would you like to update it still? (y/n)"
         echo "[INFO] A backup of your configurations will be created in configurations.bak"
         read -r answer
@@ -67,7 +67,6 @@ commit_update() {
 
     echo "[INFO] Update complete. Please restart the application to apply changes."
 }
-
 
 
 fetch_changelogs "$VERSION"
