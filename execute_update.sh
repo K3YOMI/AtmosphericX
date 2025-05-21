@@ -55,12 +55,22 @@ commit_update() {
         git fetch --all
         git stash push -u -m "Auto-stash before update"
         git pull --rebase --prune origin main
-        git clean -fd -e execute_update.sh
+        git clean -fd -e execute_update.sh -e configurations.bak
         git stash pop || echo "[INFO] No stashed changes to apply."
+        # Restore missing files and replace non-locally changed files
         for file in $(git ls-tree --name-only -r HEAD); do
             if [ ! -e "$file" ]; then
                 git checkout -- "$file" 2>/dev/null
                 echo "[INFO] '$file' was missing and has been restored from the repository."
+            else
+                # Check if file is locally modified
+                if ! git diff --quiet -- "$file"; then
+                    # Locally modified, skip replacing
+                    continue
+                fi
+                # Not locally modified, replace with repo version
+                git checkout -- "$file" 2>/dev/null
+                echo "[INFO] '$file' was replaced with the repository version."
             fi
         done
     fi
