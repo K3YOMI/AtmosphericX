@@ -5,9 +5,18 @@ VERSION=$(cat version)
 FULL_REWRITE="false"
 
 fetch_changelogs() {
+    # get the latest version from the version file in the repo
     local version="$1"
     local url="https://k3yomi.github.io/update/atmosx_header.json"
-    changelog=$(curl -s -f "$url" | awk -v ver="\"$version\"" 'BEGIN { found=0 }$1 ~ ver":" { found=1 }found && /^\s*}/ { exit }found { print }')
+    local new_version="https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version"
+    new_version=$(curl -s -f "$new_version")
+    if [ "$version" != "$new_version" ]; then
+        echo "Your current version: $version"
+        echo "A newer version is available: $new_version"
+    else
+        echo "You are already on the latest version: $version"
+    fi
+    changelog=$(curl -s -f "$url" | awk -v ver="\"$new_version\"" 'BEGIN { found=0 }$1 ~ ver":" { found=1 }found && /^\s*}/ { exit }found { print }')
     echo ============================ CURRENT VERSION ============================
     if [ -n "$changelog" ]; then
         updated=$(echo "$changelog" | grep '"updated"' | sed 's/.*: "\(.*\)".*/\1/')
