@@ -4244,43 +4244,6 @@
         },
         {
             "prev_ver": 520093699,
-            "name": "[Source] Intro Video",
-            "uuid": "5623f48d-b90f-4d94-a087-92b651bb42f6",
-            "id": "ffmpeg_source",
-            "versioned_id": "ffmpeg_source",
-            "settings": {
-                "local_file": "D:/[Atmospheric X]/IMG_5028.MOV",
-                "looping": true,
-                "speed_percent": 179
-            },
-            "mixers": 255,
-            "sync": 0,
-            "flags": 0,
-            "volume": 0.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.mute": [],
-                "libobs.unmute": [],
-                "libobs.push-to-mute": [],
-                "libobs.push-to-talk": [],
-                "MediaSource.Restart": [],
-                "MediaSource.Play": [],
-                "MediaSource.Pause": [],
-                "MediaSource.Stop": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 520093699,
             "name": "[Source] Mapbox",
             "uuid": "d9e215c4-1ba8-41dd-bf6d-20800bb2fe42",
             "id": "browser_source",
