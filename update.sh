@@ -55,7 +55,7 @@ commit_update() {
             echo "[INFO] Configuration file backed up in configurations.bak"
             git fetch --all
             git reset --hard origin/main
-            git clean -fd -e execute_update.sh -e configurations.bak
+            git clean -fd -e update.sh -e configurations.bak
         else
             echo "[INFO] Exiting updater..."
             exit 0
