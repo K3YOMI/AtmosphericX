@@ -28,6 +28,7 @@ fetch_changelogs() {
         echo "Updated: $updated"
         echo "Full Rewrite: $rewrite"
         FULL_REWRITE=$rewrite
+        FULL_REWRITE=$(echo "$FULL_REWRITE" | tr -d '\r' | xargs)
         if [ -n "$headline" ] && [ "$headline" != "null" ]; then
             echo "Headline: $headline"
         fi
@@ -46,8 +47,8 @@ fetch_changelogs() {
 }
 commit_update() {
     if [ "$FULL_REWRITE" = "true" ]; then
-        echo "[WARNING] This update requires a full rewrite of your configurations and project files, would you like to update it still? (y/n)"
         echo "[INFO] A backup of your configurations will be created in configurations.bak"
+        echo "[WARNING] This update requires a full rewrite of your configurations and project files, would you like to update it still? (y/n)"
         read -r answer
         if [ "$answer" = "y" ]; then
             echo "Backing up old configuration file..."
@@ -55,17 +56,17 @@ commit_update() {
             echo "[INFO] Configuration file backed up in configurations.bak"
             git fetch --all
             git reset --hard origin/main
-            git clean -fd -e update.sh -e configurations.bak
         else
             echo "[INFO] Exiting updater..."
             exit 0
         fi
     else
-        BLACKLISTED_FILES="execute_update.sh execute_update_unix.sh configurations.bak"
+        BLACKLISTED_FILES="update.sh configurations.bak"
         echo "[INFO] Updating files..."
         git fetch --all
-        files_to_update=$(git diff --name-only origin/main | grep -v -E 'execute_update\.sh|execute_update_unix\.sh|configurations\.bak|configurations\.json')
+        files_to_update=$(git diff --name-only origin/main | grep -v -E 'update\.sh|configurations\.bak|configurations\.json')
         for file in $files_to_update; do
+            echo "Updating $file..."
             git checkout origin/main -- "$file"
         done
     fi
