@@ -47,6 +47,7 @@ class Routes {
     createZones = async function(shapefiles=[]) {
         let checkFiles = await this.checkShapefiles()
         if (!checkFiles.success) {
+            loader.modules.hooks.createOutput(this.name, `\n\n[NOTICE] DO NOT CLOSE ATMOSPHERICX UNTIL THE SHAPEFILES ARE DONE COMPLETING!\n\t THIS COULD TAKE A WHILE DEPENDING ON THE SPEED OF YOUR HARDWARE!!\n\t IF YOU CLOSE ATMOSPHERICX, THE SHAPEFILES WILL NOT BE CREATED AND YOU WILL NEED TO DELETE DATABASE.DB AND RESTART ATMOSPHERICX TO CREATE THEM AGAIN!\n\n`)
             for (let i = 0; i < shapefiles.length; i++) {
                 let file = shapefiles[i].file 
                 let type = shapefiles[i].id
