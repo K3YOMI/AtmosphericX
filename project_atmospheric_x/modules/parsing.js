@@ -358,6 +358,8 @@ class Parsing {
         let forecastOffices = loader.cache.configurations.sources.filter.nws_office_filter;
         let exludedForecaseOffices = loader.cache.configurations.sources.filter.nws_office_exclude_filter;
         let ugcCodes = loader.cache.configurations.sources.filter.ugc_filter;
+        let abbreviatedStatesFilter = loader.cache.configurations.sources.filter.abbreviated_states_filter;
+        if (abbreviatedStatesFilter.length != 0) { alerts = alerts.filter(alert => { let ugcCodes = alert.properties.geocode.UGC; if (!Array.isArray(ugcCodes) || ugcCodes.length === 0) { return false; } return ugcCodes.some(code => abbreviatedStatesFilter.includes(code.substring(0, 2))); }); }
         if (exludedForecaseOffices.length != 0) { alerts = alerts.filter(alert => !exludedForecaseOffices.includes(alert.properties.parameters.WMOidentifier[0].split(' ')[1])); }
         if (forecastOffices.length != 0) { alerts = alerts.filter(alert => forecastOffices.includes(alert.properties.parameters.WMOidentifier[0].split(' ')[1])); }
         if (ugcCodes.length != 0) { alerts = alerts.filter(alert => alert.properties.geocode.UGC.some(code => ugcCodes.includes(code))); }

@@ -27,14 +27,14 @@
         "filter": {
             "nws_office_exclude_filter": ["KWNS"],
             "nws_office_filter": [],
-            "ugc_filter": []
+            "ugc_filter": [],
+            "abbreviated_states_filter": []
         },
         "primary_sources": {
             "national_weather_service": {
                 "enabled": true,
                 "cache_time": 29,
-                "endpoint": "https://api.weather.gov/alerts/active",
-                "state_filter": "ALL"
+                "endpoint": "https://api.weather.gov/alerts/active"
             },
             "noaa_weather_wire_service": {
                 "enabled": false,

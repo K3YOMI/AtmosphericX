@@ -37,11 +37,10 @@ class Webcalling {
       */
 
 
-    featureRequest = async function(metadata, reqName, isNws=false, isIem=false) {
+    featureRequest = async function(metadata, reqName, isIem=false) {
         return new Promise(async (resolve) => {
             try {
                 let url = metadata.endpoint
-                if (isNws && metadata.state_filter != `ALL`) { url += `/area/${metadata.state_filter}` }
                 if (isIem) {
                     let state = metadata.state_abbreviation
                     let hours = metadata.data_retention_hours
@@ -83,11 +82,10 @@ class Webcalling {
       * @param {boolean} isLocationServices - Whether the request is for the Location Services (default: false)
       */
 
-    genericRequest = async function(metadata, reqName, isNws=false, isIem=false, isLocationServices=false, isRealtimeIRL=false) {
+    genericRequest = async function(metadata, reqName, isIem=false, isLocationServices=false, isRealtimeIRL=false) {
         return new Promise(async (resolve) => {
             try {
                 let url = metadata.endpoint
-                if (isNws && metadata.state_filter != `ALL`) { url += `/area/${metadata.state_filter}` }
                 if (isRealtimeIRL) {  url = url.replace("${X}", metadata.pull_key) }
                 if (isIem) {
                     let state = metadata.state_abbreviation
@@ -189,7 +187,7 @@ class Webcalling {
                 for (const handle of ready) {
                     loader.static.httpTimer[handle.name] = Date.now();
                     this.retries = 0
-                    await this[handle.pointer](handle.handle, handle.name, handle.name == `NationalWeatherService`, handle.name == `IEMReports`, handle.name == `LocationNames`, handle.name == `RealtimeIRL`)
+                    await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `LocationNames`, handle.name == `RealtimeIRL`)
                 }    
             }
             if (isNWWS != undefined && isNWWS.features.length > 0) {
