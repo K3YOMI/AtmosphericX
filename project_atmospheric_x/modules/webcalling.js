@@ -32,7 +32,6 @@ class Webcalling {
       * 
       * @param {Object} metadata - The metadata object containing the endpoint and other parameters
       * @param {string} reqName - The name of the request to be used in the log messages
-      * @param {boolean} isNws - Whether the request is for the National Weather Service (default: false)
       * @param {boolean} isIem - Whether the request is for the IEM (default: false)
       */
 
@@ -59,7 +58,7 @@ class Webcalling {
                     this.retries++;
                     loader.modules.hooks.createOutput(`${this.name}.featureRequest`, `Retrying request for ${reqName} (${this.retries})`)
                     loader.modules.hooks.createLog(`${this.name}.featureRequest`, `Retrying request for ${reqName} (${this.retries})`)
-                    let result = await this.featureRequest(metadata, reqName, isNws, isIem);
+                    let result = await this.featureRequest(metadata, reqName, isIem);
                     resolve(result);
                 } else { 
                     this.results += ` (${reqName}: Failed)`;
@@ -77,7 +76,6 @@ class Webcalling {
       * 
       * @param {Object} metadata - The metadata object containing the endpoint and other parameters
       * @param {string} reqName - The name of the request to be used in the log messages
-      * @param {boolean} isNws - Whether the request is for the National Weather Service (default: false)
       * @param {boolean} isIem - Whether the request is for the IEM (default: false)
       * @param {boolean} isLocationServices - Whether the request is for the Location Services (default: false)
       */
@@ -115,7 +113,7 @@ class Webcalling {
                     this.retries++;
                     loader.modules.hooks.createOutput(`${this.name}.genericRequest`, `Retrying request for ${reqName} (${this.retries})`)
                     loader.modules.hooks.createLog(`${this.name}.genericRequest`, `Retrying request for ${reqName} (${this.retries})`)
-                    let result = await this.genericRequest(metadata, reqName, isNws, isIem, isLocationServices, isRealtimeIRL);
+                    let result = await this.genericRequest(metadata, reqName, isIem, isLocationServices, isRealtimeIRL);
                     resolve(result);
                 } else { 
                     this.results += ` (${reqName}: Failed)`;

@@ -161,7 +161,7 @@ class Dashboard {
                     this.giveResponse(request, response, {statusCode: 401, message: `Account not activated`});
                     return {success: false, message: `Account not activated`};
                 }
-                request.session.account = `atmosx-session-${loader.packages.crypto.randomBytes(16).toString(`hex`)}`;
+                request.session.account = `atmosx-session-${loader.packages.crypto.randomBytes(64).toString(`hex`)}`;
                 request.session.username = username;
                 request.session.save();
                 loader.modules.hooks.createOutput(this.name, `Login successful for username ${username}`);

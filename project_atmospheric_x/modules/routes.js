@@ -104,7 +104,7 @@ class Routes {
       */
 
     createExpressServer = function() { 
-        let randomSecret = loader.packages.crypto.randomBytes(32).toString('hex')
+        let randomSecret = loader.packages.crypto.randomBytes(64).toString('hex')
         loader.static.express = loader.packages.express()
         loader.static.express.use(loader.packages.expressSession({
             secret: randomSecret,
@@ -112,8 +112,7 @@ class Routes {
             saveUninitialized: false,
             cookie: {
                 maxAge: null,
-                name: `session`,
-                sameSite: `strict`,
+                sameSite: `lax`,
                 httpOnly: true,
                 secure: loader.cache.configurations.hosting.https
             },
