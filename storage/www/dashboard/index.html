@@ -267,7 +267,7 @@
         if (window.innerWidth <= 1270) { document.getElementById(`._nonchild_atmosx_dashboard`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.plugins`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.support`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-        library.createWebsocketSession([`torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)
             library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username') || 'Default User'}</span>`)
@@ -275,22 +275,15 @@
             dashboard_class.spawnGeneralSetupHub()
             dashboard_class.spawnExternalServices()
             dashboard_class.spawnStormPredictionCenterModels()
-            let response = await library.createHttpRequest(`https://k3yomi.github.io/update/atmosx_header.json`)
-            if (response.status == 200) {
-                response = await response.json()
-                response = response[library.storage.configurations.version]
-                document.getElementById('version').innerHTML = `v${library.storage.configurations.version}`
-                if (response && response.changelogs && Array.isArray(response.changelogs) && response.changelogs.length > 0) {
-                    document.getElementById('atmosx.header.https').innerHTML = `${response.updated} - v${response.version}<ul style="padding-left: 20px;">${response.changelogs.map(item => `<li>${item}</li>`).join('')}</ul>`;
-                    if (response.headline != ``) {
-                        document.getElementById('data-card-headline-parent').style.display = 'block'
-                        document.querySelector('.data-card-headline').innerHTML = response.headline
-                    }
-                } else {
-                    document.getElementById('atmosx.header.https').innerHTML = `No changelogs available for this version.`;
+            if (library.storage.updates.changelogs && Array.isArray(library.storage.updates.changelogs) && library.storage.updates.changelogs.length > 0) {
+                document.getElementById('version').innerHTML = `v${library.storage.updates.version}`
+                document.getElementById('atmosx.header.https').innerHTML = `${library.storage.updates.updated} - v${library.storage.updates.version}<ul style="padding-left: 20px;">${library.storage.updates.changelogs.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                if (library.storage.updates.headline != ``) {
+                    document.getElementById('data-card-headline-parent').style.display = 'block'
+                    document.querySelector('.data-card-headline').innerHTML = library.storage.updates.headline
                 }
             } else {
-                document.getElementById('atmosx.header.https').innerHTML = `Failed to fetch changelogs`;
+                document.getElementById('atmosx.header.https').innerHTML = `No changelogs available for this version.`;
             }
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts(true)

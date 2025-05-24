@@ -5,7 +5,6 @@ VERSION=$(cat version)
 FULL_REWRITE="false"
 
 fetch_changelogs() {
-    # get the latest version from the version file in the repo
     local version="$1"
     local url="https://k3yomi.github.io/update/atmosx_header.json"
     local new_version="https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version"
@@ -45,6 +44,8 @@ fetch_changelogs() {
     fi
     echo =============================== END OF LOG ==============================
 }
+
+
 commit_update() {
     if [ "$FULL_REWRITE" = "true" ]; then
         echo "[INFO] A backup of your configurations will be created in configurations.bak"

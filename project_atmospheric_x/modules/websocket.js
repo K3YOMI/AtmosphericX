@@ -97,7 +97,7 @@ class Websockets {
 
     requestValues = function(client, values) {
         let canSend = false
-        let allowedValues = [`svrprob`, `torprob`, `public`, `active`, `realtime`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
+        let allowedValues = [`updates`, `svrprob`, `torprob`, `public`, `active`, `realtime`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
         values = values.filter((value) => { return allowedValues.includes(value) })
         if (client.readyState === loader.packages.ws.OPEN) { 
             let index = loader.static.webSocketClients.indexOf(client)

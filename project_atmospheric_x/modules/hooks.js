@@ -192,6 +192,26 @@ class Hooks {
     }
 
     /**
+      * @function checkUpdates
+      * @description Checks for updates to the project by comparing the current version with the latest version from the GitHub repository.
+      */
+
+    checkUpdates = async function() {
+        let changelogs = "https://k3yomi.github.io/update/atmosx_header.json"
+        let currentVersion = "https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version"
+        let thisVersion = this.getCurrentVersion()
+        let latestVersion = await this.createHttpRequest(currentVersion)
+        let changelogsData = await this.createHttpRequest(changelogs)
+        if (latestVersion.success === false) { return {success: false, message: `Failed to get latest version.`} }
+        if (changelogsData.success === false) { return {success: false, message: `Failed to get changelogs.`} }
+        loader.cache.updates = changelogsData.message[thisVersion] ? changelogsData.message[thisVersion] : []
+        loader.cache.latestupdates = changelogsData.message[latestVersion.message] ? changelogsData.message[latestVersion.message] : []
+        if (latestVersion.message != thisVersion) {
+            this.createOutput(this.name, `\n\n[NOTICE] New version available: ${latestVersion.message} (Current version: ${thisVersion})\n\t You can update to the latest version by running update.sh.\n\t If you wish to replace manually, you can download the latest version from the GitHub repository.\n\t ==================== CHANGE LOGS ======================== \n\t ${loader.cache.latestupdates.changelogs.join(`\n\t `)}\n\n`);
+        }
+    }
+
+    /**
       * @function displayLogo
       * @description Displays the logo of the project in the console.
       */

@@ -20,6 +20,7 @@ return new Promise(async (resolve, reject) => {
     loader.modules.hooks.createOutput(`AtmosphericX`, `Atmospheric X is starting...`)
     loader.modules.hooks.createLog(`AtmosphericX`, `Atmospheric X is starting...`)
     loader.modules.hooks.cleanTemp()
+    loader.modules.hooks.checkUpdates()
     await loader.modules.webcalling.nextRun()
     loader.modules.listener.createSession()
     setInterval(async () => {
@@ -36,5 +37,6 @@ return new Promise(async (resolve, reject) => {
             }, 1000)
             if (loader.static.wiresession !== undefined) { loader.modules.listener.reconnectSessionCheck() }
         }
+        if (new Date().getSeconds() % 1800 == 0) { loader.modules.hooks.checkUpdates() }
     }, 100);
 })
