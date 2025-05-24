@@ -43,7 +43,7 @@ class Listener {
         loader.static.wiresession = loader.packages.xmpp.client({reconnect: true, service: wireService, domain: wireDomain, username: wireUsername, password: wirePassword}).setMaxListeners(0);
         loader.static.wiresession.on(`online`, async (_address) => {
             let displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', '');
-            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${displayName} (${displayTime})`, xmlns: 'http://jabber.org/protocol/muc' }));
+            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${displayName} (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})`, xmlns: 'http://jabber.org/protocol/muc' }));
             loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain}`)
             loader.cache.timeSinceLastStanza = new Date().getTime()
             loader.cache.hasConnectedBefore = true
