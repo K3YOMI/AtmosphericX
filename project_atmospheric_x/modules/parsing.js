@@ -386,6 +386,11 @@ class Parsing {
             if (this.doesAlertExist(tAlerts, index.id)) { continue; }
             index = JSON.parse(JSON.stringify(index));
             let registration = loader.modules.building.registerEvent(index);
+            let alertHash = loader.packages.crypto.createHash('sha1').update(JSON.stringify(registration)).digest('hex');
+            if (loader.cache.logging.findIndex(log => log.id == alertHash) == -1) {
+                loader.cache.logging.push({ id: alertHash, expires: registration.details.expires});
+                loader.modules.hooks.sendWebhook(`${registration.details.name} (${registration.details.type})`,`**Location:** ${registration.details.locations}\n**Issued:** ${new Date(registration.details.issued).toLocaleString()}\n**Expires:** ${new Date(registration.details.expires).toLocaleString()}\n**Wind Gusts:** ${registration.details.wind}\n**Hail Size:** ${registration.details.hail}\n**Damage Threat:** ${registration.details.damage}\n**Tornado** ${registration.details.tornado}\n**Tags:** ${registration.details.tag.join(', ')}\n**Sender:** ${registration.details.sender}\n**Tracking ID:** ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}\n\n\`\`\`\n${registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\n\`\`\`\n`);
+            }
             if (Object.keys(registration).length != 0) {
                 if (registration.details.ignored == true) { continue; }
                 tAlerts.push(registration);

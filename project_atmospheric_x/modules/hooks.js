@@ -55,6 +55,26 @@ class Hooks {
         })
     }
 
+    /**
+      * @function sendWebhook
+      * @description Sends a webhook message to a Discord channel using the axios package.
+      * 
+      * @param {string} title - The title of the webhook message.
+      * @param {string} message - The message of the webhook.
+      */
+
+    sendWebhook = async function(title, message) {
+        let settings = loader.cache.configurations.webhook_settings
+        let endpoint = settings.discord_webhook
+        let content = settings.content
+        let displayName = settings.webhook_display
+        if (!settings.enabled) { return }
+        if (new Date().getTime() - loader.static.webhookTimeout < 500) { return } 
+        loader.static.webhookTimeout = new Date().getTime()
+        let embed = { title: title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: {text: displayName} };
+        await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] })
+    }
+
 
     /**
       * @function getRandomAlert

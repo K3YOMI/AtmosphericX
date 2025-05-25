@@ -21,12 +21,14 @@ loader.static.webSocketClients = [] // Array of websocket clients that are curre
 loader.static.webSocketClientLimits = [] // Array of websocket clients that are currently connected to the server with limits
 loader.static.httpTimer = [] // Array of timers for the HTTP server
 loader.static.wiresession = undefined // The session for the wire server
+loader.static.webhookTimeout = 0
 
 
 loader.cache.twire = {features: []} // Array of features that are currently being processed by the wire server
 loader.cache.timeSinceLastStanza = new Date().getTime() // The time since the last stanza was received from the wire server
 loader.cache.attemptingToConnect = false // Boolean to check if the wire server is currently attempting to connect
 loader.cache.hasConnectedBefore = false // Boolean to check if the wire server has connected before
+loader.cache.logging = []
 
 loader.packages.fs = require(`fs`)
 loader.packages.path = require(`path`)

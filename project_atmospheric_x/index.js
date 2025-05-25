@@ -31,6 +31,7 @@ return new Promise(async (resolve, reject) => {
             loader.modules.hooks.cleanTemp()
             setTimeout(() => {
                 loader.cache.twire = {features: loader.cache.twire.features.filter(feature => feature !== undefined && new Date(feature.properties.expires).getTime() / 1000 > new Date().getTime() / 1000)} 
+                loader.cache.logging = loader.cache.logging.filter(log => log !== undefined && new Date(log.expires).getTime() / 1000 > new Date().getTime() / 1000)
                 loader.modules.webcalling.nextRun(loader.cache.twire)
                 loader.modules.webcalling.nextRun()
                 loader.cache.isRequestingData = false

@@ -54,7 +54,7 @@ class Products {
                     if (loader.cache.wire == undefined) { loader.cache.wire = [] }
                     if (loader.cache.wire.length >= 20) { loader.cache.wire.shift() }
                     loader.cache.wire.push({message: message, issued: new Date().toISOString()})
-                    loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${getType}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`)
+                    loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${getType}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}`, `utf8`)
                     if (!hasVtec) { loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-global-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`); }
                     if (attributes.awipsid) {
                         if (isXml && areaDesc) {
@@ -62,6 +62,8 @@ class Products {
                         }
                         if (!isXml && hasVtec) {
                             loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`);
+                            loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-cache.bin`), `\n\n${message}\n\n`, `utf8`);
+
                         }
                         return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec,type: getType,ignore: false}
                     }
