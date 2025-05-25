@@ -38,6 +38,6 @@ return new Promise(async (resolve, reject) => {
             }, 1000)
             if (loader.static.wiresession !== undefined) { loader.modules.listener.reconnectSessionCheck() }
         }
-        if (new Date().getMinutes() % 30 == 0) { loader.modules.hooks.checkUpdates() } // Check for updates every 30 minutes
+        if (new Date().getMinutes() % 30 == 0 && new Date().getSeconds() == 0) { loader.modules.hooks.checkUpdates() }
     }, 100);
 })
