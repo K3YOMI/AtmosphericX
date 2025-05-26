@@ -9,15 +9,6 @@
             "cert": "../storage/cert/cert.crt"
         }
     },
-<<<<<<< HEAD
-=======
-    "webhook_settings": {
-        "enabled": false,
-        "discord_webhook": "DISCORD_WEBHOOK_HERE",
-        "webhook_display": "AtmosphericX (Integration)",
-        "content": "<@&ROLE_ID_HERE>"
-    },
->>>>>>> cd55640cec035b60d725be89d8e17cc24ca1d071
     "overlay_settings": {
         "color_scheme": [
             { "type": "Tornado Emergency", "color": { "light": "rgb(209,38,215)", "dark": "rgb(159,37,163)" }},
