@@ -105,20 +105,8 @@ class Routes {
       */
 
     createExpressServer = function() { 
-        let randomSecret = loader.packages.crypto.randomBytes(64).toString('hex')
         loader.static.express = loader.packages.express()
-        loader.static.express.use(loader.packages.expressSession({
-            secret: randomSecret,
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                maxAge: null,
-                sameSite: `lax`,
-                httpOnly: true,
-                secure: loader.cache.configurations.hosting.https
-            },
-            name: `atmosx-session`
-        }))
+        loader.static.express.use(loader.packages.cookieParser())
         loader.static.express.set('trust proxy', 1)
         if (loader.cache.configurations.hosting.https) { 
             let httpsOptions = { 

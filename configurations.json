@@ -306,6 +306,7 @@
             "note": "No configuration needed"
         },
         "alert": {
+            "duration": 8.0,
             "max_text_length": 70,
             "animation_style": "animation: fade 6.0s ease-in-out; animation-fill-mode: forwards; animation-delay: 0s; transition: all 0.3s ease-in-out; opacity: 1;"
         }

@@ -60,7 +60,10 @@ class Dashboard {
                         successMessage.innerHTML = jsonData.message;
                         successMessage.style.display = `block`;
                         errorMessage.style.display = `none`;
-                        if (action === `login`) {localStorage.setItem(`atmosx.cached.username`, username);}
+                        if (action === `login`) {
+                            localStorage.setItem(`atmosx.cached.username`, username);
+                            document.cookie = `sessionFallback=${jsonData.session}; path=/; SameSite=Lax;`;
+                        }
                         setTimeout(() => { window.location.replace(`/`) }, 1000);
                     } else {
                         errorMessage.innerHTML = jsonData.message;

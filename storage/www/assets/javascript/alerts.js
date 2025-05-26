@@ -136,6 +136,7 @@ class Alerts {
             let timeIssuedString = `Invalid Time`
             let configuration = this.storage.configurations.widget_settings.alert;
             let maxDescriptionLength = configuration.max_text_length;
+            let maxDuration = configuration.duration;
             let eventName = alert.details.name 
             let eventStatus = alert.details.type
             let locationsImpacted = alert.details.locations
@@ -199,9 +200,9 @@ class Alerts {
             setTimeout(() => {
                 domNotification.style.animation = 'fadeOut 1s ease-in-out';
                 setTimeout(() => { domNotification.style.display = 'none'; alertTitle.textContent = ''; alertDescription.textContent = ''; domNotification.style.backgroundColor = ''; domNotification.style.animation = ''; }, 900);
-            }, 6 * 1000);
+            }, (maxDuration - 0.8) * 1000);
         }  
-        setTimeout(() => { this.storage.isQueryRunning = false; }, 6.8 * 1000);
+        setTimeout(() => { this.storage.isQueryRunning = false; }, maxDuration * 1000);
     }
 
 

@@ -161,29 +161,31 @@ class Dashboard {
                     this.giveResponse(request, response, {statusCode: 401, message: `Account not activated`});
                     return {success: false, message: `Account not activated`};
                 }
-                request.session.account = `atmosx-session-${loader.packages.crypto.randomBytes(64).toString(`hex`)}`;
-                request.session.username = username;
-                request.session.save();
+                let generatedSession = loader.packages.crypto.randomBytes(32).toString(`hex`);
+                response.cookie(`session`, generatedSession, { maxAge: null, sameSite: `lax`, secure: loader.cache.configurations.hosting.https, httpOnly: true }); // If this fails, we will rely on the fallback session
+
                 loader.modules.hooks.createOutput(this.name, `Login successful for username ${username}`);
                 loader.modules.hooks.createLog(this.name, `INFO`, `Login successful for username ${username}`);
-                loader.static.accounts.push({username: username, session: request.session.account});
-                this.giveResponse(request, response, {statusCode: 200, message: `Login successful`});
-                return {success: true, message: `Login successful`};
+                loader.static.accounts.push({username: username, session: generatedSession, address: request.socket.remoteAddress, userAgent: request.headers['user-agent']});
+                this.giveResponse(request, response, {statusCode: 200, message: `Login successful`, session: generatedSession});
+                return {success: true, message: `Login successful`, session: generatedSession};
             }
             if (action == 1) { // Logout (1)
-                if (request.session.account == undefined) {
+                if (request.cookies.session == undefined || request.cookies.fallbackSession == undefined) {
                     loader.modules.hooks.createOutput(this.name, `Attempted logout with no session`);
                     loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted logout with no session`);
+                    response.clearCookie('session');
+                    response.clearCookie('sessionFallback');
                     this.giveResponse(request, response, {statusCode: 401, message: `No session found`});
-                    request.session.destroy();
                     return {success: false, message: `No session found`};
                 }
-                let account = loader.static.accounts.find(a => a.session == request.session.account);
+                let account = loader.static.accounts.find(a => a.session == request.cookies.session);
                 loader.modules.hooks.createOutput(this.name, `${account.username} logged out successfully`);
                 loader.modules.hooks.createLog(this.name, `INFO`, `${account.username} logged out successfully`);
-                loader.static.accounts = loader.static.accounts.filter(a => a.session != request.session.account);
+                loader.static.accounts = loader.static.accounts.filter(a => a.session != request.cookies.session);
+                response.clearCookie('session');
+                response.clearCookie('sessionFallback');
                 this.giveResponse(request, response, {statusCode: 200, message: `Logout successful`});
-                request.session.destroy();
                 return {success: true, message: `Logout successful`};
             }
             if (action == 2) { // Register (2)
@@ -264,7 +266,7 @@ class Dashboard {
     giveResponse = function(request, response, data={statusCode: 200, message: `OK`}) {
         response.statusCode = data.statusCode
         response.setHeader('Content-Type', 'application/json')
-        response.end(JSON.stringify({status: data.statusCode, message: data.message}))
+        response.end(JSON.stringify(data))
     }
 
     /**
@@ -277,8 +279,14 @@ class Dashboard {
 
     hasCredentials = function(request, response) { 
         if (!loader.cache.configurations.hosting.portal) { return {success: true, message: `Userless Session`}}
-        if (request.session.account != undefined) { return {success: true, message: request.session.username} }
-        return {success: false, message: `Session not found`}
+        let cookie = request.cookies.session
+        let fallback = request.cookies.sessionFallback
+        let account = loader.static.accounts.find(a => a.session == cookie || a.session == fallback);
+        if (account) {
+            return {success: true, message: `User ${account.username} has valid session`}
+        } else {
+            return {success: false, message: `Forbidden - Invalid session`}
+        }
     }
 
     /**
@@ -292,7 +300,7 @@ class Dashboard {
       */
 
     redirectSession = function(request, response, redirectUrl, killSession=false) { 
-        if (killSession) { request.session.destroy(); response.clearCookie(`atmosx-session`) }
+        if (killSession) { response.clearCookie('session'); response.clearCookie('sessionFallback'); }
         response.sendFile(redirectUrl)
         return {success: true, message: `Redirected to ${redirectUrl}`}
     }
