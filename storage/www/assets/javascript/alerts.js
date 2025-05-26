@@ -198,7 +198,7 @@ class Alerts {
             domTags.innerHTML = `${eventTags || 'N/A'}`;
             setTimeout(() => {
                 domNotification.style.animation = 'fadeOut 1s ease-in-out';
-                setTimeout(() => { domNotification.style.display = 'none'; alertTitle.textContent = ''; alertDescription.textContent = ''; domNotification.style.backgroundColor = ''; domNotification.style.animation = ''; }, 900);
+                setTimeout(() => { domNotification.style.display = 'none'; domNotification.style.backgroundColor = ''; domNotification.style.animation = ''; }, 900);
             }, (this.storage.configurations.widget_settings.alert.duration - 0.8) * 1000);
         }  
         setTimeout(() => { this.storage.isQueryRunning = false; }, this.storage.configurations.widget_settings.alert.duration * 1000);
