@@ -54,6 +54,7 @@ class Routes {
         loader.static.express.get('/widgets/description', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_description@widget/index.html`));
         loader.static.express.get('/widgets/alert', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_title@widget/index.html`));
         loader.static.express.get('/widgets/location', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_location@widget/index.html`));
+        loader.static.express.get('/widgets/gps', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/gps@widget/index.html`));
         loader.static.express.get('/widgets/expires', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_expires@widget/index.html`));
         loader.static.express.get('/widgets/time', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/time@widget/index.html`));
         loader.static.express.get('/widgets/date', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/date@widget/index.html`));

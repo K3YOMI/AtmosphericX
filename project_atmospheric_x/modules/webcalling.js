@@ -159,7 +159,7 @@ class Webcalling {
                 {name: 'SpotterNetworkReports', handle: sources.miscellaneous_sources.spotter_network_reports, timer: sources.miscellaneous_sources.spotter_network_reports.cache_time, contradictions: [`mPingReports`, `IEMReports`, `GRLevelXReports`], pointer: `genericRequest`},
                 {name: 'NoaaWeatherWireService', handle: sources.primary_sources.noaa_weather_wire_service, timer: 1, contradictions: [`NationalWeatherService`], pointer: `nullRoute`},        
                 {name: 'RealtimeIRL', handle: sources.miscellaneous_sources.location_services.realtimeirl, timer: sources.miscellaneous_sources.location_services.realtimeirl.cache_time, contradictions: [], pointer: `genericRequest`},        
-                {name: 'LocationNames', handle: sources.miscellaneous_sources.location_services.location_names, timer: sources.miscellaneous_sources.location_services.location_names.cache_time, contradictions: [], pointer: `genericRequest`},        
+                {name: 'LocationServices', handle: sources.miscellaneous_sources.location_services.location_names, timer: sources.miscellaneous_sources.location_services.location_names.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'ProbTornado', handle: sources.miscellaneous_sources.tornado_probability, timer: sources.miscellaneous_sources.tornado_probability.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'ProbSevere', handle: sources.miscellaneous_sources.severe_probability, timer: sources.miscellaneous_sources.severe_probability.cache_time, contradictions: [], pointer: `genericRequest`},     
             ];
@@ -185,7 +185,7 @@ class Webcalling {
                 for (const handle of ready) {
                     loader.static.httpTimer[handle.name] = Date.now();
                     this.retries = 0
-                    await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `LocationNames`, handle.name == `RealtimeIRL`)
+                    await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `LocationServices`, handle.name == `RealtimeIRL`)
                 }    
             }
             if (isNWWS != undefined && isNWWS.features.length > 0) {

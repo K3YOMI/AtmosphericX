@@ -240,10 +240,12 @@ class Building {
                 if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
                 loader.cache.realtime.lat = rawData.RealtimeIRL.location.latitude;
                 loader.cache.realtime.lon = rawData.RealtimeIRL.location.longitude;
-                loader.cache.realtime.address = `N/A`;
-                loader.cache.realtime.location = `N/A`;
-                loader.cache.realtime.county = `N/A`;
-                loader.cache.realtime.state = `N/A`;
+                if (loader.cache.realtime.address == undefined) {
+                    loader.cache.realtime.address = `N/A`;
+                    loader.cache.realtime.location = `N/A`;
+                    loader.cache.realtime.county = `N/A`;
+                    loader.cache.realtime.state = `N/A`;
+                }
             }
             if (rawData.LocationServices != undefined) { 
                 if (typeof loader.cache.realtime != `object`) { return }

@@ -86,6 +86,12 @@ body {
     margin-bottom: 10px;
     display: none;
 }
+.smaller-subtext-login { 
+    font-size: 12px;
+    color: #595757;
+    margin-top: 10px;
+    text-align: center;
+}
 .success-message {
     color: green;
     margin-bottom: 10px;

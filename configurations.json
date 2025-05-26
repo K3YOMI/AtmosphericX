@@ -9,12 +9,6 @@
             "cert": "../storage/cert/cert.crt"
         }
     },
-    "webhook_settings": {
-        "enabled": false,
-        "discord_webhook": "DISCORD_WEBHOOK_HERE",
-        "webhook_display": "AtmosphericX (Discord Integration)",
-        "content": "<@&ROLE_ID_HERE>"
-    },
     "overlay_settings": {
         "color_scheme": [
             { "type": "Tornado Emergency", "color": { "light": "rgb(209,38,215)", "dark": "rgb(159,37,163)" }},
@@ -52,22 +46,7 @@
                 "credentials": {
                     "username": "NWWS_OI_USERNAME_HERE",
                     "password": "NWWS_OI_PASSWORD_HERE",
-                    "display": "AtmosphericX (DISPLAY_NAME_HERE)"
-                },
-                "mail_settings": {
-                    "enabled": false,
-                    "provider": "smtp.gmail.com",
-                    "port": 465,
-                    "secure": true,
-                    "credentials": {
-                        "username": "SMTP_USERNAME_HERE",
-                        "password": "SMTP_PASSWORD_HERE"
-                    },
-                    "sender": {
-                        "name": "AtmosphericX",
-                        "email": "AtmosphericX@EmailServiceExample"
-                    },
-                    "recipient": "EMAIL_ADDRESS_HERE"
+                    "display": "DISPLAY_NAME_HERE"
                 }
             }
         },
@@ -129,17 +108,20 @@
             "tornado_probability": {
                 "enabled": true,
                 "cache_time": 119,
+                "threshold": 50,
                 "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PTv3_LOOP"
             },
             "severe_probability": {
                 "enabled": true,
                 "cache_time": 119,
+                "threshold": 50,
                 "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PSv3_LOOP"
             }
         }
     },
     "project_settings": {
         "http_useragent": "AtmosphericX/v7",
+        "http_timeout": 5,
         "global_update": 10,
         "priority_alerts": true,
         "priority": ["Tornado Emergency", "Particularly Dangerous Situation", "Considerable Severe Thunderstorm Warning", "Destructive Severe Thunderstorm Warning","Confirmed Tornado Warning", "Radar Indicated Tornado Warning", "Flash Flood Emergency", "Flash Flood Watch","Severe Thunderstorm Watch","Tornado Watch","Special Marine Warning","Flash Flood Warning","Severe Thunderstorm Warning","Tornado Warning","Snow Squall Warning","Earthquake Warning","Hurricane Warning", "Hurricane Watch"],
@@ -155,6 +137,28 @@
                 "timeout": 30,
                 "types": ["public", "wire", "reports", "spotters", "discussions", "severeProbability", "tornadoProbability"]
             }
+        },
+        "webhook_settings": {
+            "enabled": false,
+            "discord_webhook": "DISCORD_WEBHOOK_HERE",
+            "webhook_display": "AtmosphericX (Webhook Integration)",
+            "content": "<@&ROLE_ID_HERE>"
+        },
+        "mail_settings": {
+            "enabled": false,
+            "provider": "smtp.gmail.com",
+            "port": 465,
+            "secure": true,
+            "credentials": {
+                "username": "SMTP_USERNAME_HERE",
+                "password": "SMTP_PASSWORD_HERE"
+            },
+            "sender": {
+                "name": "AtmosphericX",
+                "email": "AtmosphericX@EmailServiceExample"
+            },
+            "recipient": "EMAIL_ADDRESS_HERE",
+            "note": "This isn't recommended as you will reach your rate limit realitively quickly. This was made just for fun so feel free to use your own server if you wish."
         }
     },
     "definitions": {

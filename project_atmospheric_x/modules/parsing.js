@@ -218,10 +218,12 @@ class Parsing {
                         if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
                         loader.cache.realtime.lat = lat;
                         loader.cache.realtime.lon = lon;
-                        loader.cache.realtime.address = `N/A`;
-                        loader.cache.realtime.location = `N/A`;
-                        loader.cache.realtime.county = `N/A`;
-                        loader.cache.realtime.state = `N/A`;
+                        if (loader.cache.realtime.location == undefined) {
+                            loader.cache.realtime.address = `N/A`;
+                            loader.cache.realtime.location = `N/A`;
+                            loader.cache.realtime.county = `N/A`;
+                            loader.cache.realtime.state = `N/A`;
+                        }
                     }
                 }
             }
@@ -257,7 +259,7 @@ class Parsing {
                 let objectId = objectIdMatch ? objectIdMatch[1] : "";
                 let meta = { 
                     objectId: objectId, 
-                    info: infoLine, 
+                    info: infoLine.replace(/Line: \d+, \d+,\s*/, '').trim(),
                     PSv3: details && details[1] ? parseFloat(details[1]) : null, 
                     PHv3: details && details[2] ? parseFloat(details[2]) : null, 
                     PWv3: details && details[3] ? parseFloat(details[3]) : null, 
@@ -278,8 +280,9 @@ class Parsing {
                 i++;
             }
         }
+        let typeThreshold = type === `tornado` ? loader.cache.configurations.sources.miscellaneous_sources.tornado_probability.threshold : loader.cache.configurations.sources.miscellaneous_sources.severe_probability.threshold;
         objects = objects.filter((obj, index, self) => index === self.findIndex((t) => (t.id === obj.id)));
-        objects = objects.filter(object => object.probability >= 50);
+        objects = objects.filter(object => object.probability >= typeThreshold);
         return { success: true, message: objects };
     }
 
@@ -388,8 +391,10 @@ class Parsing {
             let registration = loader.modules.building.registerEvent(index);
             let alertHash = loader.packages.crypto.createHash('sha1').update(JSON.stringify(registration)).digest('hex');
             if (loader.cache.logging.findIndex(log => log.id == alertHash) == -1) {
+                loader.modules.hooks.createOutput(`${this.name}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)})`)
                 loader.cache.logging.push({ id: alertHash, expires: registration.details.expires});
-                loader.modules.hooks.sendWebhook(`${registration.details.name} (${registration.details.type})`,`**Location:** ${registration.details.locations}\n**Issued:** ${new Date(registration.details.issued).toLocaleString()}\n**Expires:** ${new Date(registration.details.expires).toLocaleString()}\n**Wind Gusts:** ${registration.details.wind}\n**Hail Size:** ${registration.details.hail}\n**Damage Threat:** ${registration.details.damage}\n**Tornado** ${registration.details.tornado}\n**Tags:** ${registration.details.tag.join(', ')}\n**Sender:** ${registration.details.sender}\n**Tracking ID:** ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}\n\n\`\`\`\n${registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\n\`\`\`\n`);
+                loader.modules.hooks.youveGotMail(`${registration.details.name} (${registration.details.type})`, `Locations: ${registration.details.locations}\nIssued: ${new Date(registration.details.issued).toLocaleString()}\nExpires: ${new Date(registration.details.expires).toLocaleString()}\nWind Gusts: ${registration.details.wind}\nHail Size: ${registration.details.hail}\nDamage Threat: ${registration.details.damage}\nTornado ${registration.details.tornado}\nTags: ${registration.details.tag.join(', ')}\nSender: ${registration.details.sender}\nTracking ID: ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}`)
+                loader.modules.hooks.sendWebhook(`${registration.details.name} (${registration.details.type})`,`**Locations:** ${registration.details.locations}\n**Issued:** ${new Date(registration.details.issued).toLocaleString()}\n**Expires:** ${new Date(registration.details.expires).toLocaleString()}\n**Wind Gusts:** ${registration.details.wind}\n**Hail Size:** ${registration.details.hail}\n**Damage Threat:** ${registration.details.damage}\n**Tornado** ${registration.details.tornado}\n**Tags:** ${registration.details.tag.join(', ')}\n**Sender:** ${registration.details.sender}\n**Tracking ID:** ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}\n\n\`\`\`\n${registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\n\`\`\`\n`);
             }
             if (Object.keys(registration).length != 0) {
                 if (registration.details.ignored == true) { continue; }

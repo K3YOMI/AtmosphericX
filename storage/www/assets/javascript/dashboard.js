@@ -609,7 +609,7 @@ class Dashboard {
         if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (stats.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
-            this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available<br>Did you enable it?</center>`, parent: domDirectory})
+            this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
         stats.sort((a, b) => b.probability - a.probability);
@@ -636,7 +636,7 @@ class Dashboard {
         if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (stats.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
-            this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available<br>Did you enable it?</center>`, parent: domDirectory})
+            this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
         stats.sort((a, b) => b.probability - a.probability);

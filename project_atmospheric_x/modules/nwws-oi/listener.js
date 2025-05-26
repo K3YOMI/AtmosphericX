@@ -43,7 +43,7 @@ class Listener {
         loader.static.wiresession = loader.packages.xmpp.client({reconnect: true, service: wireService, domain: wireDomain, username: wireUsername, password: wirePassword}).setMaxListeners(0);
         loader.static.wiresession.on(`online`, async (_address) => {
             let displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', '');
-            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/${displayName} (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})`, xmlns: 'http://jabber.org/protocol/muc' }));
+            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})`, xmlns: 'http://jabber.org/protocol/muc' }));
             loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain}`)
             loader.cache.timeSinceLastStanza = new Date().getTime()
             loader.cache.hasConnectedBefore = true
@@ -100,7 +100,6 @@ class Listener {
       */
 
     processValidAlerts = function(alerts, type, timeTaken) {
-        let smsMessage = ``
         if (alerts == undefined) { loader.modules.webcalling.nextRun(loader.cache.twire); loader.modules.hooks.createOutput(`${this.name}`, `[!] ${type} (${timeTaken})`); return; }
         for (let i = 0; i < alerts.length; i++) {
             let data = alerts[i]
@@ -110,14 +109,8 @@ class Listener {
             let expiresArray = [`Expired`, `Cancelled`, `Cancel`]
             let updatedArray = [`Extended`, `Updated`, `Correction`, `Upgraded`]
             let newArray = [`Issued`, `Alert`]
-            if (expiresArray.includes(action)) { 
-                if (find != -1) {
-                    loader.cache.twire.features[find] = undefined
-                    loader.modules.hooks.createOutput(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${timeTaken})`)
-                } else { 
-                    loader.modules.hooks.createOutput(`${this.name}`, `[!] [${type}] Alert ${action} (No Action) >> ${data.properties.event} (${data.tracking}) (${timeTaken})`)
-                }
-            }
+            if (expiresArray.includes(action)) { if (find != -1) { loader.cache.twire.features[find] = undefined } }
+            if (newArray.includes(action)) { if (find == -1) { loader.cache.twire.features.push(data) } }
             if (updatedArray.includes(action)) { 
                 if (find != -1) {
                     let newHistory = loader.cache.twire.features[find].history.concat(data.history)
@@ -137,23 +130,11 @@ class Listener {
                             }
                         }
                     }
-                    loader.modules.hooks.createOutput(`${this.name}`, `[!] [${type}] Alert ${action} >> ${data.properties.event} (${data.tracking}) (${timeTaken})`)
                 } else { 
                     loader.cache.twire.features.push(data)
-                    loader.modules.hooks.createOutput(`${this.name}`, `[!] [${type}] ${action} Alert Added >> ${data.properties.event} (${data.tracking}) (${timeTaken})`)
                 }
             } 
-            if (newArray.includes(action)) { 
-                if (find != -1) {
-                    loader.modules.hooks.createOutput(`${this.name}`, `[!] [${type}] [Cached] New Alert Added >> ${data.properties.event} (${data.tracking}) (${timeTaken})`)
-                } else { 
-                    loader.cache.twire.features.push(data)
-                    loader.modules.hooks.createOutput(`${this.name}`, `[!] [${type}] New Alert Added >> ${data.properties.event} (${data.tracking}) (${timeTaken})`)
-                }
-            }
-            smsMessage += `${data.properties.event} (${action})\nTracking: ${tracking}\nLocations: ${data.properties.areaDesc}\n\n`
         }
-        loader.modules.hooks.youGotMail(`${alerts.length} New Alert(s)`, smsMessage)
         loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `parsed`, `nwws-parsed-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${JSON.stringify(alerts, null, 4)}\n\n`, `utf8`)
         loader.modules.webcalling.nextRun(loader.cache.twire)
     }

@@ -184,7 +184,18 @@ a:hover, a:active, a:focus {
     transition: 0.3s;
     width: 100%;
 }
-
+.iframe-discord {
+    width: 100%;
+    height: 450px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+}
+.iframe-youtube {
+    width: 100%;
+    height: 450px;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
+}
 
 /* Popup Styles */
 .popup-box {
@@ -260,20 +271,6 @@ a:hover, a:active, a:focus {
     cursor: pointer;
     font-size: 1em;
     transition: 0.3s ease-in-out;
-}
-
-.data-card-video {
-    border-radius: 10px;
-    margin-left: -25px;
-    padding: 20px;
-    align-items: center;
-    transition: 0.4s ease-in-out;
-    zoom: 0.8;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
 }
 
 

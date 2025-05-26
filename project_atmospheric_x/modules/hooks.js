@@ -26,15 +26,15 @@ class Hooks {
     }
 
     /**
-      * @function youGotMail
+      * @function youveGotMail
       * @description Sends an email using the nodemailer package. (Mostly for alerts...)
       *
       * @param {string} title - The title of the email.
       * @param {string} message - The message of the email.
       */
 
-    youGotMail = async function(title, message) {
-        let settings = loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service.mail_settings
+    youveGotMail = async function(title, message) {
+        let settings = loader.cache.configurations.project_settings.mail_settings
         let isEnabled = settings.enabled 
         if (!isEnabled) { return }
         if (loader.static.mailclient == undefined) {
@@ -64,7 +64,7 @@ class Hooks {
       */
 
     sendWebhook = async function(title, message) {
-        let settings = loader.cache.configurations.webhook_settings
+        let settings = loader.cache.configurations.project_settings.webhook_settings
         let endpoint = settings.discord_webhook
         let content = settings.content
         let displayName = settings.webhook_display
@@ -113,7 +113,7 @@ class Hooks {
                 let details = { 
                     url: url,
                     maxRedirects: 0,
-                    timeout: 5000, // TODO: Make this configurable
+                    timeout: loader.cache.configurations.project_settings.http_timeout * 1000,
                     headers: { 
                         'User-Agent': loader.cache.configurations.project_settings.http_useragent,
                         'Accept': 'application/geo+json, text/plain, */*; q=0.9',
