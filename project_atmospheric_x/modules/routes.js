@@ -91,6 +91,10 @@ class Routes {
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             response.setHeader('Access-Control-Allow-Credentials', 'true');
             response.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+            response.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+            response.setHeader('Pragma', 'no-cache');
+            response.setHeader('Expires', '0');
+            response.setHeader('Surrogate-Control', 'no-store');
             next()
         })
         loader.static.express.use(`/assets`, loader.packages.express.static(parentDirectory + `/www/assets`))
