@@ -12,7 +12,7 @@
     "webhook_settings": {
         "enabled": false,
         "discord_webhook": "DISCORD_WEBHOOK_HERE",
-        "webhook_display": "AtmosphericX (Discord Integration)",
+        "webhook_display": "AtmosphericX (Integration)",
         "content": "<@&ROLE_ID_HERE>"
     },
     "overlay_settings": {
