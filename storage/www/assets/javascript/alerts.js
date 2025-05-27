@@ -173,7 +173,7 @@ class Alerts {
             let domLocations = document.getElementById('event-locations');
             let domMaxHail = document.getElementById('event-max-hail');
             let domMaxGusts = document.getElementById('event-max-wind');
-            let domTornaod = document.getElementById('event-tornado');
+            let domTornado = document.getElementById('event-tornado');
             let domDmg = document.getElementById('event-damage');
             let domExpires = document.getElementById('event-expires-time');
             let domIssued = document.getElementById('event-issued-time');
@@ -190,7 +190,7 @@ class Alerts {
             domLocations.innerHTML = `${locationsImpacted || 'N/A'}`;
             domMaxHail.textContent = `${maxHailSize || 'N/A'}`;
             domMaxGusts.textContent = `${maxWindGust || 'N/A'}`;
-            domTornaod.textContent = `${tornadoIndicator || 'N/A'}`;
+            domTornado.textContent = `${tornadoIndicator || 'N/A'}`;
             domDmg.textContent = `${damageThreat || 'N/A'}`;
             domSender.textContent = `${fullSendName || 'N/A'}`;
             domExpires.innerHTML = `${timeExpiresString || 'N/A'}`;
