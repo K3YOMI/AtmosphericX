@@ -93,7 +93,7 @@
         </div>
         <div class="wrapper">
             <div id="_navigation.home" style="display: block;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card" id="data-card-headline-parent" style="display: none;"> 
                         <p class="data-card-description">
                             <span class="data-card-headline"></span>
@@ -108,7 +108,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="grid-area" id="._nonchild_atmosx_dashboard" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="grid-area" id="._nonchild_atmosx_dashboard" data-original-grid-template-columns="2" style="grid-template-columns: repeat(2, 1fr);">
                     <div class="data-card"> 
                         <h1 class="data-card-title">Demo Video</h1>
                         <hr class="data-card-hr"> 
@@ -122,7 +122,7 @@
                         <center><iframe src="https://discord.com/widget?id=1358154190437744730&theme=dark" class='iframe-discord' allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></center>
                     </div>
                 </div>
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card"> 
                         <h1 class="data-card-title">Latest Changelogs</h1>
                         <hr class="data-card-hr"> 
@@ -131,117 +131,116 @@
                 </div>
             </div>
             <div id="_navigation.alerts" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Top 6 Most Recent Alerts</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="child_atmosx_alerts.recent_alerts" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="child_atmosx_alerts.recent_alerts" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Search Alerts</span></h1>
                         <hr class="data-card-hr"> 
                         <input class="popup-input" id="_alerts.alert_search" style="width: 50%; margin-top: 5px;" placeholder="Search for alerts, locations, and or any tag indicator" onkeyup="dashboard_class.spawnAlertCards(undefined, false, undefined, document.getElementById('_alerts.alert_search').value)"><br><br>
-                        <div id="child_atmosx_alerts.global_alerts" class="grid-area" style="grid-template-columns: repeat(2, 1fr);"></div>                   
+                        <div id="child_atmosx_alerts.global_alerts" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>                   
                     </div>
                    
                 </div>
             </div>
             <div id="_navigation.lsr" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Storm Report Index</span></h1>
                         <hr class="data-card-hr"> 
                         <small>Search for Local Storm Reports</small><br>
                         <input class="popup-input" id="_lsr.reports_search" style="width: 50%; margin-top: 5px;" placeholder="" onkeyup="dashboard_class.spawnStormReports(undefined, undefined, document.getElementById('_lsr.reports_search').value)"><br><br>
-                        <div id="child_atmosx_lsr.reports" class="grid-area" style="grid-template-columns: repeat(3, 1fr)"></div>
+                        <div id="child_atmosx_lsr.reports" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr)"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.dicussions" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Mesoscale Discussions</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="child_atmosx_discussions.mesoscale" class="grid-area" style="grid-template-columns: repeat(1, 1fr);"></div>
+                        <div id="child_atmosx_discussions.mesoscale" class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.spc" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Storm Prediction Center Models</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="hub_spc.models" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="hub_spc.models" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.spotternetwork" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Spotter Network Index</span></h1>
                         <hr class="data-card-hr"> 
                         <small>Search for Spotters</small><br>
                         <input class="popup-input" id="_spotternetwork.spotter_search" style="width: 50%; margin-top: 5px;" placeholder="Search Spotters" oninput="dashboard_class.spawnStormSpotterNetwork(undefined, undefined, this.value)"><br><br>
-                        <div id="child_atmosx_spotternetwork.general" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="child_atmosx_spotternetwork.general" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.external" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">External Third-Party Services</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="hub_external.services" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="hub_external.services" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
 
             <div id="_navigation.radio" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">NOAA Weather Radio</span></h1>
                         <hr class="data-card-hr"> 
                         <small>Search Stations</small><br>
                         <input class="popup-input" id="_noaa_radio_communications.radio_search" style="width: 50%; margin-top: 5px;" placeholder="Search Stations" oninput="dashboard_class.spawnRadioServices(undefined, undefined, this.value)"><br><br>
-                        <div id="hub_radio.noaa" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="hub_radio.noaa" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
 
             <div id="_navigation.nwws" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Latest NWWS Reports</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="child_atmosx_nwws.reports" class="grid-area" style="grid-template-columns: repeat(1, 1fr);"></div>
+                        <div id="child_atmosx_nwws.reports" class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.torProbability" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Tornado Probability Statistics</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="child_atmosx_tor.statistics" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="child_atmosx_tor.statistics" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.svrProbability" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Severe Probability Statistics</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="child_atmosx_svr.statistics" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="child_atmosx_svr.statistics" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
             <div id="_navigation.help" style="display: none;" type="menu">
-                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">General Information</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="hub.plugins" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
-                        <div id="hub.support" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                        <div id="hub.plugins" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
                 </div>
             </div>
@@ -251,9 +250,6 @@
         let dashboard_class;
         let alert_class;
         let library = new Library()
-        if (window.innerWidth <= 1270) { document.getElementById(`._nonchild_atmosx_dashboard`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-        if (window.innerWidth <= 1270) { document.getElementById(`hub.plugins`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-        if (window.innerWidth <= 1270) { document.getElementById(`hub.support`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         library.createWebsocketSession([`wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)

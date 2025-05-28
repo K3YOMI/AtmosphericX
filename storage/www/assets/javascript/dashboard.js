@@ -21,8 +21,8 @@ class Dashboard {
         this.name = `Dashboard`
         this.library.createOutput(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
         document.addEventListener('onCacheUpdate', async (event) => {})
-        window.addEventListener('resize', () => { this.updateThread()});
-        window.addEventListener('zoom', () => { this.updateThread() });
+        window.addEventListener('resize', () => {this.updateSize()});
+        window.addEventListener('zoom', () => {this.updateSize()});
     }
 
     /**
@@ -310,7 +310,6 @@ class Dashboard {
         }
         document.getElementById(domDictionary).innerHTML = ``
         document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (window.innerWidth <= 1270) { document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (recentOnly) { maxShownAlerts = maxShownAlerts = 6 }
         if (activeAlerts.length == 0) {
             document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';
@@ -400,7 +399,6 @@ class Dashboard {
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDictionary).innerHTML = ``
         document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (window.innerWidth <= 1270) { document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         document.getElementById(searchBar).placeholder = `Search by report location or event name (x${reports.length})`
         if (reports.length == 0) { 
             document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';
@@ -468,7 +466,6 @@ class Dashboard {
 
     spawnStormPredictionCenterModels = function(domDirectory=`hub_spc.models`) {
         document.getElementById(domDirectory).innerHTML = ``
-        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         let currentOutlooks = this.storage.configurations.spc_outlooks
         for (let i = 0; i < currentOutlooks.length; i++) {
             let outlook = currentOutlooks[i]
@@ -498,7 +495,6 @@ class Dashboard {
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDirectory).innerHTML = ``
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         document.getElementById(searchBar).placeholder = `Search by spotter description (x${spotters.length})`
         if (spotters.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
@@ -554,7 +550,6 @@ class Dashboard {
     spawnExternalServices = function(domDirectory=`hub_external.services`) {
         document.getElementById(domDirectory).innerHTML = ``
         let services = this.storage.configurations.third_party_services
-        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         for (let i = 0; i < services.length; i++) {
             let service = services[i]
             let title = service.title
@@ -623,7 +618,6 @@ class Dashboard {
         document.getElementById(domDirectory).innerHTML = ``
         let stats = this.storage.torprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (stats.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available</center>`, parent: domDirectory})
@@ -650,7 +644,6 @@ class Dashboard {
         document.getElementById(domDirectory).innerHTML = ``
         let stats = this.storage.svrprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (stats.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available</center>`, parent: domDirectory})
@@ -678,7 +671,6 @@ class Dashboard {
     spawnRadioServices = function(domDirectory=`hub_radio.noaa`, searchBar=`_spotternetwork.spotter_search`, searchTerm=``) {
         let radioServices = this.library.storage.wxRadio
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
-        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDirectory).innerHTML = ``
         if (radioServices.length == 0) {
@@ -807,6 +799,23 @@ class Dashboard {
       * @returns {Promise<void>} This function does not return any value. It manipulates the DOM to update various sections of the dashboard.
       */
 
+    async updateSize() {
+        let elements = document.querySelectorAll(`[class*="grid-area"]`);
+        for (let i = 0; i < elements.length; i++) {
+            if (window.innerWidth <= 1270) { 
+                elements[i].style.gridTemplateColumns = 'repeat(1, 1fr)';
+                continue;
+            }
+            let originalValue = elements[i].getAttribute('data-original-grid-template-columns');
+            console.log(`Original Value: ${originalValue}`)
+            if (originalValue) {
+                elements[i].style.gridTemplateColumns = 'repeat(' + originalValue + ', 1fr)';
+            } else {
+                elements[i].style.gridTemplateColumns = 'repeat(3, 1fr)';
+            }
+        }
+    }
+
     async updateThread() {
         this.triggerLocalStorageListener()
         this.spawnStormReports()
@@ -818,6 +827,7 @@ class Dashboard {
         this.spawnAlertCards(`child_atmosx_alerts.global_alerts`, false, `_alerts.alert_search`, ``)
         this.spawnAlertCards(`child_atmosx_alerts.recent_alerts`, true, ``, ``)
         this.spawnRadioServices(`hub_radio.noaa`, `_noaa_radio_communications.radio_search`, ``)
+        this.updateSize()
         let elements = document.querySelectorAll(`[id^="child_atmosx_"]`)
         for (let i = 0; i < elements.length; i++) {
             let doc = elements[i]

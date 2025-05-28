@@ -134,6 +134,12 @@ a:hover, a:active, a:focus {
     padding: 20px;
     width: 98%;
 }
+.grid-parent {
+    display: grid;
+    grid-gap: 70px;
+    padding: 20px;
+    width: 98%;
+}
 .data-card-parent {
     background-color: rgba(32, 32, 32, 0.208);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
