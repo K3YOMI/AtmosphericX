@@ -817,6 +817,7 @@ class Dashboard {
     }
 
     async updateThread() {
+        this.updateSize()
         this.triggerLocalStorageListener()
         this.spawnStormReports()
         this.spawnMesoscaleDiscussions()
@@ -827,7 +828,6 @@ class Dashboard {
         this.spawnAlertCards(`child_atmosx_alerts.global_alerts`, false, `_alerts.alert_search`, ``)
         this.spawnAlertCards(`child_atmosx_alerts.recent_alerts`, true, ``, ``)
         this.spawnRadioServices(`hub_radio.noaa`, `_noaa_radio_communications.radio_search`, ``)
-        this.updateSize()
         let elements = document.querySelectorAll(`[id^="child_atmosx_"]`)
         for (let i = 0; i < elements.length; i++) {
             let doc = elements[i]
