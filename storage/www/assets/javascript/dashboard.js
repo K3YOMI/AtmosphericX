@@ -625,12 +625,12 @@ class Dashboard {
         let stats = this.storage.torprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (stats.length == 0) {
-            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
+            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
-        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
+        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
