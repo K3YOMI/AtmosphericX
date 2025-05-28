@@ -800,7 +800,8 @@ class Dashboard {
       */
 
     resizeTable = function(domDirectory=`child_atmosx_alerts.global_alerts`, size=3) {
-        if (window.innerWidth <= 1270) { return }
+        let isMobile = window.innerWidth <= 1270;
+        if (isMobile) { return }
         document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', size);  
         document.getElementById(domDirectory).style.gridTemplateColumns = `repeat(${size}, 1fr)`;
     }
