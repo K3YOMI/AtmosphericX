@@ -312,10 +312,12 @@ class Dashboard {
         document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (recentOnly) { maxShownAlerts = maxShownAlerts = 6 }
         if (activeAlerts.length == 0) {
+            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDictionary})
             return
         }
+        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3); 
         activeAlerts.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
         for (let i = 0; i < maxShownAlerts; i++) {
             if (activeAlerts[i] == undefined) { continue }
@@ -401,10 +403,12 @@ class Dashboard {
         document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(3, 1fr)';
         document.getElementById(searchBar).placeholder = `Search by report location or event name (x${reports.length})`
         if (reports.length == 0) { 
+            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Storm Reports...` ,content: `<center>No Storm Report Information Available</center>`, parent: domDictionary})
             return
         }
+        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
         reports.sort((a, b) => new Date(b.issued) - new Date(a.issued))
         for (let i = 0; i < reports.length; i++) {
             if (reports[i] == undefined) { continue }
@@ -498,8 +502,10 @@ class Dashboard {
         document.getElementById(searchBar).placeholder = `Search by spotter description (x${spotters.length})`
         if (spotters.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
             this.injectCardData({ title: `Awaiting Spotter Network...`,content: `<center>No Spotter Network Information Available<br>Are you sure you enabled it in the configurations?</center>`,parent: domDirectory})
         }
+        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
         await spotters.forEach(spotter => {
             let description = spotter.description.toString().replace(/\\n/g, '<br>').replace('"', '');
             spotter.description = description;
@@ -619,10 +625,12 @@ class Dashboard {
         let stats = this.storage.torprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (stats.length == 0) {
+            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
+        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
@@ -645,10 +653,12 @@ class Dashboard {
         let stats = this.storage.svrprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (stats.length == 0) {
+            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
+        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
@@ -674,10 +684,12 @@ class Dashboard {
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDirectory).innerHTML = ``
         if (radioServices.length == 0) {
+            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting NOAA Radio Services...`, content: `<center>No NOAA Radio Streams Available.<br>Did you enable it within configurations?</center>`, parent: domDirectory})
             return
         }
+        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
         if (!window._radioPlayers) window._radioPlayers = {};
         let cardRefs = [];
         for (let i = 0; i < radioServices.length; i++) {
