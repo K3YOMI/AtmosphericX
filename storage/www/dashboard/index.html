@@ -3,19 +3,19 @@
     <head>
         <title>AtmosphericX - Dashboard</title>
         <meta name="viewport" content="width=device-width initial-scale=0.5, maximum-scale=0.5, user-scalable=no minimal-ui">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link rel="stylesheet" href="../assets/styles/dashboard.css">
         <link rel="stylesheet" href="../assets/styles/responsive-dashboard.css">
         <link rel="stylesheet" href="../../assets/styles/streaming.css">
         <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
         <script src="../assets/javascript/library.js"></script>
         <script src="../assets/javascript/dashboard.js"></script>
         <script src="../assets/javascript/alerts.js"></script>
         <script src="../../assets/javascript/static.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     </head>
     <body id="_body.base">
-        <i class="hamburger-menu fa fa-bars" onclick="dashboard_class.triggerHamburgerListener()"></i>
+        <i class="hamburger-menu fa fa-bars" id="hamburger" onclick="dashboard_class.triggerHamburgerListener()"></i>
         <div class="interactive-sidebar" data-state="closed">
             <img src="/assets/media/dashboard/logo.png" alt="Logo" class="sidebar-logo">
             <hr class="sidebar-hr">
@@ -55,6 +55,10 @@
                 <i class="fas fa-globe"></i>
                 <span>Spotter Network</span>
             </div>
+            <div class="sidebar-item" onclick="dashboard_class.navigationListener('_navigation.radio')">
+                <i class="fas fa-broadcast-tower"></i>
+                <span>Radio Services</span>
+            </div>
             <div class="sidebar-item" onclick="dashboard_class.navigationListener('_navigation.external')">
                 <i class="fas fa-satellite-dish"></i>
                 <span>Services</span>
@@ -89,15 +93,12 @@
         </div>
         <div class="wrapper">
             <div id="_navigation.home" style="display: block;" type="menu">
-                <h1 class="title-dashboard">Dashboard</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
-
                     <div class="data-card" id="data-card-headline-parent" style="display: none;"> 
                         <p class="data-card-description">
                             <span class="data-card-headline"></span>
                         </p>
                     </div>
-
                     <div class="data-card"> 
                         <h1 class="data-card-title">👋 Welcome back, <span id="_home.accountname">[Account Name]</span></h1>
                         <hr class="data-card-hr"> 
@@ -108,8 +109,6 @@
                     </div>
                 </div>
                 <div class="grid-area" id="._nonchild_atmosx_dashboard" style="grid-template-columns: repeat(2, 1fr);">
-                   
-                    
                     <div class="data-card"> 
                         <h1 class="data-card-title">Demo Video</h1>
                         <hr class="data-card-hr"> 
@@ -120,14 +119,9 @@
                     <div class="data-card"> 
                         <h1 class="data-card-title">Join our Discord!</h1>
                         <hr class="data-card-hr"> 
-                        <center>
-                            <iframe src="https://discord.com/widget?id=1358154190437744730&theme=dark" class='iframe-discord' allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-                        </center>
-     
-                        
+                        <center><iframe src="https://discord.com/widget?id=1358154190437744730&theme=dark" class='iframe-discord' allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe></center>
                     </div>
                 </div>
-
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card"> 
                         <h1 class="data-card-title">Latest Changelogs</h1>
@@ -137,7 +131,6 @@
                 </div>
             </div>
             <div id="_navigation.alerts" style="display: none;" type="menu">
-                <h1 class="title-dashboard">Active Alerts</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Top 6 Most Recent Alerts</span></h1>
@@ -154,7 +147,6 @@
                 </div>
             </div>
             <div id="_navigation.lsr" style="display: none;" type="menu">
-                <h1 class="title-dashboard">Local Storm Reports</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Storm Report Index</span></h1>
@@ -166,7 +158,6 @@
                 </div>
             </div>
             <div id="_navigation.dicussions" style="display: none;" type="menu">
-                <h1 class="title-dashboard">Discussions</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Mesoscale Discussions</span></h1>
@@ -176,7 +167,6 @@
                 </div>
             </div>
             <div id="_navigation.spc" style="display: none;" type="menu">
-                <h1 class="title-dashboard">SPC Models</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Storm Prediction Center Models</span></h1>
@@ -186,7 +176,6 @@
                 </div>
             </div>
             <div id="_navigation.spotternetwork" style="display: none;" type="menu">
-                <h1 class="title-dashboard">Spotter Network</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Spotter Network Index</span></h1>
@@ -198,7 +187,6 @@
                 </div>
             </div>
             <div id="_navigation.external" style="display: none;" type="menu">
-                <h1 class="title-dashboard">External Services</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">External Third-Party Services</span></h1>
@@ -207,8 +195,20 @@
                     </div>
                 </div>
             </div>
+
+            <div id="_navigation.radio" style="display: none;" type="menu">
+                <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">NOAA Weather Radio</span></h1>
+                        <hr class="data-card-hr"> 
+                        <small>Search Stations</small><br>
+                        <input class="popup-input" id="_noaa_radio_communications.radio_search" style="width: 50%; margin-top: 5px;" placeholder="Search Stations" oninput="dashboard_class.spawnRadioServices(undefined, undefined, this.value)"><br><br>
+                        <div id="hub_radio.noaa" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
+
             <div id="_navigation.nwws" style="display: none;" type="menu">
-                <h1 class="title-dashboard">NWWS-OI</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Latest NWWS Reports</span></h1>
@@ -218,7 +218,6 @@
                 </div>
             </div>
             <div id="_navigation.torProbability" style="display: none;" type="menu">
-                <h1 class="title-dashboard">Tornado Probability Statistics</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Tornado Probability Statistics</span></h1>
@@ -228,7 +227,6 @@
                 </div>
             </div>
             <div id="_navigation.svrProbability" style="display: none;" type="menu">
-                <h1 class="title-dashboard">Severe Probability Statistics</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">Severe Probability Statistics</span></h1>
@@ -238,10 +236,9 @@
                 </div>
             </div>
             <div id="_navigation.help" style="display: none;" type="menu">
-                <h1 class="title-dashboard">General Help Center</h1>
                 <div class="grid-area" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Optional Plugins</span></h1>
+                        <h1 class="data-card-title">General Information</span></h1>
                         <hr class="data-card-hr"> 
                         <div id="hub.plugins" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
                         <div id="hub.support" class="grid-area" style="grid-template-columns: repeat(3, 1fr);"></div>
@@ -257,11 +254,11 @@
         if (window.innerWidth <= 1270) { document.getElementById(`._nonchild_atmosx_dashboard`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.plugins`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
         if (window.innerWidth <= 1270) { document.getElementById(`hub.support`).style.gridTemplateColumns = 'repeat(1, 1fr)';}
-        library.createWebsocketSession([`updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library, true)
             dashboard_class = new Dashboard(library, false)
             library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username') || 'Default User'}</span>`)
-            dashboard_class.UpdateThread()
+            dashboard_class.updateThread()
             dashboard_class.spawnGeneralSetupHub()
             dashboard_class.spawnExternalServices()
             dashboard_class.spawnStormPredictionCenterModels()
@@ -277,7 +274,7 @@
             }
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts(true)
-                await dashboard_class.UpdateThread()
+                await dashboard_class.updateThread()
             })
         })
     </script>

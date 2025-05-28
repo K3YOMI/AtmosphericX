@@ -116,6 +116,11 @@
                 "cache_time": 119,
                 "threshold": 50,
                 "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PSv3_LOOP"
+            },
+            "wx_radio": {
+                "enabled": true,
+                "cache_time": 3600,
+                "endpoint": "https://api.weatherusa.net/v1/wxradio"
             }
         }
     },
@@ -135,7 +140,7 @@
             },
             "general_websockets": {
                 "timeout": 30,
-                "types": ["public", "wire", "reports", "spotters", "discussions", "severeProbability", "tornadoProbability"]
+                "types": ["public", "wire", "reports", "spotters", "discussions", "severeProbability", "tornadoProbability", "wxRadio"]
             }
         },
         "webhook_settings": {
@@ -230,11 +235,12 @@
         { "title": "Live Storm Chasing",    "url": "https://livestormchasing.com/", "image": "/assets/media/dashboard/storm-live-logo.png" },
         { "title": "Mesoscale Analysis",    "url": "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl", "image": "/assets/media/dashboard/mesoscale-logo.png" },
         { "title": "Nexlab",                "url": "https://weather.cod.edu/#", "image": "/assets/media/dashboard/nexlab-logo.png" },
+        { "title": "WeatherWise",           "url": "https://web.weatherwise.app/", "image": "/assets/media/dashboard/weather-wise.png" },
+        { "title": "OpenMhz",               "url": "https://openmhz.com/systems", "image": "/assets/media/dashboard/open-mhz.png" },
         { "title": "GFS Model",             "url": "https://www.tropicaltidbits.com/analysis/models/", "image": "/assets/media/dashboard/tropical-logo.png" },
         { "title": "HRRR Model",            "url": "https://www.tropicaltidbits.com/analysis/models/?model=hrrr", "image": "/assets/media/dashboard/tropical-logov2.png" },
         { "title": "RGEM Model",            "url": "https://www.tropicaltidbits.com/analysis/models/?model=rgem&region=us", "image": "/assets/media/dashboard/tropical-logo.png" },
-        { "title": "Hodographs",            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", "image": "/assets/media/dashboard/pivotal-weather.png" },
-        { "title": "WeatherWise",           "url": "https://web.weatherwise.app", "image": "/assets/media/dashboard/weather-wise.png" }
+        { "title": "Hodographs",            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3", "image": "/assets/media/dashboard/pivotal-weather.png" }
     ],
     "widget_settings": {
         "mapbox": {

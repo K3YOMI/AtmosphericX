@@ -162,6 +162,7 @@ class Webcalling {
                 {name: 'LocationServices', handle: sources.miscellaneous_sources.location_services.location_names, timer: sources.miscellaneous_sources.location_services.location_names.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'ProbTornado', handle: sources.miscellaneous_sources.tornado_probability, timer: sources.miscellaneous_sources.tornado_probability.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'ProbSevere', handle: sources.miscellaneous_sources.severe_probability, timer: sources.miscellaneous_sources.severe_probability.cache_time, contradictions: [], pointer: `genericRequest`},     
+                {name: 'wxRadio', handle: sources.miscellaneous_sources.wx_radio, timer: sources.miscellaneous_sources.wx_radio.cache_time, contradictions: [], pointer: `genericRequest`},     
             ];
             if (isNWWS == undefined) {
                 handles.forEach(handle => {

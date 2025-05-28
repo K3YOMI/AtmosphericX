@@ -286,6 +286,21 @@ class Parsing {
         return { success: true, message: objects };
     }
 
+    readWxRadio = function(messageBody=``) {
+        let feeds = []
+        for (let i = 0; i < messageBody.sources.length; i++) {
+            let feed = messageBody.sources[i];
+            let location = feed.location || `N/A`
+            let lat = feed.lat || `N/A`
+            let lon = feed.lon || `N/A`
+            let callsign = feed.callsign || `N/A`
+            let frequency = feed.freq || `N/A`
+            let stream = feed.listen_url || `No stream available`
+            feeds.push({location: location,lat: lat,lon: lon, callsign: callsign,frequency: frequency,stream: stream})
+        }
+        return { success: true, message: feeds }
+    }
+
     /**
      * @function coordsToMiles
      * @description Check if the coordinates are within the specified miles of the a spotter network member's location

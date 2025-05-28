@@ -35,7 +35,7 @@ class Listener {
         let wireEnabled = wireCfg.enabled
         let wireUsername = wireCfg.credentials.username 
         let wirePassword = wireCfg.credentials.password
-        let displayName = wireCfg.credentials.display
+        let displayName = wireCfg.credentials.display.replace(`AtmosphericX`, ``)
         let wireService = wireCfg.endpoint
         let wireXml = wireCfg.xml_alerts
         let wireDomain = wireCfg.domain

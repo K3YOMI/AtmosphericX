@@ -21,6 +21,8 @@ class Dashboard {
         this.name = `Dashboard`
         this.library.createOutput(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
         document.addEventListener('onCacheUpdate', async (event) => {})
+        window.addEventListener('resize', () => { this.updateThread()});
+        window.addEventListener('zoom', () => { this.updateThread() });
     }
 
     /**
@@ -100,7 +102,7 @@ class Dashboard {
             allElements.forEach(element => { element.style.display = `none`})
             document.getElementById(domClicked).style.display = `block`
         }
-        this.UpdateThread()
+        this.updateThread()
     }
 
     /**
@@ -111,18 +113,29 @@ class Dashboard {
      * @param {string} [domSidebar=`.interactive-sidebar`] - The CSS selector for the sidebar menu element. Defaults to `.interactive-sidebar`.
      */
 
-    triggerHamburgerListener = function(domSidebar=`.interactive-sidebar`) {
+    triggerHamburgerListener = function(domSidebar=`.interactive-sidebar`, domWrapper=`.wrapper`, domHamburger=`hamburger`) {
         let sidebarMenu = document.querySelector(domSidebar)
+        let wrapper = document.querySelector(domWrapper)
+        let hamburgerButton = document.getElementById(domHamburger)
         let currentState = sidebarMenu.getAttribute(`data-state`)
+        let isMobile = window.innerWidth <= 1270;
         if (currentState == `open`) {
             sidebarMenu.setAttribute(`data-state`, `closed`);
+            hamburgerButton.className = `hamburger-menu fa fa-bars`;
             sidebarMenu.style.transform = `translateX(-280%)`;
             sidebarMenu.style.transition = `transform 0.3s ease-in-out`;
+            if (!isMobile) {
+                wrapper.style.width = `92%`;
+                wrapper.style.transition = `width 0.3s ease-in-out`;
+            }
             return;
         }
         sidebarMenu.setAttribute(`data-state`, `open`);
+        hamburgerButton.className = `hamburger-menu fa fa-times`;
         sidebarMenu.style.transform = `translateX(0)`;
         sidebarMenu.style.transition = `transform 0.3s ease-in-out`;
+        wrapper.style.width = `80%`;
+        wrapper.style.transition = `width 0.3s ease-in-out`;
     }
 
     /**
@@ -210,6 +223,7 @@ class Dashboard {
         domCard.appendChild(p)
         document.getElementById(cardMetadata.parent).appendChild(domCard);
         if (cardMetadata.onclick) { domCard.onclick = cardMetadata.onclick.bind(this); }
+        return domCard;
     }
 
     /**
@@ -651,6 +665,57 @@ class Dashboard {
             });    
         }
     }
+    
+    /**
+      * @function spawnRadioServices
+      * @description Displays NOAA Radio Services in the user interface. Each radio service is displayed in a data card, and clicking the card toggles audio playback for that service.
+      *
+      * @param {string} [domDirectory=`hub_radio.noaa`] - The ID of the DOM element where the NOAA Radio Services will be injected. Defaults to `hub_radio.noaa`.
+      * @param {string} [searchBar=`_spotternetwork.spotter_search`] - The ID of the search bar element. Defaults to `_spotternetwork.spotter_search`.
+      * @param {string} [searchTerm=`] - The search term to filter the radio services. Defaults to an empty string.
+      */
+
+    spawnRadioServices = function(domDirectory=`hub_radio.noaa`, searchBar=`_spotternetwork.spotter_search`, searchTerm=``) {
+        let radioServices = this.library.storage.wxRadio
+        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
+        if (window.innerWidth <= 1270) { document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';}
+        if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
+        document.getElementById(domDirectory).innerHTML = ``
+        if (radioServices.length == 0) {
+            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.injectCardData({ title: `Awaiting NOAA Radio Services...`, content: `<center>No NOAA Radio Streams Available.<br>Did you enable it within configurations?</center>`, parent: domDirectory})
+            return
+        }
+        if (!window._radioPlayers) window._radioPlayers = {};
+        let cardRefs = [];
+        for (let i = 0; i < radioServices.length; i++) {
+            let source = radioServices[i]
+            if (JSON.stringify(source).toLowerCase().includes(searchTerm.toLowerCase()) == false) { continue }
+            let card = this.injectCardData({
+                title: `${source.callsign} (${source.frequency}) - ${source.location}`,
+                content: `Location: ${source.location}<br>Frequency: ${source.frequency}`,
+                parent: domDirectory,
+                onclick: () => {
+                    let listenUrl = source.stream;
+                    if (!window._radioPlayers) window._radioPlayers = {};
+                    let currentAudio = window._radioPlayers[i];
+                    if (currentAudio && !currentAudio.paused) {
+                        currentAudio.pause();
+                        delete window._radioPlayers[i];
+                        card.style.outline = 'none';
+                    } else {
+                        let audio = new Audio(listenUrl);
+                        window._radioPlayers[i] = audio;
+                        audio.play();
+                        audio.volume = 0.2; // Set volume to 50%
+                        card.style.outline = '2px solid #00c853';
+                    }
+                }
+            });
+            cardRefs[i] = card;
+            if (window._radioPlayers[i] && !window._radioPlayers[i].paused) { card.style.outline = '2px solid #00c853'; }
+        }
+    }
 
     /**
       * @function spawnGeneralSetupHub
@@ -734,7 +799,7 @@ class Dashboard {
     }
 
     /**
-      * @function UpdateThread
+      * @function updateThread
       * @description Updates various sections of the dashboard by calling specific 
       * functions to refresh data and display it in the user interface.
       * 
@@ -742,7 +807,7 @@ class Dashboard {
       * @returns {Promise<void>} This function does not return any value. It manipulates the DOM to update various sections of the dashboard.
       */
 
-    async UpdateThread() {
+    async updateThread() {
         this.triggerLocalStorageListener()
         this.spawnStormReports()
         this.spawnMesoscaleDiscussions()
@@ -752,6 +817,7 @@ class Dashboard {
         this.spawnSevereProbabilities()
         this.spawnAlertCards(`child_atmosx_alerts.global_alerts`, false, `_alerts.alert_search`, ``)
         this.spawnAlertCards(`child_atmosx_alerts.recent_alerts`, true, ``, ``)
+        this.spawnRadioServices(`hub_radio.noaa`, `_noaa_radio_communications.radio_search`, ``)
         let elements = document.querySelectorAll(`[id^="child_atmosx_"]`)
         for (let i = 0; i < elements.length; i++) {
             let doc = elements[i]

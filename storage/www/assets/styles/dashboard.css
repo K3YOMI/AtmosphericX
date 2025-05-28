@@ -54,12 +54,11 @@ a:hover, a:active, a:focus {
     border-right: #ffffff42;
     border-right-style: solid;
     border-right-width: 1px;
+    transform: translateX(-100%);
 }
 
 .hamburger-menu {
     position: fixed;
-    display: none;
-    top: 0px; left: 0px;
     border-radius: 5px;
     padding: 10px;
     z-index: 2;
@@ -122,7 +121,7 @@ a:hover, a:active, a:focus {
 }
 .wrapper {
     zoom: 1.0;
-    width: 80%;
+    width: 92%;
     position: relative;
     margin: auto;
     margin-right: calc(10% - 120px);
@@ -196,11 +195,15 @@ a:hover, a:active, a:focus {
     border: none;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);
 }
+.audio-player {
+    width: 100%;
+    
+}
 
 /* Popup Styles */
 .popup-box {
     position: fixed;
-    top: 50%; left: 55%; width: auto;
+    top: 50%; left: 53%; width: auto;
     height: auto; transform: translate(-50%, -50%);
     background-color: rgb(25, 25, 25);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.741);

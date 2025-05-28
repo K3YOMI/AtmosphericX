@@ -95,6 +95,8 @@ commit_update() {
             echo "[INFO] Configuration file backed up in configurations.bak"
             git fetch --all
             git reset --hard origin/main
+            cd project_atmospheric_x
+            npm install .
         else
             echo "[INFO] Exiting updater..."
             exit 0
@@ -107,6 +109,8 @@ commit_update() {
             echo "Updating $file..."
             git checkout origin/main -- "$file"
         done
+        cd project_atmospheric_x
+        npm install .
     fi
     echo "[INFO] Update complete. Please restart the application to apply changes."
 }

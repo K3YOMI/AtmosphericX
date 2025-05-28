@@ -278,6 +278,10 @@ class Building {
                 let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`);
                 loader.cache.svrprob = response.message
             }
+            if (rawData.wxRadio != undefined) {
+                let response = loader.modules.parsing.readWxRadio(rawData.wxRadio);
+                loader.cache.wxRadio = response.message
+            }
             loader.modules.websocket.onCacheReady()
             return {status: true, message: `Cache built successfully`}
         } catch (error) {
