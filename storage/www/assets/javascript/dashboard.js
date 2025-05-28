@@ -309,15 +309,13 @@ class Dashboard {
             document.getElementById(searchBar).placeholder = `Search by location, event name, description, tracking id, status, or properties (x${activeAlerts.length})`
         }
         document.getElementById(domDictionary).innerHTML = ``
-        document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(3, 1fr)';
+        this.resizeTable(domDirectory, 1);
         if (recentOnly) { maxShownAlerts = maxShownAlerts = 6 }
         if (activeAlerts.length == 0) {
-            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
-            document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.resizeTable(domDirectory, 1);
             this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDictionary})
             return
         }
-        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3); 
         activeAlerts.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
         for (let i = 0; i < maxShownAlerts; i++) {
             if (activeAlerts[i] == undefined) { continue }
@@ -400,15 +398,13 @@ class Dashboard {
         let reports = this.storage.reports 
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDictionary).innerHTML = ``
-        document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(3, 1fr)';
         document.getElementById(searchBar).placeholder = `Search by report location or event name (x${reports.length})`
+        this.resizeTable(domDirectory, 3);
         if (reports.length == 0) { 
-            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
-            document.getElementById(domDictionary).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.resizeTable(domDirectory, 1);
             this.injectCardData({ title: `Awaiting Storm Reports...` ,content: `<center>No Storm Report Information Available</center>`, parent: domDictionary})
             return
         }
-        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
         reports.sort((a, b) => new Date(b.issued) - new Date(a.issued))
         for (let i = 0; i < reports.length; i++) {
             if (reports[i] == undefined) { continue }
@@ -498,14 +494,12 @@ class Dashboard {
         let spotters = this.storage.spotters
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDirectory).innerHTML = ``
-        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         document.getElementById(searchBar).placeholder = `Search by spotter description (x${spotters.length})`
+        this.resizeTable(domDirectory, 3);
         if (spotters.length == 0) {
-            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
-            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
+            this.resizeTable(domDirectory, 1);
             this.injectCardData({ title: `Awaiting Spotter Network...`,content: `<center>No Spotter Network Information Available<br>Are you sure you enabled it in the configurations?</center>`,parent: domDirectory})
         }
-        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         await spotters.forEach(spotter => {
             let description = spotter.description.toString().replace(/\\n/g, '<br>').replace('"', '');
             spotter.description = description;
@@ -623,14 +617,12 @@ class Dashboard {
     spawnTornadoProbabilities = function(domDirectory=`child_atmosx_tor.statistics`) {
         document.getElementById(domDirectory).innerHTML = ``
         let stats = this.storage.torprob 
-        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
+        this.resizeTable(domDirectory, 3);
         if (stats.length == 0) {
-            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
-            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.resizeTable(domDirectory, 1);
             this.injectCardData({ title: `Awaiting Tornado Probabilities...`, content: `<center>No Tornado Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
-        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
@@ -651,14 +643,12 @@ class Dashboard {
     spawnSevereProbabilities = function(domDirectory=`child_atmosx_svr.statistics`) {
         document.getElementById(domDirectory).innerHTML = ``
         let stats = this.storage.svrprob 
-        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
+        this.resizeTable(domDirectory, 3);        
         if (stats.length == 0) {
-            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
-            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.resizeTable(domDirectory, 1);
             this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
-        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
@@ -680,16 +670,15 @@ class Dashboard {
 
     spawnRadioServices = function(domDirectory=`hub_radio.noaa`, searchBar=`_noaa_radio_communications.radio_search`, searchTerm=``) {
         let radioServices = this.library.storage.wxRadio
-        document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDirectory).innerHTML = ``
         if (radioServices.length == 0) {
-            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
-            document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
+            this.resizeTable(domDirectory, 1)
             this.injectCardData({ title: `Awaiting NOAA Radio Services...`, content: `<center>No NOAA Radio Streams Available.<br>Did you enable it within configurations?</center>`, parent: domDirectory})
             return
         }
-        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
+        this.resizeTable(domDirectory, 3)
+        
         if (!window._radioPlayers) window._radioPlayers = {};
         let cardRefs = [];
         for (let i = 0; i < radioServices.length; i++) {
@@ -800,6 +789,20 @@ class Dashboard {
         } catch (err) {
             this.library.createNotification(`You must enable <span style="color: red;">clipboard</span> permissions in your browser settings or be on a secure https session!`);
         }
+    }
+
+    /**
+      * @function resizeTable
+      * @description Resizes the grid template columns of a specified DOM element to a given size.
+      * 
+      * @param {string} [domDirectory=`child_atmosx_alerts.global_alerts`] - The ID of the DOM element whose grid template columns will be resized. Defaults to `child_atmosx_alerts.global_alerts`.
+      * @param {number} [size=3] - The number of columns to set in the grid template. Defaults to 3.
+      */
+
+    resizeTable = function(domDirectory=`child_atmosx_alerts.global_alerts`, size=3) {
+        if (window.innerWidth <= 1270) { return }
+        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', size);  
+        document.getElementById(domDirectory).style.gridTemplateColumns = `repeat(${size}, 1fr)`;
     }
 
     /**
