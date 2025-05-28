@@ -653,12 +653,12 @@ class Dashboard {
         let stats = this.storage.svrprob 
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (stats.length == 0) {
-            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
+            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting Severe Probabilities...`, content: `<center>No Severe Probabilities Information Available</center>`, parent: domDirectory})
             return
         }
-        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
+        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
@@ -684,12 +684,12 @@ class Dashboard {
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
         document.getElementById(domDirectory).innerHTML = ``
         if (radioServices.length == 0) {
-            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
+            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
             this.injectCardData({ title: `Awaiting NOAA Radio Services...`, content: `<center>No NOAA Radio Streams Available.<br>Did you enable it within configurations?</center>`, parent: domDirectory})
             return
         }
-        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
+        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         if (!window._radioPlayers) window._radioPlayers = {};
         let cardRefs = [];
         for (let i = 0; i < radioServices.length; i++) {
