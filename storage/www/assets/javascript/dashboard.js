@@ -295,25 +295,25 @@ class Dashboard {
      * Basically, this function will spawn the alert cards in the specified DOM element. It will also handle the search bar and the recent alerts.
      *
      * @async
-     * @param {string} [domDictionary=`child_atmosx_alerts.global_alerts`] - The ID of the DOM element where the alert cards will be injected. Defaults to `child_atmosx_alerts.global_alerts`.
+     * @param {string} [domDirectory=`child_atmosx_alerts.global_alerts`] - The ID of the DOM element where the alert cards will be injected. Defaults to `child_atmosx_alerts.global_alerts`.
      * @param {boolean} [recentOnly=false] - If true, only recent alerts will be shown. Defaults to `false`.
      * @param {string} [searchBar=`_alerts.alert_search`] - The ID of the search bar element. Defaults to `_alerts.alert_search`.
      * @param {string} [searchTerm=`] - The search term to filter the alerts. Defaults to an empty string.
      */
 
-    spawnAlertCards = function(domDictionary=`child_atmosx_alerts.global_alerts`, recentOnly=false, searchBar=`_alerts.alert_search`, searchTerm=``) {
+    spawnAlertCards = function(domDirectory=`child_atmosx_alerts.global_alerts`, recentOnly=false, searchBar=`_alerts.alert_search`, searchTerm=``) {
         let activeAlerts = this.storage.active
         let maxShownAlerts = activeAlerts.length
         if (!recentOnly) {
             if (document.getElementById(searchBar).value !== `` && searchTerm == `` && !recentOnly) { return }
             document.getElementById(searchBar).placeholder = `Search by location, event name, description, tracking id, status, or properties (x${activeAlerts.length})`
         }
-        document.getElementById(domDictionary).innerHTML = ``
+        document.getElementById(domDirectory).innerHTML = ``
         this.resizeTable(domDirectory, 1);
         if (recentOnly) { maxShownAlerts = maxShownAlerts = 6 }
         if (activeAlerts.length == 0) {
             this.resizeTable(domDirectory, 1);
-            this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDictionary})
+            this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDirectory})
             return
         }
         activeAlerts.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
@@ -349,7 +349,7 @@ class Dashboard {
             this.injectCardData({
                 title: `${eventName} (${eventStatus})`,
                 content: `Event: ${eventName} (${eventStatus})<br>Locations: ${locationsImpacted}<br>Issued: ${eventIssued}<br>Expires in: ${timeString}<br>Wind Gust: ${maxWindGust} <br>Hail: ${maxHailSize}<br>Damage Threat: ${damageThreat}<br>Tornado: ${tornadoIndicator}<br>Tag: ${eventTags}<br>Sender: ${fullSendName}<br>Tracking ID: ${eventTrackingID}`,
-                parent: domDictionary,
+                parent: domDirectory,
                 onclick: () => {
                     let eventHistoryString = ``
                     eventHistory = eventHistory.sort((a, b) => new Date(b.time) - new Date(a.time))
@@ -379,7 +379,7 @@ class Dashboard {
         }   
         if (recentOnly) {
             for (let i = activeAlerts.length; i < maxShownAlerts; i++) {
-                this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDictionary})
+                this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDirectory})
             }
         }
     }
@@ -389,20 +389,20 @@ class Dashboard {
       * @description Retrieves and displays the latest storm reports from the `storage.reports` array. If there are no reports, it shows a message indicating that no storm reports are available. The reports are displayed as cards with relevant details such as event name, location, issued/expires times, and a description.
       * The reports are sorted by the issued time (most recent first) and displayed in a section of the webpage. Each report card has a click handler that opens an alert showing more detailed information about the storm report.
       * 
-      * @param {string} [domDictionary=`child_atmosx_lsr.reports`] - The ID of the DOM element where the storm reports will be injected. Defaults to `child_atmosx_lsr.reports`.
+      * @param {string} [domDirectory=`child_atmosx_lsr.reports`] - The ID of the DOM element where the storm reports will be injected. Defaults to `child_atmosx_lsr.reports`.
       * @param {string} [searchBar=`_lsr.reports_search`] - The ID of the search bar element. Defaults to `_lsr.reports_search`.
       * @param {string} [searchTerm=`] - The search term to filter the reports. Defaults to an empty string.
       */
 
-    spawnStormReports = function(domDictionary=`child_atmosx_lsr.reports`, searchBar=`_lsr.reports_search`, searchTerm=``) {
+    spawnStormReports = function(domDirectory=`child_atmosx_lsr.reports`, searchBar=`_lsr.reports_search`, searchTerm=``) {
         let reports = this.storage.reports 
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
-        document.getElementById(domDictionary).innerHTML = ``
+        document.getElementById(domDirectory).innerHTML = ``
         document.getElementById(searchBar).placeholder = `Search by report location or event name (x${reports.length})`
         this.resizeTable(domDirectory, 3);
         if (reports.length == 0) { 
             this.resizeTable(domDirectory, 1);
-            this.injectCardData({ title: `Awaiting Storm Reports...` ,content: `<center>No Storm Report Information Available</center>`, parent: domDictionary})
+            this.injectCardData({ title: `Awaiting Storm Reports...` ,content: `<center>No Storm Report Information Available</center>`, parent: domDirectory})
             return
         }
         reports.sort((a, b) => new Date(b.issued) - new Date(a.issued))
@@ -418,7 +418,7 @@ class Dashboard {
             this.injectCardData({ 
                 title: `${event}`, 
                 content: `Location: ${locations}<br>Issued: ${issued}<br>Expires: ${expires}<br>Details: ${details}<br>Sender: ${sender}`, 
-                parent: domDictionary,
+                parent: domDirectory,
                 onclick: () => {
                     this.injectNotification({ title: `${event}`, description: `Location: ${locations}<br>Issued: ${issued}<br>Expires: ${expires}<br>Details: ${details}<br>Sender: ${sender}`, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(`Location: ${locations}\nIssued: ${issued}\nExpires: ${expires}\nDetails: ${details}\nSender: ${sender}`); } }] });
                 } 
