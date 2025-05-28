@@ -309,7 +309,7 @@ class Dashboard {
             document.getElementById(searchBar).placeholder = `Search by location, event name, description, tracking id, status, or properties (x${activeAlerts.length})`
         }
         document.getElementById(domDirectory).innerHTML = ``
-        this.resizeTable(domDirectory, 1);
+        this.resizeTable(domDirectory, 3);
         if (recentOnly) { maxShownAlerts = maxShownAlerts = 6 }
         if (activeAlerts.length == 0) {
             this.resizeTable(domDirectory, 1);
@@ -822,7 +822,6 @@ class Dashboard {
                 continue;
             }
             let originalValue = elements[i].getAttribute('data-original-grid-template-columns');
-            console.log(`Original Value: ${originalValue}`)
             if (originalValue) {
                 elements[i].style.gridTemplateColumns = 'repeat(' + originalValue + ', 1fr)';
             } else {
