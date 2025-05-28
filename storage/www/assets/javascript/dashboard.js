@@ -502,10 +502,10 @@ class Dashboard {
         document.getElementById(searchBar).placeholder = `Search by spotter description (x${spotters.length})`
         if (spotters.length == 0) {
             document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(1, 1fr)';
-            document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 1);  
+            document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 1);  
             this.injectCardData({ title: `Awaiting Spotter Network...`,content: `<center>No Spotter Network Information Available<br>Are you sure you enabled it in the configurations?</center>`,parent: domDirectory})
         }
-        document.getElementById(domDictionary).setAttribute('data-original-grid-template-columns', 3);  
+        document.getElementById(domDirectory).setAttribute('data-original-grid-template-columns', 3);  
         await spotters.forEach(spotter => {
             let description = spotter.description.toString().replace(/\\n/g, '<br>').replace('"', '');
             spotter.description = description;
@@ -674,11 +674,11 @@ class Dashboard {
       * @description Displays NOAA Radio Services in the user interface. Each radio service is displayed in a data card, and clicking the card toggles audio playback for that service.
       *
       * @param {string} [domDirectory=`hub_radio.noaa`] - The ID of the DOM element where the NOAA Radio Services will be injected. Defaults to `hub_radio.noaa`.
-      * @param {string} [searchBar=`_spotternetwork.spotter_search`] - The ID of the search bar element. Defaults to `_spotternetwork.spotter_search`.
+      * @param {string} [searchBar=`_noaa_radio_communications.radio_search`] - The ID of the search bar element. Defaults to `_spotternetwork.spotter_search`.
       * @param {string} [searchTerm=`] - The search term to filter the radio services. Defaults to an empty string.
       */
 
-    spawnRadioServices = function(domDirectory=`hub_radio.noaa`, searchBar=`_spotternetwork.spotter_search`, searchTerm=``) {
+    spawnRadioServices = function(domDirectory=`hub_radio.noaa`, searchBar=`_noaa_radio_communications.radio_search`, searchTerm=``) {
         let radioServices = this.library.storage.wxRadio
         document.getElementById(domDirectory).style.gridTemplateColumns = 'repeat(3, 1fr)';
         if (document.getElementById(searchBar).value !== `` && searchTerm == ``) { return }
