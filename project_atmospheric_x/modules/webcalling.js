@@ -189,7 +189,7 @@ class Webcalling {
                     await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `LocationServices`, handle.name == `RealtimeIRL`)
                 }    
             }
-            if (isNWWS != undefined && isNWWS.features.length > 0) {
+            if (isNWWS != undefined) {
                 if (loader.static.httpTimer[`NoaaWeatherWireService`] == undefined) {loader.static.httpTimer[`NoaaWeatherWireService`] = 0}
                 if (loader.static.httpTimer[`NoaaWeatherWireService`] < Date.now() - sources.primary_sources.noaa_weather_wire_service.cache_time * 1000) {
                     loader.static.httpTimer[`NoaaWeatherWireService`] = Date.now()

@@ -220,9 +220,9 @@ class Building {
 
     buildCache = async function(rawData, isUsingWire) {
         try {
-            if (rawData.NoaaWeatherWireService != undefined && rawData.NoaaWeatherWireService.features.length > 0 && isUsingWire == true ) {
+            if (rawData.NoaaWeatherWireService != undefined && isUsingWire == true ) {
                 let response = loader.modules.parsing.readAlerts(rawData.NoaaWeatherWireService)
-                loader.cache.active = response.message 
+                loader.cache.active = response.message
             }
             if (rawData.NationalWeatherService != undefined && rawData.NationalWeatherService.features.length > 0) {
                 let response = loader.modules.parsing.readAlerts(rawData.NationalWeatherService)
