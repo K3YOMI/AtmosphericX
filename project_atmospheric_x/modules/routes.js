@@ -40,8 +40,8 @@ class Routes {
             loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/dashboard/index.html`, false)
         })
         loader.static.express.get(`/settings`, (req, res) => {
-            let hasSession = loader.modules.dashboard.hasCredentials(req, res)
-            if (!hasSession.success) { return loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/portal/login.html`, true); }
+            let hasSession = loader.modules.dashboard.hasCredentials(req, res, true)
+            if (!hasSession.success) { return loader.modules.dashboard.giveResponse(req, res, {statusCode: 401, message: `You do not have permission to access this page, this requires administrator privileges.`}) }
             loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/dashboard/settings.html`, false)
         })
         loader.static.express.get(`/widgets/alert_bar_old`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_bar@widget/index.html`)})

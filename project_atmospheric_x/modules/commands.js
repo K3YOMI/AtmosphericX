@@ -24,6 +24,7 @@ class Commands {
         this.commands = [
             {command: `/help`, description: `List all commands`, function: `sendHelpSignal`},
             {command: `/activate`, description: `Activates an account`, function: `sendActivateSignal`, usage: `<username> <true/false>`},
+            {command: `/set-role`, description: `Sets a user's role (0/1)`, function: `sendRoleSignal`, usage: `<username> <0 = Default User | 1 = Administrator>`},
             {command: `/del-account`, description: `Deletes an account`, function: `sendDeleteAccountSignal`, usage: `<username>`},
             {command: `/force`, description: `Force update all clients`, function: `sendForceSignal`},
             {command: `/clients`, description: `Get all clients`, function: `sendClientsSignal`},
@@ -54,8 +55,8 @@ class Commands {
     	let ugc = args[0]
       	if (ugc != undefined) {
         	let zones = loader.modules.ugc.getZones(ugc)
-			let locations = await loader.modules.ugc.getLocations(zones)
-			loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${new Date().getTime() - start}ms)`)
+        	let locations = await loader.modules.ugc.getLocations(zones)
+        	loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${new Date().getTime() - start}ms)`)
       	}
   	}
 
@@ -177,6 +178,30 @@ class Commands {
             loader.modules.hooks.createOutput(this.name, `Account ${username} activated: ${enable}`)
         }
     }
+
+	/**
+	  * @function sendRoleSignal
+	  * @description Sets the role of an account based on the provided username and role.
+	  *
+	  * @param {Array} args - An array containing the username and role.
+	  *  - args[0] {string} - The username of the account to set the role for.
+	  *  - args[1] {number} - The role to set (0 for Default User, 1 for Administrator).
+	  */
+
+	sendRoleSignal = async function(args) {
+		let username = args[0]
+		let role = parseInt(args[1])
+		if (username != undefined && role != undefined) {
+			if (role === 0 || role === 1) {
+				await loader.modules.database.runQuery(`UPDATE accounts SET role = ? WHERE username = ?`, [role, username])
+				loader.modules.hooks.createLog(this.name, `Account ${username} role set to: ${role === 0 ? 'Default User' : 'Administrator'}`)
+				loader.modules.hooks.createOutput(this.name, `Account ${username} role set to: ${role === 0 ? 'Default User' : 'Administrator'}`)
+			}
+			else {
+				loader.modules.hooks.createOutput(this.name, `Invalid role. Use 0 for Default User or 1 for Administrator.`)
+			}
+		}
+	}
 
     /**
       * @function sendHelpSignal

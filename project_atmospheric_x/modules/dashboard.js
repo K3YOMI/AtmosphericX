@@ -33,25 +33,25 @@ class Dashboard {
       */
 
     createManualAlert = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response)
+        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
         if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `Forbidden - No session found`});
-            return {success: false, message: `Forbidden - No session found`}
+            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a manual alert`});
+            return {success: false, message: `You must be an administrator to create a manual alert`}
         }
         let body = JSON.parse(await new Promise((resolve, reject) => {
             let body = ``;
             request.on(`data`, (chunk) => { body += chunk; });
             request.on(`end`, () => { resolve(body); });
         }));
-        let registration = loader.modules.building.registerEvent(body);
+        let registration = loader.modules.hooks.filteringHtml(loader.modules.building.registerEvent(body));
         loader.cache.manual = registration.details.locations != `` ? registration : []
         this.giveResponse(request, response, {statusCode: 200, message: `Alert created successfully`});
         if (loader.cache.manual.length != 0) {
-            loader.modules.hooks.createOutput(this.name, `Manual alert created successfully - ${hasSession.message}`);
-            loader.modules.hooks.createLog(this.name, `Manual alert created successfully - ${hasSession.message}`);
+            loader.modules.hooks.createOutput(this.name, `Manual alert created successfully - Created Alert`);
+            loader.modules.hooks.createLog(this.name, `Manual alert created successfully - Created Alert`);
         } else { 
-            loader.modules.hooks.createOutput(this.name, `Cleared manual alert - ${hasSession.message}`);
-            loader.modules.hooks.createLog(this.name, `Cleared manual alert - ${hasSession.message}`);
+            loader.modules.hooks.createOutput(this.name, `Cleared manual alert - Clear`);
+            loader.modules.hooks.createLog(this.name, `Cleared manual alert - Clear`);
         }
         loader.modules.websocket.onCacheReady()
         return {success: true, message: `Manual alert modified successfully`}
@@ -67,10 +67,10 @@ class Dashboard {
       */
 
     createNotification = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response)
+        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
         if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `Forbidden - No session found`});
-            return {success: false, message: `Forbidden - No session found`}
+            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a notification`});
+            return {success: false, message: `You must be an administrator to create a notification`}
         }
         let body = JSON.parse(await new Promise((resolve, reject) => {
             let body = ``;
@@ -81,13 +81,13 @@ class Dashboard {
         let message = body.message
         this.giveResponse(request, response, {statusCode: 200, message: `Notification created successfully`});
         if (title != `` && message != ``) {
-            loader.cache.notification = {title: title, message: message}
-            loader.modules.hooks.createOutput(this.name, `Notification created successfully - ${hasSession.message}`);
-            loader.modules.hooks.createLog(this.name, `Notification created successfully - ${hasSession.message}`);
+            loader.cache.notification = loader.modules.hooks.filteringHtml({title: title, message: message})
+            loader.modules.hooks.createOutput(this.name, `Notification created successfully - ${title} - ${message}`);
+            loader.modules.hooks.createLog(this.name, `Notification created successfully - ${title} - ${message}`);
         } else {
             loader.cache.notification = {}
-            loader.modules.hooks.createOutput(this.name, `Cleared notification - ${hasSession.message}`);
-            loader.modules.hooks.createLog(this.name, `Cleared notification - ${hasSession.message}`);
+            loader.modules.hooks.createOutput(this.name, `Cleared notification - Clear`);
+            loader.modules.hooks.createLog(this.name, `Cleared notification - Clear`);
         }
         loader.modules.websocket.onCacheReady()
         return {success: true, message: `Notification modified successfully`}
@@ -103,10 +103,10 @@ class Dashboard {
       */
 
     createStatusHeader = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response)
+        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
         if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `Forbidden - No session found`});
-            return {success: false, message: `Forbidden - No session found`}
+            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to modify the status header`});
+            return {success: false, message: `You must be an administrator to modify the status header`}
         }
         let body = JSON.parse(await new Promise((resolve, reject) => {
             let body = ``;
@@ -115,14 +115,14 @@ class Dashboard {
         }));
         let title = body.title
         loader.cache.header = title
-        this.giveResponse(request, response, {statusCode: 200, message: `Header modified successfully`});
+        this.giveResponse(request, response, {statusCode: 200, message: `Header modified successfully - ${loader.cache.header}`});
         if (title != ``) {
-            loader.modules.hooks.createOutput(this.name, `Status header modified successfully - ${hasSession.message}`);
-            loader.modules.hooks.createLog(this.name, `Status header modified successfully - ${hasSession.message}`);
+            loader.modules.hooks.createOutput(this.name, `Status header modified successfully - ${loader.cache.header}`);
+            loader.modules.hooks.createLog(this.name, `Status header modified successfully - ${loader.cache.header}`);
         } else {
             loader.cache.header = ``
-            loader.modules.hooks.createOutput(this.name, `Cleared status header - ${hasSession.message}`);
-            loader.modules.hooks.createLog(this.name, `Cleared status header - ${hasSession.message}`);
+            loader.modules.hooks.createOutput(this.name, `Cleared status header - Clear`);
+            loader.modules.hooks.createLog(this.name, `Cleared status header - Clear`);
         }
         loader.modules.websocket.onCacheReady()
         return {success: true, message: `Status header modified successfully`}
@@ -151,13 +151,13 @@ class Dashboard {
                 let db = await loader.modules.database.runQuery(`SELECT * FROM accounts WHERE username = ? AND hash = ?`, [username, hash]);
                 if (db.length == 0) {
                     loader.modules.hooks.createOutput(this.name, `Attempted login with invalid credentials on username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted login with invalid credentials on username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Attempted login with invalid credentials on username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Invalid username or password`});
                     return {success: false, message: `Invalid username or password`};
                 }
                 if (db[0].activated == 0) {
                     loader.modules.hooks.createOutput(this.name, `Attempted login with unactivated account on username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted login with unactivated account on username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Attempted login with unactivated account on username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Account not activated`});
                     return {success: false, message: `Account not activated`};
                 }
@@ -167,13 +167,13 @@ class Dashboard {
                 loader.modules.hooks.createOutput(this.name, `Login successful for username ${username}`);
                 loader.modules.hooks.createLog(this.name, `INFO`, `Login successful for username ${username}`);
                 loader.static.accounts.push({username: username, session: generatedSession, address: request.socket.remoteAddress, userAgent: request.headers['user-agent']});
-                this.giveResponse(request, response, {statusCode: 200, message: `Login successful`, session: generatedSession});
-                return {success: true, message: `Login successful`, session: generatedSession};
+                this.giveResponse(request, response, {statusCode: 200, message: `Login successful`, session: generatedSession, role: db[0].role});
+                return {success: true, message: `Login successful`, session: generatedSession, role: db[0].role};
             }
             if (action == 1) { // Logout (1)
                 if (request.cookies.session == undefined || request.cookies.fallbackSession == undefined) {
                     loader.modules.hooks.createOutput(this.name, `Attempted logout with no session`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted logout with no session`);
+                    loader.modules.hooks.createLog(this.name, `Attempted logout with no session`);
                     response.clearCookie('session');
                     response.clearCookie('sessionFallback');
                     this.giveResponse(request, response, {statusCode: 401, message: `No session found`});
@@ -194,20 +194,20 @@ class Dashboard {
                 let db = await loader.modules.database.runQuery(`SELECT * FROM accounts WHERE username = ?`, [username]);
                 if (db.length > 0) {
                     loader.modules.hooks.createOutput(this.name, `Attempted registration with existing username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted registration with existing username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Attempted registration with existing username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Username already exists`});
                     return {success: false, message: `Username already exists`};
                 }
                 if (username.length < 3 || username.length > 20) {
                     loader.modules.hooks.createOutput(this.name, `Attempted registration with invalid username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted registration with invalid username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Attempted registration with invalid username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Username must be between 3 and 20 characters`});
                     return {success: false, message: `Username must be between 3 and 20 characters`};
                 }
                 let createdAccount = await loader.modules.database.runQuery(`INSERT INTO accounts (username, hash, activated) VALUES (?, ?, ?)`, [username, hash, 0]);
                 if (createdAccount == undefined) {
                     loader.modules.hooks.createOutput(this.name, `Failed to create account for username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Failed to create account for username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Failed to create account for username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Failed to create account`});
                     return {success: false, message: `Failed to create account`};
                 }
@@ -223,20 +223,20 @@ class Dashboard {
                 let db = await loader.modules.database.runQuery(`SELECT * FROM accounts WHERE username = ? AND hash = ?`, [username, oldPassword]);
                 if (db.length == 0) {
                     loader.modules.hooks.createOutput(this.name, `Attempted password reset with invalid credentials on username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted password reset with invalid credentials on username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Attempted password reset with invalid credentials on username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Invalid username or password`});
                     return {success: false, message: `Invalid username or password`};
                 }
                 if (db[0].activated == 0) {
                     loader.modules.hooks.createOutput(this.name, `Attempted password reset with unactivated account on username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Attempted password reset with unactivated account on username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Attempted password reset with unactivated account on username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Account not activated`});
                     return {success: false, message: `Account not activated`};
                 }
                 let updatedAccount = await loader.modules.database.runQuery(`UPDATE accounts SET hash = ? WHERE username = ?`, [newPassword, username]);
                 if (updatedAccount == undefined) {
                     loader.modules.hooks.createOutput(this.name, `Failed to update password for username ${username}`);
-                    loader.modules.hooks.createLog(this.name, `WARNING`, `Failed to update password for username ${username}`);
+                    loader.modules.hooks.createLog(this.name, `Failed to update password for username ${username}`);
                     this.giveResponse(request, response, {statusCode: 401, message: `Failed to update password`});
                     return {success: false, message: `Failed to update password`};
                 }
@@ -252,7 +252,6 @@ class Dashboard {
             return {success: false, message: `Internal Server Error`};
         }
     }
-
 
     /**
       * @function giveResponse
@@ -275,14 +274,18 @@ class Dashboard {
       * 
       * @param {Object} request - The HTTP request object.
       * @param {Object} response - The HTTP response object.
+      * @param {boolean} isAdministrator - Whether to check if the user is an administrator (default: false).
       */
 
-    hasCredentials = function(request, response) { 
+    hasCredentials = function(request, response, isAdministrator=false) { 
         if (!loader.cache.configurations.hosting.portal) { return {success: true, message: `Userless Session`}}
         let cookie = request.cookies.session
         let fallback = request.cookies.sessionFallback
         let account = loader.static.accounts.find(a => a.session == cookie || a.session == fallback);
         if (account) {
+            let getDB = loader.modules.database.runQuery(`SELECT * FROM accounts WHERE username = ?`, [account.username]);
+            if (getDB.length == 0) { return {success: false, message: `Forbidden - User not found in database`} }
+            if (isAdministrator && getDB[0].role != 1) { return {success: false, message: `Forbidden - User is not an administrator`} }
             return {success: true, message: `User ${account.username} has valid session`}
         } else {
             return {success: false, message: `Forbidden - Invalid session`}

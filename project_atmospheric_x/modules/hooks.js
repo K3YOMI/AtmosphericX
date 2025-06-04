@@ -201,6 +201,39 @@ class Hooks {
     }
 
     /**
+      * @function filteringHtml
+      * @description Filters HTML tags from a given string or object.
+      *
+      * @param {string|object} rawBody - The string or object to filter HTML tags from.
+      * @return {string|object} - The filtered string or object with HTML tags removed.
+      */
+
+    filteringHtml = function(rawBody) {
+        if (typeof rawBody === 'string') {
+            try {
+                const parsed = JSON.parse(rawBody);
+                rawBody = parsed;
+            } catch (e) {
+                rawBody = rawBody.replace(/<[^>]*>/g, ``);
+                return rawBody;
+            }
+        }
+        if (Array.isArray(rawBody)) {
+            return rawBody.map(item => this.filteringHtml(item));
+        } else if (typeof rawBody === 'object' && rawBody !== null) {
+            for (let key in rawBody) {
+                if (typeof rawBody[key] === 'string') {
+                    rawBody[key] = rawBody[key].replace(/<[^>]*>/g, ``);
+                } else if (typeof rawBody[key] === 'object') {
+                    rawBody[key] = this.filteringHtml(rawBody[key]);
+                }
+            }
+            return rawBody;
+        }
+        return rawBody;
+    }
+
+    /**
       * @function getCurrentVersion
       * @description Gets the current version of the project from the version file.
       * 
