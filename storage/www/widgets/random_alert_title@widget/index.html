@@ -20,7 +20,8 @@
             let element = document.getElementById(`random_alert`)
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts()
-                if (library.storage.random.length == 0) {  element.innerHTML = `Awaiting Alerts...`;   element.style.top = "35%"; return }
+                if (library.storage.random.length == 0) {  element.innerHTML = `Awaiting Alerts...`; element.style.top = "35%"; return }
+                element.style.top = (library.storage.random.details.name.length >= 33) ? "29%" : "35%"
                 element_class.randomAlertUpdate(`random_alert`, library.storage.random.details.name, max_length, aniamtions[0], aniamtions[1])
             })
         })
