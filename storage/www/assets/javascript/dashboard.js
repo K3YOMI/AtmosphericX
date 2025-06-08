@@ -15,14 +15,24 @@
 
 
 class Dashboard { 
-    constructor(library) {
+    constructor(library, isDashboard=false) {
         this.library = library
         this.storage = this.library.storage
+        this.storage.muted = true
         this.name = `Dashboard`
         this.library.createOutput(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
-        document.addEventListener('onCacheUpdate', async (event) => {})
-        window.addEventListener('resize', () => {this.updateSize()});
-        window.addEventListener('zoom', () => {this.updateSize()});
+        if (isDashboard) {
+            this.populateSidebar()
+            this.updateThread()
+            this.spawnGeneralSetupHub()
+            this.spawnExternalServices()
+            this.spawnStormPredictionCenterModels()
+            this.populateDevLogs()
+            library.createNotification(`Welcome back <span style="color: green;">${localStorage.getItem('atmosx.cached.username') || 'Default User'}</span>`)
+            document.addEventListener('onCacheUpdate', async (event) => {})
+            window.addEventListener('resize', () => {this.updateSize()});
+            window.addEventListener('zoom', () => {this.updateSize()});
+        }
     }
 
     /**
@@ -283,10 +293,12 @@ class Dashboard {
       * @param {string} [usernameSpan=`_home.accountname`] - The ID of the span element where the username will be displayed. Defaults to `_home.accountname`.
       */
 
-    triggerLocalStorageListener = function(usernameSpan=`_home.accountname`) {
-        document.getElementById(usernameSpan).innerHTML = `${localStorage.getItem('atmosx.cached.username') || 'Default User'} (${localStorage.getItem('atmosx.cached.role') === "1" ? "Administrator" : (localStorage.getItem('atmosx.cached.role') === "0" ? "User" : "Unknown")})`;  
-        if (localStorage.getItem('atmosx.cached.donationprompt') === null) {
-            this.injectNotification({title: `Donations are appreciated`, description: `As the sole developer of this project, your donations would greatly help in maintaining and improving this project. Contributions would allow me to dedicate more time to development, cover hosting costs (if any), and implement new features to enhance your experience.`,rows: 2,parent: `_body.base`, buttons: [ { name: `No Thank You`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups()} }, { name: `I'd like to donate!`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups()} } ],inputs: [],selects: null})    
+    triggerLocalStorageListener = function(usernameSpan=`_home.accountname`) { 
+        let username = localStorage.getItem('atmosx.cached.username') || 'Default User'; username = username.charAt(0).toUpperCase() + username.slice(1); 
+        let role = localStorage.getItem('atmosx.cached.role'); let roleText = role === "1" ? "Administator" : (role === "0" ? "User" : "Administator"); 
+        document.getElementById(usernameSpan).innerHTML = `${username} (Role: ${roleText})`; 
+        if (localStorage.getItem('atmosx.cached.donationprompt') === null) { 
+            this.injectNotification({title: `Donations are appreciated`, description: `As the sole developer of this project, your donations would greatly help in maintaining and improving this project. Contributions would allow me to dedicate more time to development, cover hosting costs (if any), and implement new features to enhance your experience.`,rows: 2,parent: `_body.base`, buttons: [ { name: `No Thank You`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups()} }, { name: `I'd like to donate!`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups()} } ],inputs: [],selects: null}) 
         }
     }
 
@@ -365,17 +377,16 @@ class Dashboard {
                         title: `${eventName} (${eventStatus})`,  
                         subtext: eventSubtitle,
                         description: eventHistoryString.replace(/\n/g, `<br>`), 
-                        rows: 2,  
+                        rows: 3,  
                         parent: `_body.base`,  
                         buttons: [
-                            { name: `Copy Card`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventSubtitle.replace(/<br>/g, `\n`)) } },
-                            { name: `Copy Description`, className: `button-ok`, function: () => { this.copyTextToClipboard(currentDescription) } },
-                            { name: `Copy History`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventHistoryString) } },
+                            { name: `<ic class="fa fa-copy"></ic> Card`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventSubtitle.replace(/<br>/g, `\n`)) } },
+                            { name: `<ic class="fa fa-copy"></ic> Description`, className: `button-ok`, function: () => { this.copyTextToClipboard(currentDescription) } },
+                            { name: `<ic class="fa fa-copy"></ic> History`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventHistoryString) } },
+                            { name: `<ic class="fa fa-volume-up"></ic> Play Audio`, className: `button-ok`, function: () => { this.storage.alertsQueue = []; this.storage.alertsQueue.push(alert); alert_class.triggerAlertQueue(false) }},
                             { name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }
-
                         ]
-                    })
-                }
+                    })  }
             })
         }   
         if (recentOnly) {
@@ -421,7 +432,7 @@ class Dashboard {
                 content: `Location: ${locations}<br>Issued: ${issued}<br>Expires: ${expires}<br>Details: ${details}<br>Sender: ${sender}`, 
                 parent: domDirectory,
                 onclick: () => {
-                    this.injectNotification({ title: `${event}`, description: `Location: ${locations}<br>Issued: ${issued}<br>Expires: ${expires}<br>Details: ${details}<br>Sender: ${sender}`, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(`Location: ${locations}\nIssued: ${issued}\nExpires: ${expires}\nDetails: ${details}\nSender: ${sender}`); } }] });
+                    this.injectNotification({ title: `${event}`, description: `Location: ${locations}<br>Issued: ${issued}<br>Expires: ${expires}<br>Details: ${details}<br>Sender: ${sender}`, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(`Location: ${locations}\nIssued: ${issued}\nExpires: ${expires}\nDetails: ${details}\nSender: ${sender}`); } }] });
                 } 
             });
         }
@@ -450,7 +461,7 @@ class Dashboard {
                 content: discussion,
                 parent: domDirectory,
                 onclick: () => {
-                    this.injectNotification({ title: `Mesoscale Discussion #${i + 1}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `Copy to Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
+                    this.injectNotification({ title: `Mesoscale Discussion #${i + 1}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
                 }
             });
         }
@@ -533,7 +544,7 @@ class Dashboard {
                         parent: `_body.base`,
                         buttons: [
                             { name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } },
-                            { name: `Copy to Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(`Location: ${lat}, ${lon}\nDescription: ${description}`); } }
+                            { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(`Location: ${lat}, ${lon}\nDescription: ${description}`); } }
                         ]
                     });
                 }
@@ -600,7 +611,7 @@ class Dashboard {
                         parent: `_body.base`,
                         buttons: [
                             { name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } },
-                            { name: `Copy to Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(wire[i].message); } 
+                            { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(wire[i].message); } 
                         }
                     ]});    
                 }
@@ -723,7 +734,7 @@ class Dashboard {
         let obsDownload = `${window.location.protocol || 'http'}//${window.location.hostname || 'localhost'}`;
         this.injectCardData({
             title: `Download Latest Template`,
-            content: `<button class="button-ok" style="width: 100%; margin-top: 5px;">Download</button>`,
+            content: `<button class="button-ok" style="width: 100%; margin-top: 5px;">Download</button><br><small>Put the endpoint you used to connect to the dashboard, this will give you a template scene for OBS Studio.</small>`,
             parent: domDirectory,
             onclick: () => {
                 this.injectNotification({
@@ -748,6 +759,12 @@ class Dashboard {
                 })
                 
             }
+        });
+        this.injectCardData({
+            title: `Public Discord Community`,
+            content: `<button class="button-ok" style="width: 100%; margin-top: 5px;" onclick="window.open('https://discord.gg/B8nKmhYMfz', '_blank', 'width=1000,height=1000')">Join Discord</button><br><small>Join our public Discord community to get help, get custom unique themes, discuss weather, and talk with others.</small>`,
+            parent: domDirectory,
+            onclick: () => {}
         });
         this.injectCardData({
             title: `Public Community Theme`,
@@ -808,6 +825,66 @@ class Dashboard {
     }
 
     /**
+      * @function populateSidebar
+      * @description Populates the sidebar with static dashboard items based on the user's role and permissions. Each item is created as a div element with an icon and label, and can trigger navigation or actions when clicked.
+      * 
+      * @param {string} [domDirectory=`_sidebar.data`] - The ID of the DOM element where the sidebar items will be injected. Defaults to `_sidebar.data`.
+      */ 
+
+    populateSidebar = function(domDirectory=`_sidebar.data`) {
+        let staticSidebarItems = static_dashboard_directs
+        let currentRole = localStorage.getItem('atmosx.cached.role') || '0';
+        let dom = document.getElementById(domDirectory);
+        for (let i = 0; i < staticSidebarItems.length; i++) {
+            let item = staticSidebarItems[i];
+            if (item.permission && currentRole !== item.permission.toString()) { continue; }
+            let div = document.createElement('div');
+            div.className = 'sidebar-item';
+            div.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
+            if (item.nav) { div.onclick = () => this.navigationListener(item.nav); }
+            if (item.action) { 
+                if (typeof item.action === 'function') {div.onclick = item.action; }
+                if (typeof item.action === 'string') {div.onclick = () => this[item.action](); }}
+            dom.appendChild(div);
+        }
+    }
+
+    /**
+      * @function populateDevLogs
+      * @description Populates the development logs section with the latest changelogs and version information. If there are no changelogs available, it displays a message indicating that.
+      */
+
+    populateDevLogs = function(version=`version`, domDirectory=`_devlogs`, headlineDom=`data-card-headline-parent`, headlineClass=`.data-card-headline`, httpsClass=`atmosx.header.https`) {
+        if (library.storage.updates.changelogs && Array.isArray(library.storage.updates.changelogs) && library.storage.updates.changelogs.length > 0) {
+            document.getElementById(version).innerHTML = `v${library.storage.updates.version}`
+            document.getElementById(httpsClass).innerHTML = `${library.storage.updates.updated} - v${library.storage.updates.version}<ul style="padding-left: 20px;">${library.storage.updates.changelogs.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            if (library.storage.updates.headline != ``) {
+                document.getElementById(headlineDom).style.display = 'block'
+                document.querySelector(headlineClass).innerHTML = library.storage.updates.headline
+            }
+        } else {
+            document.getElementById(httpsClass).innerHTML = `No changelogs available for this version.`;
+        }
+    }
+
+    /**
+      * @function toggleMute
+      * @description Toggles the mute state of alerts. If alerts are muted, it updates the storage and displays a notification indicating that alerts have been muted. If alerts are unmuted, it updates the storage and displays a notification indicating that alerts have been unmuted.
+      * 
+      */ 
+
+    toggleMute = function() {
+        if (this.storage.muted == true) {
+            this.storage.muted = false;
+            this.library.createNotification(`<span style="color: green;">Alerts have been unmuted</span>`);
+        } else {
+            this.storage.muted = true;
+            this.library.createNotification(`<span style="color: red;">Alerts have been muted</span>`);
+        }
+
+    }
+
+    /**
       * @function updateThread
       * @description Updates various sections of the dashboard by calling specific 
       * functions to refresh data and display it in the user interface.
@@ -849,10 +926,7 @@ class Dashboard {
             let doc = elements[i]
             if (doc == undefined) { continue }
             if (doc.parentElement == undefined) { continue }
-            if ((doc.parentElement).parentElement.parentElement.style.display == `none`) {
-                doc.innerHTML = ``; 
-                continue;
-            }
+            if ((doc.parentElement).parentElement.parentElement.style.display == `none`) { doc.innerHTML = ``; continue; }
         }
     }
 }

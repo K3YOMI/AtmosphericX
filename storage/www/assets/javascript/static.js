@@ -16,6 +16,28 @@
     All this literally does is hold information that we don't want to have to keep reloading through websockets...
 */
 
+
+const static_dashboard_directs = [
+    { icon: "fas fa-house-user", label: "Dashboard", nav: "_navigation.home", permission: 0 },
+    { icon: "fas fa-exclamation-triangle", label: "Active Alerts", nav: "_navigation.alerts", permission: 0 },
+    { icon: "fas fa-flag", label: "Reports Index", nav: "_navigation.lsr", permission: 0 },
+    { icon: "fas fa-cloud-sun", label: "Discussions", nav: "_navigation.dicussions", permission: 0 },
+    { icon: "fas fa-chart-bar", label: "TOR Probability", nav: "_navigation.torProbability", permission: 0 },
+    { icon: "fas fa-chart-bar", label: "SVR Probability", nav: "_navigation.svrProbability", permission: 0 },
+    { icon: "fas fa-comments", label: "NWWS-OI", nav: "_navigation.nwws", permission: 0 },
+    { icon: "fas fa-project-diagram", label: "SPC Models", nav: "_navigation.spc", permission: 0 },
+    { icon: "fas fa-globe", label: "Spotter Network", nav: "_navigation.spotternetwork", permission: 0 },
+    { icon: "fas fa-broadcast-tower", label: "NOAA Radio", nav: "_navigation.radio", permission: 0 },
+    { icon: "fas fa-satellite-dish", label: "Services", nav: "_navigation.external", permission: 0 },
+    { icon: "fa fa-hands-helping", label: "General Support", nav: "_navigation.help", permission: 0 },
+    { icon: "fas fa-cogs", label: "Widget Settings", nav: null, permission: 1, action: () => window.open('/settings', '_blank', 'width=602,height=800') },
+    { icon: "fas fa-user", label: "My Account", nav: null, permission: 0, action: 'triggerAccountListner' },
+    { icon: "fas fa-donate", label: "Support Me", nav: null, permission: 0, action: () => window.open('https://ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-external-link-square-alt", label: "Github", nav: null, permission: 0, action: () => window.open('https://github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-external-link-square-alt", label: "Documentation", nav: null, permission: 0, action: () => window.open('https://k3yomi.github.io/blog/posts/atmosphericx/', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-bell", label: "Toggle Sounds", nav: null, permission: 0,  action: 'toggleMute' },
+]
+
 const static_alerts = [
     "Tornado Emergency", 
     "Particularly Dangerous Situation", 

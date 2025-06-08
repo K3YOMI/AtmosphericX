@@ -23,7 +23,7 @@
             let mapbox_class = new Mapbox(library, parameter == `true` ? true : false)
             mapbox_class.updateThread()
             document.addEventListener('onCacheUpdate', async (event) => {
-                alert_class.syncAlerts(true)
+                alert_class.syncAlerts()
                 mapbox_class.updateThread()
             })
         })
