@@ -5,7 +5,7 @@
 
 <h1 style='font-size: 65px'; align="center">🌩️ Project AtmosphericX 🌪️</h1>
 
-![image](https://github.com/user-attachments/assets/94f58502-dd9c-45d0-ab08-a1a54f1c9a87)
+![images](https://github.com/user-attachments/assets/7090a5c9-cf31-4c6e-866f-435955ff1ceb)
 <sub>This project does <b>not</b> include any radar service (yet), the image above is to show what AtmosphericX can be used for to visually display warnings, watches, and advisories</sub>
 
 
