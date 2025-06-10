@@ -804,7 +804,7 @@ class Dashboard {
       */
     
     spawnConfigurations = async function(domDirectory = `hub.configurations`) {
-        const container = document.getElementById(domDirectory);
+        let container = document.getElementById(domDirectory);
         container.innerHTML = ``;
         let response = this.library.storage.configurableConfigurations;
         let configurations = await response.json()

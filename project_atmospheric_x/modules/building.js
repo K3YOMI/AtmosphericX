@@ -217,20 +217,21 @@ class Building {
 
     buildCache = async function(rawData, isUsingWire) {
         try {
+            rawData = loader.modules.hooks.filteringHtml(rawData)
             if (rawData.NoaaWeatherWireService != undefined && isUsingWire == true ) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.readAlerts(rawData.NoaaWeatherWireService))
+                let response = loader.modules.parsing.readAlerts(rawData.NoaaWeatherWireService)
                 loader.cache.active = response.message
             }
             if (rawData.NationalWeatherService != undefined && rawData.NationalWeatherService.features.length > 0) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.readAlerts(rawData.NationalWeatherService))
+                let response = loader.modules.parsing.readAlerts(rawData.NationalWeatherService)
                 loader.cache.active = response.message
             }
             if (rawData.SpotterNetwork != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.readSpotterNetwork(rawData.SpotterNetwork))
+                let response = loader.modules.parsing.readSpotterNetwork(rawData.SpotterNetwork)
                 loader.cache.spotters = response.message;
             }
             if (rawData.MesoscaleDiscussions != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.readRawMesoscaleDicussions(rawData.MesoscaleDiscussions))
+                let response = loader.modules.parsing.readRawMesoscaleDicussions(rawData.MesoscaleDiscussions)
                 loader.cache.discussions = response.message;
             }
             if (rawData.RealtimeIRL != undefined) { 
@@ -252,31 +253,31 @@ class Building {
                 loader.cache.realtime.state = rawData.LocationServices.features[5].text;
             }
             if (rawData.SpotterNetworkReports != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.rawSpotterNetworkReports(rawData.SpotterNetworkReports))
+                let response = loader.modules.parsing.rawSpotterNetworkReports(rawData.SpotterNetworkReports)
                 loader.cache.reports = response.message
             }
             if (rawData.mPingReports != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.rawRawMpingReports(rawData.mPingReports))
+                let response = loader.modules.parsing.rawRawMpingReports(rawData.mPingReports)
                 loader.cache.reports = response.message
             }
             if (rawData.GRLevelXReports != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.readRawGrlevelXReports(rawData.GRLevelXReports))
+                let response = loader.modules.parsing.readRawGrlevelXReports(rawData.GRLevelXReports)
                 loader.cache.reports = response.message
             }
             if (rawData.IEMReports != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.rawIemReports(rawData.IEMReports.features))
+                let response = loader.modules.parsing.rawIemReports(rawData.IEMReports.features)
                 loader.cache.reports = response.message
             }
             if (rawData.ProbTornado != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.rawProbabilityReports(rawData.ProbTornado, `tornado`))
+                let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbTornado, `tornado`)
                 loader.cache.torprob = response.message
             }
             if (rawData.ProbSevere != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`))
+                let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`)
                 loader.cache.svrprob = response.message
             }
             if (rawData.wxRadio != undefined) {
-                let response = loader.modules.hooks.filteringHtml(loader.modules.parsing.readWxRadio(rawData.wxRadio))
+                let response = loader.modules.parsing.readWxRadio(rawData.wxRadio)
                 loader.cache.wxRadio = response.message
             }
             loader.modules.websocket.onCacheReady()

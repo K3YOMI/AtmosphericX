@@ -36,11 +36,11 @@ class Database {
       */
 
     createDatabase = function() {
-        const dbPath = loader.packages.path.join(__dirname, `../../storage/database.db`);
+        let dbPath = loader.packages.path.join(__dirname, `../../storage/database.db`);
         this.db = new loader.packages.sqlite3(dbPath);
         try {
             this.db.prepare(`CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, hash TEXT NOT NULL, activated INTEGER NOT NULL DEFAULT 0, role INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`).run();
-            const rootExists = this.db.prepare(`SELECT 1 FROM accounts WHERE username = ?`).get('root');
+            let rootExists = this.db.prepare(`SELECT 1 FROM accounts WHERE username = ?`).get('root');
             if (rootExists === undefined) {
                 this.db.prepare(`INSERT INTO accounts (username, hash, role, activated) VALUES (?, ?, ?, ?)`).run('root', 'hzf+LiRTX1pP+v335+TaeLSAWu136Ltqs26gebv7jBw=', 1, 1);
                 loader.modules.hooks.createLog(`${this.name}.createDatabase`, `Database created, created root account with the password: root`);

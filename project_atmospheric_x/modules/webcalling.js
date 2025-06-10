@@ -183,7 +183,7 @@ class Webcalling {
                     if (loader.static.httpTimer[handle.name] == undefined) {loader.static.httpTimer[handle.name] = Date.now() - handle.timer * 1000}
                 })
                 let ready = active.filter(handle => (Date.now() - loader.static.httpTimer[handle.name]) / 1000 >= handle.timer)
-                for (const handle of ready) {
+                for (let handle of ready) {
                     loader.static.httpTimer[handle.name] = Date.now();
                     this.retries = 0
                     await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `LocationServices`, handle.name == `RealtimeIRL`)

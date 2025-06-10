@@ -212,7 +212,7 @@ class Hooks {
     filteringHtml = function(rawBody) {
         if (typeof rawBody === 'string') {
             try {
-                const parsed = JSON.parse(rawBody);
+                let parsed = JSON.parse(rawBody);
                 rawBody = parsed;
             } catch (e) {
                 rawBody = rawBody.replace(/<[^>]*>/g, ``);

@@ -15,7 +15,7 @@
 
 
 class CfgEditor {
-    constructor(library) {
+    letructor(library) {
         this.library = library;
         this.storage = this.library.storage;
         this.name = `CfgEditor`;
@@ -100,9 +100,9 @@ class CfgEditor {
 
     updateLineNumbers = function() {
         if (!this.codeEl) return;
-        const text = this.getEditorText();
-        const lines = text.split("\n").length;
-        const linesEl = document.getElementById("config-json-lines");
+        let text = this.getEditorText();
+        let lines = text.split("\n").length;
+        let linesEl = document.getElementById("config-json-lines");
         let html = "";
         for (let i = 1; i <= lines; i++) html += `${i}<br>`;
         linesEl.innerHTML = html;
@@ -117,10 +117,10 @@ class CfgEditor {
 
     getCaretCharacterOffsetWithin = function(element) {
         let caretOffset = 0;
-        const sel = window.getSelection();
+        let sel = window.getSelection();
         if (sel.rangeCount > 0) {
-            const range = sel.getRangeAt(0);
-            const preCaretRange = range.cloneRange();
+            let range = sel.getRangeAt(0);
+            let preCaretRange = range.cloneRange();
             preCaretRange.selectNodeContents(element);
             preCaretRange.setEnd(range.endContainer, range.endOffset);
             caretOffset = preCaretRange.toString().length;
@@ -138,13 +138,13 @@ class CfgEditor {
 
     setCaretPosition = function(element, offset) {
         let nodeStack = [element], node, found = false, charIndex = 0;
-        const range = document.createRange();
+        let range = document.createRange();
         range.setStart(element, 0);
         range.collapse(true);
         while (!found && nodeStack.length) {
             node = nodeStack.pop();
             if (node.nodeType === 3) {
-                const nextCharIndex = charIndex + node.length;
+                let nextCharIndex = charIndex + node.length;
                 if (offset <= nextCharIndex) {
                     range.setStart(node, offset - charIndex);
                     range.collapse(true);
@@ -156,7 +156,7 @@ class CfgEditor {
                 while (i--) nodeStack.push(node.childNodes[i]);
             }
         }
-        const sel = window.getSelection();
+        let sel = window.getSelection();
         sel.removeAllRanges();
         sel.addRange(range);
     };
@@ -168,9 +168,9 @@ class CfgEditor {
 
     getEditorText = function() {
         if (!this.codeEl) return "";
-        const cloned = this.codeEl.cloneNode(true);
+        let cloned = this.codeEl.cloneNode(true);
         let html = cloned.innerHTML.replace(/<br\s*\/?>/gi, "\n");
-        const div = document.createElement("div");
+        let div = document.createElement("div");
         div.innerHTML = html;
         return div.textContent;
     };
@@ -188,8 +188,8 @@ class CfgEditor {
         if (typeof caretOffset !== "number" && this.codeEl && document.activeElement === this.codeEl) {
             caretOffset = this.getCaretCharacterOffsetWithin(this.codeEl);
         }
-        const jsonStr = JSON.stringify(obj, null, 10);
-        const highlighted = this.syntaxHighlight(jsonStr);
+        let jsonStr = JSON.stringify(obj, null, 10);
+        let highlighted = this.syntaxHighlight(jsonStr);
         this.codeEl.innerHTML = highlighted;
         if (typeof caretOffset === "number") setTimeout(() => this.setCaretPosition(this.codeEl, caretOffset), 0);
         this.currentConfig = obj;
@@ -206,10 +206,10 @@ class CfgEditor {
     handleKeyDown = function(e) {
         if (e.key === "Tab") {
             e.preventDefault();
-            const sel = window.getSelection();
+            let sel = window.getSelection();
             if (!sel.rangeCount) return;
-            const range = sel.getRangeAt(0);
-            const tabNode = document.createTextNode("  ");
+            let range = sel.getRangeAt(0);
+            let tabNode = document.createTextNode("  ");
             range.insertNode(tabNode);
             range.setStartAfter(tabNode);
             range.setEndAfter(tabNode);
@@ -224,9 +224,9 @@ class CfgEditor {
       */
 
     handleSave = function() {
-        const raw = this.getEditorText();
+        let raw = this.getEditorText();
         try {
-            const parsed = JSON.parse(raw);
+            let parsed = JSON.parse(raw);
             this.updateEditor(parsed);
             this.placeCaretAtEnd(this.codeEl);
             this.errorEl.style.display = "none";
@@ -265,10 +265,10 @@ class CfgEditor {
     placeCaretAtEnd = function(el) {
         el.focus();
         if (window.getSelection && document.createRange) {
-            const range = document.createRange();
+            let range = document.createRange();
             range.selectNodeContents(el);
             range.collapse(false);
-            const sel = window.getSelection();
+            let sel = window.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
         }
