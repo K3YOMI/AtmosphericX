@@ -58,7 +58,7 @@ class AlertBuilder {
                 if (vtec.wmo != null) { defaultWmo = vtec.wmo }
                 let getCoords = loader.modules.raw.getPolygonCoordinatesByText(msg)
                 let getTornado = loader.modules.raw.getStringByLine(msg, `TORNADO...`) ? loader.modules.raw.getStringByLine(msg, `TORNADO...`) : loader.modules.raw.getStringByLine(msg, `WATERSPOUT...`)
-                let getMaxHailSize = loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`) ? loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`) : loader.modules.raw.getStringByLine(msg, `HAIL...`)
+                let getMaxHailSize = loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`, [`IN`]) ? loader.modules.raw.getStringByLine(msg, `MAX HAIL SIZE...`, [`IN`]) : loader.modules.raw.getStringByLine(msg, `HAIL...`, [`IN`])
                 let getMaxWindGusts = loader.modules.raw.getStringByLine(msg, `MAX WIND GUST...`) ? loader.modules.raw.getStringByLine(msg, `MAX WIND GUST...`) : loader.modules.raw.getStringByLine(msg, `WIND...`)
                 let damageThreat = loader.modules.raw.getStringByLine(msg, `DAMAGE THREAT...`)
                 let senderOffice = loader.modules.raw.getOfficeName(msg) ? loader.modules.raw.getOfficeName(msg) : vtec.trackingId.split(`-`)[0]

@@ -33,14 +33,14 @@ class RawParsing {
       * @param {string} string - The string to search for and replace (if needed)
       */
 
-    getStringByLine = function(message, string) {
+    getStringByLine = function(message, string, removeIfExists=[]) {
         let lines = message.split('\n');
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].includes(string)) {
-                // replace everything before the string and after the string with an empty string
                 let start = lines[i].indexOf(string) + string.length;
                 let end = lines[i].length;
                 let result = lines[i].substring(start, end);
+                for (let j = 0; j < removeIfExists.length; j++) { result = result.replace(removeIfExists[j], '');}
                 return result.replace(string, '').replace(/^\s+|\s+$/g, '').replace(`<`, '').trim()
             }  
         }
