@@ -63,7 +63,7 @@ loader.modules.vtec = new (require(`./modules/nwws-oi/parsers/vtec.js`))()
 loader.modules.ugc = new (require(`./modules/nwws-oi/parsers/ugc.js`))()
 loader.modules.raw = new (require(`./modules/nwws-oi/parsers/raw.js`))()
 loader.modules.alertbuilder = new (require(`./modules/nwws-oi/event/alert.js`))()
-
+loader.modules.statementbuilder = new (require(`./modules/nwws-oi/event/special-statement.js`))()
 
 
 loader.definitions.RegExp_VTEC = "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z"

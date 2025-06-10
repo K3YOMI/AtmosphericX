@@ -40,7 +40,8 @@ class Products {
                 let message = stanza
                 let hasVtec = message.match(loader.definitions.RegExp_VTEC)
                 let areaDesc = message.includes(`<areaDesc>`)
-                return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec, type: `alert`,ignore: false}
+                let getType = this.getCallType(attributes)
+                return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec, type: getType, ignore: false}
             }
             if (stanza.is(`message`)) {
                 let cb = stanza.getChild(`x`)
@@ -111,8 +112,14 @@ class Products {
         if (metadata.type == `local storm report`) { } // TODO: Add LSR support
         if (metadata.type == `md`) { } // TODO: Add MD support
         if (metadata.type == `outlook`) { } // TODO: Add Outlook support
-        if (metadata.type == `special weather statement`) { } // TODO: Add SPS support
-        if (metadata.type == `test message`) { } // TODO: Add SPS support
+        if (metadata.type == `special weather statement`) { loader.modules.statementbuilder.process(metadata) }
+        if (metadata.type == `test message`) { } // TODO: Add Test Message support
+        if (metadata.type == `tabular state forecast`) { } // TODO: Add Tabular State Forecast support
+        if (metadata.type == `recreational report`) { } // TODO: Add Recreational Report support
+        if (metadata.type == `point forecast matrices`) { } // TODO: Add Point Forecast Matrices support
+        if (metadata.type == `terminal aerodrome forecast`) { } // TODO: Add Terminal Aerodrome Forecast support
+        if (metadata.type == `river statement`) { } // TODO: Add River Statement support
+        if (metadata.type == `regional weather roundup`) { } // TODO: Add Regional Weather Roundup support
         return {success: true, message: `Successfully processed the message`}
     }
 }

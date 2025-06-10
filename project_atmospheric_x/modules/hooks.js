@@ -53,6 +53,7 @@ class Hooks {
             subject: title, 
             text: message, 
         })
+        return { success: true, message: `Successfully sent email to ${settings.recipient}` }
     }
 
     /**
@@ -75,7 +76,8 @@ class Hooks {
         loader.static.webhookTimestamps = loader.static.webhookTimestamps.filter(timestamp => timestamp.time > currentTime - cooldownTime * 1000);
         if (loader.static.webhookTimestamps.length > 3) { return; }
         let embed = { title: title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: { text: displayName } };
-        try { await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] }); } catch (error) {}
+        try { await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] }); } catch (error) { return { success: false, message: `Failed to send webhook message.` } }
+        return { success: true, message: `Successfully sent webhook message.` }
     }
 
 

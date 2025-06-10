@@ -179,11 +179,6 @@ class Building {
                 ignoreWarning = true
             }
         }
-        if (loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service.enabled == true) {
-            if (event.action != undefined && event.action != `N/A`) {
-                event.properties.messageType = event.action
-            }
-        }
         event.properties.event = eventActions.name
         return {
             raw: event,

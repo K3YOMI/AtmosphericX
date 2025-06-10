@@ -120,6 +120,10 @@ class AlertBuilder {
             tracking = `${splitVTEC[2]}-${splitVTEC[3]}-${splitVTEC[4]}-${splitVTEC[5]}`;
             action = loader.definitions.statusSignatures[splitVTEC[1]];
         }
+        if (tracking === `N/A`) {
+            action = result.alert.msgType[0];
+            tracking = `${result.alert.info[0].parameter.find(p => p.valueName[0] === "WMOidentifier")?.value[0]}-${result.alert.info[0].area[0].geocode.filter(g => g.valueName[0] === "UGC").map(g => g.value[0]).join(`-`)}`;
+        }
         let alert = {
             id: `NWWS-OI-${tracking}`,
             tracking: tracking,

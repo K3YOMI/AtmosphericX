@@ -136,7 +136,8 @@
             "Snow Squall Warning",
             "Earthquake Warning",
             "Hurricane Warning",
-            "Hurricane Watch"
+            "Hurricane Watch",
+            "Special Weather Statement"
         ],
         "beep_only": false,
         "show_updates": true,
