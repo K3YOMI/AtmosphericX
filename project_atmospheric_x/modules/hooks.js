@@ -190,6 +190,7 @@ class Hooks {
         loader.cache.public = {
             warning: "This is a public configuration, this prevents the user from being able to view private information.",
             tone_sounds: loader.cache.configurations.tone_sounds,
+            default_text: loader.cache.configurations.project_settings.default_alert_text,
             scheme: loader.cache.configurations.scheme,
             spc_outlooks: loader.cache.configurations.spc_outlooks,
             third_party_services: loader.cache.configurations.third_party_services,

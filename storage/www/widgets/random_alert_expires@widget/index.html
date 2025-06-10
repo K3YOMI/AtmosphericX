@@ -20,7 +20,7 @@
             let element = document.getElementById(`random_expires`)
             document.addEventListener('onCacheUpdate', (event) => {
                 alert_class.syncAlerts()
-                if (library.storage.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; return }
+                if (library.storage.random.length == 0) { element.innerHTML = library.storage.configurations.default_text; return }
                 let rng = library.getTimeInformation(library.storage.random.details.expires)
                 if (isNaN(rng.unix)) { element.innerHTML = `Invalid Time`; return }
                 let time = rng.unix 

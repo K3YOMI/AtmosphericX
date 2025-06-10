@@ -326,7 +326,7 @@ class Dashboard {
         if (recentOnly) { maxShownAlerts = maxShownAlerts = 6 }
         if (activeAlerts.length == 0) {
             this.resizeTable(domDirectory, 1);
-            this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDirectory})
+            this.injectCardData({ title: this.storage.configurations.default_text, content: `<center>No Alert Information Available</center>`, parent: domDirectory})
             return
         }
         activeAlerts.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
@@ -391,7 +391,7 @@ class Dashboard {
         }   
         if (recentOnly) {
             for (let i = activeAlerts.length; i < maxShownAlerts; i++) {
-                this.injectCardData({ title: `Awaiting Alert....`, content: `<center>No Alert Information Available</center>`, parent: domDirectory})
+                this.injectCardData({ title: this.storage.configurations.default_text, content: `<center>No Alert Information Available</center>`, parent: domDirectory})
             }
         }
     }

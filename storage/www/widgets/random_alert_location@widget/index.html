@@ -20,7 +20,7 @@
             let element = document.getElementById(`random_location`)
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts()
-                if (library.storage.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; return }
+                if (library.storage.random.length == 0) { element.innerHTML = library.storage.configurations.default_text; return }
                 element_class.randomAlertUpdate(`random_location`, library.storage.random.details.locations, max_length, aniamtions[0], aniamtions[1])
             })
         })

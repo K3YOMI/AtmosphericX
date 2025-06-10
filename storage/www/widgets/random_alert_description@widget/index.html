@@ -22,7 +22,7 @@
             
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts()
-                if (library.storage.random.length == 0) { element.innerHTML = `Awaiting Alerts...`; return }
+                if (library.storage.random.length == 0) { element.innerHTML = library.storage.configurations.default_text; return }
                 element_class.randomAlertUpdate(`random_description`, library.storage.random.details.description, max_length, aniamtions[0], aniamtions[1])
             })
         })

@@ -117,6 +117,7 @@
         "http_timeout": 5,
         "global_update": 10,
         "priority_alerts": true,
+        "default_alert_text": "No active alerts at this time",
         "priority": [
             "Tornado Emergency",
             "Particularly Dangerous Situation",
