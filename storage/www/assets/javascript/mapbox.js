@@ -279,6 +279,31 @@ class Mapbox {
         }
     }
 
+
+    displayRadar = async function () {
+        try {
+            const response = await this.library.createHttpRequest('https://api.rainviewer.com/public/weather-maps.json');
+            const data = await response.json();
+            const latestRadar = data.radar.past.at(-1);
+            if (!latestRadar || !latestRadar.time) return;
+            if (!this.storage.mapbox.getSource('radar-source')) {
+                this.storage.mapbox.addSource('radar-source', {
+                    type: 'raster',
+                    tiles: [`https://tilecache.rainviewer.com/v2/radar/${latestRadar.time}/512/{z}/{x}/{y}/6/0_0.png`],
+                    tileSize: 256
+                });
+            }
+            if (!this.storage.mapbox.getLayer('radar-layer')) {
+                this.storage.mapbox.addLayer({
+                    id: 'radar-layer',
+                    type: 'raster',
+                    source: 'radar-source',
+                    paint: { 'raster-opacity': 0.5 }
+                });
+            }
+        } catch (err) {}
+    }
+
     /**
       * @function updateThread
       * @description Updates the Mapbox map by displaying reports, spotters, and alerts.
@@ -291,5 +316,6 @@ class Mapbox {
         this.displaySpotters()
         this.displayAlerts()
         this.realTimeIRL()
+        this.displayRadar()
     }
 }
