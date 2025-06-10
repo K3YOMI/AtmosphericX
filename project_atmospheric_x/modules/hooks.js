@@ -64,15 +64,17 @@ class Hooks {
       */
 
     sendWebhook = async function(title, message) {
-        let settings = loader.cache.configurations.project_settings.webhook_settings
-        let endpoint = settings.discord_webhook
-        let content = settings.content
-        let displayName = settings.webhook_display
-        if (!settings.enabled) { return }
-        if (new Date().getTime() - loader.static.webhookTimeout < 500) { return } 
-        loader.static.webhookTimeout = new Date().getTime()
-        let embed = { title: title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: {text: displayName} };
-        await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] })
+        let settings = loader.cache.configurations.project_settings.webhook_settings;
+        let endpoint = settings.discord_webhook;
+        let content = settings.content;
+        let displayName = settings.webhook_display;
+        if (!settings.enabled) { return; }
+        const now = Date.now();
+        loader.static.webhookTimestamps = loader.static.webhookTimestamps.filter(ts => now - ts < loader.cache.configurations.project_settings.webhook_cooldown * 1000);
+        if (loader.static.webhookTimestamps.length >= 3) { return;}
+        loader.static.webhookTimestamps.push(now);
+        let embed = { title: title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: { text: displayName } };
+        await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] });
     }
 
 

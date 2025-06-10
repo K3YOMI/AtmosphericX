@@ -21,7 +21,7 @@ loader.static.webSocketClients = [] // Array of websocket clients that are curre
 loader.static.webSocketClientLimits = [] // Array of websocket clients that are currently connected to the server with limits
 loader.static.httpTimer = [] // Array of timers for the HTTP server
 loader.static.wiresession = undefined // The session for the wire server
-loader.static.webhookTimeout = 0
+loader.static.webhookTimestamps = []
 
 
 loader.cache.twire = {features: []} // Array of features that are currently being processed by the wire server
