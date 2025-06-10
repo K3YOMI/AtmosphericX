@@ -209,7 +209,7 @@ class Mapbox {
     displayAlerts = function() {
         let alerts = this.storage.active
         let alertPlots = []
-        let scheme = this.storage.configurations.overlay_settings.color_scheme
+        let scheme = this.storage.configurations.scheme
         let hasSetZoom = false
         alerts.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
         for (let i = 0; i < alerts.length; i++) {

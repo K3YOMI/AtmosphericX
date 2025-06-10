@@ -383,7 +383,7 @@ class Dashboard {
                             { name: `<ic class="fa fa-copy"></ic> Card`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventSubtitle.replace(/<br>/g, `\n`)) } },
                             { name: `<ic class="fa fa-copy"></ic> Description`, className: `button-ok`, function: () => { this.copyTextToClipboard(currentDescription) } },
                             { name: `<ic class="fa fa-copy"></ic> History`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventHistoryString) } },
-                            { name: `<ic class="fa fa-volume-up"></ic> Play Audio`, className: `button-ok`, function: () => { this.storage.alertsQueue = []; this.storage.alertsQueue.push(alert); alert_class.triggerAlertQueue(false) }},
+                            { name: `<ic class="fa fa-volume-up"></ic> Play Audio`, className: `button-ok`, function: () => { this.storage.alertsQueue = []; this.storage.alertsQueue.push(alert); alert_class.triggerAlertQueue() }},
                             { name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }
                         ]
                     })  }
@@ -793,12 +793,31 @@ class Dashboard {
         });
     }
 
+
     /**
-     * @function copyTextToClipboard
-     * @description Copies the provided text to the clipboard. If the copy operation is successful, a notification is displayed. If it fails, an error message is shown.
-     * 
-     * @param {string} text - The text to be copied to the clipboard.
-     */
+      * @function spawnConfigurations
+      * @description Displays configurable configurations in the user interface. It retrieves the configurations from the storage and opens an editor for them.
+      * 
+      * @async
+      * @param {string} [domDirectory=`hub.configurations`] - The ID of the DOM element where the configurations will be injected. Defaults to `hub.configurations`.
+      * @returns {Promise<void>} This function does not return any value. It manipulates the DOM by creating and appending configurations data.
+      */
+    
+    spawnConfigurations = async function(domDirectory = `hub.configurations`) {
+        const container = document.getElementById(domDirectory);
+        container.innerHTML = ``;
+        let response = this.library.storage.configurableConfigurations;
+        let configurations = await response.json()
+        this.resizeTable(domDirectory, 1);
+        cfg_class.openEditor(container, configurations.message)
+    }
+
+    /**
+      * @function copyTextToClipboard
+      * @description Copies the provided text to the clipboard. If the copy operation is successful, a notification is displayed. If it fails, an error message is shown.
+      * 
+      * @param {string} text - The text to be copied to the clipboard.
+      */
 
     copyTextToClipboard = function(text) {
         try {
@@ -841,7 +860,14 @@ class Dashboard {
             let div = document.createElement('div');
             div.className = 'sidebar-item';
             div.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
-            if (item.nav) { div.onclick = () => this.navigationListener(item.nav); }
+            if (item.nav) { div.onclick = async () => {
+                if (item.label === 'Configurations') { 
+                    let response = await library.createHttpRequest(`/configurations`)
+                    if (response.status == 200) { this.storage.configurableConfigurations = response; }
+                    this.spawnConfigurations();
+                }
+                this.navigationListener(item.nav); 
+            }}
             if (item.action) { 
                 if (typeof item.action === 'function') {div.onclick = item.action; }
                 if (typeof item.action === 'string') {div.onclick = () => this[item.action](); }}

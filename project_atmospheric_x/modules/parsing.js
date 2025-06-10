@@ -342,7 +342,7 @@ class Parsing {
       */
 
     isAlreadyCancelled = function(alert) {
-        let signatures = loader.cache.configurations.definitions.cancel_signatures
+        let signatures = loader.definitions.cancelSignatures
         let description = alert.properties.description
         let type = alert.properties.messageType
         let isCancelledDescirption = signatures.filter(signature => description.toLowerCase().includes(signature.toLowerCase()))

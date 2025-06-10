@@ -33,7 +33,7 @@ class VTECParsing {
       */
 
     getVTEC = async function(message) {
-        let match = message.match(loader.cache.configurations.definitions.vtec_regexp)
+        let match = message.match(loader.definitions.RegExp_VTEC)
         let vtec = {}
         if (match != null) {
             let splitVTEC = match[0].split(`.`)
@@ -43,7 +43,7 @@ class VTECParsing {
             vtec.eventSignificance = this.getEventSignificance(splitVTEC)
             vtec.eventStatus = this.getEventStatus(splitVTEC)
             vtec.expires = this.getEventExpiration(vtecDates)
-            vtec.wmo = message.match(new RegExp(loader.cache.configurations.definitions.wmo_regexp, "gimu"));
+            vtec.wmo = message.match(new RegExp(loader.definitions.RegExp_WMO, "gimu"));
             return vtec
         } 
         return null
@@ -68,7 +68,7 @@ class VTECParsing {
       */
 
     getEventName = function(vtec) {
-        return loader.cache.configurations.definitions.event_codes[vtec[3]]
+        return loader.definitions.eventCodes[vtec[3]]
     }
 
     /**
@@ -79,7 +79,7 @@ class VTECParsing {
       */    
 
     getEventSignificance = function(vtec) {
-        return loader.cache.configurations.definitions.event_types[vtec[4]]
+        return loader.definitions.eventTypes[vtec[4]]
     }
 
     /**
@@ -90,7 +90,7 @@ class VTECParsing {
       */  
 
     getEventStatus = function(vtec) {
-        return loader.cache.configurations.definitions.status_signatures[vtec[1]]
+        return loader.definitions.statusSignatures[vtec[1]]
     }
 
     /**

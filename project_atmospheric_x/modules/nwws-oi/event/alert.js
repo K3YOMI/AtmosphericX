@@ -48,7 +48,7 @@ class AlertBuilder {
         let messages = message.map(msg => msg.trim());
         let wire = loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service
         let start = new Date().getTime()
-        let defaultWmo = metadata.message.match(new RegExp(loader.cache.configurations.definitions.wmo_regexp, "gimu"));
+        let defaultWmo = metadata.message.match(new RegExp(loader.definitions.RegExp_WMO, "gimu"));
         let alerts = []
         for (let i = 0; i < messages.length; i++) {
             let msg = messages[i]
@@ -118,7 +118,7 @@ class AlertBuilder {
         if (tracking !== `N/A`) {
             let splitVTEC = tracking.split(`.`);
             tracking = `${splitVTEC[2]}-${splitVTEC[3]}-${splitVTEC[4]}-${splitVTEC[5]}`;
-            action = loader.cache.configurations.definitions.status_signatures[splitVTEC[1]];
+            action = loader.definitions.statusSignatures[splitVTEC[1]];
         }
         let alert = {
             id: `NWWS-OI-${tracking}`,

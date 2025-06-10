@@ -136,8 +136,8 @@ class UGCParsing {
       */
 
     getHeader = function(message) { 
-        let start = message.search(new RegExp(loader.cache.configurations.definitions.ugc_start_regexp, "gimu"));
-        let end = message.substring(start).search(new RegExp(loader.cache.configurations.definitions.ugc_end_regexp, "gimu"));
+        let start = message.search(new RegExp(loader.definitions.RegExp_UGCStart, "gimu"));
+        let end = message.substring(start).search(new RegExp(loader.definitions.RegExp_UGCEnd, "gimu"));
         let full = message.substring(start, start + end).replace(/\s+/g, '').slice(0, -1)
         return full
     }

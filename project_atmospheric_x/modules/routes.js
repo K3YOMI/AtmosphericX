@@ -34,45 +34,52 @@ class Routes {
 
     createRoutes = function() {
         let parentDirectory = loader.packages.path.resolve(__dirname, `../../storage`)
-        loader.static.express.get(`/`, (req, res) => {
-            let hasSession = loader.modules.dashboard.hasCredentials(req, res)
-            if (!hasSession.success) { return loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/portal/login.html`, true); }
-            loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/dashboard/index.html`, false)
+        loader.static.express.get(`/`, (request, response) => {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response)
+            if (!hasSession.success) { return loader.modules.dashboard.redirectSession(request, response, `${parentDirectory}/www/portal/login.html`, true); }
+            loader.modules.dashboard.redirectSession(request, response, `${parentDirectory}/www/dashboard/index.html`, false)
         })
-        loader.static.express.get(`/settings`, (req, res) => {
-            let hasSession = loader.modules.dashboard.hasCredentials(req, res, true)
-            if (!hasSession.success) { return loader.modules.dashboard.giveResponse(req, res, {statusCode: 401, message: `You do not have permission to access this page, this requires administrator privileges.`}) }
-            loader.modules.dashboard.redirectSession(req, res, `${parentDirectory}/www/dashboard/settings.html`, false)
+        loader.static.express.get(`/settings`, (request, response) => {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) { return loader.modules.dashboard.giveResponse(request, response, {statusCode: 401, message: `You do not have permission to access this page, this requires administrator privileges.`}) }
+            loader.modules.dashboard.redirectSession(request, response, `${parentDirectory}/www/dashboard/settings.html`, false)
         })
-        loader.static.express.get(`/widgets/alert_bar_old`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_bar@widget/index.html`)})
-        loader.static.express.get(`/widgets/alert_bar`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_barv2@widget/index.html`)})
-        loader.static.express.get('/widgets/mapbox', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/mapbox@widget/index.html`));
-        loader.static.express.get('/widgets/notice', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/notice@widget/index.html`));
-        loader.static.express.get('/widgets/table', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/table@widget/index.html`));
-        loader.static.express.get('/widgets/light', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/color_scheme_light@widget/index.html`));
-        loader.static.express.get('/widgets/dark', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/color_scheme_dark@widget/index.html`));
-        loader.static.express.get('/widgets/description', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_description@widget/index.html`));
-        loader.static.express.get('/widgets/alert', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_title@widget/index.html`));
-        loader.static.express.get('/widgets/location', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_location@widget/index.html`));
-        loader.static.express.get('/widgets/gps', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/gps@widget/index.html`));
-        loader.static.express.get('/widgets/expires', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/random_alert_expires@widget/index.html`));
-        loader.static.express.get('/widgets/time', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/time@widget/index.html`));
-        loader.static.express.get('/widgets/date', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/date@widget/index.html`));
-        loader.static.express.get('/widgets/header', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/header@widget/index.html`));
-        loader.static.express.get('/widgets/watchdog', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/watchdog@widget/index.html`));
-        loader.static.express.get('/widgets/notification', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/notification@widget/index.html`));
-        loader.static.express.get('/widgets/spc', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/spc@widget/index.html`));
-        loader.static.express.get('/premade/stream', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/@premade/stream_layout@widget/index.html`));
-        loader.static.express.get('/premade/portable', (req, res) => res.sendFile(`${parentDirectory}/www/widgets/@premade/portable_layout@widget/index.html`));
-        loader.static.express.get('/reset', (req, res) => res.sendFile(`${parentDirectory}/www/portal/reset.html`));
-        loader.static.express.get('/registration', (req, res) => res.sendFile(`${parentDirectory}/www/portal/registration.html`));
-        loader.static.express.post(`/api/login`, async (req, res) => { loader.modules.dashboard.processCredentials(req, res, 0) });
-        loader.static.express.post(`/api/logout`, async (req, res) => { loader.modules.dashboard.processCredentials(req, res, 1) });
-        loader.static.express.post(`/api/register`, async (req, res) => { loader.modules.dashboard.processCredentials(req, res, 2) });
-        loader.static.express.post(`/api/reset`, async (req, res) => { loader.modules.dashboard.processCredentials(req, res, 3) });
-        loader.static.express.post(`/api/manual`, async (req, res) => { loader.modules.dashboard.createManualAlert(req, res) });
-        loader.static.express.post(`/api/notification`, async (req, res) => { loader.modules.dashboard.createNotification(req, res) });
-        loader.static.express.post(`/api/status`, async (req, res) => { loader.modules.dashboard.createStatusHeader(req, res) });
+        loader.static.express.get(`/configurations`, (request, response) => {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) { return loader.modules.dashboard.giveResponse(request, response, {statusCode: 401, message: `You do not have permission to access this page, this requires administrator privileges.`}) }
+            loader.modules.dashboard.giveResponse(request, response, {statusCode: 200, message: loader.cache.configurations})
+        })
+        loader.static.express.post(`/set-configurations`, async (request, response) => {
+            loader.modules.dashboard.processConfigurations(request, response)
+        })
+        loader.static.express.get(`/widgets/alert_bar`, (request, response) => {response.sendFile(`${parentDirectory}/www/widgets/alert_bar@widget/index.html`)})
+        loader.static.express.get('/widgets/mapbox', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/mapbox@widget/index.html`));
+        loader.static.express.get('/widgets/notice', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/notice@widget/index.html`));
+        loader.static.express.get('/widgets/table', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/table@widget/index.html`));
+        loader.static.express.get('/widgets/light', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/color_scheme_light@widget/index.html`));
+        loader.static.express.get('/widgets/dark', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/color_scheme_dark@widget/index.html`));
+        loader.static.express.get('/widgets/description', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_description@widget/index.html`));
+        loader.static.express.get('/widgets/alert', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_title@widget/index.html`));
+        loader.static.express.get('/widgets/location', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_location@widget/index.html`));
+        loader.static.express.get('/widgets/gps', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/gps@widget/index.html`));
+        loader.static.express.get('/widgets/expires', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_expires@widget/index.html`));
+        loader.static.express.get('/widgets/time', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/time@widget/index.html`));
+        loader.static.express.get('/widgets/date', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/date@widget/index.html`));
+        loader.static.express.get('/widgets/header', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/header@widget/index.html`));
+        loader.static.express.get('/widgets/watchdog', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/watchdog@widget/index.html`));
+        loader.static.express.get('/widgets/notification', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/notification@widget/index.html`));
+        loader.static.express.get('/widgets/spc', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/spc@widget/index.html`));
+        loader.static.express.get('/premade/stream', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/@premade/stream_layout@widget/index.html`));
+        loader.static.express.get('/premade/portable', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/@premade/portable_layout@widget/index.html`));
+        loader.static.express.get('/reset', (request, response) => response.sendFile(`${parentDirectory}/www/portal/reset.html`));
+        loader.static.express.get('/registration', (request, response) => response.sendFile(`${parentDirectory}/www/portal/registration.html`));
+        loader.static.express.post(`/api/login`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 0) });
+        loader.static.express.post(`/api/logout`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 1) });
+        loader.static.express.post(`/api/register`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 2) });
+        loader.static.express.post(`/api/reset`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 3) });
+        loader.static.express.post(`/api/manual`, async (request, response) => { loader.modules.dashboard.createManualAlert(request, response) });
+        loader.static.express.post(`/api/notification`, async (request, response) => { loader.modules.dashboard.createNotification(request, response) });
+        loader.static.express.post(`/api/status`, async (request, response) => { loader.modules.dashboard.createStatusHeader(request, response) });
     }
 
 

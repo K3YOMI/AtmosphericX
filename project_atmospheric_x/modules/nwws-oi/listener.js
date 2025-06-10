@@ -42,9 +42,10 @@ class Listener {
         if (!wireEnabled) { return }
         loader.static.wiresession = loader.packages.xmpp.client({reconnect: true, service: wireService, domain: wireDomain, username: wireUsername, password: wirePassword}).setMaxListeners(0);
         loader.static.wiresession.on(`online`, async (_address) => {
-            let displayTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', '');
+            let now = new Date();
+            let displayTime = `${String(now.getUTCMonth() + 1).padStart(2, '0')}/${String(now.getUTCDate()).padStart(2, '0')}`;
             loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})`, xmlns: 'http://jabber.org/protocol/muc' }));
-            loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain}`)
+            loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain} as "AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})"`)
             loader.cache.timeSinceLastStanza = new Date().getTime()
             loader.cache.hasConnectedBefore = true
             nwsCfg.enabled = false

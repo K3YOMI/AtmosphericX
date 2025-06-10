@@ -90,7 +90,7 @@ class Building {
       */
 
     getEventTag = function(event) { 
-        let tagDictionary = loader.cache.configurations.definitions.tag_definitions
+        let tagDictionary = loader.cache.configurations.tags
         let tags = [`No tags found`]
         for (let [key, value] of Object.entries(tagDictionary)) { 
             if (event.properties.description.toLowerCase().includes(key.toLowerCase())) {
@@ -111,14 +111,12 @@ class Building {
     getEventActions = function(event) { 
         let defaultAudio = loader.cache.configurations.tone_sounds.beep
         let eventDictionary = loader.cache.configurations.alert_dictionary[event.properties.event]
-        let imageDictionary = loader.cache.configurations.alert_banners[event.properties.event]
         let newAlertAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.new : eventDictionary.new
         let updateAlertAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.update : eventDictionary.update
         let cancelAlertAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.cancel : eventDictionary.cancel
         let easAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.eas : eventDictionary.eas
         let sirenAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.siren : eventDictionary.siren
         let autobeepAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.autobeep : eventDictionary.autobeep
-        let alertImage = (imageDictionary == undefined) ? loader.cache.configurations.alert_banners.UNK : imageDictionary
         let editedEventName = (eventDictionary == undefined) ? event.properties.event : eventDictionary.card
         let messageState = [
             { event: `Update`, message: `Updated`, audio: updateAlertAudio},
@@ -140,7 +138,6 @@ class Building {
             name: editedEventName,
             audiopresets: { new: newAlertAudio, update: updateAlertAudio, cancel: cancelAlertAudio },
             audio: defaultAudio,
-            gif: alertImage,
             eas: easAudio,
             siren: sirenAudio,
             autobeep: autobeepAudio,

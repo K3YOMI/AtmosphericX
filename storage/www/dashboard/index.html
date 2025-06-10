@@ -4,11 +4,13 @@
         <title>AtmosphericX - Dashboard</title>
         <meta name="viewport" content="width=device-width initial-scale=0.5, maximum-scale=0.5, user-scalable=no minimal-ui">
         <link rel="stylesheet" href="../assets/styles/dashboard.css">
+        <link rel="stylesheet" href="../assets/styles/editor.css">
         <link rel="stylesheet" href="../assets/styles/responsive-dashboard.css">
         <link rel="stylesheet" href="../../assets/styles/streaming.css">
         <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
         <script src="../assets/javascript/library.js"></script>
         <script src="../assets/javascript/dashboard.js"></script>
+        <script src="../assets/javascript/editor.js"></script>
         <script src="../assets/javascript/alerts.js"></script>
         <script src="../../assets/javascript/static.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -177,6 +179,16 @@
                     </div>
                 </div>
             </div>
+            <div id="_navigation.configurations" style="display: none;" type="menu">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">Configurations (Experimental)</span></h1>
+                        <hr class="data-card-hr"> 
+                        <div id="hub.configurations" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </body>
     <script>
@@ -186,9 +198,10 @@
         library.createWebsocketSession([`wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
             dashboard_class = new Dashboard(library, true)
+            cfg_class = new CfgEditor(library)
             document.addEventListener('onCacheUpdate', async (event) => {
                 let storage = alert_class.syncAlerts(true)
-                if (storage.length > 0 && library.storage.muted == false) { await alert_class.triggerAlertQueue(true) }
+                if (storage.length > 0 && library.storage.muted == false) { await alert_class.triggerAlertQueue() }
                 await dashboard_class.updateThread()
             })
         })

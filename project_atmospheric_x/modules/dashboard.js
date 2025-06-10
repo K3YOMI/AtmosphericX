@@ -24,6 +24,35 @@ class Dashboard {
     }
 
     /**
+      * @function processConfigurations
+      * @description Processes the configurations from the request body and saves them to the configurations file.
+      * 
+      * @async
+      * @param {Object} request - The HTTP request object.
+      * @param {Object} response - The HTTP response object.
+      */
+
+    processConfigurations = async function(request, response) {
+        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+        if (!hasSession.success) {
+            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to modify configurations`});
+            return {success: false, message: `You must be an administrator to modify configurations`}
+        }
+        let body = JSON.parse(await new Promise((resolve, reject) => {
+            let body = ``;
+            request.on(`data`, (chunk) => { body += chunk; });
+            request.on(`end`, () => { resolve(body); });
+        }));
+        try { JSON.stringify(body); } catch (e) { this.giveResponse(request, response, {statusCode: 400, message: `Invalid JSON format`}); return {success: false, message: `Invalid JSON format`} }
+        loader.packages.fs.writeFileSync(`../configurations.json`, JSON.stringify(body, null, 4));
+        loader.modules.hooks.createOutput(this.name, `Configurations modified successfully`);
+        loader.modules.hooks.createLog(this.name, `Configurations modified successfully`);
+        this.giveResponse(request, response, {statusCode: 200, message: `Configurations modified successfully`});
+        loader.modules.hooks.reloadConfigurations()
+        return {success: true, message: `Manual alert modified successfully`}
+    }
+
+    /**
       * @function createManualAlert
       * @description Creates a manual alert and adds it to the cache.
       * 

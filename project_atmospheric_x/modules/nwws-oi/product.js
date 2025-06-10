@@ -38,7 +38,7 @@ class Products {
                 let isXml = metadata.xml 
                 let attributes = metadata.attributes
                 let message = stanza
-                let hasVtec = message.match(loader.cache.configurations.definitions.vtec_regexp)
+                let hasVtec = message.match(loader.definitions.RegExp_VTEC)
                 let areaDesc = message.includes(`<areaDesc>`)
                 return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec, type: `alert`,ignore: false}
             }
@@ -49,7 +49,7 @@ class Products {
                     let attributes = cb.attrs
                     let isXml = message.includes(`<?xml version="1.0"`)
                     let areaDesc = message.includes(`<areaDesc>`)
-                    let hasVtec = message.match(loader.cache.configurations.definitions.vtec_regexp)
+                    let hasVtec = message.match(loader.definitions.RegExp_VTEC)
                     let getType = this.getCallType(attributes)
                     if (loader.cache.wire == undefined) { loader.cache.wire = [] }
                     if (loader.cache.wire.length >= 20) { loader.cache.wire.shift() }

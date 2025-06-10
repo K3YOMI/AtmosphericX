@@ -71,7 +71,7 @@
             "name": "[Template] Default Overlay"
         }
     ],
-    "name": "AtmosphericX Template v612",
+    "name": "AtmosphericX Template v7.1.17",
     "groups": [
         {
             "prev_ver": 520093699,
@@ -85,116 +85,6 @@
                 "cy": 1081,
                 "id_counter": 0,
                 "items": [
-                    {
-                        "name": "[Source] All-in-One-Premade Widget",
-                        "source_uuid": "708c0440-07ce-488d-a74a-00a749bd4de3",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "scale_ref": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 2,
-                        "group_item_backup": false,
-                        "pos": {
-                            "x": 1098.46826171875,
-                            "y": 0.0
-                        },
-                        "pos_rel": {
-                            "x": 0.25642269849777222,
-                            "y": -1.0
-                        },
-                        "scale": {
-                            "x": 0.4322916567325592,
-                            "y": 0.43240737915039062
-                        },
-                        "scale_rel": {
-                            "x": 0.4322916567325592,
-                            "y": 0.43240737915039062
-                        },
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "bounds_rel": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "[Source] Notificaiton Alert Bar Old",
-                        "source_uuid": "73abd046-535b-42a3-a3ae-f2825c6ac920",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "scale_ref": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 39,
-                        "group_item_backup": false,
-                        "pos": {
-                            "x": 1145.1744384765625,
-                            "y": 516.7308349609375
-                        },
-                        "pos_rel": {
-                            "x": 0.34291562438011169,
-                            "y": -0.043091058731079102
-                        },
-                        "scale": {
-                            "x": 0.40796551108360291,
-                            "y": 0.40764281153678894
-                        },
-                        "scale_rel": {
-                            "x": 0.40796551108360291,
-                            "y": 0.40764281153678894
-                        },
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "bounds_rel": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
                     {
                         "name": "[Source] Notification Alert Bar",
                         "source_uuid": "a2461663-ec61-46f1-9fa4-0e5323c5073f",
@@ -546,12 +436,12 @@
                         "id": 10,
                         "group_item_backup": false,
                         "pos": {
-                            "x": 8.46826171875,
-                            "y": 552.00006103515625
+                            "x": 0.0,
+                            "y": 583.1729736328125
                         },
                         "pos_rel": {
-                            "x": -1.7620958089828491,
-                            "y": 0.022222280502319336
+                            "x": -1.7777777910232544,
+                            "y": 0.07994997501373291
                         },
                         "scale": {
                             "x": 0.81399995088577271,
@@ -766,12 +656,12 @@
                         "id": 14,
                         "group_item_backup": false,
                         "pos": {
-                            "x": 8.46826171875,
-                            "y": 303.99993896484375
+                            "x": 0.0,
+                            "y": 343.21792602539062
                         },
                         "pos_rel": {
-                            "x": -1.7620958089828491,
-                            "y": -0.43703711032867432
+                            "x": -1.7777777910232544,
+                            "y": -0.36441123485565186
                         },
                         "scale": {
                             "x": 0.2699999213218689,
@@ -1041,12 +931,12 @@
                         "id": 20,
                         "group_item_backup": false,
                         "pos": {
-                            "x": 422.89935302734375,
-                            "y": 220.20367431640625
+                            "x": 399.780029296875,
+                            "y": 341.87948608398438
                         },
                         "pos_rel": {
-                            "x": -0.99463081359863281,
-                            "y": -0.59221541881561279
+                            "x": -1.0374443531036377,
+                            "y": -0.3668898344039917
                         },
                         "scale": {
                             "x": 0.77831059694290161,
@@ -1144,10 +1034,6 @@
             "push-to-talk": false,
             "push-to-talk-delay": 0,
             "hotkeys": {
-                "libobs.show_scene_item.2": [],
-                "libobs.hide_scene_item.2": [],
-                "libobs.show_scene_item.39": [],
-                "libobs.hide_scene_item.39": [],
                 "libobs.show_scene_item.3": [],
                 "libobs.hide_scene_item.3": [],
                 "libobs.show_scene_item.4": [],
@@ -2217,38 +2103,6 @@
         },
         {
             "prev_ver": 520093699,
-            "name": "[OV1] Alert Bar Old",
-            "uuid": "42b73f5a-6947-42c0-9f3d-becf9f65757e",
-            "id": "source-clone",
-            "versioned_id": "source-clone",
-            "settings": {
-                "active_clone": false,
-                "clone": "[Source] Notificaiton Alert Bar Old"
-            },
-            "mixers": 255,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.mute": [],
-                "libobs.unmute": [],
-                "libobs.push-to-mute": [],
-                "libobs.push-to-talk": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 520093699,
             "name": "[OV1] Black Static",
             "uuid": "36c9a544-2a84-4f51-8028-b18e8ed165bc",
             "id": "color_source",
@@ -2931,43 +2785,6 @@
         },
         {
             "prev_ver": 520093699,
-            "name": "[Source] All-in-One-Premade Widget",
-            "uuid": "708c0440-07ce-488d-a74a-00a749bd4de3",
-            "id": "browser_source",
-            "versioned_id": "browser_source",
-            "settings": {
-                "url": "http://localhost:80/premade/stream",
-                "width": 1920,
-                "height": 1080,
-                "fps": 30,
-                "webpage_control_level": 1,
-                "reroute_audio": true
-            },
-            "mixers": 255,
-            "sync": 0,
-            "flags": 0,
-            "volume": 0.10039300471544266,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.mute": [],
-                "libobs.unmute": [],
-                "libobs.push-to-mute": [],
-                "libobs.push-to-talk": [],
-                "ObsBrowser.Refresh": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 2,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 520093699,
             "name": "[Source] AtmosphericX v7 Template",
             "uuid": "73c29963-5b1a-4625-8fd6-d5069a07fd5a",
             "id": "scene",
@@ -3011,116 +2828,6 @@
                         "scale_rel": {
                             "x": 1.0,
                             "y": 1.0
-                        },
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "bounds_rel": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "[Source] All-in-One-Premade Widget",
-                        "source_uuid": "708c0440-07ce-488d-a74a-00a749bd4de3",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "scale_ref": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 2,
-                        "group_item_backup": true,
-                        "pos": {
-                            "x": 1092.7825927734375,
-                            "y": 0.0
-                        },
-                        "pos_rel": {
-                            "x": 0.2458936870098114,
-                            "y": -1.0
-                        },
-                        "scale": {
-                            "x": 0.4322916567325592,
-                            "y": 0.43240737915039062
-                        },
-                        "scale_rel": {
-                            "x": 0.43005412817001343,
-                            "y": 0.43000730872154236
-                        },
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "bounds_rel": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "[Source] Notificaiton Alert Bar Old",
-                        "source_uuid": "73abd046-535b-42a3-a3ae-f2825c6ac920",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "scale_ref": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 39,
-                        "group_item_backup": true,
-                        "pos": {
-                            "x": 1139.2469482421875,
-                            "y": 513.86273193359375
-                        },
-                        "pos_rel": {
-                            "x": 0.33193880319595337,
-                            "y": -0.048402369022369385
-                        },
-                        "scale": {
-                            "x": 0.40796551108360291,
-                            "y": 0.40764281153678894
-                        },
-                        "scale_rel": {
-                            "x": 0.40585389733314514,
-                            "y": 0.40538021922111511
                         },
                         "bounds": {
                             "x": 0.0,
@@ -3492,12 +3199,12 @@
                         "id": 10,
                         "group_item_backup": true,
                         "pos": {
-                            "x": 8.4244384765625,
-                            "y": 548.93621826171875
+                            "x": 0.0,
+                            "y": 579.93609619140625
                         },
                         "pos_rel": {
-                            "x": -1.7621769905090332,
-                            "y": 0.016548514366149902
+                            "x": -1.7777777910232544,
+                            "y": 0.073955774307250977
                         },
                         "scale": {
                             "x": 0.81399995088577271,
@@ -3712,12 +3419,12 @@
                         "id": 14,
                         "group_item_backup": true,
                         "pos": {
-                            "x": 8.4244384765625,
-                            "y": 302.31256103515625
+                            "x": 0.0,
+                            "y": 341.31292724609375
                         },
                         "pos_rel": {
-                            "x": -1.7621769905090332,
-                            "y": -0.44016188383102417
+                            "x": -1.7777777910232544,
+                            "y": -0.36793899536132812
                         },
                         "scale": {
                             "x": 0.2699999213218689,
@@ -3987,12 +3694,12 @@
                         "id": 20,
                         "group_item_backup": true,
                         "pos": {
-                            "x": 420.71044921875,
-                            "y": 218.98141479492188
+                            "x": 397.71075439453125,
+                            "y": 339.98190307617188
                         },
                         "pos_rel": {
-                            "x": -0.9986843466758728,
-                            "y": -0.59447884559631348
+                            "x": -1.0412763357162476,
+                            "y": -0.37040388584136963
                         },
                         "scale": {
                             "x": 0.77831059694290161,
@@ -4433,42 +4140,6 @@
                 "width": 420,
                 "height": 415,
                 "fps": 30
-            },
-            "mixers": 255,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.mute": [],
-                "libobs.unmute": [],
-                "libobs.push-to-mute": [],
-                "libobs.push-to-talk": [],
-                "ObsBrowser.Refresh": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 520093699,
-            "name": "[Source] Notificaiton Alert Bar Old",
-            "uuid": "73abd046-535b-42a3-a3ae-f2825c6ac920",
-            "id": "browser_source",
-            "versioned_id": "browser_source",
-            "settings": {
-                "url": "http://localhost:80/widgets/alert_bar_old",
-                "width": 1920,
-                "height": 1080,
-                "fps": 30,
-                "reroute_audio": true
             },
             "mixers": 255,
             "sync": 0,
@@ -5850,61 +5521,6 @@
                             "duration": 0
                         },
                         "private_settings": {}
-                    },
-                    {
-                        "name": "[OV1] Alert Bar Old",
-                        "source_uuid": "42b73f5a-6947-42c0-9f3d-becf9f65757e",
-                        "visible": true,
-                        "locked": false,
-                        "rot": 0.0,
-                        "scale_ref": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 32,
-                        "group_item_backup": false,
-                        "pos": {
-                            "x": 364.0,
-                            "y": -194.0
-                        },
-                        "pos_rel": {
-                            "x": -1.1037037372589111,
-                            "y": -1.3592592477798462
-                        },
-                        "scale": {
-                            "x": 0.67864584922790527,
-                            "y": 0.67870372533798218
-                        },
-                        "scale_rel": {
-                            "x": 0.67864584922790527,
-                            "y": 0.67870372533798218
-                        },
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "bounds_rel": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
                     }
                 ]
             },
@@ -5928,9 +5544,7 @@
                 "libobs.show_scene_item.20": [],
                 "libobs.hide_scene_item.20": [],
                 "libobs.show_scene_item.31": [],
-                "libobs.hide_scene_item.31": [],
-                "libobs.show_scene_item.32": [],
-                "libobs.hide_scene_item.32": []
+                "libobs.hide_scene_item.31": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,

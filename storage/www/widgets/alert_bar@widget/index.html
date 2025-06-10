@@ -8,10 +8,46 @@
     <script src="../../assets/javascript/alerts.js"></script>
     <script src="../../assets/javascript/library.js"></script>
     <body>
-        <img id="alert_notification">
-            <p id="alert_title" class="text1"></p>
-            <p id="alert_description" class="text2"></p>
-        </img>
+        <div class="alert-box">
+            <div class="alert-header"><span id="event-name"></span></div>
+            <div class="alert-body">
+                <div class="row-dark">
+                    <div class="left">
+                        <div>LOCATIONS INCLUDE: <span id="event-locations"></span></div>
+                    </div>
+                    <div class="right">
+                        <div>ISSUED: <span id="event-issued-time"></span></div>
+                    </div>
+                </div>
+                <div class="row-light">
+                    <div class="left">
+                        <div>HAIL: <span id="event-max-hail"></span></div>
+                    </div>
+                    <div class="left">
+                        <div>WIND: <span id="event-max-wind"></span></div>
+                    </div>
+                    <div class="left">
+                        <div>TOR: <span id="event-tornado"></span></div>
+                    </div>
+                    <div class="right">
+                        <div>DMG: <span id="event-damage"></span></div>
+                    </div>
+                    <div class="right">
+                        <div>EXPIRES: <span id="event-expires-time"></span></div>
+                    </div>
+                </div>
+                <div class="row-dark">
+                    <div class="left">
+                        <div>OFFICE: <span id="event-sender"></span></div>
+                    </div>
+                </div>
+                <div class="row-light">
+                    <div class="left">
+                        <div>TAGS: <span id="event-tags"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
     <script>
         let library = new Library()

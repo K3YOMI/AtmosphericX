@@ -30,6 +30,7 @@ const static_dashboard_directs = [
     { icon: "fas fa-broadcast-tower", label: "NOAA Radio", nav: "_navigation.radio", permission: 0 },
     { icon: "fas fa-satellite-dish", label: "Services", nav: "_navigation.external", permission: 0 },
     { icon: "fa fa-hands-helping", label: "General Support", nav: "_navigation.help", permission: 0 },
+    { icon: "fa fa-cogs", label: "Configurations", nav: "_navigation.configurations", permission: 1 },
     { icon: "fas fa-cogs", label: "Widget Settings", nav: null, permission: 1, action: () => window.open('/settings', '_blank', 'width=602,height=800') },
     { icon: "fas fa-user", label: "My Account", nav: null, permission: 0, action: 'triggerAccountListner' },
     { icon: "fas fa-donate", label: "Support Me", nav: null, permission: 0, action: () => window.open('https://ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000') },
