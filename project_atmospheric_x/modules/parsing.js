@@ -394,31 +394,127 @@ class Parsing {
       * @param {object} alerts - The data object to read the alerts from
       */
 
-    readAlerts = function(alerts) {
-        let tAlerts = []
-        let features = alerts.features.filter(feature => feature !== undefined);   
-        let filtering = this.filterAlerts(features)
-        let coordFilter = this.coordsToMiles(filtering)
-        for (let i = 0; i < coordFilter.length; i++) {
-            let index = coordFilter[i]
-            if (index.properties.description != null) { if (this.isAlreadyCancelled(index)) { continue; } }
-            if (this.doesAlertExist(tAlerts, index.id)) { continue; }
-            index = JSON.parse(JSON.stringify(index));
-            let registration = loader.modules.building.registerEvent(index);
-            let alertHash = loader.packages.crypto.createHash('sha1').update(JSON.stringify(registration)).digest('hex');
-            if (loader.cache.logging.findIndex(log => log.id == alertHash) == -1) {
-                loader.modules.hooks.createOutput(`${this.name}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)})`)
-                loader.cache.logging.push({ id: alertHash, expires: registration.details.expires});
-                loader.modules.hooks.youveGotMail(`${registration.details.name} (${registration.details.type})`, `Locations: ${registration.details.locations}\nIssued: ${new Date(registration.details.issued).toLocaleString()}\nExpires: ${new Date(registration.details.expires).toLocaleString()}\nWind Gusts: ${registration.details.wind}\nHail Size: ${registration.details.hail}\nDamage Threat: ${registration.details.damage}\nTornado ${registration.details.tornado}\nTags: ${registration.details.tag.join(', ')}\nSender: ${registration.details.sender}\nTracking ID: ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}`)
-                loader.modules.hooks.sendWebhook(`${registration.details.name} (${registration.details.type})`,`**Locations:** ${registration.details.locations}\n**Issued:** ${new Date(registration.details.issued).toLocaleString()}\n**Expires:** ${new Date(registration.details.expires).toLocaleString()}\n**Wind Gusts:** ${registration.details.wind}\n**Hail Size:** ${registration.details.hail}\n**Damage Threat:** ${registration.details.damage}\n**Tornado** ${registration.details.tornado}\n**Tags:** ${registration.details.tag.join(', ')}\n**Sender:** ${registration.details.sender}\n**Tracking ID:** ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}\n\n\`\`\`\n${registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\n\`\`\`\n`);
-            }
-            if (Object.keys(registration).length != 0) {
-                if (registration.details.ignored == true) { continue; }
-                tAlerts.push(registration);
+readAlerts = function(alerts) {
+    let tAlerts = [];
+    let features = alerts.features.filter(feature => feature !== undefined);   
+    let filtering = this.filterAlerts(features);
+    let coordFilter = this.coordsToMiles(filtering);
+
+    for (let i = 0; i < coordFilter.length; i++) {
+        let index = coordFilter[i];
+
+        // Leave this unchanged
+        if (index.properties.description != null) {
+            if (this.isAlreadyCancelled(index)) {
+                continue;
             }
         }
-        return {success: true, message: tAlerts}
+
+        if (this.doesAlertExist(tAlerts, index.id)) {
+            continue;
+        }
+
+        index = JSON.parse(JSON.stringify(index));
+        let registration = loader.modules.building.registerEvent(index);
+
+        // Create a unique hash for this alert
+        let alertHash = loader.packages.crypto
+            .createHash('sha1')
+            .update(JSON.stringify(registration))
+            .digest('hex');
+
+        if (loader.cache.logging.findIndex(log => log.id == alertHash) == -1) {
+            loader.modules.hooks.createOutput(
+                `${this.name}`,
+                `[!] Alert ${registration.details.type} >> ${registration.details.name} (${
+                    registration.raw.tracking === undefined
+                        ? (registration.raw.properties.parameters.WMOidentifier &&
+                           registration.raw.properties.parameters.WMOidentifier[0] !== undefined
+                            ? registration.raw.properties.parameters.WMOidentifier[0]
+                            : `No ID found`)
+                        : registration.raw.tracking
+                })`
+            );
+
+            loader.cache.logging.push({
+                id: alertHash,
+                expires: registration.details.expires
+            });
+
+            loader.modules.hooks.youveGotMail(
+                `${registration.details.name} (${registration.details.type})`,
+                `Locations: ${registration.details.locations}
+Issued: ${new Date(registration.details.issued).toLocaleString()}
+Expires: ${new Date(registration.details.expires).toLocaleString()}
+Wind Gusts: ${registration.details.wind}
+Hail Size: ${registration.details.hail}
+Damage Threat: ${registration.details.damage}
+Tornado ${registration.details.tornado}
+Tags: ${registration.details.tag.join(', ')}
+Sender: ${registration.details.sender}
+Tracking ID: ${
+                    registration.raw.tracking === undefined
+                        ? (registration.raw.properties.parameters.WMOidentifier &&
+                           registration.raw.properties.parameters.WMOidentifier[0] !== undefined
+                            ? registration.raw.properties.parameters.WMOidentifier[0]
+                            : `No ID found`)
+                        : registration.raw.tracking
+                }`
+            );
+
+            // --- UGC role tagging from webhook_settings ---
+            const ugcCodes = registration.raw?.properties?.geocode?.UGC || [];
+            const webhookSettings = loader.cache.configurations.project_settings.webhook_settings || {};
+            const roleMap = webhookSettings.ugc_role_map || {};
+            const enableUgcRoles = webhookSettings.enable_ugc_roles === true;
+
+            const matchedRoleTags = enableUgcRoles
+                ? ugcCodes.map(code => roleMap[code]).filter(tag => tag && tag.trim() !== "")
+                : [];
+
+            loader.modules.hooks.sendWebhook(
+                `${registration.details.name} (${registration.details.type})`,
+                `**Locations:** ${registration.details.locations}
+**Issued:** ${new Date(registration.details.issued).toLocaleString()}
+**Expires:** ${new Date(registration.details.expires).toLocaleString()}
+**Wind Gusts:** ${registration.details.wind}
+**Hail Size:** ${registration.details.hail}
+**Damage Threat:** ${registration.details.damage}
+**Tornado** ${registration.details.tornado}
+**Tags:** ${registration.details.tag.join(', ')}
+**Sender:** ${registration.details.sender}
+**Tracking ID:** ${
+                    registration.raw.tracking === undefined
+                        ? (registration.raw.properties.parameters.WMOidentifier &&
+                           registration.raw.properties.parameters.WMOidentifier[0] !== undefined
+                            ? registration.raw.properties.parameters.WMOidentifier[0]
+                            : `No ID found`)
+                        : registration.raw.tracking
+                }
+
+\`\`\`
+${registration.details.description
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .join('\n')}
+\`\`\`
+`,
+                matchedRoleTags
+            );
+        }
+
+        if (Object.keys(registration).length != 0) {
+            if (registration.details.ignored == true) {
+                continue;
+            }
+            tAlerts.push(registration);
+        }
     }
+
+    return { success: true, message: tAlerts };
+}
+
 }
 
 module.exports = Parsing;
