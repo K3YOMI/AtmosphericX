@@ -33,23 +33,30 @@ class Dashboard {
       */
 
     processConfigurations = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
-        if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to modify configurations`});
-            return {success: false, message: `You must be an administrator to modify configurations`}
+        try {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) {
+                this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to modify configurations`});
+                return {success: false, message: `You must be an administrator to modify configurations`}
+            }
+            let body = JSON.parse(await new Promise((resolve, reject) => {
+                let body = ``;
+                request.on(`data`, (chunk) => { body += chunk; });
+                request.on(`end`, () => { resolve(body); });
+            }));
+            try { JSON.stringify(body); } catch (e) { this.giveResponse(request, response, {statusCode: 400, message: `Invalid JSON format`}); return {success: false, message: `Invalid JSON format`} }
+            loader.packages.fs.writeFileSync(`../configurations.json`, JSON.stringify(body, null, 4));
+            loader.modules.hooks.createOutput(this.name, `Configurations modified successfully`);
+            loader.modules.hooks.createLog(this.name, `Configurations modified successfully`);
+            this.giveResponse(request, response, {statusCode: 200, message: `Configurations modified successfully`});
+            loader.modules.hooks.reloadConfigurations()
+            return {success: true, message: `Manual alert modified successfully`}
+        } catch (error) {
+            loader.modules.hooks.createOutput(this.name, `Error occurred while processing configurations: ${error}`);
+            loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while processing configurations: ${error}`);
+            this.giveResponse(request, response, {statusCode: 500, message: `Internal Server Error`});
+            return {success: false, message: `Internal Server Error`}
         }
-        let body = JSON.parse(await new Promise((resolve, reject) => {
-            let body = ``;
-            request.on(`data`, (chunk) => { body += chunk; });
-            request.on(`end`, () => { resolve(body); });
-        }));
-        try { JSON.stringify(body); } catch (e) { this.giveResponse(request, response, {statusCode: 400, message: `Invalid JSON format`}); return {success: false, message: `Invalid JSON format`} }
-        loader.packages.fs.writeFileSync(`../configurations.json`, JSON.stringify(body, null, 4));
-        loader.modules.hooks.createOutput(this.name, `Configurations modified successfully`);
-        loader.modules.hooks.createLog(this.name, `Configurations modified successfully`);
-        this.giveResponse(request, response, {statusCode: 200, message: `Configurations modified successfully`});
-        loader.modules.hooks.reloadConfigurations()
-        return {success: true, message: `Manual alert modified successfully`}
     }
 
     /**
@@ -62,28 +69,35 @@ class Dashboard {
       */
 
     createManualAlert = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
-        if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a manual alert`});
-            return {success: false, message: `You must be an administrator to create a manual alert`}
+        try {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) {
+                this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a manual alert`});
+                return {success: false, message: `You must be an administrator to create a manual alert`}
+            }
+            let body = JSON.parse(await new Promise((resolve, reject) => {
+                let body = ``;
+                request.on(`data`, (chunk) => { body += chunk; });
+                request.on(`end`, () => { resolve(body); });
+            }));
+            let registration = loader.modules.hooks.filteringHtml(loader.modules.building.registerEvent(body));
+            loader.cache.manual = registration.details.locations != `` ? registration : []
+            this.giveResponse(request, response, {statusCode: 200, message: `Alert created successfully`});
+            if (loader.cache.manual.length != 0) {
+                loader.modules.hooks.createOutput(this.name, `Manual alert created successfully - Created Alert`);
+                loader.modules.hooks.createLog(this.name, `Manual alert created successfully - Created Alert`);
+            } else { 
+                loader.modules.hooks.createOutput(this.name, `Cleared manual alert - Clear`);
+                loader.modules.hooks.createLog(this.name, `Cleared manual alert - Clear`);
+            }
+            loader.modules.websocket.onCacheReady()
+            return {success: true, message: `Manual alert modified successfully`}
+        } catch (error) {
+            loader.modules.hooks.createOutput(this.name, `Error occurred while creating manual alert: ${error}`);
+            loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while creating manual alert: ${error}`);
+            this.giveResponse(request, response, {statusCode: 500, message: `Internal Server Error`});
+            return {success: false, message: `Internal Server Error`}
         }
-        let body = JSON.parse(await new Promise((resolve, reject) => {
-            let body = ``;
-            request.on(`data`, (chunk) => { body += chunk; });
-            request.on(`end`, () => { resolve(body); });
-        }));
-        let registration = loader.modules.hooks.filteringHtml(loader.modules.building.registerEvent(body));
-        loader.cache.manual = registration.details.locations != `` ? registration : []
-        this.giveResponse(request, response, {statusCode: 200, message: `Alert created successfully`});
-        if (loader.cache.manual.length != 0) {
-            loader.modules.hooks.createOutput(this.name, `Manual alert created successfully - Created Alert`);
-            loader.modules.hooks.createLog(this.name, `Manual alert created successfully - Created Alert`);
-        } else { 
-            loader.modules.hooks.createOutput(this.name, `Cleared manual alert - Clear`);
-            loader.modules.hooks.createLog(this.name, `Cleared manual alert - Clear`);
-        }
-        loader.modules.websocket.onCacheReady()
-        return {success: true, message: `Manual alert modified successfully`}
     }
 
     /**
@@ -96,30 +110,37 @@ class Dashboard {
       */
 
     createNotification = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
-        if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a notification`});
-            return {success: false, message: `You must be an administrator to create a notification`}
+        try {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) {
+                this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a notification`});
+                return {success: false, message: `You must be an administrator to create a notification`}
+            }
+            let body = JSON.parse(await new Promise((resolve, reject) => {
+                let body = ``;
+                request.on(`data`, (chunk) => { body += chunk; });
+                request.on(`end`, () => { resolve(body); });
+            }));
+            let title = body.title
+            let message = body.message
+            this.giveResponse(request, response, {statusCode: 200, message: `Notification created successfully`});
+            if (title != `` && message != ``) {
+                loader.cache.notification = loader.modules.hooks.filteringHtml({title: title, message: message})
+                loader.modules.hooks.createOutput(this.name, `Notification created successfully - ${title} - ${message}`);
+                loader.modules.hooks.createLog(this.name, `Notification created successfully - ${title} - ${message}`);
+            } else {
+                loader.cache.notification = {}
+                loader.modules.hooks.createOutput(this.name, `Cleared notification - Clear`);
+                loader.modules.hooks.createLog(this.name, `Cleared notification - Clear`);
+            }
+            loader.modules.websocket.onCacheReady()
+            return {success: true, message: `Notification modified successfully`}
+        } catch (error) {
+            loader.modules.hooks.createOutput(this.name, `Error occurred while creating notification: ${error}`);
+            loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while creating notification: ${error}`);
+            this.giveResponse(request, response, {statusCode: 500, message: `Internal Server Error`});
+            return {success: false, message: `Internal Server Error`}
         }
-        let body = JSON.parse(await new Promise((resolve, reject) => {
-            let body = ``;
-            request.on(`data`, (chunk) => { body += chunk; });
-            request.on(`end`, () => { resolve(body); });
-        }));
-        let title = body.title
-        let message = body.message
-        this.giveResponse(request, response, {statusCode: 200, message: `Notification created successfully`});
-        if (title != `` && message != ``) {
-            loader.cache.notification = loader.modules.hooks.filteringHtml({title: title, message: message})
-            loader.modules.hooks.createOutput(this.name, `Notification created successfully - ${title} - ${message}`);
-            loader.modules.hooks.createLog(this.name, `Notification created successfully - ${title} - ${message}`);
-        } else {
-            loader.cache.notification = {}
-            loader.modules.hooks.createOutput(this.name, `Cleared notification - Clear`);
-            loader.modules.hooks.createLog(this.name, `Cleared notification - Clear`);
-        }
-        loader.modules.websocket.onCacheReady()
-        return {success: true, message: `Notification modified successfully`}
     }
 
     /**
@@ -132,29 +153,36 @@ class Dashboard {
       */
 
     createStatusHeader = async function(request, response) {
-        let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
-        if (!hasSession.success) {
-            this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to modify the status header`});
-            return {success: false, message: `You must be an administrator to modify the status header`}
+        try {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) {
+                this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to modify the status header`});
+                return {success: false, message: `You must be an administrator to modify the status header`}
+            }
+            let body = JSON.parse(await new Promise((resolve, reject) => {
+                let body = ``;
+                request.on(`data`, (chunk) => { body += chunk; });
+                request.on(`end`, () => { resolve(body); });
+            }));
+            let title = body.title
+            loader.cache.header = title
+            this.giveResponse(request, response, {statusCode: 200, message: `Header modified successfully - ${loader.cache.header}`});
+            if (title != ``) {
+                loader.modules.hooks.createOutput(this.name, `Status header modified successfully - ${loader.cache.header}`);
+                loader.modules.hooks.createLog(this.name, `Status header modified successfully - ${loader.cache.header}`);
+            } else {
+                loader.cache.header = ``
+                loader.modules.hooks.createOutput(this.name, `Cleared status header - Clear`);
+                loader.modules.hooks.createLog(this.name, `Cleared status header - Clear`);
+            }
+            loader.modules.websocket.onCacheReady()
+            return {success: true, message: `Status header modified successfully`}
+        } catch (error) {
+            loader.modules.hooks.createOutput(this.name, `Error occurred while modifying status header: ${error}`);
+            loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while modifying status header: ${error}`);
+            this.giveResponse(request, response, {statusCode: 500, message: `Internal Server Error`});
+            return {success: false, message: `Internal Server Error`}
         }
-        let body = JSON.parse(await new Promise((resolve, reject) => {
-            let body = ``;
-            request.on(`data`, (chunk) => { body += chunk; });
-            request.on(`end`, () => { resolve(body); });
-        }));
-        let title = body.title
-        loader.cache.header = title
-        this.giveResponse(request, response, {statusCode: 200, message: `Header modified successfully - ${loader.cache.header}`});
-        if (title != ``) {
-            loader.modules.hooks.createOutput(this.name, `Status header modified successfully - ${loader.cache.header}`);
-            loader.modules.hooks.createLog(this.name, `Status header modified successfully - ${loader.cache.header}`);
-        } else {
-            loader.cache.header = ``
-            loader.modules.hooks.createOutput(this.name, `Cleared status header - Clear`);
-            loader.modules.hooks.createLog(this.name, `Cleared status header - Clear`);
-        }
-        loader.modules.websocket.onCacheReady()
-        return {success: true, message: `Status header modified successfully`}
     }
 
     /**
