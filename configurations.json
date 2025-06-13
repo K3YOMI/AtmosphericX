@@ -460,7 +460,8 @@
         "beep": "/assets/media/audio/tones/beep-tone.mp3",
         "eas": "/assets/media/audio/tones/eas-tone.mp3",
         "siren": "/assets/media/audio/tones/tore-tone.mp3",
-        "amber": "/assets/media/audio/tones/amber-tone.mp3"
+        "amber": "/assets/media/audio/tones/amber-tone.mp3",
+        "uniden": "/assets/media/audio/tones/uniden-tone.mp3"
     },
     "alert_dictionary": {
         "Tornado Emergency": {

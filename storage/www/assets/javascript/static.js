@@ -37,6 +37,8 @@ const static_dashboard_directs = [
     { icon: "fas fa-external-link-square-alt", label: "Github", nav: null, permission: 0, action: () => window.open('https://github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000') },
     { icon: "fas fa-external-link-square-alt", label: "Documentation", nav: null, permission: 0, action: () => window.open('https://k3yomi.github.io/blog/posts/atmosphericx/', '_blank', 'width=1000,height=1000') },
     { icon: "fas fa-bell", label: "Toggle Sounds", nav: null, permission: 0,  action: 'toggleMute' },
+    { icon: "fas fa-bell", label: "Toggle EAS", nav: null, permission: 0,  action: 'toggleEAS' },
+
 ]
 
 const static_alerts = [

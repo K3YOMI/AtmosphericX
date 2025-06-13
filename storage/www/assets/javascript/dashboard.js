@@ -907,7 +907,21 @@ class Dashboard {
             this.storage.muted = true;
             this.library.createNotification(`<span style="color: red;">Alerts have been muted</span>`);
         }
+    }
 
+    /**
+      * @function toggleEAS
+      * @description Toggles the EAS display
+      */
+
+    toggleEAS = function() {
+        if (this.storage.eas == true) {
+            this.storage.eas = false;
+            this.library.createNotification(`<span style="color: red;">EAS Alerts have been disabled</span>`);
+        } else {
+            this.storage.eas = true;
+            this.library.createNotification(`<span style="color: green;">EAS Alerts have been enabled</span>`);
+        }
     }
 
     /**
