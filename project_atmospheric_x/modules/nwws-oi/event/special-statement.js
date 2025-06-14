@@ -59,6 +59,19 @@ class AlertBuilder {
                 let damageThreat = loader.modules.raw.getStringByLine(msg, `DAMAGE THREAT...`)
                 let senderOffice = loader.modules.raw.getOfficeName(msg) ? loader.modules.raw.getOfficeName(msg) : `Unknown Office`
                 if (getCoords.length == 0 && wire.ugc_polygons) { getCoords = await loader.modules.ugc.getCoordinates(ugc.zones) }
+                let dateLineMatches = [...msg.matchAll(/\d{3,4}\s*(AM|PM)?\s*[A-Z]{2,4}\s+[A-Z]{3,}\s+[A-Z]{3,}\s+\d{1,2}\s+\d{4}/gim)];
+                if (dateLineMatches.length > 0) {
+                    let dateLineMatch = dateLineMatches[dateLineMatches.length - 1];
+                    let nwsStart = msg.lastIndexOf(dateLineMatch[0]);
+                    if (nwsStart !== -1) {
+                        let latStart = msg.indexOf("&&", nwsStart);
+                        if (latStart !== -1) {
+                            msg = msg.substring(nwsStart + dateLineMatch[0].length, latStart + "&&".length).trim();
+                        } else {
+                            msg = msg.substring(nwsStart + dateLineMatch[0].length).trim();
+                        }
+                    }
+                }
                 let alert = {
                     id: `NWWS-OI-${defaultWmo ? defaultWmo[0] : `N/A`}-${ugc.zones.join(`-`)}`,
                     tracking: `${defaultWmo ? defaultWmo[0] : `N/A`}-${ugc.zones.join(`-`)}`,

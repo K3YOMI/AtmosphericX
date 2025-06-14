@@ -55,9 +55,11 @@ class Alerts {
             if (this.storage.alertManual != data.details.name + `-` + data.details.locations + `-` + data.details.type) {
                 this.storage.alertManual = data.details.name + `-` + data.details.locations + `-` + data.details.type
                 if (!data.metadata.ignored) { this.storage.alertsQueue.push(data) }
-                if (isDashboard) { this.library.createNotification(`<span style="color: red;">${data.details.name}</span> has been <span style="color: green;">${data.details.type}</span>`) }
+                if (isDashboard) { 
+                    this.createDashboardPriorityAlert(data)
+                    this.library.createNotification(`<span style="color: red;">${data.details.name}</span> has been <span style="color: green;">${data.details.type}</span>`) 
+                }
             }
-            // check if in active
             let isInActive = this.storage.active.find(x => x.details.name == data.details.name && x.details.locations == data.details.locations)
             if (isInActive == undefined) { this.storage.active.push(data) }
         }
@@ -74,7 +76,10 @@ class Alerts {
                 if (emergencyAlertPlayed != undefined) { data.metadata.siren = false; data.metadata.eas = false; }
                 if (data.metadata.siren == true || data.metadata.eas == true) { this.storage.emergencyAlerts.push(`${data.details.name}-${data.details.locations}`) } // Add to sound alerts if not already in the list
                 if (canBePushed) { 
-                    if (isDashboard) { this.library.createNotification(`<span style="color: red;">${data.details.name}</span> has been <span style="color: green;">${data.details.type}</span>`) }
+                    if (isDashboard) { 
+                        this.createDashboardPriorityAlert(data)
+                        this.library.createNotification(`<span style="color: red;">${data.details.name}</span> has been <span style="color: green;">${data.details.type}</span>`) 
+                    }
                     this.storage.alertsQueue.push(data)
                     this.storage.lastQueue.push(data)
                 }
@@ -88,6 +93,62 @@ class Alerts {
         }
         return this.storage.alertsQueue
     }
+
+
+    /**
+      * Creates a dashboard priority alert similar to NOAA Weather Radio Alerts. Starts off with the Uniden Siren and gives a confirmation if you want to proceed to listen to the alert with
+      * text to speech. 
+      * @param {Object} alert - The alert object containing details about the alert.
+      */
+
+    createDashboardPriorityAlert = function(alert) {
+        if (this.storage.isPriorityAlertPlaying == undefined) { this.storage.isPriorityAlertPlaying = false }
+        if (this.storage.eas != true) { return }
+        if (this.storage.isPriorityAlertPlaying) { return }
+        this.storage.isPriorityAlertPlaying = true;
+        this.library.playAudio(this.storage.configurations.tone_sounds.uniden, false);
+        dashboard_class.injectNotification({
+            title: `Critical Information - ${alert.details.name}`,
+            subtext: `Locations Impacted: ${alert.details.locations}`,
+            description: `${alert.details.description.substring(0, 3000)}...<br><br>`,
+            rows: 3,
+            parent: `_body.base`,
+            buttons: [
+                {
+                    name: `Listen`,
+                    className: `button-primary`,
+                    function: () => {
+                        let synth = window.speechSynthesis;
+                        let utter = new SpeechSynthesisUtterance(`${alert.details.description}`);
+                        let preferredVoices = [ "Microsoft Aria Online (Natural) - English (United States)", "Google US English", "Google UK English Female", "Google UK English Male" ];
+                        let voices = synth.getVoices();
+                        utter.lang = `en-US`;
+                        utter.volume = 1;
+                        utter.rate = 1;
+                        utter.pitch = 1;
+                        utter.voice = voices.find(voice => preferredVoices.includes(voice.name)) || voices.find(voice => voice.lang.startsWith("en")) || voices[0];  utter.onend = () => {
+                            this.storage.isPriorityAlertPlaying = false;
+                        };
+                        synth.cancel();
+                        synth.speak(utter);
+                        this.library.stopAllSounds();
+                        dashboard_class.clearAllPopups();
+                    }
+                },
+                {
+                    name: `Ignore Alert`,
+                    className: `button-danger`,
+                    function: () => {
+                        dashboard_class.clearAllPopups();
+                        this.library.stopAllSounds();
+                        this.storage.isPriorityAlertPlaying = false;
+                    }
+                }
+            ]
+        })
+        setTimeout(() => { this.storage.isPriorityAlertPlaying = false; }, 10 * 1000);
+    }  
+
 
     /**
       * @function createAnimatedAlert

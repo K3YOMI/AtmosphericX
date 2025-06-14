@@ -195,13 +195,14 @@
         let dashboard_class;
         let alert_class;
         let library = new Library()
+        library.detectMobileDevice()
         library.createWebsocketSession([`wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
             dashboard_class = new Dashboard(library, true)
             cfg_class = new CfgEditor(library)
             document.addEventListener('onCacheUpdate', async (event) => {
                 let storage = alert_class.syncAlerts(true)
-                if (storage.length > 0 && library.storage.muted == false) { await alert_class.triggerAlertQueue() }
+                if (storage.length > 0 && library.storage.sounds == true) { await alert_class.triggerAlertQueue() }
                 await dashboard_class.updateThread()
             })
         })

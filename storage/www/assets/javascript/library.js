@@ -165,8 +165,12 @@ class Library {
             audio.volume = 1.0
             audio.autoplay = true
             audio.play()
+            if (!this.storage.currentPlaying) { this.storage.currentPlaying = [] }
+            this.storage.currentPlaying.push(audio)
             audio.onended = () => {
                 audio.remove()
+                let index = this.storage.currentPlaying.indexOf(audio);
+                if (index > -1) {  this.storage.currentPlaying.splice(index, 1); }
                 if (useChannels) { this.storage.playable = true}
             }  
         } else { 
@@ -184,7 +188,11 @@ class Library {
                     channel.autoplay = true;
                     channel.volume = 1.0;
                     channel.play();
+                    if (!this.storage.currentPlaying) { this.storage.currentPlaying = [] }
+                    this.storage.currentPlaying.push(channel);
                     channel.onended = () => {
+                        let index = this.storage.currentPlaying.indexOf(channel);
+                        if (index > -1) { this.storage.currentPlaying.splice(index, 1); }
                         if (useChannels) { this.storage.playable = true; }
                     };
                     break;
@@ -193,8 +201,24 @@ class Library {
         }
     }
 
+    /**
+     * @function stopAllSounds
+     * @description Stops all currently playing audio files and resets the current playing audio list.
+     */
 
-/**
+    stopAllSounds = function() {
+        if (this.storage.currentPlaying) {
+            for (let audio of this.storage.currentPlaying) {
+                if (!audio.ended && !audio.paused) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            }
+            this.storage.currentPlaying = [];
+        }
+    }
+
+   /**
      * @function createNotification
      * @description Creates a notification element and appends it to the body. The notification slides in, stays for a while, and then slides out before being removed from the DOM.
      * 
