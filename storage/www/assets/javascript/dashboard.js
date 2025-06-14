@@ -298,10 +298,10 @@ class Dashboard {
         let role = localStorage.getItem('atmosx.cached.role'); let roleText = role === "1" ? "Administator" : (role === "0" ? "User" : "Administator"); 
         document.getElementById(usernameSpan).innerHTML = `${username} (Role: ${roleText})`; 
         this.storage.eas = localStorage.getItem('atmosx.cached.eas') === 'true' ? true : false;
-        this.storage.muted = localStorage.getItem('atmosx.cached.muted') === 'true' ? true : false;
+        this.storage.sounds = localStorage.getItem('atmosx.cached.sounds') === 'true' ? true : false;
         if (localStorage.getItem('atmosx.cached.donationprompt') === null) { 
             localStorage.setItem(`atmosx.cached.eas`, false)
-            localStorage.setItem(`atmosx.cached.muted`, true)
+            localStorage.setItem(`atmosx.cached.sounds`, true)
             this.injectNotification({title: `Donations are appreciated`, description: `As the sole developer of this project, your donations would greatly help in maintaining and improving this project. Contributions would allow me to dedicate more time to development, cover hosting costs (if any), and implement new features to enhance your experience.`,rows: 2,parent: `_body.base`, buttons: [ { name: `No Thank You`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups()} }, { name: `I'd like to donate!`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups()} } ],inputs: [],selects: null}) 
         }
     }
@@ -904,13 +904,13 @@ class Dashboard {
       */ 
 
     toggleMute = function() {
-        if (this.storage.muted == true) {
-            this.storage.muted = false;
-            localStorage.setItem('atmosx.cached.muted', false);
+        if (this.storage.sounds == true) {
+            this.storage.sounds = false;
+            localStorage.setItem('atmosx.cached.sounds', false);
             this.library.createNotification(`<span style="color: green;">Alerts have been unmuted</span>`);
         } else {
-            this.storage.muted = true;
-            localStorage.setItem('atmosx.cached.muted', true);
+            this.storage.sounds = true;
+            localStorage.setItem('atmosx.cached.sounds', true);
             this.library.createNotification(`<span style="color: red;">Alerts have been muted</span>`);
         }
     }

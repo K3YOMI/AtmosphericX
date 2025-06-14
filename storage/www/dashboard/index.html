@@ -201,7 +201,7 @@
             cfg_class = new CfgEditor(library)
             document.addEventListener('onCacheUpdate', async (event) => {
                 let storage = alert_class.syncAlerts(true)
-                if (storage.length > 0 && library.storage.muted == false) { await alert_class.triggerAlertQueue() }
+                if (storage.length > 0 && library.storage.sounds == true) { await alert_class.triggerAlertQueue() }
                 await dashboard_class.updateThread()
             })
         })
