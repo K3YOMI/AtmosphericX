@@ -62,23 +62,52 @@ class Hooks {
       * 
       * @param {string} title - The title of the webhook message.
       * @param {string} message - The message of the webhook.
+      * @param {string[]} [ugc_roles] - Optional array of Discord role mentions to include.
       */
 
-    sendWebhook = async function(title, message) {
+    sendWebhook = async function(title, message, ugc_roles = []) {
         let settings = loader.cache.configurations.project_settings.webhook_settings;
         let endpoint = settings.discord_webhook;
-        let content = settings.content;
+        let content = settings.content || "";
         let displayName = settings.webhook_display;
-        let cooldownTime = settings.webhook_cooldown
+        let cooldownTime = settings.webhook_cooldown;
+
         if (!settings.enabled) { return; }
+
         let currentTime = new Date().getTime();
         loader.static.webhookTimestamps.push({ time: currentTime, title: title });
         loader.static.webhookTimestamps = loader.static.webhookTimestamps.filter(timestamp => timestamp.time > currentTime - cooldownTime * 1000);
+
         if (loader.static.webhookTimestamps.length > 3) { return; }
-        let embed = { title: title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: { text: displayName } };
-        try { await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] }); } catch (error) { return { success: false, message: `Failed to send webhook message.` } }
-        return { success: true, message: `Successfully sent webhook message.` }
-    }
+
+        // Append role mentions to the content string, separated by spaces
+        if (Array.isArray(ugc_roles)) {
+            ugc_roles.forEach(tag => {
+                if (tag && tag.trim() !== "") {
+                    content += ` ${tag}`;
+                }
+            });
+        }
+
+        let embed = {
+            title: title,
+            description: message,
+            color: 16711680,
+            timestamp: new Date().toISOString(),
+            footer: { text: displayName }
+        };
+
+        try {
+            await loader.packages.axios.post(endpoint, {
+                username: displayName,
+                content: content.trim(),
+                embeds: [embed]
+            });
+        } catch (error) {
+            return { success: false, message: `Failed to send webhook message.` };
+        }
+        return { success: true, message: `Successfully sent webhook message.` };
+    };
 
 
     /**

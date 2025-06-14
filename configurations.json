@@ -181,7 +181,14 @@
             "discord_webhook": "DISCORD_WEBHOOK_HERE",
             "webhook_display": "AtmosphericX (Webhook Integration)",
             "content": "<@&ROLE_ID_HERE>",
-            "webhook_cooldown": 5
+            "webhook_cooldown": 5,
+            "enable_ugc_roles": false,
+            "ugc_role_map": {
+                "MSC021": "<@&ROLE_ID_HERE2>",
+                "MSC029": "<@&ROLE_ID_HERE3>",
+                "MSC063": "<@&ROLE_ID_HERE4>",
+                "MSC085": "<@&ROLE_ID_HERE5>"
+            }
         },
         "mail_settings": {
             "enabled": false,
