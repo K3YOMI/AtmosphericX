@@ -195,6 +195,7 @@
         let dashboard_class;
         let alert_class;
         let library = new Library()
+        library.detectMobileDevice()
         library.createWebsocketSession([`wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
             dashboard_class = new Dashboard(library, true)

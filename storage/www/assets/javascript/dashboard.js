@@ -907,11 +907,11 @@ class Dashboard {
         if (this.storage.sounds == true) {
             this.storage.sounds = false;
             localStorage.setItem('atmosx.cached.sounds', false);
-            this.library.createNotification(`<span style="color: green;">Alerts have been muted</span>`);
+            this.library.createNotification(`<span style="red: green;">Alerts have been muted</span>`);
         } else {
             this.storage.sounds = true;
             localStorage.setItem('atmosx.cached.sounds', true);
-            this.library.createNotification(`<span style="color: red;">Alerts have been unmuted</span>`);
+            this.library.createNotification(`<span style="color: green;">Alerts have been unmuted</span>`);
         }
     }
 
