@@ -104,8 +104,7 @@ class Alerts {
     createDashboardPriorityAlert = function(alert) {
         if (this.storage.isPriorityAlertPlaying == undefined) { this.storage.isPriorityAlertPlaying = false }
         if (this.storage.eas != true) { return }
-        if (this.storage.isPriorityAlertPlaying) { return }
-        this.storage.isPriorityAlertPlaying = true;
+        if (this.storage.isPriorityAlertPlaying == true) { return }
         this.library.playAudio(this.storage.configurations.tone_sounds.uniden, false);
         dashboard_class.injectNotification({
             title: `Critical Information - ${alert.details.name}`,
@@ -146,6 +145,7 @@ class Alerts {
                 }
             ]
         })
+        this.storage.isPriorityAlertPlaying = true;
         setTimeout(() => { this.storage.isPriorityAlertPlaying = false; }, 10 * 1000);
     }  
 
