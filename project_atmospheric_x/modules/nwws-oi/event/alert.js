@@ -70,10 +70,18 @@ class AlertBuilder {
                     if (nwsStart !== -1) {
                         let latStart = msg.indexOf("&&", nwsStart);
                         if (latStart !== -1) {
-                            msg = msg.substring(nwsStart + dateLineMatch[0].length, latStart + "&&".length).trim();
+                            msg = msg.substring(nwsStart + dateLineMatch[0].length, latStart).trim();
                         } else {
                             msg = msg.substring(nwsStart + dateLineMatch[0].length).trim();
                         }
+                    }
+                } else { 
+                    let vtecStart = msg.indexOf(vtec.raw);
+                    if (vtecStart !== -1) {
+                        let afterVtec = msg.substring(vtecStart + vtec.raw.length);
+                        if (afterVtec.startsWith('/')) { afterVtec = afterVtec.substring(1); }
+                        let latStart = afterVtec.indexOf("&&");
+                        if (latStart !== -1) { msg = afterVtec.substring(0, latStart).trim(); } else { msg = afterVtec.trim(); }
                     }
                 }
                 let alert = {

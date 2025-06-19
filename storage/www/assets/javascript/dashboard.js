@@ -22,6 +22,7 @@ class Dashboard {
         this.name = `Dashboard`
         this.library.createOutput(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
         if (isDashboard) {
+            this.triggerLocalStorageListener()
             this.populateSidebar()
             this.updateThread()
             this.spawnGeneralSetupHub()
@@ -289,6 +290,8 @@ class Dashboard {
     /**
       * @function triggerLocalStorageListener
       * @description Handles the display of the account username and prompts the user for donations if they haven't dismissed the prompt.
+      * Note: Permissions are still handled by the server, this is just a client-side display function and will not affect the permissions of the user besides
+      * showing certain features based on the client side storage :3
       * 
       * @param {string} [usernameSpan=`_home.accountname`] - The ID of the span element where the username will be displayed. Defaults to `_home.accountname`.
       */
@@ -299,6 +302,7 @@ class Dashboard {
         document.getElementById(usernameSpan).innerHTML = `${username} (Role: ${roleText})`; 
         this.storage.eas = localStorage.getItem('atmosx.cached.eas') === 'true' ? true : false;
         this.storage.sounds = localStorage.getItem('atmosx.cached.sounds') === 'true' ? true : false;
+        if (role == null || role == undefined) { localStorage.setItem('atmosx.cached.role', "1"); }
         if (localStorage.getItem('atmosx.cached.donationprompt') === null) { 
             localStorage.setItem(`atmosx.cached.eas`, false)
             localStorage.setItem(`atmosx.cached.sounds`, false)
@@ -959,7 +963,6 @@ class Dashboard {
 
     async updateThread() {
         this.updateSize()
-        this.triggerLocalStorageListener()
         this.spawnStormReports()
         this.spawnMesoscaleDiscussions()
         this.spawnStormSpotterNetwork()
