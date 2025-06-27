@@ -282,22 +282,27 @@ class Mapbox {
 
     displayRadar = async function () {
         try {
-            const response = await this.library.createHttpRequest('https://api.rainviewer.com/public/weather-maps.json');
-            const data = await response.json();
-            const latestRadar = data.radar.past.at(-1);
+            let response = await this.library.createHttpRequest('https://api.rainviewer.com/public/weather-maps.json');
+            let data = await response.json();
+            let latestRadar = data.radar.past.at(-1);
             if (!latestRadar || !latestRadar.time) return;
-            if (!this.storage.mapbox.getSource('radar-source')) {
-                this.storage.mapbox.addSource('radar-source', {
+            let radarSourceId = 'radar-source';
+            let radarLayerId = 'radar-layer';
+            let radarTiles = [`https://tilecache.rainviewer.com/v2/radar/${latestRadar.time}/512/{z}/{x}/{y}/6/0_0.png`];
+            if (this.storage.mapbox.getSource(radarSourceId)) {
+                this.storage.mapbox.getSource(radarSourceId).setTiles(radarTiles);
+            } else {
+                this.storage.mapbox.addSource(radarSourceId, {
                     type: 'raster',
-                    tiles: [`https://tilecache.rainviewer.com/v2/radar/${latestRadar.time}/512/{z}/{x}/{y}/6/0_0.png`],
+                    tiles: radarTiles,
                     tileSize: 256
                 });
             }
-            if (!this.storage.mapbox.getLayer('radar-layer')) {
+            if (!this.storage.mapbox.getLayer(radarLayerId)) {
                 this.storage.mapbox.addLayer({
-                    id: 'radar-layer',
+                    id: radarLayerId,
                     type: 'raster',
-                    source: 'radar-source',
+                    source: radarSourceId,
                     paint: { 'raster-opacity': 0.5 }
                 });
             }
