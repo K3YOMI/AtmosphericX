@@ -74,6 +74,7 @@ class AlertBuilder {
                         } else {
                             msg = msg.substring(nwsStart + dateLineMatch[0].length).trim();
                         }
+                        if (msg.startsWith('/')) { msg = msg.substring(1).trim() }
                     }
                 } else { 
                     let vtecStart = msg.indexOf(vtec.raw);
