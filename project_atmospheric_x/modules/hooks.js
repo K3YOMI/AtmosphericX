@@ -90,7 +90,7 @@ class Hooks {
 
     converCoordinated = async function(lat, lon) {
         return new Promise((resolve, reject) => {
-            let url = loader.definitions.static_apis.open_stree_map_coordinates.replace("${X}", lat).replace("${Y}", lon);
+            let url = loader.definitions.static_apis.open_street_map_coordinates.replace("${X}", lat).replace("${Y}", lon);
             return this.createHttpRequest(url).then(response => {
                 if (response.success === false) { resolve('err') } resolve(response.message);
             }).catch(error => { resolve('err'); });

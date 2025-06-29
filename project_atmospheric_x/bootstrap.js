@@ -77,5 +77,5 @@ loader.definitions.eventTypes = { "W": "Warning", "F": "Forecast", "A": "Watch",
 
 
 loader.definitions.static_apis = { 
-    ['open_stree_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}"
+    ['open_street_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}"
 }
