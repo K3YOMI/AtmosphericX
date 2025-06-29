@@ -249,6 +249,7 @@ class Parsing {
         let typeMap = { severe: { key: "PSv3", label: "Severe" }, tornado: { key: "ProbTor", label: "Tornado" }};
         let objects = [];
         let lines = messageBody.split('\n');
+        let seenIds = new Set();
         let i = 0;
         while (i < lines.length) {
             let line = lines[i];
@@ -266,22 +267,22 @@ class Parsing {
                     PTv3: details && details[4] ? parseFloat(details[4]) : null,
                     ProbTor: details && details[5] ? parseFloat(details[5]) : null
                 };
-                let coords = [];
+                // Skip storing coordinates to save memory
                 let j = i + 2;
                 while (j < lines.length && !lines[j].startsWith("End:") && !lines[j].startsWith("Color:")) {
-                    let coordMatch = lines[j].match(/^\s*([-\d.]+),\s*([-\d.]+)/);
-                    if (coordMatch) { coords.push([parseFloat(coordMatch[2]), parseFloat(coordMatch[1])]); }
                     j++;
                 }
                 let key = typeMap[type] ? typeMap[type].key : "PSv3";
-                if (meta[key] !== null) { objects.push({ id: meta.objectId, type: type, probability: meta[key], description: meta.info}); }
+                if (meta[key] !== null && !seenIds.has(meta.objectId)) {
+                    objects.push({ id: meta.objectId, type: type, probability: meta[key], description: meta.info});
+                    seenIds.add(meta.objectId);
+                }
                 i = j;
             } else {
                 i++;
             }
         }
         let typeThreshold = type === `tornado` ? loader.cache.configurations.sources.miscellaneous_sources.tornado_probability.threshold : loader.cache.configurations.sources.miscellaneous_sources.severe_probability.threshold;
-        objects = objects.filter((obj, index, self) => index === self.findIndex((t) => (t.id === obj.id)));
         objects = objects.filter(object => object.probability >= typeThreshold);
         return { success: true, message: objects };
     }
