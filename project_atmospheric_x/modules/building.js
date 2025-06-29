@@ -229,24 +229,6 @@ class Building {
                 let response = loader.modules.parsing.readRawMesoscaleDicussions(rawData.MesoscaleDiscussions)
                 loader.cache.discussions = response.message;
             }
-            if (rawData.RealtimeIRL != undefined) { 
-                if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
-                loader.cache.realtime.lat = rawData.RealtimeIRL.location.latitude;
-                loader.cache.realtime.lon = rawData.RealtimeIRL.location.longitude;
-                if (loader.cache.realtime.address == undefined) {
-                    loader.cache.realtime.address = `N/A`;
-                    loader.cache.realtime.location = `N/A`;
-                    loader.cache.realtime.county = `N/A`;
-                    loader.cache.realtime.state = `N/A`;
-                }
-            }
-            if (rawData.LocationServices != undefined) { 
-                if (typeof loader.cache.realtime != `object`) { return }
-                loader.cache.realtime.address = rawData.LocationServices.features[0].place_name;
-                loader.cache.realtime.location = rawData.LocationServices.features[2].place_name;
-                loader.cache.realtime.county = rawData.LocationServices.features[4].text;
-                loader.cache.realtime.state = rawData.LocationServices.features[5].text;
-            }
             if (rawData.SpotterNetworkReports != undefined) {
                 let response = loader.modules.parsing.rawSpotterNetworkReports(rawData.SpotterNetworkReports)
                 loader.cache.reports = response.message
@@ -274,6 +256,19 @@ class Building {
             if (rawData.wxRadio != undefined) {
                 let response = loader.modules.parsing.readWxRadio(rawData.wxRadio)
                 loader.cache.wxRadio = response.message
+            }
+            if (rawData.RealtimeIRL != undefined) { 
+                if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
+                loader.cache.realtime.lat = rawData.RealtimeIRL.location.latitude;
+                loader.cache.realtime.lon = rawData.RealtimeIRL.location.longitude;
+                let toLocation = await loader.modules.hooks.converCoordinated(loader.cache.realtime.lat, loader.cache.realtime.lon)
+                if (toLocation != `err`) {
+                    let address = toLocation.address
+                    loader.cache.realtime.address = `${address.house_number}, ${address.road}, ${address.city || address.municipality}, ${address.state}, ${address.postcode}`; 
+                    loader.cache.realtime.location = `${address.city || address.municipality}, ${address.state}`
+                    loader.cache.realtime.county = address.county;
+                    loader.cache.realtime.state = address.state;
+                }
             }
             loader.modules.websocket.onCacheReady()
             return {status: true, message: `Cache built successfully`}

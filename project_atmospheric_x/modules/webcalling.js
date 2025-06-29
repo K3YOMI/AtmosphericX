@@ -77,10 +77,9 @@ class Webcalling {
       * @param {Object} metadata - The metadata object containing the endpoint and other parameters
       * @param {string} reqName - The name of the request to be used in the log messages
       * @param {boolean} isIem - Whether the request is for the IEM (default: false)
-      * @param {boolean} isLocationServices - Whether the request is for the Location Services (default: false)
       */
 
-    genericRequest = async function(metadata, reqName, isIem=false, isLocationServices=false, isRealtimeIRL=false) {
+    genericRequest = async function(metadata, reqName, isIem=false, isRealtimeIRL=false) {
         return new Promise(async (resolve) => {
             try {
                 let url = metadata.endpoint
@@ -90,16 +89,6 @@ class Webcalling {
                     let hours = metadata.data_retention_hours
                     if (state != `ALL` && state != ``) { url += `hours=${hours}&states=${state}` }
                 }
-                if (isLocationServices) {
-                    if (loader.cache.realtime == undefined || loader.cache.realtime.length == 0) {
-                        loader.static.httpTimer[reqName] = 0
-                        this.results += ` (${reqName}: Skipped)`;
-                        resolve({success: false, message: []})
-                        return
-                    }
-                    url = url.replace("${X}", loader.cache.realtime.lon).replace("${Y}", loader.cache.realtime.lat).replace("${Z}", loader.cache.configurations.widget_settings.mapbox.api_key)
-                }
-
                 let response = await loader.modules.hooks.createHttpRequest(url)
                 if (response.status != false && response.message != undefined) {
                     this.data[reqName] = response.message;
@@ -113,7 +102,7 @@ class Webcalling {
                     this.retries++;
                     loader.modules.hooks.createOutput(`${this.name}.genericRequest`, `Retrying request for ${reqName} (${this.retries})`)
                     loader.modules.hooks.createLog(`${this.name}.genericRequest`, `Retrying request for ${reqName} (${this.retries})`)
-                    let result = await this.genericRequest(metadata, reqName, isIem, isLocationServices, isRealtimeIRL);
+                    let result = await this.genericRequest(metadata, reqName, isIem, isRealtimeIRL);
                     resolve(result);
                 } else { 
                     this.results += ` (${reqName}: Failed)`;
@@ -159,7 +148,6 @@ class Webcalling {
                 {name: 'SpotterNetworkReports', handle: sources.miscellaneous_sources.spotter_network_reports, timer: sources.miscellaneous_sources.spotter_network_reports.cache_time, contradictions: [`mPingReports`, `IEMReports`, `GRLevelXReports`], pointer: `genericRequest`},
                 {name: 'NoaaWeatherWireService', handle: sources.primary_sources.noaa_weather_wire_service, timer: 1, contradictions: [`NationalWeatherService`], pointer: `nullRoute`},        
                 {name: 'RealtimeIRL', handle: sources.miscellaneous_sources.location_services.realtimeirl, timer: sources.miscellaneous_sources.location_services.realtimeirl.cache_time, contradictions: [], pointer: `genericRequest`},        
-                {name: 'LocationServices', handle: sources.miscellaneous_sources.location_services.location_names, timer: sources.miscellaneous_sources.location_services.location_names.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'ProbTornado', handle: sources.miscellaneous_sources.tornado_probability, timer: sources.miscellaneous_sources.tornado_probability.cache_time, contradictions: [], pointer: `genericRequest`},        
                 {name: 'ProbSevere', handle: sources.miscellaneous_sources.severe_probability, timer: sources.miscellaneous_sources.severe_probability.cache_time, contradictions: [], pointer: `genericRequest`},     
                 {name: 'wxRadio', handle: sources.miscellaneous_sources.wx_radio, timer: sources.miscellaneous_sources.wx_radio.cache_time, contradictions: [], pointer: `genericRequest`},     
@@ -186,7 +174,7 @@ class Webcalling {
                 for (let handle of ready) {
                     loader.static.httpTimer[handle.name] = Date.now();
                     this.retries = 0
-                    await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `LocationServices`, handle.name == `RealtimeIRL`)
+                    await this[handle.pointer](handle.handle, handle.name, handle.name == `IEMReports`, handle.name == `RealtimeIRL`)
                 }    
             }
             if (isNWWS != undefined) {

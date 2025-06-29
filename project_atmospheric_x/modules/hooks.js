@@ -80,6 +80,23 @@ class Hooks {
         return { success: true, message: `Successfully sent webhook message.` }
     }
 
+    /**
+      * @function converCoordinated
+      * @description Converts latitude and longitude coordinates to a human-readable address using the OpenStreetMap Nominatim API.
+      *
+      * @param {number} lat - The latitude coordinate.
+      * @param {number} lon - The longitude coordinate.
+      */
+
+    converCoordinated = async function(lat, lon) {
+        return new Promise((resolve, reject) => {
+            let url = loader.definitions.static_apis.open_stree_map_coordinates.replace("${X}", lat).replace("${Y}", lon);
+            return this.createHttpRequest(url).then(response => {
+                if (response.success === false) { resolve('err') } resolve(response.message);
+            }).catch(error => { resolve('err'); });
+        })
+    }
+
 
     /**
       * @function getRandomAlert

@@ -58,12 +58,6 @@
                     "show_active": true,
                     "show_streaming": true
                 },
-                "location_names": {
-                    "enabled": false,
-                    "cache_time": 119,
-                    "endpoint": "https://api.mapbox.com/geocoding/v5/mapbox.places/${X},${Y}.json?language=en&access_token=${Z}",
-                    "note": "You must have a VALID Mapbox API key to use this service. (Set the API key in the widgets config) Additionally, this only gets the raw text location (ex. 'Des Moines, IA')."
-                },
                 "note": "Realtimeirl and spotter network tracking can NOT be used at the same time for tracking. You must choose one or the other."
             },
             "iem_local_storm_reports": {
