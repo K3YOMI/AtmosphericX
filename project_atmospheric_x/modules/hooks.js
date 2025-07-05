@@ -16,6 +16,7 @@
 let loader = require(`../loader.js`)
 
 
+
 class Hooks { 
     constructor() {
         this.name = `Hooks`;
@@ -90,7 +91,7 @@ class Hooks {
 
     converCoordinated = async function(lat, lon) {
         return new Promise((resolve, reject) => {
-            let url = loader.definitions.static_apis.open_street_map_coordinates.replace("${X}", lat).replace("${Y}", lon);
+            let url = loader.definitions.static_apis.open_stree_map_coordinates.replace("${X}", lat).replace("${Y}", lon);
             return this.createHttpRequest(url).then(response => {
                 if (response.success === false) { resolve('err') } resolve(response.message);
             }).catch(error => { resolve('err'); });
@@ -220,6 +221,19 @@ class Hooks {
             realtime_irl: loader.cache.configurations.sources.miscellaneous_sources.realtime_irl,
             version: this.getCurrentVersion(),
         }
+        const memoryUsage = process.memoryUsage();
+        loader.cache.metrics = {
+            memory: (memoryUsage.rss / 1024 / 1024).toFixed(2) + ' MB', 
+            cpu: loader.packages.os.cpus().length + ' cores',
+            platform: process.platform,
+            arch: process.arch,
+            uptime: (process.uptime() / 60).toFixed(2) + ' min',
+            node_version: process.version,
+            hostname: loader.packages.os.hostname(),
+            free_memory: (loader.packages.os.freemem() / 1024 / 1024).toFixed(2) + ' MB',
+            total_memory: (loader.packages.os.totalmem() / 1024 / 1024).toFixed(2) + ' MB',
+            loadavg: loader.packages.os.loadavg(),
+        }
         return {success: true, message: `Successfully reloaded configurations.`}
     }
 
@@ -282,7 +296,7 @@ class Hooks {
         if (changelogsData.success === false) { return {success: false, message: `Failed to get changelogs.`} }
         loader.cache.updates = changelogsData.message[thisVersion] ? changelogsData.message[thisVersion] : []
         loader.cache.latestupdates = changelogsData.message[latestVersion.message] ? changelogsData.message[latestVersion.message] : []
-        if (latestVersion.message != thisVersion) {
+        if (latestVersion.message > thisVersion) {
             this.createOutput(this.name, `\n\n[NOTICE] New version available: ${latestVersion.message} (Current version: ${thisVersion})\n\t You can update to the latest version by running update.sh.\n\t If you wish to replace manually, you can download the latest version from the GitHub repository.\n\t ==================== CHANGE LOGS ======================== \n\t ${loader.cache.latestupdates.changelogs.join(`\n\t `)}\n\n`);
         }
     }

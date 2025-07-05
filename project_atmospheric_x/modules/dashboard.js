@@ -59,6 +59,47 @@ class Dashboard {
         }
     }
 
+
+    /**
+      * @function chatBot
+      * @description Create a message with a chatbot to retrieve text-to-speech audio for streaming purposes ig...
+      * This is only windows supported due to a package limitation....
+      * 
+      * @async
+      * @param {Object} request - The HTTP request object.
+      * @param {Object} response - The HTTP response object.
+      */
+
+    chatBot = async function(request, response) {
+        try {
+            let hasSession = loader.modules.dashboard.hasCredentials(request, response, true)
+            if (!hasSession.success) {
+                this.giveResponse(request, response, {statusCode: 403, message: `You must be an administrator to create a chatbot alert`});
+                return {success: false, message: `You must be an administrator to create a chatbot alert`}
+            }
+            let body = JSON.parse(await new Promise((resolve, reject) => {
+                let body = ``;
+                request.on(`data`, (chunk) => { body += chunk; });
+                request.on(`end`, () => { resolve(body); });
+            }));
+            let registration = loader.modules.hooks.filteringHtml(body);
+            let description = registration.description
+            let chatData = await loader.modules.character.commitChat(`${loader.cache.configurations.sources.miscellaneous_sources.character_ai.prefix} ${description}`)
+            if (chatData.status == false) { 
+                loader.giveResponse(request, response, {statusCode: 200, message: chatData.message});
+                return {success: false, message: chatData.message}
+            }
+            loader.cache.chatbot = {message: chatData.message, image: loader.cache.configurations.sources.miscellaneous_sources.character_ai.image}
+            this.giveResponse(request, response, {statusCode: 200, message: `Chatbot alert created successfully`});
+            loader.modules.websocket.onCacheReady()
+        } catch (error) {
+            loader.modules.hooks.createOutput(this.name, `Error occurred while creating chatbot alert: ${error}`);
+            loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while creating chatbot alert: ${error}`);
+            this.giveResponse(request, response, {statusCode: 500, message: `Internal Server Error`});
+            return {success: false, message: `Internal Server Error`}
+        }
+    }
+
     /**
       * @function createManualAlert
       * @description Creates a manual alert and adds it to the cache.
@@ -219,27 +260,29 @@ class Dashboard {
                     return {success: false, message: `Account not activated`};
                 }
                 let generatedSession = loader.packages.crypto.randomBytes(32).toString(`hex`);
-                response.cookie(`session`, generatedSession, { maxAge: null, sameSite: `lax`, secure: loader.cache.configurations.hosting.https, httpOnly: true }); // If this fails, we will rely on the fallback session
+                response.cookie(`session`, generatedSession, { maxAge: null, sameSite: `lax`, secure: loader.cache.configurations.hosting.https, httpOnly: true });
 
                 loader.modules.hooks.createOutput(this.name, `Login successful for username ${username}`);
                 loader.modules.hooks.createLog(this.name, `INFO`, `Login successful for username ${username}`);
-                loader.static.accounts.push({username: username, session: generatedSession, address: request.socket.remoteAddress, userAgent: request.headers['user-agent']});
+                loader.static.accounts.push({username: username, session: generatedSession, address: request.headers['cf-connecting-ip'] ? request.headers['cf-connecting-ip'] : request.connection.remoteAddress, userAgent: request.headers['user-agent']});
                 this.giveResponse(request, response, {statusCode: 200, message: `Login successful`, session: generatedSession, role: db[0].role});
                 return {success: true, message: `Login successful`, session: generatedSession, role: db[0].role};
             }
             if (action == 1) { // Logout (1)
                 if (request.cookies.session == undefined || request.cookies.fallbackSession == undefined) {
-                    loader.modules.hooks.createOutput(this.name, `Attempted logout with no session`);
-                    loader.modules.hooks.createLog(this.name, `Attempted logout with no session`);
                     response.clearCookie('session');
                     response.clearCookie('sessionFallback');
+                    let account = loader.static.accounts.find(a => a.session == request.cookies.session || a.session == request.cookies.sessionFallback);
+                    if (account) {
+                        loader.static.accounts = loader.static.accounts.filter(a => a.session != request.cookies.session && a.session != request.cookies.sessionFallback ? true : false);
+                    }
                     this.giveResponse(request, response, {statusCode: 401, message: `No session found`});
                     return {success: false, message: `No session found`};
                 }
                 let account = loader.static.accounts.find(a => a.session == request.cookies.session);
                 loader.modules.hooks.createOutput(this.name, `${account.username} logged out successfully`);
                 loader.modules.hooks.createLog(this.name, `INFO`, `${account.username} logged out successfully`);
-                loader.static.accounts = loader.static.accounts.filter(a => a.session != request.cookies.session);
+                loader.static.accounts = loader.static.accounts.filter(a => a.session != request.cookies.session && a.session != request.cookies.sessionFallback ? true : false);
                 response.clearCookie('session');
                 response.clearCookie('sessionFallback');
                 this.giveResponse(request, response, {statusCode: 200, message: `Logout successful`});
@@ -302,6 +345,24 @@ class Dashboard {
                 this.giveResponse(request, response, {statusCode: 200, message: `Password updated successfully`});
                 return {success: true, message: `Password updated successfully`};
             }
+            if (action == 4) { // Login as Guest (4)
+                if (!loader.cache.configurations.hosting.guests) {
+                    loader.modules.hooks.createOutput(this.name, `Attempted guest login but guest login is disabled`);
+                    loader.modules.hooks.createLog(this.name, `Attempted guest login but guest login is disabled`);
+                    this.giveResponse(request, response, {statusCode: 403, message: `Guest login is disabled`});
+                    return {success: false, message: `Guest login is disabled`};
+                }
+                let generatedSession = loader.packages.crypto.randomBytes(32).toString(`hex`);
+                response.cookie(`session`, generatedSession, { maxAge: null, sameSite: `lax`, secure: loader.cache.configurations.hosting.https, httpOnly: true });
+                let randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+                loader.static.accounts.push({ username: `Guest-${randomSuffix}`, session: generatedSession, address: request.headers['cf-connecting-ip'] ? request.headers['cf-connecting-ip'] : request.connection.remoteAddress, userAgent: request.headers['user-agent'], isGuest: true });
+                loader.modules.hooks.createOutput(this.name, `Guest login successful`);
+                loader.modules.hooks.createLog(this.name, `INFO`, `Guest login successful - ${`Guest-${randomSuffix}`}`);
+                this.giveResponse(request, response, {statusCode: 200, message: `Guest login successful`, session: generatedSession, role: 0});
+                return {success: true, message: `Guest login successful`, session: generatedSession, role: 0};
+            }
+            this.giveResponse(request, response, {statusCode: 400, message: `Invalid action`});
+            return {success: false, message: `Invalid action`};
         } catch (error) {
             loader.modules.hooks.createOutput(this.name, `Error occurred while managing credentials: ${error}`);
             loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while managing credentials: ${error}`);
@@ -339,11 +400,14 @@ class Dashboard {
         let cookie = request.cookies.session
         let fallback = request.cookies.sessionFallback
         let account = loader.static.accounts.find(a => a.session == cookie || a.session == fallback);
-        if (account) {
+        if (account && !account.isGuest) {
             let getDB = loader.modules.database.runQuery(`SELECT * FROM accounts WHERE username = ?`, [account.username]);
             if (getDB.length == 0) { return {success: false, message: `Forbidden - User not found in database`} }
             if (isAdministrator && getDB[0].role != 1) { return {success: false, message: `Forbidden - User is not an administrator`} }
             return {success: true, message: `User ${account.username} has valid session`}
+        } else if (account && account.isGuest) {
+            if (isAdministrator) { return {success: false, message: `Forbidden - Guest user cannot be an administrator`} }
+            return {success: true, message: `Guest user ${account.username} has valid session`}
         } else {
             return {success: false, message: `Forbidden - Invalid session`}
         }

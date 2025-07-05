@@ -2,6 +2,7 @@
     "hosting": {
         "https": false,
         "portal": true,
+        "guests": false,
         "https_port": 443,
         "http_port": 80,
         "cert_path": {
@@ -27,6 +28,7 @@
             "noaa_weather_wire_service": {
                 "enabled": false,
                 "cache_time": 0,
+                "reconnect_after": 60,
                 "endpoint": "xmpp://nwws-oi.weather.gov",
                 "domain": "nwws-oi.weather.gov",
                 "xml_alerts": false,
@@ -59,6 +61,17 @@
                     "show_streaming": true
                 },
                 "note": "Realtimeirl and spotter network tracking can NOT be used at the same time for tracking. You must choose one or the other."
+            },
+            "character_ai": {
+                "enabled": false,
+                "auto_alert": false,
+                "prefix": "Describe the warning like a weather radio guy would, make it short and simple...  ",
+                "image": "YOUR_CHARACTER_IMAGE_URL_HERE",
+                "auth_token": "Token YOUR_CHARACTER_AI_TOKEN_HERE",
+                "character_id": "CHARACTER_ID_HERE",
+                "character_voice_id": "VOICE_ID_HERE",
+                "chromium_path": "/usr/bin/chromium-browser",
+                "note": "If you are using linux, you must install chromium for this to work. This npm package uses puppeteer to run the character ai. If you are using windows, you can use the default chromium path."
             },
             "iem_local_storm_reports": {
                 "enabled": false,
@@ -107,7 +120,7 @@
         }
     },
     "project_settings": {
-        "http_useragent": "AtmosphericX/v7",
+        "http_useragent": "AtmosphericX/v7.1.2",
         "http_timeout": 5,
         "global_update": 10,
         "priority_alerts": true,
@@ -153,12 +166,14 @@
                     "random",
                     "active",
                     "manual",
+                    "chatbot",
                     "realtime"
                 ]
             },
             "general_websockets": {
                 "timeout": 30,
                 "types": [
+                    "metrics",
                     "public",
                     "wire",
                     "reports",

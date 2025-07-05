@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AtmosphericX - Login</title>
         <link rel="stylesheet" href="../assets/styles/portal.css">
-        <link rel="stylesheet" href="../../assets/styles/streaming.css">
+        <link rel="stylesheet" href="../../assets/styles/variables.css">
         <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
         <script src="../assets/javascript/library.js"></script>
@@ -22,9 +22,10 @@
                     <input type="text" id="username" autocomplete="off" placeholder="Username" required>
                     <input type="password" id="password" autocomplete="off" placeholder="Password" required>
                     <button type="submit">Login</button>
+                    <button type="button" id="login-guest">Login as Guest<br><small>This action may be unavailable if left unconfigured</small></button>
                     <br><br>
                     <p>Create an <a href="/registration">account?</a> &dash;  Change <a href="/reset">password?</a></p>
-                    <small class="smaller-subtext-login">Having troubles logging in? See: <a href="https://k3yomi.github.io/blog/posts/atmosphericx-installation/#dashboard-setup" target="_blank">Dashboard Issues Documentation</a></small>
+                    <small class="smaller-subtext-login"><a href="https://k3yomi.github.io/blog/posts/atmosphericx-installation/#dashboard-setup" target="_blank">Having troubles logging in?</a></small>
                 </form>
             </div>
         </div>
@@ -34,7 +35,7 @@
             dashboard_class.addFormListener(`login-form`, `login`)
         </script>
         <footer>
-            <p>Project AtmosphericX<br><small>Made with ❤️ k3yomi & StarflightVR</small></p>
+            <p>Project AtmosphericX<br><small>Made with ❤️ by k3yomi & Starflight</small></p>
         </footer>
     </body>
 </html>

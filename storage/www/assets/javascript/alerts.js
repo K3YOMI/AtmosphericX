@@ -49,9 +49,6 @@ class Alerts {
         let activeAlerts = this.storage.active
         if (manualAlerts.length != 0) { 
             let data = manualAlerts
-            let isWarning = data.details.name.includes(`Warning`) // Unused but may be useful in the future
-            let isWatch = data.details.name.includes(`Watch`) // Unused but may be useful in the future
-            let isEmergency = data.details.name.includes(`Emergency`) || data.details.name.includes(`Particularly Dangerous Situation`) // Unused but may be useful in the future
             if (this.storage.alertManual != data.details.name + `-` + data.details.locations + `-` + data.details.type) {
                 this.storage.alertManual = data.details.name + `-` + data.details.locations + `-` + data.details.type
                 if (!data.metadata.ignored) { this.storage.alertsQueue.push(data) }
@@ -68,10 +65,10 @@ class Alerts {
                 let data = this.storage.active[i]
                 let emergencyAlertPlayed = this.storage.emergencyAlerts.find(x => x == `${data.details.name}-${data.details.locations}`)
                 let isDuplicate = this.storage.lastQueue.find(x => x.details.name == data.details.name && x.details.description == data.details.description && x.details.type == data.details.type && x.details.issued == data.details.issued && x.details.expires == data.details.expires)
-                let currentTime = new Date().getTime() / 1000
-                let timeCheck = currentTime - new Date(data.details.issued).getTime() / 1000
-                let canBePushed = (timeCheck < 200 && isDuplicate == undefined) ? true : false 
-                let canBeCleared = (timeCheck > 200 && isDuplicate != undefined) ? true : false
+                let currentTime = Date.now();
+                let timeCheck = currentTime - new Date(data.details.issued).getTime();
+                let canBePushed = (timeCheck < 200000 && isDuplicate == undefined) ? true : false;
+                let canBeCleared = (timeCheck > 200000 && isDuplicate != undefined) ? true : false;  
                 if (data.metadata.ignored) { continue }
                 if (emergencyAlertPlayed != undefined) { data.metadata.siren = false; data.metadata.eas = false; }
                 if (data.metadata.siren == true || data.metadata.eas == true) { this.storage.emergencyAlerts.push(`${data.details.name}-${data.details.locations}`) } // Add to sound alerts if not already in the list
@@ -103,8 +100,8 @@ class Alerts {
 
     createDashboardPriorityAlert = function(alert) {
         if (this.storage.isPriorityAlertPlaying == undefined) { this.storage.isPriorityAlertPlaying = false }
-        if (this.storage.eas != true) { return }
-        if (this.storage.isPriorityAlertPlaying == true) { return }
+        if (!this.storage.eas) { return }
+        if (this.storage.isPriorityAlertPlaying) { return }
         this.library.playAudio(this.storage.configurations.tone_sounds.uniden, false);
         dashboard_class.injectNotification({
             title: `Critical Information - ${alert.details.name}`,
@@ -115,7 +112,7 @@ class Alerts {
             buttons: [
                 {
                     name: `Listen`,
-                    className: `button-primary`,
+                    className: `button-ok`,
                     function: () => {
                         let synth = window.speechSynthesis;
                         let utter = new SpeechSynthesisUtterance(`${alert.details.description}`);

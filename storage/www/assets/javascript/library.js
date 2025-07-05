@@ -130,10 +130,25 @@ class Library {
             interaction.style.top = `50%`;
             interaction.style.left = `50%`;
             interaction.style.transform = `translate(-50%, -50%)`;
-            interaction.style.fontSize = `25px`;
-            interaction.style.padding = `120px`;
-            document.body.appendChild(interaction);
-            interaction.onclick = () => {
+            interaction.style.fontSize = `22px`;
+            interaction.style.padding = `40px 60px`;
+            interaction.style.background = `rgba(35, 37, 38, 0.9)`;
+            interaction.style.color = `#fff`;
+            interaction.style.border = `none`;
+            interaction.style.borderRadius = `16px`;
+            interaction.style.cursor = `pointer`;
+            interaction.style.zIndex = `9999`;
+            interaction.style.fontFamily = `inherit`;
+            interaction.style.fontWeight = `bold`;
+            interaction.style.letterSpacing = `0.5px`;
+            interaction.style.transition = `background 0.3s, transform 0.2s`;
+            interaction.onmouseover = () => {
+                interaction.style.transform = `translate(-50%, -50%) scale(1.05)`;
+            };
+            interaction.onmouseout = () => {
+                interaction.style.transform = `translate(-50%, -50%) scale(1)`;
+            };
+            document.body.appendChild(interaction);  interaction.onclick = () => {
                 let audioChannels = [];
                 interaction.remove();
                 for (let i = 0; i < 4; i++) {
@@ -290,7 +305,7 @@ class Library {
         if (minute < 10) { minute = `0${minute}` }
         if (hour < 10) { hour = `0${hour}` }
         month = monthDict[month]
-        return { 
+        return { // Half of these wont be used but oh fucking well...
             time: `${hour}:${minute}:${second} ${standardTime ? extension : ''}`,
             date : `${month} ${day}`,
             timezone: timeZoneFormal, 

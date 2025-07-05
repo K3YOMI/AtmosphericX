@@ -62,6 +62,7 @@ class Routes {
         loader.static.express.get('/widgets/alert', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_title@widget/index.html`));
         loader.static.express.get('/widgets/location', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_location@widget/index.html`));
         loader.static.express.get('/widgets/gps', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/gps@widget/index.html`));
+        loader.static.express.get('/widgets/chatbot', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/chatbot@widget/index.html`));
         loader.static.express.get('/widgets/expires', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/random_alert_expires@widget/index.html`));
         loader.static.express.get('/widgets/time', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/time@widget/index.html`));
         loader.static.express.get('/widgets/date', (request, response) => response.sendFile(`${parentDirectory}/www/widgets/date@widget/index.html`));
@@ -74,6 +75,9 @@ class Routes {
         loader.static.express.get('/reset', (request, response) => response.sendFile(`${parentDirectory}/www/portal/reset.html`));
         loader.static.express.get('/registration', (request, response) => response.sendFile(`${parentDirectory}/www/portal/registration.html`));
         loader.static.express.post(`/api/login`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 0) });
+        loader.static.express.post(`/api/login-guest`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 4) });
+        loader.static.express.post(`/api/chatbot`, async (request, response) => { loader.modules.dashboard.chatBot(request, response) });
+
         loader.static.express.post(`/api/logout`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 1) });
         loader.static.express.post(`/api/register`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 2) });
         loader.static.express.post(`/api/reset`, async (request, response) => { loader.modules.dashboard.processCredentials(request, response, 3) });
@@ -93,7 +97,7 @@ class Routes {
     createMiddleware = function() {
         let parentDirectory = loader.packages.path.resolve(__dirname, `../../storage/`)
         loader.static.express.use((request, response, next) => {
-            loader.modules.hooks.createLog(this.name, `${request.method} : ${request.url} : ${request.headers['user-agent']} : ${request.connection.remoteAddress} : ${request.headers.referer}`)
+            loader.modules.hooks.createLog(this.name, `${request.method} : ${request.url} : ${request.headers['user-agent']} : ${request.headers['cf-connecting-ip'] ? request.headers['cf-connecting-ip'] : request.connection.remoteAddress} : ${request.headers.referer}`)
             response.setHeader('Access-Control-Allow-Origin', '*');
             response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
             response.setHeader('Access-Control-Allow-Credentials', 'true');

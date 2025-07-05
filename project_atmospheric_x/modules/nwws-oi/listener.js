@@ -40,12 +40,13 @@ class Listener {
         let wireXml = wireCfg.xml_alerts
         let wireDomain = wireCfg.domain
         if (!wireEnabled) { return }
+        loader.cache.totalReconnects = 0
         loader.static.wiresession = loader.packages.xmpp.client({reconnect: true, service: wireService, domain: wireDomain, username: wireUsername, password: wirePassword}).setMaxListeners(0);
         loader.static.wiresession.on(`online`, async (_address) => {
             let now = new Date();
-            let displayTime = `${String(now.getUTCMonth() + 1).padStart(2, '0')}/${String(now.getUTCDate()).padStart(2, '0')}`;
-            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})`, xmlns: 'http://jabber.org/protocol/muc' }));
-            loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain} as "AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})"`)
+            let displayTime = `${String(now.getUTCMonth() + 1).padStart(2, '0')}/${String(now.getUTCDate()).padStart(2, '0')} ${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
+            loader.static.wiresession.send(loader.packages.xmpp.xml('presence', {  to: `nwws@conference.nwws-oi.weather.gov/AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime}) (x${loader.cache.totalReconnects})`, xmlns: 'http://jabber.org/protocol/muc' }));
+            loader.modules.hooks.createOutput(`${this.name}`, `Connected to ${wireDomain} as "AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime}) (x${loader.cache.totalReconnects})"`)
             loader.cache.timeSinceLastStanza = new Date().getTime()
             loader.cache.hasConnectedBefore = true
             nwsCfg.enabled = false
@@ -149,11 +150,12 @@ class Listener {
     reconnectSessionCheck = async function() {
         if (loader.static.wiresession !== undefined && loader.cache.hasConnectedBefore == true) {
             let timeDiff = new Date().getTime() - loader.cache.timeSinceLastStanza
-            if (timeDiff > 30000) {
+            if (timeDiff > loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service.reconnect_after * 1000) {
                 loader.modules.hooks.createOutput(`AtmosphericX`, `[!] No NWWS message Received in the last ${timeDiff}ms, restarting...`)
                 loader.modules.hooks.createLog(`AtmosphericX`, `[!] No NWWS message Received in the last ${timeDiff}ms, restarting...`)
                 if (!loader.cache.attemptingToConnect) {
                     loader.cache.attemptingToConnect = true
+                    loader.cache.totalReconnects += 1
                     await loader.static.wiresession.stop().catch((err) => {})
                     await loader.static.wiresession.start().catch((err) => {})
                 }

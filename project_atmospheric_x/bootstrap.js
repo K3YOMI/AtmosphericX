@@ -16,18 +16,18 @@
 let loader = require(`./loader.js`)
 
 
-loader.static.accounts = [] // Array of accounts that are currently logged in within the dashboard (Session ID and Username)
-loader.static.webSocketClients = [] // Array of websocket clients that are currently connected to the server
-loader.static.webSocketClientLimits = [] // Array of websocket clients that are currently connected to the server with limits
-loader.static.httpTimer = [] // Array of timers for the HTTP server
-loader.static.wiresession = undefined // The session for the wire server
+loader.static.accounts = []
+loader.static.webSocketClients = []
+loader.static.webSocketClientLimits = [] 
+loader.static.httpTimer = [] 
+loader.static.wiresession = undefined 
 loader.static.webhookTimestamps = []
 
 
-loader.cache.twire = {features: []} // Array of features that are currently being processed by the wire server
-loader.cache.timeSinceLastStanza = new Date().getTime() // The time since the last stanza was received from the wire server
-loader.cache.attemptingToConnect = false // Boolean to check if the wire server is currently attempting to connect
-loader.cache.hasConnectedBefore = false // Boolean to check if the wire server has connected before
+loader.cache.twire = {features: []}
+loader.cache.timeSinceLastStanza = new Date().getTime()
+loader.cache.attemptingToConnect = false 
+loader.cache.hasConnectedBefore = false
 loader.cache.logging = []
 
 loader.packages.fs = require(`fs`)
@@ -47,6 +47,7 @@ loader.packages.ws = require('ws');
 loader.packages.nodemailer = require('nodemailer');
 
 loader.modules.hooks = new (require(`./modules/hooks.js`))()
+loader.modules.character = new (require(`./modules/character.js`))()
 loader.modules.database = new (require(`./modules/database.js`))()
 loader.modules.routes = new (require(`./modules/routes.js`))()
 loader.modules.dashboard = new (require(`./modules/dashboard.js`))()
@@ -77,5 +78,5 @@ loader.definitions.eventTypes = { "W": "Warning", "F": "Forecast", "A": "Watch",
 
 
 loader.definitions.static_apis = { 
-    ['open_street_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}"
+    ['open_stree_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}"
 }

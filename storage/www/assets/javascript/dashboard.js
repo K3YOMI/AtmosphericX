@@ -50,6 +50,30 @@ class Dashboard {
     addFormListener = function(domId = `login-form`, action = `login`) {
         let successMessage = document.querySelector(`.success-message`);
         let errorMessage = document.querySelector(`.error-message`);
+        document.getElementById('login-guest').addEventListener('click', function(e) {
+            e.preventDefault();
+            fetch(`/api/login-guest`, { 
+                method: `POST`, 
+                headers: { 'Content-Type': `application/json` }, 
+                body: JSON.stringify({}) 
+            }).then((response) => {
+                response.json().then((jsonData) => {
+                    if (response.ok) {
+                        successMessage.innerHTML = jsonData.message;
+                        successMessage.style.display = `block`;
+                        errorMessage.style.display = `none`;
+                        localStorage.setItem(`atmosx.cached.username`, `Guest`);
+                        localStorage.setItem(`atmosx.cached.role`, jsonData.role);
+                        document.cookie = `sessionFallback=${jsonData.session}; path=/; SameSite=Lax;`;
+                        setTimeout(() => { window.location.replace(`/`) }, 1000);
+                    } else {
+                        errorMessage.innerHTML = jsonData.message;
+                        errorMessage.style.display = `block`;
+                        successMessage.style.display = `none`;
+                    }
+                });
+            });
+        });
         document.getElementById(domId).addEventListener(`submit`, (emitEvent) => {
             emitEvent.preventDefault();
             let username = document.getElementById(`username`).value;
@@ -179,7 +203,7 @@ class Dashboard {
       * 
       * @param {string} [domId=`_body.base`] - The ID of the parent element where the notification will be injected. Defaults to `_body.base`.
       */
-    
+
     triggerWidgetListener = function() {
         this.clearAllPopups()
         this.injectNotification({
@@ -192,6 +216,7 @@ class Dashboard {
                 { name: `Spawn Alert`, className: `button-ok`, function: () => { fetch(`/api/manual`, {method: `POST`, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: document.getElementById(`widget_alert_type`).value, properties: { senderName:"Manual Admin Override", event: document.getElementById(`widget_alert_type`).value, description: "N/A", messageType: document.getElementById(`widget_alert_status`).value, expires: "N/A", indicated: document.getElementById(`widget_alert_indicator`).value, areaDesc: document.getElementById(`widget_notification_alert_location`).value, parameters: {} } }), })}},
                 { name: `Submit Status`, className: `button-ok`, function: () => { fetch(`/api/status`, { method: `POST`, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: document.getElementById(`widget_notification_announcement_title`).value })})}},
                 { name: `Submit Notification`, className: `button-ok`, function: () => { fetch(`/api/notification`, { method: `POST`, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: document.getElementById(`widget_notification_announcement_title`).value, message: document.getElementById(`widget_notification_announcement_subtext`).value })})}},
+                { name: `Submit Chatbot`, className: `button-ok`, function: () => { fetch(`/api/chatbot`, { method: `POST`, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ description: document.getElementById(`widget_notification_announcement_subtext`).value })})}}
             ],
             inputs: [ 
                 { id: `widget_notification_alert_location`, type: `text`, className: `popup-input`, placeholder: `Location Here`}, 
@@ -246,11 +271,12 @@ class Dashboard {
       */
 
     injectNotification = function(metadata) {
-        let arrButtons = metadata.buttons
-        let arrInputs = metadata.inputs
-        let arrSelects = metadata.selects
-        let removeX = metadata.removeclose
-        this.clearAllPopups()
+        let arrButtons = metadata.buttons;
+        let arrInputs = metadata.inputs;
+        let arrSelects = metadata.selects;
+        let arrCheckboxes = metadata.checkboxes;
+        let removeX = metadata.removeclose;
+        this.clearAllPopups();
         let popup = document.createElement('div');
         popup.className = `popup-box`;
         popup.style.display = `block`;
@@ -258,20 +284,23 @@ class Dashboard {
         let popupContent = popup.querySelector(`.popup-inputs`);
         if (metadata.subtext == undefined || metadata.subtext == ``) {
             let subtextElement = popup.querySelector(`#_popup\\.subtext`);
-            if (subtextElement) { subtextElement.remove();}
+            if (subtextElement) { subtextElement.remove(); }
         }
         if (removeX) {
             let closeButton = popup.querySelector(`.popup-close`);
             if (closeButton) { closeButton.remove(); }
         }
         if (arrInputs) {
-            arrInputs.forEach(input => { let element = document.createElement('input'); element.type = input.type || `text`; element.id = input.id; element.className = input.className || `popup-input`; element.placeholder = input.placeholder; element.value = input.value || ``; popupContent.appendChild(element) });
+            arrInputs.forEach(input => { let element = document.createElement('input'); element.type = input.type || `text`; element.id = input.id; element.className = input.className || `popup-input`; element.placeholder = input.placeholder; element.value = input.value || ``; popupContent.appendChild(element); });
         }
         if (arrSelects) {
-            arrSelects.forEach(select => { let element = document.createElement('select'); element.id = select.id; element.className = select.className || `popup-select`; select.options.forEach(option => { let option_element = document.createElement('option'); option_element.value = option.value; option_element.innerHTML = option.name; element.appendChild(option_element) }); popupContent.appendChild(element) });
+            arrSelects.forEach(select => { let element = document.createElement('select'); element.id = select.id; element.className = select.className || `popup-select`; select.options.forEach(option => { let option_element = document.createElement('option'); option_element.value = option.value; option_element.innerHTML = option.name; element.appendChild(option_element); }); popupContent.appendChild(element); });
         }
+        if (arrCheckboxes) {
+            arrCheckboxes.forEach(checkbox => { let label = document.createElement('label'); label.className = 'popup-checkbox-label'; let element = document.createElement('input'); element.type = 'checkbox'; element.id = checkbox.id; element.className = 'popup-checkbox'; element.checked = !!checkbox.checked; if (typeof checkbox.onchange === 'function') { element.onchange = checkbox.onchange.bind(this); } label.appendChild(element); let span = document.createElement('span'); span.innerText = checkbox.name || ''; label.appendChild(span); popupContent.appendChild(label); });
+        }  
         if (arrButtons) {
-            arrButtons.forEach(button => { let element = document.createElement('button'); element.className = button.className || `button-ok`; element.innerHTML = button.name; element.onclick = button.function.bind(this); popupContent.appendChild(element) });
+            arrButtons.forEach(button => { let element = document.createElement('button'); element.className = button.className || `button-ok`; element.innerHTML = button.name; element.onclick = button.function.bind(this); popupContent.appendChild(element); });
         }
         document.getElementById(metadata.parent).appendChild(popup);
     }
@@ -306,7 +335,7 @@ class Dashboard {
         if (localStorage.getItem('atmosx.cached.donationprompt') === null) { 
             localStorage.setItem(`atmosx.cached.eas`, false)
             localStorage.setItem(`atmosx.cached.sounds`, false)
-            this.injectNotification({title: `Donations are appreciated`, description: `As the sole developer of this project, your donations would greatly help in maintaining and improving this project. Contributions would allow me to dedicate more time to development, cover hosting costs (if any), and implement new features to enhance your experience.`,rows: 2,parent: `_body.base`, buttons: [ { name: `No Thank You`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups()} }, { name: `I'd like to donate!`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups()} } ],inputs: [],selects: null}) 
+            this.injectNotification({ title: `[Introduction] Welcome to AtmosphericX, ${username}!`, description: `Thank you for using AtmosphericX! Your feedback and ideas are what makes this project go forward.<br><br><b>Support Us:</b> If you find this project helpful, consider donating. Every bit helps keep development going.<br><b>Get Involved:</b> Join our <a href="https://discord.gg/B8nKmhYMfz" target="_blank">Discord community</a> to share feedback, suggest features, or connect with other weather enthusiasts.<br><br>Feel free to select the settings you would like enabled so we can memorize them for yo<br><bMade with ❤️ by KiyomiWx and Starflight. We appreciate your support!`, rows: 2, parent: `_body.base`, buttons: [ { name: `Continue`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups(); } }, { name: `Donate`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups(); } } ], checkboxes: [ { id: `atmosx.cached.eas`, className: `popup-checkbox`, name: `Enable EAS Alerts`, checked: this.storage.eas, onchange: (e) => { localStorage.setItem('atmosx.cached.eas', e.target.checked); this.storage.eas = e.target.checked; } }, { id: `atmosx.cached.sounds`, className: `popup-checkbox`, name: `Enable Alert Sounds`, checked: this.storage.sounds, onchange: (e) => { localStorage.setItem('atmosx.cached.sounds', e.target.checked); this.storage.sounds = e.target.checked; } } ], inputs: [], selects: null }); 
         }
     }
 
@@ -392,6 +421,8 @@ class Dashboard {
                             { name: `<ic class="fa fa-copy"></ic> Description`, className: `button-ok`, function: () => { this.copyTextToClipboard(currentDescription) } },
                             { name: `<ic class="fa fa-copy"></ic> History`, className: `button-ok`, function: () => { this.copyTextToClipboard(eventHistoryString) } },
                             { name: `<ic class="fa fa-volume-up"></ic> Play Audio`, className: `button-ok`, function: () => { this.storage.alertsQueue = []; this.storage.alertsQueue.push(alert); alert_class.triggerAlertQueue() }},
+                            { name: `<ic class="fa fa-volume-up"></ic> Play EAS`, className: `button-ok`, function: () => { this.storage.alertsQueue = []; this.storage.alertsQueue.push(alert); alert_class.createDashboardPriorityAlert(alert)} },
+                            { name: `<ic class="fa fa-volume-up"></ic> Play Chatbot`, className: `button-ok`, function: () => { fetch('/api/chatbot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ description: currentDescription }) }) }},
                             { name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }
                         ]
                     })  }
@@ -821,6 +852,31 @@ class Dashboard {
     }
 
     /**
+      * @function spawnSettings
+      * @description Displays client and server data in the user interface. It retrieves the data from the performance and navigator objects, and displays it in a card format.
+      *
+      * @async
+      * @param {string} [domDirectory=`hub.system`] - The ID of the
+      *
+      */
+
+    spawnSettings = async function(domDirectory = `hub.system`) {
+        document.getElementById(domDirectory).innerHTML = ``
+        this.injectCardData({
+            title: `Client Data`,
+            content: `Memory: ${performance.memory ? (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2) + ' MB' : 'N/A'}<br>CPU Cores: ${navigator.hardwareConcurrency || 'N/A'}<br>Battery Level: ${navigator.getBattery ? (await navigator.getBattery()).level * 100 + '%' : 'N/A'}<br>User Agent: ${navigator.userAgent || 'N/A'}<br>Platform: ${navigator.platform || 'N/A'}<br>Screen Resolution: ${window.screen.width}x${window.screen.height}<br>Version: ${this.library.storage.updates.version || 'N/A'}<br>HTTPS: ${window.location.protocol === 'https:' ? 'Enabled' : 'Disabled'}<br>Current Role: ${localStorage.getItem('atmosx.cached.role') == "1" ? 'Administrator' : localStorage.getItem('atmosx.cached.role') == "2" ? 'Moderator' : localStorage.getItem('atmosx.cached.role') == "3" ? 'User' : 'Guest'}`,
+            parent: domDirectory,
+            onclick: () => {}
+        });
+        this.injectCardData({
+            title: `Server Data`,
+            content: `Memory: ${this.library.storage.metrics?.memory || 'N/A'}<br>CPU: ${this.library.storage.metrics?.cpu || 'N/A'}<br>Platform: ${this.library.storage.metrics?.platform || 'N/A'}<br>Arch: ${this.library.storage.metrics?.arch || 'N/A'}<br>Uptime: ${this.library.storage.metrics?.uptime || 'N/A'}<br>Node.js Version: ${this.library.storage.metrics?.node_version || 'N/A'}<br>Hostname: ${this.library.storage.metrics?.hostname || 'N/A'}<br>Free Memory: ${this.library.storage.metrics?.free_memory || 'N/A'}<br>Total Memory: ${this.library.storage.metrics?.total_memory || 'N/A'}<br>Load Avg: ${(this.library.storage.metrics?.loadavg || []).join(', ') || 'N/A'}<br>`,
+            parent: domDirectory,
+            onclick: () => {}
+        });  
+    }
+
+    /**
       * @function copyTextToClipboard
       * @description Copies the provided text to the clipboard. If the copy operation is successful, a notification is displayed. If it fails, an error message is shown.
       * 
@@ -969,6 +1025,7 @@ class Dashboard {
         this.spawnWireOpenInterface()
         this.spawnTornadoProbabilities()
         this.spawnSevereProbabilities()
+        this.spawnSettings()
         this.spawnAlertCards(`child_atmosx_alerts.global_alerts`, false, `_alerts.alert_search`, ``)
         this.spawnAlertCards(`child_atmosx_alerts.recent_alerts`, true, ``, ``)
         this.spawnRadioServices(`hub_radio.noaa`, `_noaa_radio_communications.radio_search`, ``)

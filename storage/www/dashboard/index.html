@@ -5,8 +5,7 @@
         <meta name="viewport" content="width=device-width initial-scale=0.5, maximum-scale=0.5, user-scalable=no minimal-ui">
         <link rel="stylesheet" href="../assets/styles/dashboard.css">
         <link rel="stylesheet" href="../assets/styles/editor.css">
-        <link rel="stylesheet" href="../assets/styles/responsive-dashboard.css">
-        <link rel="stylesheet" href="../../assets/styles/streaming.css">
+        <link rel="stylesheet" href="../../assets/styles/variables.css">
         <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
         <script src="../assets/javascript/library.js"></script>
         <script src="../assets/javascript/dashboard.js"></script>
@@ -23,7 +22,7 @@
             <hr class="sidebar-hr">
             <div id="_sidebar.data"></div>
             <footer class="sidebar-footer">
-                <p>Project AtmosphericX <small><span id='version'></span></small><br><small>Made with ❤️ k3yomi & StarflightVR</small></p>
+                <p>Project AtmosphericX <small><span id='version'></span></small><br><small>Made with ❤️ by k3yomi & Starflight</small></p>
             </footer>
         </div>
         <div class="wrapper">
@@ -188,6 +187,15 @@
                     </div>
                 </div>
             </div>
+            <div id="_navigation.system" style="display: none;" type="menu">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">System Settings</span></h1>
+                        <hr class="data-card-hr"> 
+                        <div id="hub.system" class="grid-area" data-original-grid-template-columns="2" style="grid-template-columns: repeat(2, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </body>
@@ -196,7 +204,7 @@
         let alert_class;
         let library = new Library()
         library.detectMobileDevice()
-        library.createWebsocketSession([`wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
             dashboard_class = new Dashboard(library, true)
             cfg_class = new CfgEditor(library)

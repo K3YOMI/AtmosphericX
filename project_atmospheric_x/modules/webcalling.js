@@ -170,7 +170,7 @@ class Webcalling {
                 active.forEach(handle => {
                     if (loader.static.httpTimer[handle.name] == undefined) {loader.static.httpTimer[handle.name] = Date.now() - handle.timer * 1000}
                 })
-                let ready = active.filter(handle => (Date.now() - loader.static.httpTimer[handle.name]) / 1000 >= handle.timer)
+                let ready = active.filter(handle => (Date.now() - loader.static.httpTimer[handle.name]) >= handle.timer * 1000)
                 for (let handle of ready) {
                     loader.static.httpTimer[handle.name] = Date.now();
                     this.retries = 0

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/chatbot@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/variables.css">
+    <script src="../../assets/javascript/library.js"></script>
+    <body>
+        <div class="chatbot-widget">
+            <div class="chatbot"></div>
+        </div>
+    <script>
+        let library = new Library()
+        library.detectMobileDevice()
+        library.createWebsocketSession([`chatbot`]).then(() => {
+            let chatbotDiv = document.querySelector('.chatbot');
+            let audioQueue = [];
+            let globalAdded = []
+            let isPlaying = false;
+            function playNextAudio() {
+                if (isPlaying || audioQueue.length === 0) return;
+                isPlaying = true;
+                const audioSrc = audioQueue.shift();
+                if (!audioSrc) {
+                    isPlaying = false;
+                    return;
+                }
+                chatbotDiv.classList.add('visible');
+                if (library.storage.chatbotImage) {
+                    let existingImg = chatbotDiv.querySelector('img');
+                    if (!existingImg) {
+                        let img = document.createElement('img');
+                        img.src = library.storage.chatbotImage;
+                        img.alt = "Chatbot";
+                        chatbotDiv.appendChild(img);
+                    } else {
+                        existingImg.src = library.storage.chatbotImage;
+                    }
+                }
+                // Use Howler.js to play audio
+                const audio = new Howl({
+                    src: [audioSrc],
+                    html5: true
+                });
+                audio.play();
+                audio.once('end', () => {
+                    chatbotDiv.classList.remove('visible');
+                    let img = chatbotDiv.querySelector('img');
+                    if (img) chatbotDiv.removeChild(img);
+                    isPlaying = false;
+                    playNextAudio();
+                });
+                audio.once('loaderror', (id, error) => {
+                    chatbotDiv.classList.remove('visible');
+                    let img = chatbotDiv.querySelector('img');
+                    if (img) chatbotDiv.removeChild(img);
+                    console.error('Audio playback failed:', error);
+                    isPlaying = false;
+                    playNextAudio();
+                });
+            }
+            document.addEventListener('onCacheUpdate', (event) => {
+                if (!audioQueue.includes(library.storage.chatbot.message) && !globalAdded.includes(library.storage.chatbot.message)) {
+                    audioQueue.push(library.storage.chatbot.message);
+                    globalAdded.push(library.storage.chatbot.message);
+                    console.log(`Added audio to queue: ${library.storage.chatbot.message}`);
+                    chatbotDiv.style.background = `#ffffff00 url('${library.storage.chatbot.image}') center center no-repeat`;
+                    playNextAudio();
+                }
+            });
+        });
+    </script>
+</html>

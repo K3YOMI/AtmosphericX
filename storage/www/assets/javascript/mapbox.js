@@ -286,26 +286,28 @@ class Mapbox {
             let data = await response.json();
             let latestRadar = data.radar.past.at(-1);
             if (!latestRadar || !latestRadar.time) return;
+            if (this.lastRadarTime === latestRadar.time) return;
+            this.lastRadarTime = latestRadar.time;
             let radarSourceId = 'radar-source';
             let radarLayerId = 'radar-layer';
             let radarTiles = [`https://tilecache.rainviewer.com/v2/radar/${latestRadar.time}/512/{z}/{x}/{y}/6/0_0.png`];
+            if (this.storage.mapbox.getLayer(radarLayerId)) {
+                this.storage.mapbox.removeLayer(radarLayerId);
+            }
             if (this.storage.mapbox.getSource(radarSourceId)) {
-                this.storage.mapbox.getSource(radarSourceId).setTiles(radarTiles);
-            } else {
-                this.storage.mapbox.addSource(radarSourceId, {
-                    type: 'raster',
-                    tiles: radarTiles,
-                    tileSize: 256
-                });
+                this.storage.mapbox.removeSource(radarSourceId);
             }
-            if (!this.storage.mapbox.getLayer(radarLayerId)) {
-                this.storage.mapbox.addLayer({
-                    id: radarLayerId,
-                    type: 'raster',
-                    source: radarSourceId,
-                    paint: { 'raster-opacity': 0.5 }
-                });
-            }
+            this.storage.mapbox.addSource(radarSourceId, {
+                type: 'raster',
+                tiles: radarTiles,
+                tileSize: 256
+            });
+            this.storage.mapbox.addLayer({
+                id: radarLayerId,
+                type: 'raster',
+                source: radarSourceId,
+                paint: { 'raster-opacity': 0.5 }
+            });
         } catch (err) {}
     }
 

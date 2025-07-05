@@ -29,17 +29,20 @@ const static_dashboard_directs = [
     { icon: "fas fa-globe", label: "Spotter Network", nav: "_navigation.spotternetwork", permission: 0 },
     { icon: "fas fa-broadcast-tower", label: "NOAA Radio", nav: "_navigation.radio", permission: 0 },
     { icon: "fas fa-satellite-dish", label: "Services", nav: "_navigation.external", permission: 0 },
-    { icon: "fa fa-hands-helping", label: "General Support", nav: "_navigation.help", permission: 0 },
     { icon: "fa fa-clipboard-check", label: "Configurations", nav: "_navigation.configurations", permission: 1 },
-    { icon: "fas fa-cogs", label: "Widget Settings", nav: null, permission: 1, action: () => window.open('/settings', '_blank', 'width=602,height=800') },
-    { icon: "fas fa-user", label: "My Account", nav: null, permission: 0, action: 'triggerAccountListner' },
-    { icon: "fas fa-donate", label: "Support Me", nav: null, permission: 0, action: () => window.open('https://ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000') },
-    { icon: "fas fa-external-link-square-alt", label: "Github", nav: null, permission: 0, action: () => window.open('https://github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000') },
-    { icon: "fas fa-external-link-square-alt", label: "Documentation", nav: null, permission: 0, action: () => window.open('https://k3yomi.github.io/blog/posts/atmosphericx/', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-cog", label: "Widget Settings", nav: null, permission: 1, action: () => window.open('/settings', '_blank', 'width=602,height=850') },
+    { icon: "fa fa-cogs", label: "System Settings", nav: "_navigation.system", permission: 1 },
+    { icon: "fa fa-hands-helping", label: "General Support", nav: "_navigation.help", permission: 0 },
     { icon: "fas fa-bell", label: "Toggle Sounds", nav: null, permission: 0,  action: 'toggleMute' },
     { icon: "fas fa-bell", label: "Toggle EAS", nav: null, permission: 0,  action: 'toggleEAS' },
+    { icon: "fas fa-donate", label: "Donate", nav: null, permission: 0, action: () => window.open('https://ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-external-link-square-alt", label: "Github", nav: null, permission: 0, action: () => window.open('https://github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-external-link-square-alt", label: "Documentation", nav: null, permission: 0, action: () => window.open('https://k3yomi.github.io/blog/posts/atmosphericx/', '_blank', 'width=1000,height=1000') },
+    { icon: "fas fa-user", label: "My Account", nav: null, permission: 0, action: 'triggerAccountListner' },
+
 
 ]
+
 
 const static_alerts = [
     "Tornado Emergency", 

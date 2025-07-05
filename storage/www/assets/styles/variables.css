@@ -1,0 +1,345 @@
+:root, .global {
+    --global-font-family: 'SofiaSansSemiCondensed-Bold', 'Inter', 'Segoe UI', Arial, sans-serif;
+
+    /* Dashboard Notification Widget */
+    --dynamic-bg-notification: rgba(32, 32, 32, 0.831);
+    --dynamic-bg-color-notification: rgba(32, 32, 32, 0.831);
+    --dynamic-bg-color-notification-border: #ffffff42;
+    --dynamic-bg-color-notification-text: #fff;
+    --dynamic-bg-color-notification-padding: 15px 25px;
+    --dynamic-bg-color-notification-radius: 8px;
+    --dynamic-bg-color-notification-shadow: 0 4px 10px rgba(0, 0, 0, 0.89);
+    --dynamic-bg-color-notification-transition: transform 0.4s ease, opacity 0.4s ease;
+    --dynamic-bg-color-notification-opacity: 0;
+    --dynamic-bg-color-notification-transform: translateY(-50px);
+    --dynamic-bg-color-notification-z-index: 10000;
+    --dynamic-bg-color-notification-width: 500px;       
+    --dynamic-bg-color-notification-text-align: center;
+    --dynamic-bg-color-notification-font-size: 14px;
+    --dynamic-bg-color-notification-border-style: solid;
+    --dynamic-bg-color-notification-border-width: 1px;
+    --dynamic-bg-color-notification-animation: fadeInDown 0.4s ease-out
+}
+:root, configuration-editor {
+    --editor-bg: #1e1e1e;
+    --editor-fg: #d4d4d4;
+    --editor-padding: 12px;
+    --editor-border-radius: 8px;
+    --editor-border: 1px solid #3c3c3c;
+    --editor-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    --editor-line-bg: #252526;
+    --editor-line-fg: #858585;
+    --editor-line-padding: 20px 12px 20px 16px;
+    --editor-line-border: 1px solid #3c3c3c;
+    --editor-font-size: 13px;
+    --editor-line-height: 1.6;
+    --editor-min-height: 700px;
+    --editor-max-height: 900px;
+    --editor-caret: #d7ba7d;
+    --editor-focus-shadow: 0 0 0 1px #007acc;
+    --editor-error-fg: #ffffff;
+    --editor-error-bg: #1e1e1e;
+    --editor-error-border: 4px solid #ffffff;
+    --editor-note-fg: #9cdcfe;
+    --editor-note-border: 4px solid #9cdcfe;
+}
+:root, .portal {
+    /* Backgrounds */
+    --portal-bg-primary: var(--color-bg-primary, #0B0B0B);
+    --portal-bg-blur-layer: rgba(31, 31, 32, 0.404);
+    --portal-bg-login-image: url('/assets/media/dashboard/login-bg.png');
+    --portal-bg-input: rgba(204, 84, 84, 0.04);
+    --portal-bg-input-focus: rgba(94, 242, 192, 0.08);
+    --portal-bg-footer: var(--color-bg-sidebar, #1a1a1a6e);
+    --portal-bg-footer-hover: var(--color-bg-data-card, rgba(31, 31, 32, 0.8));
+    --portal-bg-button: linear-gradient(90deg, #156865 0%, #156865 100%);
+    --portal-bg-button-hover: linear-gradient(90deg, #1e918d 0%, #1e918d 100%);
+
+    /* Text */
+    --portal-text-primary: #f4f4f5;
+    --portal-text-secondary: #f5f5f7;
+    --portal-text-muted: #a1a1b0;
+    --portal-text-footer: #d4d4d8;
+    --portal-text-footer-hover: #e4e4e7;
+    --portal-text-error: #f87171;
+    --portal-text-success: #4ade80;
+    --portal-text-link: #c4b5fd;
+    --portal-text-link-hover: #a78bfa;
+
+    /* Borders */
+    --portal-border-box: rgba(255, 255, 255, 0.10);
+    --portal-border-input: rgba(255, 255, 255, 0.12);
+    --portal-border-footer: rgba(255, 255, 255, 0.05);
+    --portal-border-input-focus: #5ef2c0;
+
+    /* Shadows */
+    --portal-shadow-box: 0 8px 32px rgba(94, 242, 192, 0.06), 0 1.5px 6px rgba(0, 0, 0, 0.10);
+    --portal-shadow-button: 0 2px 12px rgba(63, 60, 187, 0.2);
+    --portal-shadow-logo: 0 2px 5px rgba(0, 0, 0, 0.10);
+    --portal-shadow-footer: 0 -4px 24px rgba(0, 0, 0, 0.35);
+    --portal-shadow-input-focus: 0 0 0 2.5px rgba(94, 242, 192, 0.3);
+}
+
+
+:root, .dashboard-desktop, .dashboard-mobile {
+    /* Backgrounds */
+    --dashboard-desktop-color-bg-primary: rgb(26, 24, 24);
+    --dashboard-desktop-color-bg-sidebar: #1A1A1A;
+    --dashboard-desktop-color-bg-data-card: #1F1F1F;
+    --dashboard-desktop-color-bg-data-card-hover: #333333;
+    --dashboard-desktop-color-bg-data-card-parent: rgba(50, 50, 50, 0.35);
+    --dashboard-desktop-color-bg-grid-area: rgba(0, 0, 0, 0);
+    --dashboard-desktop-color-bg-popup: #1A1A1A;
+    --dashboard-desktop-color-bg-popup-description: rgba(50, 50, 50, 0.35);
+
+    /* Text */
+    --dashboard-desktop-color-text-primary: #C0C0C0;
+    --dashboard-desktop-color-text-primary-hover: #FFFFFF;
+    --dashboard-desktop-color-text-popup-title: #FFFFFF;
+
+    /* Borders */
+    --dashboard-desktop-color-border-sidebar: rgba(200, 200, 200, 0.4);
+    --dashboard-desktop-color-border-data-card: rgba(200, 200, 200, 0.15);
+    --dashboard-desktop-color-border-popup: rgba(200, 200, 200, 0.4);
+
+    /* Buttons */
+    --dashboard-desktop-color-button-ok-bg: #2FA043;
+    --dashboard-desktop-color-button-ok-bg-hover: #3EC14E;
+    --dashboard-desktop-color-button-danger-bg: #E55353;
+    --dashboard-desktop-color-button-danger-bg-hover: #FF6666;
+    --dashboard-desktop-color-button-text: #FFFFFF;
+    --dashboard-desktop-color-popup-close: #FF6E6E;
+
+    /* Checkboxes */
+    --dashboard-desktop-checkbox-size: 18px;
+    --dashboard-desktop-checkbox-accent: #5ef2c0;
+    --dashboard-desktop-checkbox-margin-right: 10px;
+    --dashboard-desktop-checkbox-label-bg: #232323;
+    --dashboard-desktop-checkbox-label-bg-hover: #2a2a2a;
+    --dashboard-desktop-checkbox-label-radius: 6px;
+    --dashboard-desktop-checkbox-label-padding: 6px 10px;
+    --dashboard-desktop-checkbox-label-color: #e0e0e0;
+    --dashboard-desktop-checkbox-label-font-size: 1rem;
+
+    /* Shadows */
+    --dashboard-desktop-shadow-default: 0 4px 20px rgba(15, 15, 15, 0.85);
+
+    /* Scrollbar */
+    --dashboard-desktop-scrollbar-thumb-color: rgba(110, 110, 110, 0.8);
+    --dashboard-desktop-scrollbar-track-color: rgba(25, 25, 25, 0.6);
+
+    /* Fonts and sizes */
+    --dashboard-desktop-font-size-icon: 1.2em;
+    --dashboard-desktop-font-size-hamburger: 1.5em;
+    --dashboard-desktop-font-size-sidebar-title: 2em;
+    --dashboard-desktop-font-size-title-dashboard: 2.5em;
+    --dashboard-desktop-font-size-subtitle-dashboard: 1.5em;
+    --dashboard-desktop-font-size-data-card-title: 1.8em;
+    --dashboard-desktop-font-size-data-card-description: 1.5em;
+    --dashboard-desktop-font-size-popup-title: 1.4em;
+    --dashboard-desktop-font-size-popup-description: 1em;
+    --dashboard-desktop-font-size-popup-close: 1.5em;
+    --dashboard-desktop-font-size-footer: 0.8em;
+    --dashboard-desktop-font-size-button: 1em;
+
+    /* Layout & sizing */
+    --dashboard-desktop-sidebar-width: 220px;
+    --dashboard-desktop-sidebar-padding: 20px;
+    --dashboard-desktop-sidebar-gap: 10px;
+    --dashboard-desktop-wrapper-width: 92%;
+    --dashboard-desktop-wrapper-margin-right-calc: calc(10% - 120px);
+    --dashboard-desktop-grid-gap: 70px;
+    --dashboard-desktop-grid-columns: 3;
+    --dashboard-desktop-data-card-radius: 10px;
+    --dashboard-desktop-popup-radius: 10px;
+    --dashboard-desktop-popup-padding: 20px;
+    --dashboard-desktop-popup-input-padding: 10px;
+    --dashboard-desktop-popup-gap: 40px;
+    --dashboard-desktop-button-padding: 10px 20px;
+    --dashboard-desktop-icon-padding: 8px;
+    --dashboard-desktop-icon-width: 12px;
+    --dashboard-desktop-icon-height: 17px;
+    --dashboard-desktop-zoom-default: 1.0;
+    --dashboard-desktop-zoom-card: 0.8;
+
+    --dashboard-mobile-sidebar-width: 30%;
+    --dashboard-mobile-sidebar-title-font-size: 1.3em;
+    --dashboard-mobile-sidebar-logo-width: 200px;
+    --dashboard-mobile-wrapper-width: 80%;
+    --dashboard-mobile-wrapper-margin-left: 80px;
+    --dashboard-mobile-data-card-parent-padding-right: 40px;
+    --dashboard-mobile-popup-box-width: 75%;
+    --dashboard-mobile-popup-description-font-size: 0.6em;
+    --dashboard-mobile-hamburger-menu-font-size: 1.2em;
+    --dashboard-mobile-hamburger-menu-padding: 20px;
+    --dashboard-mobile-data-card-video-width: 100%;
+    --dashboard-mobile-data-card-video-height: 100%;
+    --dashboard-mobile-notification-font-size: 0.7em;
+    --dashboard-mobile-notification-width: 400px;
+    --dashboard-mobile-notification-margin-left: -175px;
+    --dashboard-mobile-ul-font-size: 0.7em;
+}
+
+
+:root, .dynamic-bg-widget {
+    --dynamic-bg-color-dark: rgba(28,61,181);
+    --dynamic-bg-color-light: rgba(42,81,224);
+}
+:root, .alert-bar-widget {
+    --alertbar-widget-text-color: white;
+    --alertbar-widget-header-size: 1.9em;
+    --alertbar-widget-header-weight: bold;
+    --alertbar-widget-header-align: left;
+    --alertbar-widget-header-bg: rgba(0, 0, 0, 0.863);
+    --alertbar-widget-bg-gradient: linear-gradient(to bottom, #282bc5, #df0e0e);
+    --alertbar-widget-row-light-bg: rgba(0, 0, 0, 0.247);
+    --alertbar-widget-row-dark-bg: rgba(0, 0, 0, 0.438);
+    --alertbar-widget-body-bg: rgba(0, 0, 0, 0.1);
+}
+:root, .date-widget {
+    --date-widget-font-size: 35px;
+    --date-widget-font-weight: bold;
+    --date-widget-color: white;
+    --date-widget-text-shadow: 1px 1px 3px #00000069;
+    --date-widget-background: rgba(0, 0, 0, 0);
+}
+:root, .time-widget {
+    --time-widget-font-size: 35px;
+    --time-widget-font-weight: bold;
+    --time-widget-color: white;
+    --time-widget-text-shadow: 1px 1px 3px #00000069;
+}
+:root, .gps-widget {
+    --gps-widget-font-size: 35px;
+    --gps-widget-line-height: 35px;
+    --gps-widget-color: white;
+    --gps-widget-text-shadow: 1px 1px 3px #00000069;
+    --gps-widget-background: rgba(0, 0, 0, 0);
+    --gps-widget-padding: 0px 5px 0 5px;
+}
+:root, .header-widget {
+    --header-widget-font-size: 35px;
+    --header-widget-font-weight: bold;
+    --header-widget-color: white;
+    --header-widget-text-shadow: 1px 1px 3px #00000069;
+    --header-widget-background: rgba(0, 0, 0, 0);
+}
+:root, .mapbox-widget {
+    --mapbox-popup-widget-font-size: 17px;
+    --mapbox-popup-widget-font-weight: normal;
+    --mapbox-popup-widget-color: #f0f0f0;
+    --mapbox-popup-widget-text-shadow: none;
+    --mapbox-popup-widget-background: rgba(26, 25, 25, 0.473);
+    --mapbox-popup-widget-border-radius: 10px;
+    --mapbox-popup-widget-box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+    --mapbox-popup-widget-link-color: #dcdcdc;
+}
+:root, .notification-widget {
+    --notification-widget-font-size-main: 35px;
+    --notification-widget-font-size-secondary: 15px;
+    --notification-widget-font-weight: bold;
+    --notification-widget-color: white;
+    --notification-widget-text-shadow: 1px 1px 3px #00000069;
+    --notification-widget-background: rgba(0, 0, 0, 0);
+    --notification-widget-border-color: rgb(255, 255, 255);
+}
+:root, .alert-description-widget {
+    --alert-description-widget-font-size: 30px;
+    --alert-description-widget-line-height: 50px;
+    --alert-description-widget-color: white;
+    --alert-description-widget-padding: 0px 5px 0 5px;
+    --alert-description-widget-shadow: 1px 1px 3px #00000069;
+    --alert-description-widget-align: left;
+    --alert-description-widget-position: absolute;
+    --alert-description-widget-top: 53%;
+    --alert-description-widget-left: 0;
+    --alert-description-widget-margin-bottom: 0;
+}
+:root, .alert-expires-widget {
+    --alert-expires-widget-font-size: 30px;
+    --alert-expires-widget-color: black;
+    --alert-expires-widget-align: center;
+    --alert-expires-widget-padding: 0px 5px 0 5px;
+    --alert-expires-widget-shadow: 1px 1px 3px #00000069;
+}
+:root, .alert-location-widget {
+    --alert-location-widget-font-size: 40px;
+    --alert-location-widget-line-height: 5px;
+    --alert-location-widget-color: white;
+    --alert-location-widget-padding: 0px 5px 0 5px;
+    --alert-location-widget-margin-bottom: 0;
+    --alert-location-widget-position: absolute;
+    --alert-location-widget-top: 50%;
+    --alert-location-widget-left: 0;
+    --alert-location-widget-transform: translate(0, -50%);
+    --alert-location-widget-text-shadow: 1px 1px 3px #00000069;
+}
+:root, .alert-title-widget {
+    --alert-title-widget-font-size: 150px;
+    --alert-title-widget-line-height: 150px;
+    --alert-title-widget-color: white;
+    --alert-title-widget-text-shadow: 1px 1px 3px #00000069;
+    --alert-title-widget-padding: 0px 5px 0 5px;
+    --alert-title-widget-background: rgba(0, 0, 0, 0);
+}
+:root, .spc-widget {
+    --spc-widget-font-size: 90px;
+    --spc-widget-font-weight: bold;
+    --spc-widget-color: white;
+    --spc-widget-text-shadow: 1px 1px 3px #00000069;
+    --spc-widget-background: rgba(0, 0, 0, 0.562);
+    --spc-widget-padding: 15px;
+    --spc-widget-top: -100px;
+    --spc-widget-right: 0;
+}
+:root, .table-widget {
+    --table-widget-font-size: 21px;
+    --table-widget-color: white;
+    --table-widget-text-align: center;
+    --table-widget-width: 500px;
+    --table-widget-margin-left: auto;
+    --table-widget-margin-right: auto;
+    --table-widget-overflow: hidden;
+}
+:root, .watchdog-widget {
+    --watchdog-widget-font-size: 35px;
+    --watchdog-widget-font-weight: bold;
+    --watchdog-widget-color: white;
+    --watchdog-widget-text-shadow: 1px 1px 3px #00000069;
+}
+:root, .chatbot-widget {
+    --chatbot-border-radius: 16px;
+    --chatbot-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    --chatbot-zoom: 2.1;
+}
+
+
+
+
+
+
+
+@font-face { font-family: SofiaSansSemiCondensed-Bold; src: url('/assets/fonts/SofiaSansSemiCondensed-Bold.ttf');}  
+* { font-family: var(--global-font-family); }
+.p_boxdark { background-color: var(--dynamic-bg-color-dark); display: block; width: 100%; transition-duration: 1s; overflow: hidden; }
+.p_boxlight { background-color: var(--dynamic-bg-color-light); display: block; width: 100%; transition-duration: 1s; overflow: hidden; }
+.notification { position: fixed; top: 20px; left: 38%; transform: var(--dynamic-bg-color-notification-transform); background-color: var(--dynamic-bg-color-notification); color: var(--dynamic-bg-color-notification-text); padding: var(--dynamic-bg-color-notification-padding); border-radius: var(--dynamic-bg-color-notification-radius); box-shadow: var(--dynamic-bg-color-notification-shadow); transition: var(--dynamic-bg-color-notification-transition); opacity: var(--dynamic-bg-color-notification-opacity); z-index: var(--dynamic-bg-color-notification-z-index); width: var(--dynamic-bg-color-notification-width); text-align: var(--dynamic-bg-color-notification-text-align); font-size: var(--dynamic-bg-color-notification-font-size); border-color: var(--dynamic-bg-color-notification-border); border-style: var(--dynamic-bg-color-notification-border-style); border-width: var(--dynamic-bg-color-notification-border-width); }
+
+@keyframes fade { 0% {opacity: 0;} 40% {opacity: 1;} 75% {opacity: 1;} 100% {opacity: 0;} }
+@keyframes fadeOutUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
+@keyframes fadeInDown { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes fadeOut { 0% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes rainbow-shadow { 0% { filter: drop-shadow(0 0 5px rgb(91, 205, 250)); } 25% { filter: drop-shadow(0 0 5px rgb(245, 169, 184)); } 50% { filter: drop-shadow(0 0 5px rgb(255, 255, 255)); } 75% { filter: drop-shadow(0 0 5px rgb(245, 169, 184)); } 100% { filter: drop-shadow(0 0 5px rgb(91, 205, 250)); } }
+@keyframes fade-in { from { opacity: 0; transform: translateY(32px) scale(0.98); } 60% { opacity: 1; transform: translateY(-4px) scale(1.01); } to { opacity: 1; transform: none; } }
+@keyframes bg-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes body-fade-zoom { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes fade-slide-up { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop-in { 0% { opacity: 0; transform: scale(0.6) rotate(-10deg); } 80% { transform: scale(1.05) rotate(2deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes text-flicker { 0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; } 20%, 22%, 24%, 55% { opacity: 0.3; } }
+@keyframes input-pulse { 0% { box-shadow: 0 0 0 0 rgba(94, 242, 192, 0.4); } 100% { box-shadow: 0 0 0 6px rgba(94, 242, 192, 0); } }
+@keyframes button-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes shimmer { 0% { text-shadow: 0 0 2px #c4b5fd; } 50% { text-shadow: 0 0 6px #a78bfa; } 100% { text-shadow: 0 0 2px #c4b5fd; } }
+@keyframes footer-slide-in { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes pulse-glow { 0% { box-shadow: 0 0 0px rgba(94, 242, 192, 0.12); } 100% { box-shadow: 0 0 12px rgba(94, 242, 192, 0.25); } }
+@keyframes chatbot-float {0% { transform: translateY(0) scale(1); }20% { transform: translateY(-2px) scale(1.01); }40% { transform: translateY(1.5px) scale(0.99); }60% { transform: translateY(-2.5px) scale(1.01); }80% { transform: translateY(1px) scale(0.99); }100% { transform: translateY(0) scale(1); }}

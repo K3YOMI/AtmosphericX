@@ -384,7 +384,7 @@ class Parsing {
         if (exludedForecaseOffices.length != 0) { alerts = alerts.filter(alert => !exludedForecaseOffices.includes(alert.properties.parameters.WMOidentifier[0].split(' ')[1])); }
         if (forecastOffices.length != 0) { alerts = alerts.filter(alert => forecastOffices.includes(alert.properties.parameters.WMOidentifier[0].split(' ')[1])); }
         if (ugcCodes.length != 0) { alerts = alerts.filter(alert => alert.properties.geocode.UGC.some(code => ugcCodes.includes(code))); }
-        alerts = alerts.filter(alert => new Date(alert.properties.expires).getTime() / 1000 > new Date().getTime() / 1000); 
+        alerts = alerts.filter(alert => new Date(alert.properties.expires).getTime() > new Date().getTime()); 
         return alerts
     }
 
@@ -412,6 +412,12 @@ class Parsing {
                 loader.cache.logging.push({ id: alertHash, expires: registration.details.expires});
                 loader.modules.hooks.youveGotMail(`${registration.details.name} (${registration.details.type})`, `Locations: ${registration.details.locations}\nIssued: ${new Date(registration.details.issued).toLocaleString()}\nExpires: ${new Date(registration.details.expires).toLocaleString()}\nWind Gusts: ${registration.details.wind}\nHail Size: ${registration.details.hail}\nDamage Threat: ${registration.details.damage}\nTornado ${registration.details.tornado}\nTags: ${registration.details.tag.join(', ')}\nSender: ${registration.details.sender}\nTracking ID: ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}`)
                 loader.modules.hooks.sendWebhook(`${registration.details.name} (${registration.details.type})`,`**Locations:** ${registration.details.locations}\n**Issued:** ${new Date(registration.details.issued).toLocaleString()}\n**Expires:** ${new Date(registration.details.expires).toLocaleString()}\n**Wind Gusts:** ${registration.details.wind}\n**Hail Size:** ${registration.details.hail}\n**Damage Threat:** ${registration.details.damage}\n**Tornado** ${registration.details.tornado}\n**Tags:** ${registration.details.tag.join(', ')}\n**Sender:** ${registration.details.sender}\n**Tracking ID:** ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}\n\n\`\`\`\n${registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\n\`\`\`\n`);
+                if (loader.cache.configurations.sources.miscellaneous_sources.character_ai.auto_alert) {
+                    loader.modules.character.commitChat(`${loader.cache.configurations.sources.miscellaneous_sources.character_ai.prefix} ${registration.details.description}`).then((response) => {
+                        if (response.success == true) { loader.cache.chatbot = {message: response.message, image: loader.cache.configurations.sources.miscellaneous_sources.character_ai.image} }
+                    })
+                }
+            
             }
             if (Object.keys(registration).length != 0) {
                 if (registration.details.ignored == true) { continue; }
