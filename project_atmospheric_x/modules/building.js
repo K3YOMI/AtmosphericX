@@ -61,21 +61,22 @@ class Building {
       */
 
     getEventSignificance = function(event, damage) {
+        let eventName = event.properties.event || `Unknown Event`;
         let description = event.properties.description?.toLowerCase() || `No description provided`;
-        if (description.includes(`flash flood emergency`) && event.properties.event == `Flash Flood Warning`) event.properties.event = `Flash Flood Emergency`;
-        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Warning` && damage == `CONSIDERABLE`) event.properties.event = `Particularly Dangerous Situation (TOR WARNING)`;
-        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Watch`) event.properties.event = `Particularly Dangerous Situation (TOR WATCH)`;
-        if (description.includes(`tornado emergency`) && event.properties.event == `Tornado Warning` && damage == `CATASTROPHIC`) event.properties.event = `Tornado Emergency`;
-        if (event.properties.event == `Tornado Warning`) {
-            event.properties.event = `Radar Indicated Tornado Warning`;
-            if (event.properties.parameters.tornadoDetection == `RADAR INDICATED`) event.properties.event = `Radar Indicated Tornado Warning`;
-            if (event.properties.parameters.tornadoDetection == `OBSERVED`) event.properties.event = `Confirmed Tornado Warning`;
+        if (description.includes(`flash flood emergency`) && eventName == `Flash Flood Warning`) eventName = `Flash Flood Emergency`;
+        if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Warning` && damage == `CONSIDERABLE`) eventName = `Particularly Dangerous Situation (TOR WARNING)`;
+        if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Watch`) eventName = `Particularly Dangerous Situation (TOR WATCH)`;
+        if (description.includes(`tornado emergency`) && eventName == `Tornado Warning` && damage == `CATASTROPHIC`) eventName = `Tornado Emergency`;
+        if (eventName == `Tornado Warning`) {
+            eventName = `Radar Indicated Tornado Warning`;
+            if (event.properties.parameters.tornadoDetection == `RADAR INDICATED`) eventName = `Radar Indicated Tornado Warning`;
+            if (event.properties.parameters.tornadoDetection == `OBSERVED`) eventName = `Confirmed Tornado Warning`;
         }
-        if (event.properties.event == `Severe Thunderstorm Warning`) {
-            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) event.properties.event = `Considerable Severe Thunderstorm Warning`;
-            if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) event.properties.event = `Destructive Severe Thunderstorm Warning`;
+        if (eventName == `Severe Thunderstorm Warning`) {
+            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) eventName = `Considerable Severe Thunderstorm Warning`;
+            if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) eventName = `Destructive Severe Thunderstorm Warning`;
         }
-        return event.properties.event;
+        return eventName;
     }
 
     /**

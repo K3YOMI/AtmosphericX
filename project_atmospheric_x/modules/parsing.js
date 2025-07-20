@@ -402,7 +402,7 @@ class Parsing {
                     '```'
                 ].join('\n');
                 loader.modules.hooks.sendWebhook(alertTitle, alertBody, generalWebhook);
-                if (Array.isArray(criticalWebhook.events) && criticalWebhook.events.includes(alert.properties.native)) { loader.modules.hooks.sendWebhook(alertTitle, alertBody, criticalWebhook); }
+                if (Array.isArray(criticalWebhook.events) && criticalWebhook.events.includes(alert.properties.event)) { loader.modules.hooks.sendWebhook(alertTitle, alertBody, criticalWebhook); }
                 if (loader.cache.configurations.sources.miscellaneous_sources.character_ai.auto_alert) {
                     loader.modules.character.commitChat(`${loader.cache.configurations.sources.miscellaneous_sources.character_ai.prefix} ${registration.details.description}`).then(response => {
                         if (response.success) { loader.cache.chatbot = { message: response.message, image: loader.cache.configurations.sources.miscellaneous_sources.character_ai.image }; }
