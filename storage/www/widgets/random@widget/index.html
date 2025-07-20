@@ -39,9 +39,8 @@
                     let date = new Date(rng.unix * 1000);
                     let options = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
                     let formattedDate = date.toLocaleString('en-US', options);
-                    text = formattedDate.replace(/:\d{2}\s/, ' ').replace(',', '');
+                    text = formattedDate
                 }
-                console.log(text)
                 element_class.randomAlertUpdate(`dynamic-random-id`, text, max_length, aniamtions[0], aniamtions[1])
             })
         })
