@@ -164,11 +164,11 @@ class Building {
         event.properties.parameters.tornadoDetection = tornado;
         event.properties.description ??= `No description provided`;
         event.properties.messageType = eventActions.message;
-        if (onlyDoBeeps && !filteredEvents.includes(properEventName)) {
+        if (onlyDoBeeps && !filteredEvents.includes(event.properties.properEventName)) {
             eventActions.audio = defaultAudio;
             onlyBeep = true;
         }
-        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.includes(properEventName)) {
+        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.includes(event.properties.properEventName)) {
             ignoreWarning = true;
         }
         if (event.geometry?.coordinates?.[0] && loader.cache.location) {
