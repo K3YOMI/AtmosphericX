@@ -1,1 +1,0 @@
-.text { font-size: var(--alert-title-widget-font-size); line-height: var(--alert-title-widget-line-height); width: 100%; text-align: center; overflow: hidden; color: var(--alert-title-widget-color); word-wrap: break-word; margin-bottom: 0; position: absolute; top: 35%; left: 0%; padding: var(--alert-title-widget-padding); text-shadow: var(--alert-title-widget-text-shadow); }

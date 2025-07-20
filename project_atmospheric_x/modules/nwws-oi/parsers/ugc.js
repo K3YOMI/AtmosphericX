@@ -32,16 +32,11 @@ class UGCParsing {
       */
 
     getUGC = async function(message) {
-        let header = this.getHeader(message)
-        let zones = this.getZones(header)
-        let locations = await this.getLocations(zones)
-        let ugc = {}
-        if (zones.length > 0) {
-            ugc.zones = zones 
-            ugc.locations = locations
-            return ugc
-        }
-        return null
+        let header = this.getHeader(message);
+        let zones = this.getZones(header);
+        let locations = await this.getLocations(zones);
+        let ugc = zones.length > 0 ? { zones, locations } : null;
+        return ugc;
     }
 
     /**
@@ -55,12 +50,10 @@ class UGCParsing {
         let locations = [];
         for (let i = 0; i < zones.length; i++) {
             let id = zones[i].trim();
-            let located = await loader.modules.database.runQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id])
-            if (located.length > 0) { locations.push(located[0].location); }
-            if (located.length === 0) { locations.push(id); }
+            let located = await loader.modules.database.runQuery(`SELECT location FROM shapefiles WHERE id = ?`, [id]);
+            located.length > 0 ? locations.push(located[0].location) : locations.push(id);
         }
-        locations = [...new Set(locations)];
-        return locations
+        return Array.from(new Set(locations));
     }
 
     /**
@@ -74,16 +67,16 @@ class UGCParsing {
         let coordinates = [];
         for (let i = 0; i < zones.length; i++) {
             let id = zones[i].trim();
-            let located = await loader.modules.database.runQuery(`SELECT geometry FROM shapefiles WHERE id = ?`, [id])
+            let located = await loader.modules.database.runQuery(`SELECT geometry FROM shapefiles WHERE id = ?`, [id]);
             if (located.length > 0) {
                 let geometry = JSON.parse(located[0].geometry);
-                if (geometry && geometry.type === 'Polygon') {
-                    coordinates = coordinates.concat(geometry.coordinates[0].map(coord => [coord[0], coord[1]]));
+                if (geometry?.type == 'Polygon') {
+                    coordinates.push(...geometry.coordinates[0].map(coord => [coord[0], coord[1]]));
                     break;
                 }
             }
         }
-        return coordinates
+        return coordinates;
     }
 
     /**
@@ -94,38 +87,22 @@ class UGCParsing {
       */
 
     getZones = function(header) {
-        let ugcSplit = header.split(`-`);
-        let zones = [];
-        let state = ugcSplit[0].substring(0, 2);
-        let format = ugcSplit[0].substring(2, 3);
+        let ugcSplit = header.split('-'), zones = [], state = ugcSplit[0].substring(0, 2), format = ugcSplit[0].substring(2, 3);
         for (let i = 0; i < ugcSplit.length; i++) {
-            if (/^[A-Z]/.test(ugcSplit[i])) { 
+            if (/^[A-Z]/.test(ugcSplit[i])) {
                 state = ugcSplit[i].substring(0, 2);
                 if (ugcSplit[i].includes('>')) {
-                    let [start, end] = ugcSplit[i].split('>');
-                    let startNum = parseInt(start.substring(3), 10);
-                    let endNum = parseInt(end, 10);
-                    for (let j = startNum; j <= endNum; j++) {
-                        zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
-                    }
-                } else {
-                    zones.push(ugcSplit[i]); 
-                }
-                continue; 
+                    let [start, end] = ugcSplit[i].split('>'), startNum = parseInt(start.substring(3), 10), endNum = parseInt(end, 10);
+                    for (let j = startNum; j <= endNum; j++) zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
+                } else zones.push(ugcSplit[i]);
+                continue;
             }
             if (ugcSplit[i].includes('>')) {
-                let [start, end] = ugcSplit[i].split('>');
-                let startNum = parseInt(start, 10);
-                let endNum = parseInt(end, 10);
-                for (let j = startNum; j <= endNum; j++) {
-                    zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
-                }
-            } else {
-                zones.push(`${state}${format}${ugcSplit[i]}`);
-            }
+                let [start, end] = ugcSplit[i].split('>'), startNum = parseInt(start, 10), endNum = parseInt(end, 10);
+                for (let j = startNum; j <= endNum; j++) zones.push(`${state}${format}${j.toString().padStart(3, '0')}`);
+            } else zones.push(`${state}${format}${ugcSplit[i]}`);
         }
-        zones = zones.filter(item => item !== '');
-        return zones 
+        return zones.filter(item => item !== '');
     }
 
     /**
@@ -135,11 +112,11 @@ class UGCParsing {
       * @param {string} message - The message to search in
       */
 
-    getHeader = function(message) { 
+    getHeader = function(message) {
         let start = message.search(new RegExp(loader.definitions.RegExp_UGCStart, "gimu"));
         let end = message.substring(start).search(new RegExp(loader.definitions.RegExp_UGCEnd, "gimu"));
-        let full = message.substring(start, start + end).replace(/\s+/g, '').slice(0, -1)
-        return full
+        let full = message.substring(start, start + end).replace(/\s+/g, '').slice(0, -1);
+        return full;
     }
 }
 

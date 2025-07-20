@@ -22,10 +22,14 @@
   */
 
 class Mapbox { 
-    constructor(library, autoFly) {
+    constructor(library, autoFly=undefined, showAlert=undefined, showLocation=undefined) {
         this.library = library
         this.storage = this.library.storage
         this.auto = autoFly
+        this.showAlert = showAlert
+        this.showLocation = showLocation
+        this.previousTracking = null
+        this.isTransitioning = false
         this.name = `MapboxClass`
         this.library.createOutput(`${this.name} Initialization`, `Successfully initialized ${this.name} module`)
         this.createMapBoxSession()
@@ -48,6 +52,24 @@ class Mapbox {
             })
             this.storage.mapbox.on(`load`, async () => { })
         }
+        if (this.showAlert !== null) {
+            let mapboxAlert = document.getElementById(`mapbox-alert`);
+            if (mapboxAlert) {
+                let alertIframe = document.createElement('iframe');
+                alertIframe.src = `/widgets/alerts?top&colorTop`;
+                alertIframe.className = `alert-iframe`;
+                mapboxAlert.appendChild(alertIframe);
+            }  
+        }  
+        if (this.showLocation !== null) {
+            let mapboxLocation = document.getElementById(`mapbox-locations`);
+            if (mapboxLocation) {
+                let alertIframe = document.createElement('iframe');
+                alertIframe.src = `/widgets/location`
+                alertIframe.className = `location-iframe`;
+                mapboxLocation.appendChild(alertIframe);
+            }  
+        }  
     }
 
     /**
@@ -84,20 +106,6 @@ class Mapbox {
         if (!this.storage.mapbox.getLayer(targetedLayer)) {
             this.storage.mapbox.addLayer({id: targetedLayer,type: `line`,source: targetedSource,paint: {'line-color': ['get', 'color'],'line-width': 3}});  
         }
-        //this.storage.mapbox.on('click', targetedLayer, (e) => {
-        //    let coordinates = e.features[0].geometry.coordinates[0][0].slice();
-        //    let description = e.features[0].properties.description;
-        //    if (description === ``) {description = `No description provided`}
-        //    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360}
-        //    if (this.currentPopup) {this.currentPopup.remove();}      
-        //    this.currentPopup = new mapboxgl.Popup({ className: 'widgets-custom-popup' }).setLngLat(coordinates).setHTML(`<div>${description}</div>`).addTo(this.storage.mapbox);
-        //});
-        //this.storage.mapbox.on('mouseenter', targetedLayer, () => {
-        //    this.storage.mapbox.getCanvas().style.cursor = 'pointer';
-        //});
-        //this.storage.mapbox.on('mouseleave', targetedLayer, () => {
-        //    this.storage.mapbox.getCanvas().style.cursor = '';
-        //});
     }
 
 
@@ -136,23 +144,6 @@ class Mapbox {
         if (!this.storage.mapbox.getLayer(targetedLayer)) {
             this.storage.mapbox.addLayer({id: targetedLayer,type: `circle`,source: targetedSource,paint: { 'circle-radius': ['get', 'size'], 'circle-color': ['get', 'color'], 'circle-opacity': 0.8, 'circle-stroke-width': 1, 'circle-stroke-color': `rgb(255, 255, 255)`,},filter: ['!=', ['get', 'description'], ``]});
         }
-
-        //this.storage.mapbox.on('click', targetedLayer, (e) => {
-        //    let coordinates = e.features[0].geometry.coordinates.slice();
-        //    let description = e.features[0].properties.description;
-        //    if (description === ``) {description = `No description provided`}
-        //    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360}
-        //    if (this.currentPopup) {this.currentPopup.remove();}          
-        //    this.currentPopup = new mapboxgl.Popup({ className: 'widgets-custom-popup' }).setLngLat(coordinates).setHTML(`<div>${description}</div>`).addTo(this.storage.mapbox);
-        //});
-//
-        //this.storage.mapbox.on('mouseenter', targetedLayer, () => {
-        //    this.storage.mapbox.getCanvas().style.cursor = 'pointer';
-        //});
-//
-        //this.storage.mapbox.on('mouseleave', targetedLayer, () => {
-        //    this.storage.mapbox.getCanvas().style.cursor = '';
-        //});  
     }  
 
     /**
@@ -173,6 +164,25 @@ class Mapbox {
             })
         }
         this.createDotSource(reportPlots, `storm-reports-source`, `storm-reports-layer`)
+    }
+
+    /**
+      * @function updateAlertDescription
+      * @description Updates the alert description in the Mapbox alert iframe based on the tracking ID.
+      * @param {string} tracking - The tracking ID of the alert.
+      */
+
+    updateAlertDescription = function(tracking) {
+        let alertIframe = document.querySelector('#mapbox-alert iframe');
+        if (alertIframe) {
+            if (this.previousTracking == tracking) { return; }
+            this.previousTracking = tracking;
+            if (alertIframe.src.includes(`trackingID=${tracking}`)) { return; }
+            setTimeout(() => {
+                alertIframe.src = '';
+                alertIframe.src = `/widgets/alerts?top&colorTop&trackingID=${tracking}`;
+            }, 1000);
+        } 
     }
 
     /**
@@ -221,7 +231,7 @@ class Mapbox {
             if (hasSetZoom == false) { hasSetZoom = true; triggerZoom = true;  }
             let location = alert.details.locations;
             let sender = alert.details.sender;
-            let eventColor = scheme.find(color => alert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type === "Default");
+            let eventColor = scheme.find(color => alert.details.name.toLowerCase().includes(color.type.toLowerCase())) || scheme.find(color => color.type == "Default");
             let coords = alert.raw.geometry.coordinates[0].map(point => [point[0], point[1]]);
             let name = alert.details.name;
             let type = alert.details.type;
@@ -230,27 +240,38 @@ class Mapbox {
             let tags = alert.details.tag == undefined ? `No tags found` : alert.details.tag
             tags = JSON.stringify(tags).replace(/\"/g, ``).replace(/,/g, `, `).replace(/\[/g, ``).replace(/\]/g, ``)
             let description = `<b>${name} (${type})</b><br>${location}<br><br><b>Sender:</b> ${sender}<br><b>Issued:</b> ${issued}<br><b>Expires:</b> ${expires}<br>Tags: ${tags}`;
-            if (triggerZoom && !this.auto && this.storage.realtime.length == 0) {
+            if (triggerZoom && !this.auto && this.storage.location.length == 0) {
+                this.isTransitioning = true;
                 this.storage.mapbox.flyTo({center: [alert.raw.geometry.coordinates[0][0][0], alert.raw.geometry.coordinates[0][0][1]], zoom: 9, speed: 0.4, pitch: 55, });
-                if (description === ``) {description = `No description provided`}
-                //if (this.currentPopup) {this.currentPopup.remove();}
-                //this.currentPopup = new mapboxgl.Popup({ className: 'widgets-custom-popup' }).setLngLat([alert.raw.geometry.coordinates[0][0][0], alert.raw.geometry.coordinates[0][0][1]]).setHTML(`<div>${description}</div>`).addTo(this.storage.mapbox);
+                if (description == ``) {description = `No description provided`}
+                if (this.showAlert != null) {
+                    let trackingId = alert.raw.tracking == undefined ? (alert.raw.properties.parameters.WMOidentifier && alert.raw.properties.parameters.WMOidentifier[0] !== undefined ? alert.raw.properties.parameters.WMOidentifier[0]  : `No ID found`) : alert.raw.tracking;
+                    this.updateAlertDescription(trackingId)
+                }
+                setTimeout(() => { this.isTransitioning = false; }, 5000);
             }
             alertPlots.push({
                 issued: issued,
+                tracking: alert.raw.tracking == undefined ? (alert.raw.properties.parameters.WMOidentifier && alert.raw.properties.parameters.WMOidentifier[0] !== undefined ? alert.raw.properties.parameters.WMOidentifier[0]  : `No ID found`) : alert.raw.tracking,
                 coordinates: coords,
                 color: eventColor.color.light,
                 description: description,
                 autoZoom: triggerZoom
             })
         }
-        if (alertPlots.length > 0 && this.storage.realtime.length == 0 && this.auto) {
+        if (alertPlots.length > 0 && this.storage.location.length == 0 && this.auto) {
             let validAlertFound = false;
             while (!validAlertFound && alertPlots.length > 0) {
                 let randomAlert = alertPlots[Math.floor(Math.random() * alertPlots.length)];
                 if (randomAlert.coordinates && randomAlert.coordinates.length > 0 && randomAlert.coordinates[0] && randomAlert.coordinates[0].length > 0) {
                     validAlertFound = true;
+                    this.isTransitioning = true;
                     this.storage.mapbox.flyTo({center: [randomAlert.coordinates[0][0], randomAlert.coordinates[0][1]], zoom: 9, speed: 0.4, pitch: 55, });
+                    if (this.showAlert != null) {
+                        let trackingId = randomAlert.tracking;
+                        this.updateAlertDescription(trackingId)
+                    }
+                    setTimeout(() => { this.isTransitioning = false; }, 5000);
                 } else {
                     alertPlots.splice(alertPlots.indexOf(randomAlert), 1); // Remove invalid alert
                 }
@@ -262,20 +283,20 @@ class Mapbox {
 
 
     /**
-      * @function realTimeIRL
+      * @function displayLocation
       * @description Displays the user's current location on the Mapbox map by creating a dot source and layer.
       */
  
-    realTimeIRL = async function() {
-        if (Object.keys(this.storage.realtime).length > 0) {
-            let latitude = this.storage.realtime.lat
-            let longitude = this.storage.realtime.lon
-            let location = this.storage.realtime.county + `, ` + this.storage.realtime.state
+    displayLocation = async function() {
+        if (Object.keys(this.storage.location).length > 0) {
+            let latitude = this.storage.location.lat
+            let longitude = this.storage.location.lon
+            let location = this.storage.location.county + `, ` + this.storage.location.state
             let color = `rgb(255, 0, 191)`
             let description = `You are here!`
-            let dotPlots = [{ latitude: latitude, longitude: longitude, color: color, description: location, size: 10}]
-            this.storage.mapbox.flyTo({center: [longitude, latitude], zoom: 9, speed: 0.8, pitch: 1});
-            this.createDotSource(dotPlots, `realtimeirl-source`, `realtimeirl-layer`)
+            let dotPlots = [{ latitude: latitude, longitude: longitude, color: color, description: location, size: 10 }];
+            this.storage.mapbox.flyTo({center: [longitude, latitude], zoom: 15, speed: 0.8, pitch: 55, bearing: 0});  
+            this.createDotSource(dotPlots, `displayLocation-source`, `displayLocation-layer`)
         }
     }
 
@@ -286,7 +307,7 @@ class Mapbox {
             let data = await response.json();
             let latestRadar = data.radar.past.at(-1);
             if (!latestRadar || !latestRadar.time) return;
-            if (this.lastRadarTime === latestRadar.time) return;
+            if (this.lastRadarTime == latestRadar.time) return;
             this.lastRadarTime = latestRadar.time;
             let radarSourceId = 'radar-source';
             let radarLayerId = 'radar-layer';
@@ -319,10 +340,11 @@ class Mapbox {
 
     updateThread = function() {
         if (!this.storage.mapbox.isStyleLoaded()) { setTimeout(() => { this.updateThread() }, 1000); return; }
+        if (this.isTransitioning) { return; }
         this.displayReports()
         this.displaySpotters()
         this.displayAlerts()
-        this.realTimeIRL()
+        this.displayLocation()
         this.displayRadar()
     }
 }

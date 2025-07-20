@@ -13,6 +13,8 @@
 */
 
 
+
+
 let loader = require(`../loader.js`)
 
 
@@ -30,7 +32,7 @@ class Commands {
 			{ command: `/clients`, description: `Get all clients`, function: `sendClientsSignal` },
 			{ command: `/debug-xml`, description: `Debug XML alerts`, function: `sendDebugXmlSignal` },
 			{ command: `/debug-raw`, description: `Debug raw alerts`, function: `sendDebugRawSignal` },
-			{ command: `/debug-ugc`, description: `Debug raw alerts`, function: `sendDebugUgcSignal` },
+			{ command: `/debug-ugc`, description: `Debug ugc codes`, function: `sendDebugUgcSignal` },
 			{ command: `/clear`, description: `Clear console`, function: `sendClearSignal` },
 			{ command: `/memory-dump`, description: `Create a memory dump`, function: `sendMemoryDumpSignal` },
 			{ command: `/hammer-time`, description: `Stress testing`, function: `sendHammerSignal` },
@@ -48,118 +50,72 @@ class Commands {
 	handleCommand = async (command, args) => {
 		switch (command) {
 			case '/help':
-				console.log(`\n`)
-				console.log(`Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MiB (${Math.round((loader.packages.os.totalmem() - loader.packages.os.freemem()) / loader.packages.os.totalmem() * 100) + '%'})`)
-				console.table(this.commands.map((cmd) => {
-					return { Command: cmd.command, Description: cmd.description, Usage: cmd.usage ? cmd.usage : `No usage` }
-				}))
+				console.log(`\n`);
+				console.log(`Memory: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MiB (${Math.round((loader.packages.os.totalmem() - loader.packages.os.freemem()) / loader.packages.os.totalmem() * 100)}%)`);
+				console.table(this.commands.map(cmd => ({ Command: cmd.command, Description: cmd.description, Usage: cmd.usage || `No usage` })));
 				break;
-			case '/activate-account':
-				{
-					let username = args[0]
-					let enable = (args[1] == 1) ? 1 : 0;
-					if (username != undefined && enable != undefined) {
-						await loader.modules.database.runQuery(`UPDATE accounts SET activated = ? WHERE username = ?`, [enable, username])
-						loader.modules.hooks.createLog(this.name, `Account ${username} activated: ${enable}`)
-						loader.modules.hooks.createOutput(this.name, `Account ${username} activated: ${enable}`)
-					}
+			case '/activate-account': {
+				let username = args[0], enable = args[1] == 1 ? 1 : 0;
+				if (username && enable != undefined) {
+					await loader.modules.database.runQuery(`UPDATE accounts SET activated = ? WHERE username = ?`, [enable, username]);
+					loader.modules.hooks.createLog(this.name, `Account ${username} activated: ${enable}`);
+					loader.modules.hooks.createOutput(this.name, `Account ${username} activated: ${enable}`);
 				}
 				break;
-			case '/account-role':
-				{
-					let username = args[0]
-					let role = parseInt(args[1])
-					if (username != undefined && role != undefined) {
-						if (role === 0 || role === 1) {
-							await loader.modules.database.runQuery(`UPDATE accounts SET role = ? WHERE username = ?`, [role, username])
-							loader.modules.hooks.createLog(this.name, `Account ${username} role set to: ${role === 0 ? 'Default User' : 'Administrator'}`)
-							loader.modules.hooks.createOutput(this.name, `Account ${username} role set to: ${role === 0 ? 'Default User' : 'Administrator'}`)
-						}
-						else {
-							loader.modules.hooks.createOutput(this.name, `Invalid role. Use 0 for Default User or 1 for Administrator.`)
-						}
-					}
+			}
+			case '/account-role': {
+				let username = args[0], role = parseInt(args[1]);
+				if (username && role != undefined) {
+					if (role == 0 || role == 1) {
+						await loader.modules.database.runQuery(`UPDATE accounts SET role = ? WHERE username = ?`, [role, username]);
+						loader.modules.hooks.createLog(this.name, `Account ${username} role set to: ${role == 0 ? 'Default User' : 'Administrator'}`);
+						loader.modules.hooks.createOutput(this.name, `Account ${username} role set to: ${role == 0 ? 'Default User' : 'Administrator'}`);
+					} else loader.modules.hooks.createOutput(this.name, `Invalid role. Use 0 for Default User or 1 for Administrator.`);
 				}
 				break;
-			case '/delete-account':
-				{
-					let username = args[0]
-					if (username != undefined) {
-						await loader.modules.database.runQuery(`DELETE FROM accounts WHERE username = ?`, [username])
-						loader.modules.hooks.createLog(this.name, `Account ${username} deleted`)
-						loader.modules.hooks.createOutput(this.name, `Account ${username} deleted`)
-					}
+			}
+			case '/delete-account': {
+				let username = args[0];
+				if (username) {
+					await loader.modules.database.runQuery(`DELETE FROM accounts WHERE username = ?`, [username]);
+					loader.modules.hooks.createLog(this.name, `Account ${username} deleted`);
+					loader.modules.hooks.createOutput(this.name, `Account ${username} deleted`);
 				}
 				break;
-			case '/force-update':
-				{
-					let limits = loader.static.webSocketClientLimits
-					for (let i = 0; i < limits.length; i++) {
-						Object.keys(limits[i]).forEach(key => { limits[i][key].time = 0; limits[i][key].hasCalled = false; });
-					}
-					loader.modules.hooks.reloadConfigurations()
-					loader.modules.webcalling.nextRun()
-					loader.modules.webcalling.nextRun(loader.cache.twire)
-					loader.modules.websocket.onCacheReady()
-					loader.modules.hooks.createOutput(this.name, `Successfully forced all clients to update their data`)
+			}
+			case '/force-update': {
+				let limits = loader.static.webSocketClientLimits;
+				limits.forEach(limit => Object.keys(limit).forEach(key => { limit[key].time = 0; limit[key].hasCalled = false; }));
+				loader.modules.hooks.reloadConfigurations();
+				loader.modules.webcalling.nextRun();
+				loader.modules.webcalling.nextRun(loader.cache.twire);
+				loader.modules.websocket.onCacheReady();
+				loader.modules.hooks.createOutput(this.name, `Successfully forced all clients to update their data`);
+				break;
+			}
+			case '/clients': {
+				let totalClients = loader.static.webSocketClients.length, totalAccountsOnline = loader.static.accounts.filter(account => account.session).length, accountsOnline = loader.static.accounts.filter(account => account.session);
+				loader.modules.hooks.createOutput(this.name, `Total clients: ${totalClients}`);
+				loader.modules.hooks.createOutput(this.name, `Total sessions: ${totalAccountsOnline}`);
+				if (accountsOnline.length) console.table(accountsOnline.map((account, idx) => ({ '#': idx + 1, Username: account.username, Address: account.address, Guest: account.isGuest ? 'Yes' : 'No' })));
+				let dbCall = await loader.modules.database.runQuery(`SELECT * FROM accounts`);
+				if (dbCall.length) console.table(dbCall.map((row, idx) => ({ '#': idx + 1, Username: row.username, Activated: row.activated ? 'Yes' : 'No', Role: row.role == 0 ? 'Default User' : 'Administrator', Created: row.created_at })));
+				break;
+			}
+			case '/debug-xml': loader.modules.listener.createDebugAlert(`XML`); break;
+			case '/debug-raw': loader.modules.listener.createDebugAlert(`RAW`); break;
+			case '/debug-ugc': {
+				let start = Date.now(), ugc = args[0];
+				if (ugc) {
+					let zones = loader.modules.ugc.getZones(ugc), locations = await loader.modules.ugc.getLocations(zones);
+					loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${Date.now() - start}ms)`);
 				}
 				break;
-			case '/clients':
-				{
-					let totalClients = loader.static.webSocketClients.length
-					let totalAccountsOnline = loader.static.accounts.filter(account => account.session != undefined).length
-					loader.modules.hooks.createOutput(this.name, `Total clients: ${totalClients}`)
-					loader.modules.hooks.createOutput(this.name, `Total sessions: ${totalAccountsOnline}`)
-					const accountsOnline = loader.static.accounts.filter(account => account.session != undefined);
-					if (accountsOnline.length > 0) {
-						let tableData = accountsOnline.map((account, idx) => ({ '#': idx + 1, Username: account.username, Address: account.address, Guest: account.isGuest ? 'Yes' : 'No' }));
-						console.table(tableData);
-					}
-					let dbCall = await loader.modules.database.runQuery(`SELECT * FROM accounts`);
-					if (dbCall.length > 0) {
-						let tableData = dbCall.map((row, idx) => ({
-							'#': idx + 1,
-							Username: row.username,
-							Activated: row.activated ? 'Yes' : 'No',
-							Role: row.role === 0 ? 'Default User' : 'Administrator',
-							Created: row.created_at
-						}));
-						console.table(tableData);
-					}
-				}
-				break;
-			case '/debug-xml':
-				loader.modules.listener.createDebugAlert(`XML`)
-				break;
-			case '/debug-raw':
-				loader.modules.listener.createDebugAlert(`RAW`)
-				break;
-			case '/debug-ugc':
-				{
-					let start = new Date().getTime()
-					let ugc = args[0]
-					if (ugc != undefined) {
-						let zones = loader.modules.ugc.getZones(ugc)
-						let locations = await loader.modules.ugc.getLocations(zones)
-						loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${new Date().getTime() - start}ms)`)
-					}
-				}
-				break;
-			case '/clear':
-				loader.modules.hooks.displayLogo()
-				break;
-			case '/memory-dump':
-				require('v8').writeHeapSnapshot();
-				loader.modules.hooks.createOutput(this.name, `Memory dump created`)
-				loader.modules.hooks.createLog(this.name, `Memory dump created`)
-				break;
-			case '/hammer-time':
-				for (let i = 0; i < 25; i++) {
-					loader.modules.listener.createDebugAlert(`RAW`)
-				}
-				break;
-			default:
-				loader.modules.hooks.createOutput(this.name, `Command not found: ${command}`)
+			}
+			case '/clear': loader.modules.hooks.displayLogo(); break;
+			case '/memory-dump': require('v8').writeHeapSnapshot(); loader.modules.hooks.createOutput(this.name, `Memory dump created`); loader.modules.hooks.createLog(this.name, `Memory dump created`); break;
+			case '/hammer-time': for (let i = 0; i < 25; i++) loader.modules.listener.createDebugAlert(`RAW`); break;
+			default: loader.modules.hooks.createOutput(this.name, `Command not found: ${command}`);
 		}
 	}
 
@@ -171,7 +127,7 @@ class Commands {
 	  */
 
 	validateCommand = function (command) {
-		let foundCommand = this.commands.find((c) => c.command === command)
+		let foundCommand = this.commands.find((c) => c.command == command)
 		if (foundCommand) { return foundCommand.command }
 	}
 

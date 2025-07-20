@@ -50,54 +50,48 @@ class Dashboard {
     addFormListener = function(domId = `login-form`, action = `login`) {
         let successMessage = document.querySelector(`.success-message`);
         let errorMessage = document.querySelector(`.error-message`);
-        document.getElementById('login-guest').addEventListener('click', function(e) {
-            e.preventDefault();
-            fetch(`/api/login-guest`, { 
-                method: `POST`, 
-                headers: { 'Content-Type': `application/json` }, 
-                body: JSON.stringify({}) 
-            }).then((response) => {
-                response.json().then((jsonData) => {
-                    if (response.ok) {
-                        successMessage.innerHTML = jsonData.message;
-                        successMessage.style.display = `block`;
-                        errorMessage.style.display = `none`;
-                        localStorage.setItem(`atmosx.cached.username`, `Guest`);
-                        localStorage.setItem(`atmosx.cached.role`, jsonData.role);
-                        document.cookie = `sessionFallback=${jsonData.session}; path=/; SameSite=Lax;`;
-                        setTimeout(() => { window.location.replace(`/`) }, 1000);
-                    } else {
-                        errorMessage.innerHTML = jsonData.message;
-                        errorMessage.style.display = `block`;
-                        successMessage.style.display = `none`;
-                    }
+        if (action == `login`) {
+            document.getElementById('login-guest').addEventListener('click', function(e) {
+                e.preventDefault();
+                fetch(`/api/login-guest`, { method: `POST`, headers: { 'Content-Type': `application/json` }, body: JSON.stringify({})}).then((response) => {
+                    response.json().then((jsonData) => {
+                        if (response.ok) {
+                            successMessage.innerHTML = jsonData.message;
+                            successMessage.style.display = `block`;
+                            errorMessage.style.display = `none`;
+                            localStorage.setItem(`atmosx.cached.username`, `Guest`);
+                            localStorage.setItem(`atmosx.cached.role`, jsonData.role);
+                            document.cookie = `sessionFallback=${jsonData.session}; path=/; SameSite=Lax;`;
+                            setTimeout(() => { window.location.replace(`/`) }, 1000);
+                        } else {
+                            errorMessage.innerHTML = jsonData.message;
+                            errorMessage.style.display = `block`;
+                            successMessage.style.display = `none`;
+                        }
+                    });
                 });
             });
-        });
+        }
         document.getElementById(domId).addEventListener(`submit`, (emitEvent) => {
             emitEvent.preventDefault();
             let username = document.getElementById(`username`).value;
             let hashedPassword = CryptoJS.SHA256(document.getElementById(`password`).value).toString();
             let requestBody = { username, password: hashedPassword };
             let endpoint = `/api/login`;
-            if (action === `reset`) {
+            if (action == `reset`) {
                 let hashedNewPassword = CryptoJS.SHA256(document.getElementById(`new-password`).value).toString();
                 requestBody.new_password = hashedNewPassword;
                 endpoint = `/api/reset`;
-            } else if (action === `register`) {
+            } else if (action == `register`) {
                 endpoint = `/api/register`;
             }
-            fetch(endpoint, { 
-                method: `POST`, 
-                headers: { 'Content-Type': `application/json` }, 
-                body: JSON.stringify(requestBody) 
-            }).then((response) => {
+            fetch(endpoint, { method: `POST`, headers: { 'Content-Type': `application/json` }, body: JSON.stringify(requestBody) }).then((response) => {
                 response.json().then((jsonData) => {
                     if (response.ok) {
                         successMessage.innerHTML = jsonData.message;
                         successMessage.style.display = `block`;
                         errorMessage.style.display = `none`;
-                        if (action === `login`) {
+                        if (action == `login`) {
                             localStorage.setItem(`atmosx.cached.username`, username);
                             localStorage.setItem(`atmosx.cached.role`, jsonData.role);
                             document.cookie = `sessionFallback=${jsonData.session}; path=/; SameSite=Lax;`;
@@ -149,7 +143,7 @@ class Dashboard {
      * @param {string} [domSidebar=`.interactive-sidebar`] - The CSS selector for the sidebar menu element. Defaults to `.interactive-sidebar`.
      */
 
-    triggerHamburgerListener = function(domSidebar=`.interactive-sidebar`, domWrapper=`.wrapper`, domHamburger=`hamburger`) {
+     triggerHamburgerListener = function(domSidebar=`.interactive-sidebar`, domWrapper=`.wrapper`, domHamburger=`hamburger`) {
         let sidebarMenu = document.querySelector(domSidebar)
         let wrapper = document.querySelector(domWrapper)
         let hamburgerButton = document.getElementById(domHamburger)
@@ -258,8 +252,26 @@ class Dashboard {
         domCard.appendChild(h1)
         domCard.appendChild(hr)
         domCard.appendChild(p)
-        document.getElementById(cardMetadata.parent).appendChild(domCard);
-        if (cardMetadata.onclick) { domCard.onclick = cardMetadata.onclick.bind(this); }
+        if (Array.isArray(cardMetadata.parent)) {
+            cardMetadata.parent.forEach((parent, idx) => {
+                let parentEl = document.getElementById(parent);
+                if (parentEl) {
+                    let cardToAppend;
+                    if (idx == 0) {
+                        cardToAppend = domCard;
+                    } else {
+                        cardToAppend = domCard.cloneNode(true);
+                        if (cardMetadata.onclick) {
+                            cardToAppend.onclick = cardMetadata.onclick.bind(this);
+                        }
+                    }
+                    parentEl.appendChild(cardToAppend);
+                }
+            });
+        } else {
+            document.getElementById(cardMetadata.parent).appendChild(domCard);
+        }
+        if (cardMetadata.onclick) { domCard.onclick = cardMetadata.onclick.bind(this); }  if (cardMetadata.onclick) { domCard.onclick = cardMetadata.onclick.bind(this); }
         return domCard;
     }
 
@@ -297,7 +309,7 @@ class Dashboard {
             arrSelects.forEach(select => { let element = document.createElement('select'); element.id = select.id; element.className = select.className || `popup-select`; select.options.forEach(option => { let option_element = document.createElement('option'); option_element.value = option.value; option_element.innerHTML = option.name; element.appendChild(option_element); }); popupContent.appendChild(element); });
         }
         if (arrCheckboxes) {
-            arrCheckboxes.forEach(checkbox => { let label = document.createElement('label'); label.className = 'popup-checkbox-label'; let element = document.createElement('input'); element.type = 'checkbox'; element.id = checkbox.id; element.className = 'popup-checkbox'; element.checked = !!checkbox.checked; if (typeof checkbox.onchange === 'function') { element.onchange = checkbox.onchange.bind(this); } label.appendChild(element); let span = document.createElement('span'); span.innerText = checkbox.name || ''; label.appendChild(span); popupContent.appendChild(label); });
+            arrCheckboxes.forEach(checkbox => { let label = document.createElement('label'); label.className = 'popup-checkbox-label'; let element = document.createElement('input'); element.type = 'checkbox'; element.id = checkbox.id; element.className = 'popup-checkbox'; element.checked = !!checkbox.checked; if (typeof checkbox.onchange == 'function') { element.onchange = checkbox.onchange.bind(this); } label.appendChild(element); let span = document.createElement('span'); span.innerText = checkbox.name || ''; label.appendChild(span); popupContent.appendChild(label); });
         }  
         if (arrButtons) {
             arrButtons.forEach(button => { let element = document.createElement('button'); element.className = button.className || `button-ok`; element.innerHTML = button.name; element.onclick = button.function.bind(this); popupContent.appendChild(element); });
@@ -327,12 +339,12 @@ class Dashboard {
 
     triggerLocalStorageListener = function(usernameSpan=`_home.accountname`) { 
         let username = localStorage.getItem('atmosx.cached.username') || 'Default User'; username = username.charAt(0).toUpperCase() + username.slice(1); 
-        let role = localStorage.getItem('atmosx.cached.role'); let roleText = role === "1" ? "Administator" : (role === "0" ? "User" : "Administator"); 
+        let role = localStorage.getItem('atmosx.cached.role'); let roleText = role == "1" ? "Administator" : (role == "0" ? "User" : "Administator"); 
         document.getElementById(usernameSpan).innerHTML = `${username} (Role: ${roleText})`; 
-        this.storage.eas = localStorage.getItem('atmosx.cached.eas') === 'true' ? true : false;
-        this.storage.sounds = localStorage.getItem('atmosx.cached.sounds') === 'true' ? true : false;
+        this.storage.eas = localStorage.getItem('atmosx.cached.eas') == 'true' ? true : false;
+        this.storage.sounds = localStorage.getItem('atmosx.cached.sounds') == 'true' ? true : false;
         if (role == null || role == undefined) { localStorage.setItem('atmosx.cached.role', "1"); }
-        if (localStorage.getItem('atmosx.cached.donationprompt') === null) { 
+        if (localStorage.getItem('atmosx.cached.donationprompt') == null) { 
             localStorage.setItem(`atmosx.cached.eas`, false)
             localStorage.setItem(`atmosx.cached.sounds`, false)
             this.injectNotification({ title: `[Introduction] Welcome to AtmosphericX, ${username}!`, description: `Thank you for using AtmosphericX! Your feedback and ideas are what makes this project go forward.<br><br><b>Support Us:</b> If you find this project helpful, consider donating. Every bit helps keep development going.<br><b>Get Involved:</b> Join our <a href="https://discord.gg/B8nKmhYMfz" target="_blank">Discord community</a> to share feedback, suggest features, or connect with other weather enthusiasts.<br><br>Feel free to select the settings you would like enabled so we can memorize them for yo<br><bMade with ❤️ by KiyomiWx and Starflight. We appreciate your support!`, rows: 2, parent: `_body.base`, buttons: [ { name: `Continue`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups(); } }, { name: `Donate`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups(); } } ], checkboxes: [ { id: `atmosx.cached.eas`, className: `popup-checkbox`, name: `Enable EAS Alerts`, checked: this.storage.eas, onchange: (e) => { localStorage.setItem('atmosx.cached.eas', e.target.checked); this.storage.eas = e.target.checked; } }, { id: `atmosx.cached.sounds`, className: `popup-checkbox`, name: `Enable Alert Sounds`, checked: this.storage.sounds, onchange: (e) => { localStorage.setItem('atmosx.cached.sounds', e.target.checked); this.storage.sounds = e.target.checked; } } ], inputs: [], selects: null }); 
@@ -380,25 +392,19 @@ class Dashboard {
             let damageThreat = alert.details.damage
             let tornadoIndicator = alert.details.tornado
             let fullSendName = alert.details.sender
+            let distanceAway = alert.details.distance
             let eventTags = alert.details.tag == undefined ? `No tags found` : alert.details.tag
             let eventTrackingID = alert.raw.tracking == undefined ? (alert.raw.properties.parameters.WMOidentifier && alert.raw.properties.parameters.WMOidentifier[0] !== undefined ? alert.raw.properties.parameters.WMOidentifier[0]  : `No ID found`) : alert.raw.tracking  
             let currentDescription = alert.details.description
             let eventHistory = alert.raw.history == undefined ? [] : alert.raw.history
-            let time = library.getTimeInformation(eventExpires);
-            let now = new Date()
-            let seconds = Math.floor((new Date(time.unix * 1000) - now) / 1000)
-            let minutes = Math.floor(seconds / 60)
-            let hours = Math.floor(minutes / 60);
-            let timeString = `${hours} hours ${minutes % 60} minutes ${seconds % 60} seconds`
-            if (isNaN(hours)) { timeString = `No expiration date found` }
-            if (hours < 0) { timeString = `Now...`}
-            if (hours > 9999) { timeString = `Until further notice...`}
+            let time = library.getTimeInformation(eventExpires)
+           
             eventTags = JSON.stringify(eventTags).replace(/\"/g, ``).replace(/,/g, `, `).replace(/\[/g, ``).replace(/\]/g, ``)
             if (locationsImpacted.length > 65) { locationsImpacted = locationsImpacted.substring(0, 65) + `...` }
             if (!recentOnly) { if (JSON.stringify(alert.details).toLowerCase().includes(searchTerm.toLowerCase()) == false) { continue } }
             this.injectCardData({
                 title: `${eventName} (${eventStatus})`,
-                content: `Event: ${eventName} (${eventStatus})<br>Locations: ${locationsImpacted}<br>Issued: ${eventIssued}<br>Expires in: ${timeString}<br>Wind Gust: ${maxWindGust} <br>Hail: ${maxHailSize}<br>Damage Threat: ${damageThreat}<br>Tornado: ${tornadoIndicator}<br>Tag: ${eventTags}<br>Sender: ${fullSendName}<br>Tracking ID: ${eventTrackingID}`,
+                content: `Event: ${eventName} (${eventStatus})<br>Locations: ${locationsImpacted}<br>Issued: ${eventIssued}<br>Expires in: ${time.expires}<br>Wind Gust: ${maxWindGust} <br>Hail: ${maxHailSize}<br>Damage Threat: ${damageThreat}<br>Tornado: ${tornadoIndicator}<br>Tag: ${eventTags}<br>Sender: ${fullSendName}<br>Distance: ${distanceAway}<br>Tracking ID: ${eventTrackingID}`,
                 parent: domDirectory,
                 onclick: () => {
                     let eventHistoryString = ``
@@ -409,7 +415,7 @@ class Dashboard {
                         eventHistoryString += `\n\n${genericDashline} ${descriptionSegement.act} (${descriptionSegement.time}) ${genericDashline}\n\n${descriptionSegement.desc}`;  
                     }
                     if (eventHistoryString == ``) { eventHistoryString = currentDescription } 
-                    let eventSubtitle = `Event: ${eventName} (${eventStatus})<br>Locations: ${alert.details.locations}<br>Issued: ${eventIssued}<br>Expires in: ${timeString}<br>Wind Gust: ${maxWindGust} <br>Hail: ${maxHailSize}<br>Damage Threat: ${damageThreat}<br>Tornado: ${tornadoIndicator}<br>Tag: ${eventTags}<br>Sender: ${fullSendName}<br>Tracking ID: ${eventTrackingID}`
+                    let eventSubtitle = `Event: ${eventName} (${eventStatus})<br>Locations: ${alert.details.locations}<br>Issued: ${eventIssued}<br>Expires in: ${time.expires}<br>Wind Gust: ${maxWindGust} <br>Hail: ${maxHailSize}<br>Damage Threat: ${damageThreat}<br>Tornado: ${tornadoIndicator}<br>Tag: ${eventTags}<br>Sender: ${fullSendName}<br>Distance: ${distanceAway}<br>Tracking ID: ${eventTrackingID}`
                     this.injectNotification({
                         title: `${eventName} (${eventStatus})`,  
                         subtext: eventSubtitle,
@@ -425,7 +431,8 @@ class Dashboard {
                             { name: `<ic class="fa fa-volume-up"></ic> Play Chatbot`, className: `button-ok`, function: () => { fetch('/api/chatbot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ description: currentDescription }) }) }},
                             { name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }
                         ]
-                    })  }
+                    })  
+                }
             })
         }   
         if (recentOnly) {
@@ -560,6 +567,7 @@ class Dashboard {
             let lat = spotters[i].lat
             let lon = spotters[i].lon
             let description = spotters[i].description
+            let distance = spotters[i].distance + ` Miles` || `N/A`;
             let isActive = spotters[i].active 
             let isIdle = spotters[i].idle
             let isStreaming = spotters[i].streaming
@@ -572,13 +580,13 @@ class Dashboard {
             if (description.toLowerCase().includes(searchTerm.toLowerCase()) == false) { continue }
             this.injectCardData({
                 title: `${currentIndicator} Spotter #${i + 1}`,
-                content: `Location: ${lat}, ${lon}<br>Description: ${description}`,
+                content: `Location: ${lat}, ${lon}<br>Description: ${description}<br>Distance: ${distance}`,
                 parent: domDirectory,
                 onclick: () => {
                     let descriptionString = description.replace(/<a href="(.*?)">(.*?)<\/a>/g, `<a href="$1" target="_blank">$2</a>`);
                     this.injectNotification({
                         title: `Spotter #${i + 1}`, 
-                        description: `Location: ${lat}, ${lon}<br>Description: ${descriptionString}`, 
+                        description: `Location: ${lat}, ${lon}<br>Description: ${descriptionString}<br>Distance: ${distance}`,
                         rows: 2,
                         parent: `_body.base`,
                         buttons: [
@@ -632,6 +640,7 @@ class Dashboard {
         let wire = this.storage.wire 
         if (wire.length == 0) {
             this.injectCardData({ title: `Awaiting NOAA Weather Wire Service...`, content: `<center>No NOAA Weather Wire Service Information Available<br>Do you have valid credentials and did you enable it?</center>`, parent: domDirectory})
+            this.resizeTable(domDirectory, 1)
             return
         }
         wire.sort((a, b) => new Date(b.issued) - new Date(a.issued))
@@ -751,7 +760,7 @@ class Dashboard {
                         let audio = new Audio(listenUrl);
                         window._radioPlayers[i] = audio;
                         audio.play();
-                        audio.volume = 0.2; // Set volume to 50%
+                        audio.volume = 0.2;
                         card.style.outline = '2px solid #00c853';
                     }
                 }
@@ -861,16 +870,35 @@ class Dashboard {
       */
 
     spawnSettings = async function(domDirectory = `hub.system`) {
-        document.getElementById(domDirectory).innerHTML = ``
+        document.getElementById(domDirectory).innerHTML = ``;
         this.injectCardData({
             title: `Client Data`,
-            content: `Memory: ${performance.memory ? (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2) + ' MB' : 'N/A'}<br>CPU Cores: ${navigator.hardwareConcurrency || 'N/A'}<br>Battery Level: ${navigator.getBattery ? (await navigator.getBattery()).level * 100 + '%' : 'N/A'}<br>User Agent: ${navigator.userAgent || 'N/A'}<br>Platform: ${navigator.platform || 'N/A'}<br>Screen Resolution: ${window.screen.width}x${window.screen.height}<br>Version: ${this.library.storage.updates.version || 'N/A'}<br>HTTPS: ${window.location.protocol === 'https:' ? 'Enabled' : 'Disabled'}<br>Current Role: ${localStorage.getItem('atmosx.cached.role') == "1" ? 'Administrator' : localStorage.getItem('atmosx.cached.role') == "2" ? 'Moderator' : localStorage.getItem('atmosx.cached.role') == "3" ? 'User' : 'Guest'}`,
+            content: `Memory: ${performance.memory ? (performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2) + ' MB' : 'N/A'}<br>CPU Cores: ${navigator.hardwareConcurrency || 'N/A'}<br>Battery Level: ${navigator.getBattery ? (await navigator.getBattery()).level * 100 + '%' : 'N/A'}<br>User Agent: ${navigator.userAgent || 'N/A'}<br>Platform: ${navigator.platform || 'N/A'}<br>Screen Resolution: ${window.screen.width}x${window.screen.height}<br>Version: ${this.library.storage.updates.version || 'N/A'}<br>HTTPS: ${window.location.protocol == 'https:' ? 'Enabled' : 'Disabled'}<br>Current Role: ${localStorage.getItem('atmosx.cached.role') == "1" ? 'Administrator' : localStorage.getItem('atmosx.cached.role') == "2" ? 'Moderator' : localStorage.getItem('atmosx.cached.role') == "3" ? 'User' : 'Guest'}`,
             parent: domDirectory,
             onclick: () => {}
         });
         this.injectCardData({
             title: `Server Data`,
             content: `Memory: ${this.library.storage.metrics?.memory || 'N/A'}<br>CPU: ${this.library.storage.metrics?.cpu || 'N/A'}<br>Platform: ${this.library.storage.metrics?.platform || 'N/A'}<br>Arch: ${this.library.storage.metrics?.arch || 'N/A'}<br>Uptime: ${this.library.storage.metrics?.uptime || 'N/A'}<br>Node.js Version: ${this.library.storage.metrics?.node_version || 'N/A'}<br>Hostname: ${this.library.storage.metrics?.hostname || 'N/A'}<br>Free Memory: ${this.library.storage.metrics?.free_memory || 'N/A'}<br>Total Memory: ${this.library.storage.metrics?.total_memory || 'N/A'}<br>Load Avg: ${(this.library.storage.metrics?.loadavg || []).join(', ') || 'N/A'}<br>`,
+            parent: domDirectory,
+            onclick: () => {}
+        });
+
+        let occupants = Array.isArray(this.storage.occupants) ? this.storage.occupants : [];
+        let atmosClients = occupants.filter(o => o.nickname && o.nickname.includes('AtmosphericX'));
+
+        let renderClientGrid = `<center>No clients connected.</center>`;
+        if (atmosClients.length) {
+            renderClientGrid = `<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 4px;">${
+                atmosClients.map(c =>
+                    `<div title="${c.nickname || c}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 780px;">${(c.nickname || c).replace(/ /g, '&nbsp;')}</div>`
+                ).join('')
+            }</div>`;
+        }
+
+        this.injectCardData({
+            title: `Known AtmosphericX Clients`,
+            content: renderClientGrid,
             parent: domDirectory,
             onclick: () => {}
         });  
@@ -914,46 +942,124 @@ class Dashboard {
       * @param {string} [domDirectory=`_sidebar.data`] - The ID of the DOM element where the sidebar items will be injected. Defaults to `_sidebar.data`.
       */ 
 
-    populateSidebar = function(domDirectory=`_sidebar.data`) {
-        let staticSidebarItems = static_dashboard_directs
-        let currentRole = localStorage.getItem('atmosx.cached.role') || '0';
+    populateSidebar = function(domDirectory = `_sidebar.data`) {
+        let role = +localStorage.getItem('atmosx.cached.role') || 0;
         let dom = document.getElementById(domDirectory);
-        for (let i = 0; i < staticSidebarItems.length; i++) {
-            let item = staticSidebarItems[i];
-            if (item.permission && currentRole !== item.permission.toString()) { continue; }
+        dom.innerHTML = '';
+        dom.style.overflowY = 'auto';
+        dom.style.overflowX = 'hidden';
+        dom.style.maxHeight = 'calc(85vh - 10px)';
+
+        const createEnabledButton = (item) => {
             let div = document.createElement('div');
-            div.className = 'sidebar-item';
-            div.innerHTML = `<i class="${item.icon}"></i><span>${item.label}</span>`;
-            if (item.nav) { div.onclick = async () => {
-                if (item.label === 'Configurations') { 
-                    let response = await library.createHttpRequest(`/configurations`)
-                    if (response.status == 200) { this.storage.configurableConfigurations = response; }
-                    this.spawnConfigurations();
+            div.className = 'sidebar-item sidebar-item';
+            div.innerHTML = `${item.icon ? `<i class="${item.icon}"></i>` : ''}<span>${item.label}</span>`;
+            div.onclick = item.nav
+                ? async (e) => {
+                      e.stopPropagation();
+                      if (item.label == 'Configurations') {
+                          let res = await this.library.createHttpRequest(`/configurations`);
+                          if (res.status == 200) this.storage.configurableConfigurations = res;
+                          this.spawnConfigurations();
+                      }
+                      this.navigationListener(item.nav);
+                  }
+                : typeof item.action == 'function'
+                ? item.action
+                : () => this[item.action]?.();
+            return div;
+        };
+
+        const createDisabledButton = (item) => {
+            let div = document.createElement('div');
+            div.className = 'sidebar-item sidebar-item sidebar-item-disabled';
+            div.innerHTML = `<span style="display: flex; align-items: center; gap: 8px;">${item.icon ? `<i class="${item.icon}" style="min-width: 18px; text-align: center;"></i>` : ''}<span>${item.label}</span></span>`;
+            div.style.pointerEvents = 'none';
+            div.style.opacity = '0.5';
+            div.onmouseenter = () => {
+                div.style.background = 'rgba(0,0,0,0.07)';
+                div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.04)';
+            };
+            div.onmouseleave = () => {
+                div.style.background = '';
+                div.style.boxShadow = '';
+            };
+            return div;
+        };
+
+        static_dashboard_directs.forEach((group) => {
+            let cat = document.createElement('div');
+            cat.className = 'sidebar-category dropdown-header sidebar-item sidebar-category';
+            cat.innerHTML = `<span class="dropdown-arrow" style="float:right;transition:transform 0.25s;"><i class="fa fa-chevron-down"></i></span><span>${group.category}</span>`;
+            dom.appendChild(cat);
+            let drop = document.createElement('div');
+            drop.className = 'sidebar-dropdown-items sidebar-dropdown';
+            drop.style.display = 'none';
+            drop.style.maxHeight = '0';
+            drop.style.overflow = 'hidden';
+            drop.style.transition = 'max-height 0.35s, opacity 0.25s';
+            drop.style.opacity = '0';
+            dom.appendChild(drop);
+            group.items.forEach((item) => {
+                if (item.disabled) {
+                    let button = createDisabledButton(item);
+                    drop.appendChild(button);
+                } else {
+                    let button = item.permission && role < +item.permission ? createDisabledButton(item) : createEnabledButton(item);
+                    drop.appendChild(button);
                 }
-                this.navigationListener(item.nav); 
-            }}
-            if (item.action) { 
-                if (typeof item.action === 'function') {div.onclick = item.action; }
-                if (typeof item.action === 'string') {div.onclick = () => this[item.action](); }}
-            dom.appendChild(div);
-        }
-    }
+            });
+            cat.onclick = function () {
+                let open = drop.style.display == 'block';
+                if (open) {
+                    drop.style.maxHeight = drop.scrollHeight + 'px';
+                    drop.style.opacity = '0';
+                    drop.offsetHeight;
+                    drop.style.maxHeight = '0';
+                    setTimeout(() => {
+                        drop.style.display = 'none';
+                    }, 350);
+                } else {
+                    drop.style.display = 'block';
+                    drop.offsetHeight;
+                    drop.style.maxHeight = drop.scrollHeight + 'px';
+                    drop.style.opacity = '1';
+                    setTimeout(() => {
+                        if (drop.style.display == 'block') drop.style.maxHeight = 'none';
+                    }, 350);
+                }
+                let arrow = cat.querySelector('.dropdown-arrow i');
+                if (arrow) arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
+                setTimeout(() => {
+                    let rect = drop.getBoundingClientRect();
+                    let sidebarRect = dom.getBoundingClientRect();
+                    if (rect.bottom > sidebarRect.bottom) {
+                        dom.scrollTop += rect.bottom - sidebarRect.bottom + 10;
+                    } else if (rect.top < sidebarRect.top) {
+                        dom.scrollTop += rect.top - sidebarRect.top - 10;
+                    }
+                }, 400);
+            };
+        });
+    };
+
+
 
     /**
       * @function populateDevLogs
       * @description Populates the development logs section with the latest changelogs and version information. If there are no changelogs available, it displays a message indicating that.
       */
 
-    populateDevLogs = function(version=`version`, domDirectory=`_devlogs`, headlineDom=`data-card-headline-parent`, headlineClass=`.data-card-headline`, httpsClass=`atmosx.header.https`) {
-        if (library.storage.updates.changelogs && Array.isArray(library.storage.updates.changelogs) && library.storage.updates.changelogs.length > 0) {
+    populateDevLogs = function(version=`version`,headlineClass=`.data-card-headline`, httpsClass=`atmosx.header.https`) {
+        if (library.storage.updates.changelogs && Array.isArray(library.storage.updates.changelogs)) {
             document.getElementById(version).innerHTML = `v${library.storage.updates.version}`
             document.getElementById(httpsClass).innerHTML = `${library.storage.updates.updated} - v${library.storage.updates.version}<ul style="padding-left: 20px;">${library.storage.updates.changelogs.map(item => `<li>${item}</li>`).join('')}</ul>`;
             if (library.storage.updates.headline != ``) {
-                document.getElementById(headlineDom).style.display = 'block'
                 document.querySelector(headlineClass).innerHTML = library.storage.updates.headline
             }
         } else {
             document.getElementById(httpsClass).innerHTML = `No changelogs available for this version.`;
+            document.getElementById(version).innerHTML = `v${library.storage.updates}`
         }
     }
 

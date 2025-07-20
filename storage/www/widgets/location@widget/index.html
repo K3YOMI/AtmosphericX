@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/location@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/variables.css">
+    <script src="../../assets/javascript/alerts.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <body>
+        <div class="location-box" id="location-box" style="display: none;">
+            <div class="location-row-light" id="location-alert-header"><span id="closest-warning"></span></div>
+            <div id="location-alert-body">
+                <div class="location-row-dark"><strong>Location:</strong> <span id="location"></span></div>
+                <div class="location-row-light"><strong>Nearby Chasers:</strong> <span id="chasers-nearby">0</span></div>
+                <div class="location-row-dark"><strong>Conditions:</strong> <span id="cloud-description"></span></div>
+                <div class="location-row-light"><strong>CAPE (GFS):</strong> <span id="current-cape"></span></div>
+                <div class="location-row-dark"><strong>Temperature:</strong> <span id="temperature">72°F</span></div>
+                <div class="location-row-light"><strong>Humidity:</strong> <span id="humidity"></span></div>
+                <div class="location-row-dark">
+                    <strong>Wind:</strong> 
+                    <span>Speed: <span id="wind-speed"></span>, Direction: <span id="wind-direction"></span>, Gust: <span id="wind-gust"></span></span>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        let library = new Library()
+        let urlParamters = new URLSearchParams(window.location.search);
+        library.createWebsocketSession([`public`, `location`, `active`, `manual`, `spotters`]).then(() => {
+            let alert_class = new Alerts(library, true)
+            document.addEventListener('onCacheUpdate', async (event) => {
+                alert_class.syncAlerts()
+                alert_class.triggerLocation()
+            })
+        })
+    </script>
+</html>

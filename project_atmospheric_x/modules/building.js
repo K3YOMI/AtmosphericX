@@ -30,15 +30,10 @@ class Building {
       * @param {string} locations - The locations string to format
       */
 
-    formatLocations = function(locations=`Chicago, IL`) { 
-        let splitLocations = locations.split(`,`)
-        let parsedLocations = ``
-        if (splitLocations.length == 1) { return locations } 
-        splitLocations.forEach((location, index) => {
-            if (index == 0) { parsedLocations += `${location.trim()}` }
-            else { parsedLocations += `, ${location.trim()}` }
-        })
-        return parsedLocations
+    formatLocations = function(locations = `Chicago, IL`) {
+        let splitLocations = locations.split(`,`);
+        if (splitLocations.length == 1) return locations;
+        return splitLocations.map(location => location.trim()).join(`, `);
     }
 
     /**
@@ -49,12 +44,12 @@ class Building {
       * @param {object} event - The alert object to get the parameters from
       */
 
-    getEventParameters = function(event) { 
-        let hailSize = event.properties.parameters.maxHailSize ? `${event.properties.parameters.maxHailSize}` : `N/A`
-        let windGust = event.properties.parameters.maxWindGust ? `${event.properties.parameters.maxWindGust}` : `N/A`
-        let tornadoThreat = event.properties.parameters.tornadoDetection || event.properties.parameters.waterspoutDetection || `N/A`
-        let damageThreat = event.properties.parameters.thunderstormDamageThreat || event.properties.parameters.tornadoDamageThreat || [`N/A`]
-        return { hail: hailSize, wind: windGust, tornado: tornadoThreat, damage: damageThreat }
+    getEventParameters = function(event) {
+        let hail = event.properties.parameters.maxHailSize || `N/A`;
+        let wind = event.properties.parameters.maxWindGust || `N/A`;
+        let tornado = event.properties.parameters.tornadoDetection || event.properties.parameters.waterspoutDetection || `N/A`;
+        let damage = event.properties.parameters.thunderstormDamageThreat || event.properties.parameters.tornadoDamageThreat || [`N/A`];
+        return { hail, wind, tornado, damage };
     }
 
     /**
@@ -65,21 +60,22 @@ class Building {
       * @param {object} event - The alert object to get the significance from
       */
 
-    getEventSignificance = function(event, damage) { 
-        let description = (event.properties.description == undefined) ? `No description provided` : event.properties.description.toLowerCase() 
-        if (description.includes(`flash flood emergency`) && event.properties.event == `Flash Flood Warning`) { event.properties.event = `Flash Flood Emergency`}
-        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Warning` && damage == `CONSIDERABLE`) { event.properties.event = `Particularly Dangerous Situation`}
-        if (description.includes(`tornado emergency`) && event.properties.event == `Tornado Warning` && damage == `CATASTROPHIC`) { event.properties.event = `Tornado Emergency`}
-
+    getEventSignificance = function(event, damage) {
+        let description = event.properties.description?.toLowerCase() || `No description provided`;
+        if (description.includes(`flash flood emergency`) && event.properties.event == `Flash Flood Warning`) event.properties.event = `Flash Flood Emergency`;
+        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Warning` && damage == `CONSIDERABLE`) event.properties.event = `Particularly Dangerous Situation (TOR WARNING)`;
+        if (description.includes(`particularly dangerous situation`) && event.properties.event == `Tornado Watch`) event.properties.event = `Particularly Dangerous Situation (TOR WATCH)`;
+        if (description.includes(`tornado emergency`) && event.properties.event == `Tornado Warning` && damage == `CATASTROPHIC`) event.properties.event = `Tornado Emergency`;
         if (event.properties.event == `Tornado Warning`) {
-            if (event.properties.parameters.tornadoDetection == `RADAR INDICATED`) { event.properties.event = `Radar Indicated Tornado Warning`}
-            if (event.properties.parameters.tornadoDetection == `OBSERVED`) { event.properties.event = `Confirmed Tornado Warning` }
+            event.properties.event = `Radar Indicated Tornado Warning`;
+            if (event.properties.parameters.tornadoDetection == `RADAR INDICATED`) event.properties.event = `Radar Indicated Tornado Warning`;
+            if (event.properties.parameters.tornadoDetection == `OBSERVED`) event.properties.event = `Confirmed Tornado Warning`;
         }
         if (event.properties.event == `Severe Thunderstorm Warning`) {
-            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) { event.properties.event = `Considerable Severe Thunderstorm Warning` }
-            if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) { event.properties.event = `Destructive Severe Thunderstorm Warning` }
+            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) event.properties.event = `Considerable Severe Thunderstorm Warning`;
+            if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) event.properties.event = `Destructive Severe Thunderstorm Warning`;
         }
-        return event.properties.event
+        return event.properties.event;
     }
 
     /**
@@ -89,16 +85,16 @@ class Building {
       * @param {object} event - The alert object to check
       */
 
-    getEventTag = function(event) { 
-        let tagDictionary = loader.cache.configurations.tags
-        let tags = [`No tags found`]
-        for (let [key, value] of Object.entries(tagDictionary)) { 
+    getEventTag = function(event) {
+        let tags = [`No tags found`];
+        let tagDictionary = loader.cache.configurations.tags;
+        for (let [key, value] of Object.entries(tagDictionary)) {
             if (event.properties.description.toLowerCase().includes(key.toLowerCase())) {
-                if (tags.includes(`No tags found`)) {tags = []}
-                if (!tags.includes(value)) { tags.push(value); }
-            } 
+                tags = tags.includes(`No tags found`) ? [] : tags;
+                if (!tags.includes(value)) tags.push(value);
+            }
         }
-        return tags
+        return tags;
     }
 
     /**
@@ -108,31 +104,31 @@ class Building {
       * @param {object} event - The alert object to get the actions from
       */
 
-    getEventActions = function(event) { 
-        let defaultAudio = loader.cache.configurations.tone_sounds.beep
-        let eventDictionary = loader.cache.configurations.alert_dictionary[event.properties.event]
-        let newAlertAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.new : eventDictionary.new
-        let updateAlertAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.update : eventDictionary.update
-        let cancelAlertAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.cancel : eventDictionary.cancel
-        let easAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.eas : eventDictionary.eas
-        let sirenAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.siren : eventDictionary.siren
-        let autobeepAudio = (eventDictionary == undefined) ? loader.cache.configurations.alert_dictionary.UNK.autobeep : eventDictionary.autobeep
-        let editedEventName = (eventDictionary == undefined) ? event.properties.event : eventDictionary.card
+    getEventActions = function(event) {
+        let defaultAudio = loader.cache.configurations.tone_sounds.beep;
+        let eventDictionary = loader.cache.configurations.alert_dictionary[event.properties.properEventName] || loader.cache.configurations.alert_dictionary.UNK;
+        let { new: newAlertAudio, update: updateAlertAudio, cancel: cancelAlertAudio, eas: easAudio, siren: sirenAudio, amber: amberAudio, autobeep: autobeepAudio } = eventDictionary;
+        let editedEventName = eventDictionary.properEventName || event.properties.properEventName;
         let messageState = [
-            { event: `Update`, message: `Updated`, audio: updateAlertAudio},
-            { event: `Cancel`, message: `Expired`, audio: cancelAlertAudio},
-            { event: `Alert`, message: `Issued`, audio: newAlertAudio},
-            { event: `Updated`, message: `Updated`, audio: updateAlertAudio},
-            { event: `Expired`, message: `Expired`, audio: cancelAlertAudio},
-            { event: `Issued`, message: `Issued`, audio: newAlertAudio},
+            { event: `Update`, message: `Updated`, audio: updateAlertAudio },
+            { event: `Cancel`, message: `Expired`, audio: cancelAlertAudio },
+            { event: `Alert`, message: `Issued`, audio: newAlertAudio },
+            { event: `Updated`, message: `Updated`, audio: updateAlertAudio },
+            { event: `Expired`, message: `Expired`, audio: cancelAlertAudio },
+            { event: `Issued`, message: `Issued`, audio: newAlertAudio },
             { event: `Extended`, message: `Updated`, audio: newAlertAudio },
             { event: `Correction`, message: `Updated`, audio: updateAlertAudio },
             { event: `Upgraded`, message: `Upgraded`, audio: newAlertAudio },
             { event: `Cancelled`, message: `Cancelled`, audio: cancelAlertAudio },
             { event: `Expired`, message: `Expired`, audio: cancelAlertAudio },
             { event: `Routine`, message: `Routine`, audio: updateAlertAudio },
-        ]
-        messageState.forEach((item) => { if (event.properties.messageType == item.event) { event.properties.messageType = item.message; defaultAudio = item.audio; }});
+        ];
+        messageState.forEach(item => {
+            if (event.properties.messageType == item.event) {
+                event.properties.messageType = item.message;
+                defaultAudio = item.audio;
+            }
+        });
         return {
             message: event.properties.messageType,
             name: editedEventName,
@@ -140,8 +136,9 @@ class Building {
             audio: defaultAudio,
             eas: easAudio,
             siren: sirenAudio,
+            amber: amberAudio,
             autobeep: autobeepAudio,
-        }; 
+        };
     }
 
     /**
@@ -151,54 +148,56 @@ class Building {
       * @param {object} event - The alert object to register
       */
 
-    registerEvent = function(event) { 
-        let ignoreWarning = false
-        let onlyBeep = false 
-        let defaultAudio = loader.cache.configurations.tone_sounds.beep
-        let onlyDoBeeps = loader.cache.configurations.project_settings.beep_only
-        let filteredEvents = loader.cache.configurations.project_settings.ignore_restrictions
-        let filteredAllowUpdated = loader.cache.configurations.project_settings.show_updates
-        let {hail, wind, tornado, damage} = this.getEventParameters(event)
-        let eventTags = this.getEventTag(event)
-        event.properties.areaDesc = this.formatLocations(event.properties.areaDesc)
-        event.properties.event = this.getEventSignificance(event, damage)
-        let eventActions = this.getEventActions(event)
-        event.properties.parameters.maxWindGust = wind
-        event.properties.parameters.maxHailSize = hail
-        event.properties.parameters.tornadoDetection = tornado
-        if (event.properties.description == undefined) { event.properties.description = `No description provided` }
-        event.properties.messageType = eventActions.message
-        if (onlyDoBeeps) {
-            if (!filteredEvents.includes(event.properties.event)) { 
-                eventActions.audio = defaultAudio 
-                onlyBeep = true
-            }
+    registerEvent = function(event) {
+        let ignoreWarning = false, onlyBeep = false, distanceAway;
+        let defaultAudio = loader.cache.configurations.tone_sounds.beep;
+        let onlyDoBeeps = loader.cache.configurations.project_settings.beep_only;
+        let filteredEvents = loader.cache.configurations.project_settings.ignore_restrictions;
+        let filteredAllowUpdated = loader.cache.configurations.project_settings.show_updates;
+        let { hail, wind, tornado, damage } = this.getEventParameters(event);
+        let eventTags = this.getEventTag(event);
+        event.properties.areaDesc = this.formatLocations(event.properties.areaDesc);
+        event.properties.properEventName = this.getEventSignificance(event, damage);
+        let eventActions = this.getEventActions(event);
+        event.properties.parameters.maxWindGust = wind;
+        event.properties.parameters.maxHailSize = hail;
+        event.properties.parameters.tornadoDetection = tornado;
+        event.properties.description ??= `No description provided`;
+        event.properties.messageType = eventActions.message;
+        if (onlyDoBeeps && !filteredEvents.includes(properEventName)) {
+            eventActions.audio = defaultAudio;
+            onlyBeep = true;
         }
-        if (!filteredAllowUpdated && event.properties.messageType == `Updated`) {
-            if (!filteredEvents.includes(event.properties.event)) { 
-                ignoreWarning = true
-            }
+        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.includes(properEventName)) {
+            ignoreWarning = true;
         }
-        event.properties.event = eventActions.name
+        if (event.geometry?.coordinates?.[0] && loader.cache.location) {
+            let warningCoords = event.geometry.coordinates[0];
+            let centerPolygon = warningCoords.reduce((acc, [lon, lat]) => ([acc[0] + lon, acc[1] + lat]), [0, 0]).map(sum => sum / warningCoords.length);
+            distanceAway = loader.modules.hooks.getMilesAway(loader.cache.location.lat, loader.cache.location.lon, centerPolygon[1], centerPolygon[0]);
+        }
+        event.properties.properEventName = eventActions.name;
         return {
             raw: event,
             details: {
                 id: event.properties.id,
-                name: event.properties.event,
+                native: event.properties.event,
+                name: event.properties.properEventName,
                 type: event.properties.messageType,
                 expires: event.properties.expires,
                 issued: event.properties.sent,
                 locations: event.properties.areaDesc,
                 description: event.properties.description,
-                hail: event.properties.parameters.maxHailSize != `N/A` ? `${event.properties.parameters.maxHailSize} IN` : `N/A`,
-                wind: event.properties.parameters.maxWindGust == "0" ? `N/A` : `${event.properties.parameters.maxWindGust}`,
-                tornado: event.properties.parameters.tornadoDetection,
+                hail: hail !== `N/A` ? `${hail} IN` : `N/A`,
+                wind: wind == "0" ? `N/A` : `${wind}`,
+                tornado,
                 damage: damage[0],
                 sender: event.properties.senderName,
                 tag: eventTags,
+                distance: distanceAway ? `${distanceAway} mi` : `N/A`,
                 link: event.id,
             },
-            metadata: { ...eventActions, ignored: ignoreWarning, onlyBeep: onlyBeep },
+            metadata: { ...eventActions, ignored: ignoreWarning, onlyBeep },
         };
     }
 
@@ -212,70 +211,37 @@ class Building {
 
     buildCache = async function(rawData, isUsingWire) {
         try {
-            rawData = loader.modules.hooks.filteringHtml(rawData)
-            if (rawData.NoaaWeatherWireService != undefined && isUsingWire == true ) {
-                let response = loader.modules.parsing.readAlerts(rawData.NoaaWeatherWireService)
-                loader.cache.active = response.message
+            rawData = loader.modules.hooks.filteringHtml(rawData);
+            if (rawData.SpotterNetwork) { loader.cache.spotters = loader.modules.parsing.readSpotterNetwork(rawData.SpotterNetwork).message; }
+            if (rawData.MesoscaleDiscussions) { loader.cache.discussions = loader.modules.parsing.readRawMesoscaleDicussions(rawData.MesoscaleDiscussions).message;  }
+            if (rawData.SpotterNetworkReports) { loader.cache.reports = loader.modules.parsing.rawSpotterNetworkReports(rawData.SpotterNetworkReports).message;  }
+            if (rawData.mPingReports) { loader.cache.reports = loader.modules.parsing.rawRawMpingReports(rawData.mPingReports).message;  }
+            if (rawData.GRLevelXReports) { loader.cache.reports = loader.modules.parsing.readRawGrlevelXReports(rawData.GRLevelXReports).message;  }
+            if (rawData.IEMReports) { loader.cache.reports = loader.modules.parsing.rawIemReports(rawData.IEMReports.features).message;  }
+            if (rawData.ProbTornado) { loader.cache.torprob = loader.modules.parsing.rawProbabilityReports(rawData.ProbTornado, `tornado`).message;  }
+            if (rawData.ProbSevere) { loader.cache.svrprob = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`).message;  }
+            if (rawData.wxRadio) { loader.cache.wxRadio = loader.modules.parsing.readWxRadio(rawData.wxRadio).message;  }
+            if ((rawData.NoaaWeatherWireService && isUsingWire) || rawData.NationalWeatherService) {
+                let response = loader.modules.parsing.readAlerts(isUsingWire ? true : false, isUsingWire ? rawData.NoaaWeatherWireService : rawData.NationalWeatherService);
+                loader.cache.active = response.message;
+                let places = response.message.map(alert => {
+                    let { name, locations, issued, expires, wind, hail, damage, tornado, tag, sender, distance } = alert.details;
+                    let tracking = alert.raw.tracking || alert.raw.properties.parameters.WMOidentifier?.[0] || `No ID found`;
+                    let description = [`Event: ${name}`, `Locations: ${locations}`, `Issued: ${new Date(issued).toLocaleString()}`, `Expires: ${new Date(expires).toLocaleString()}`, `Wind Gusts: ${wind}`, `Hail Size: ${hail}`, `Damage Threat: ${damage}`, `Tornado: ${tornado}`, `Tags: ${tag.join(', ')}`, `Sender: ${sender}`, `Distance: ${distance}`, `Tracking: ${tracking}`, `Source: AtmosphericX`].join('\\n').replace(/;/g, ' -').replace(/,/g, "");
+                    let geometry = alert.raw.geometry?.coordinates;
+                    let schemeEntry = Array.isArray(loader.cache.configurations.scheme) ? loader.cache.configurations.scheme.find(s => s.type && name?.toLowerCase().includes(s.type.toLowerCase())) : null;
+                    let color = (schemeEntry?.color?.light || loader.cache.configurations.scheme.find(s => s.type == 'Default').color.light).replace('rgb(', '').replace(')', '') + ',255';
+                    return { title: name, description, polygon: geometry, rgb: color };
+                });
+                loader.modules.placefiles.createPlacefilePolygon(1, 999, `AtmosphericX Alerts - ${new Date().toUTCString()}`, places, `alerts`);
             }
-            if (rawData.NationalWeatherService != undefined && rawData.NationalWeatherService.features.length > 0) {
-                let response = loader.modules.parsing.readAlerts(rawData.NationalWeatherService)
-                loader.cache.active = response.message
-            }
-            if (rawData.SpotterNetwork != undefined) {
-                let response = loader.modules.parsing.readSpotterNetwork(rawData.SpotterNetwork)
-                loader.cache.spotters = response.message;
-            }
-            if (rawData.MesoscaleDiscussions != undefined) {
-                let response = loader.modules.parsing.readRawMesoscaleDicussions(rawData.MesoscaleDiscussions)
-                loader.cache.discussions = response.message;
-            }
-            if (rawData.SpotterNetworkReports != undefined) {
-                let response = loader.modules.parsing.rawSpotterNetworkReports(rawData.SpotterNetworkReports)
-                loader.cache.reports = response.message
-            }
-            if (rawData.mPingReports != undefined) {
-                let response = loader.modules.parsing.rawRawMpingReports(rawData.mPingReports)
-                loader.cache.reports = response.message
-            }
-            if (rawData.GRLevelXReports != undefined) {
-                let response = loader.modules.parsing.readRawGrlevelXReports(rawData.GRLevelXReports)
-                loader.cache.reports = response.message
-            }
-            if (rawData.IEMReports != undefined) {
-                let response = loader.modules.parsing.rawIemReports(rawData.IEMReports.features)
-                loader.cache.reports = response.message
-            }
-            if (rawData.ProbTornado != undefined) {
-                let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbTornado, `tornado`)
-                loader.cache.torprob = response.message
-            }
-            if (rawData.ProbSevere != undefined) {
-                let response = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`)
-                loader.cache.svrprob = response.message
-            }
-            if (rawData.wxRadio != undefined) {
-                let response = loader.modules.parsing.readWxRadio(rawData.wxRadio)
-                loader.cache.wxRadio = response.message
-            }
-            if (rawData.RealtimeIRL != undefined) { 
-                if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
-                loader.cache.realtime.lat = rawData.RealtimeIRL.location.latitude;
-                loader.cache.realtime.lon = rawData.RealtimeIRL.location.longitude;
-                let toLocation = await loader.modules.hooks.converCoordinated(loader.cache.realtime.lat, loader.cache.realtime.lon)
-                if (toLocation != `err`) {
-                    let address = toLocation.address
-                    loader.cache.realtime.address = `${address.house_number}, ${address.road}, ${address.city || address.municipality}, ${address.state}, ${address.postcode}`; 
-                    loader.cache.realtime.location = `${address.city || address.municipality}, ${address.state}`
-                    loader.cache.realtime.county = address.county;
-                    loader.cache.realtime.state = address.state;
-                }
-            }
-            loader.modules.websocket.onCacheReady()
-            return {status: true, message: `Cache built successfully`}
+            loader.modules.websocket.onCacheReady();
+            return { status: true, message: `Cache built successfully` };
         } catch (error) {
-            loader.modules.hooks.createOutput(this.name, `Error while building cache: ${error}`)
-            loader.modules.hooks.createLog(this.name, `Error while building cache: ${error}`)
-            return {status: false, message: `Error while building cache: ${error}`}
+            let errorMessage = `Error while building cache: ${error.stack || error.message}`;
+            loader.modules.hooks.createOutput(this.name, errorMessage);
+            loader.modules.hooks.createLog(this.name, errorMessage);
+            return { status: false, message: errorMessage };
         }
     }
 }

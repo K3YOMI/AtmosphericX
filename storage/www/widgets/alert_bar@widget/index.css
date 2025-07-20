@@ -1,8 +1,0 @@
-body, html { background-color: rgba(0, 0, 0, 0); margin: 0; float: center; overflow: hidden; }
-.alert-box { display: none; background: var(--alertbar-widget-bg-gradient); border-radius: 8px; color: var(--alertbar-widget-text-color); max-width: 900px; margin: auto; overflow: hidden; box-shadow: 0 0 10px rgba(0, 0, 0, 0.973); position: absolute; width: 100%; top: 50%; left: 80%; margin-top: -50px; margin-left: -50%; }
-.alert-header { background: var(--alertbar-widget-header-bg); text-align: var(--alertbar-widget-header-align); font-size: var(--alertbar-widget-header-size); font-weight: var(--alertbar-widget-header-weight); padding: 16px; }
-.alert-body { background: var(--alertbar-widget-body-bg); }
-.row-light { background: var(--alertbar-widget-row-light-bg); display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 16px; box-sizing: border-box; }
-.row-dark { background: var(--alertbar-widget-row-dark-bg); display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 16px; box-sizing: border-box; }
-.left, .right { display: flex; align-items: center; gap: 6px; }
-.alert-icon { width: 200px; height: 200px; }

@@ -15,24 +15,28 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     </head>
-    <body id="_body.base">
+    <body id="_body.base">   
+        <div class="header">
+            <div class="header-center">
+                <span class="data-card-headline"></span>
+            </div>
+            <div class="header-right">
+                <p>Project AtmosphericX <small><span id='version'></span></small></p>
+            </div>
+        </div>
         <i class="hamburger-menu fa fa-bars" id="hamburger" onclick="dashboard_class.triggerHamburgerListener()"></i>
         <div class="interactive-sidebar"  data-state="closed">
             <img src="/assets/media/dashboard/logo.png" alt="Logo" class="sidebar-logo">
+            <footer class="sidebar-subtitle">
+                <small>Made with ❤️ by k3yomi & Starflight</small>
+            </footer>
             <hr class="sidebar-hr">
             <div id="_sidebar.data"></div>
-            <footer class="sidebar-footer">
-                <p>Project AtmosphericX <small><span id='version'></span></small><br><small>Made with ❤️ by k3yomi & Starflight</small></p>
-            </footer>
         </div>
         <div class="wrapper">
+            <div id="notification-container" class="notification-container"></div>
             <div id="_navigation.home" style="display: block;" type="menu">
                 <div class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);">
-                    <div class="data-card" id="data-card-headline-parent" style="display: none;"> 
-                        <p class="data-card-description">
-                            <span class="data-card-headline"></span>
-                        </p>
-                    </div>
                     <div class="data-card"> 
                         <h1 class="data-card-title">👋 Welcome to AtmosphericX, <span id="_home.accountname">[Account Name]</span></h1>
                         <hr class="data-card-hr"> 
@@ -47,7 +51,9 @@
                         <h1 class="data-card-title">Demo Video</h1>
                         <hr class="data-card-hr"> 
                         <p class="data-card-description">
-                        <iframe class="iframe-youtube" src="https://www.youtube.com/embed/CQeA9cGQZvw" title="YouTube video player"  frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe class="iframe-youtube" src="https://www.youtube.com/embed/CQeA9cGQZvw" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                            Your browser does not support iframes. Please visit <a href="https://www.youtube.com/watch?v=CQeA9cGQZvw" target="_blank">this link</a> to view the video.
+                        </iframe>
                         </p>
                     </div>
                     <div class="data-card"> 
@@ -67,7 +73,7 @@
             <div id="_navigation.alerts" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Top 6 Most Recent Alerts</span></h1>
+                        <h1 class="data-card-title">Warnings & Advisories</span></h1>
                         <hr class="data-card-hr"> 
                         <div id="child_atmosx_alerts.recent_alerts" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
@@ -83,7 +89,7 @@
             <div id="_navigation.lsr" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Storm Report Index</span></h1>
+                        <h1 class="data-card-title">Local Storm Reports</span></h1>
                         <hr class="data-card-hr"> 
                         <small>Search for Local Storm Reports</small><br>
                         <input class="popup-input" id="_lsr.reports_search" style="width: 50%; margin-top: 5px;" placeholder="" onkeyup="dashboard_class.spawnStormReports(undefined, undefined, document.getElementById('_lsr.reports_search').value)"><br><br>
@@ -103,7 +109,7 @@
             <div id="_navigation.spc" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Storm Prediction Center Models</span></h1>
+                        <h1 class="data-card-title">Storm Prediction Center</span></h1>
                         <hr class="data-card-hr"> 
                         <div id="hub_spc.models" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
@@ -112,7 +118,7 @@
             <div id="_navigation.spotternetwork" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Spotter Network Index</span></h1>
+                        <h1 class="data-card-title">Active Spotter Network</span></h1>
                         <hr class="data-card-hr"> 
                         <small>Search for Spotters</small><br>
                         <input class="popup-input" id="_spotternetwork.spotter_search" style="width: 50%; margin-top: 5px;" placeholder="Search Spotters" oninput="dashboard_class.spawnStormSpotterNetwork(undefined, undefined, this.value)"><br><br>
@@ -123,7 +129,7 @@
             <div id="_navigation.external" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">External Third-Party Services</span></h1>
+                        <h1 class="data-card-title">Third-Party Services</span></h1>
                         <hr class="data-card-hr"> 
                         <div id="hub_external.services" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
@@ -133,7 +139,7 @@
             <div id="_navigation.radio" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">NOAA Weather Radio</span></h1>
+                        <h1 class="data-card-title">Online NOAA Radio</span></h1>
                         <hr class="data-card-hr"> 
                         <small>Search Stations</small><br>
                         <input class="popup-input" id="_noaa_radio_communications.radio_search" style="width: 50%; margin-top: 5px;" placeholder="Search Stations" oninput="dashboard_class.spawnRadioServices(undefined, undefined, this.value)"><br><br>
@@ -145,9 +151,9 @@
             <div id="_navigation.nwws" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Latest NWWS Reports</span></h1>
+                        <h1 class="data-card-title">NOAA Weather Wire Service</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="child_atmosx_nwws.reports" class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);"></div>
+                        <div id="child_atmosx_nwws.reports" class="grid-area" data-original-grid-template-columns="2" style="grid-template-columns: repeat(2, 1fr);"></div>
                     </div>
                 </div>
             </div>
@@ -181,7 +187,7 @@
             <div id="_navigation.configurations" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
-                        <h1 class="data-card-title">Configurations (Experimental)</span></h1>
+                        <h1 class="data-card-title">Live Configurations</span></h1>
                         <hr class="data-card-hr"> 
                         <div id="hub.configurations" class="grid-area" data-original-grid-template-columns="3" style="grid-template-columns: repeat(3, 1fr);"></div>
                     </div>
@@ -192,11 +198,10 @@
                     <div class="data-card-parent"> 
                         <h1 class="data-card-title">System Settings</span></h1>
                         <hr class="data-card-hr"> 
-                        <div id="hub.system" class="grid-area" data-original-grid-template-columns="2" style="grid-template-columns: repeat(2, 1fr);"></div>
+                        <div id="hub.system" class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);"></div>
                     </div>
                 </div>
             </div>
-
         </div>
     </body>
     <script>
@@ -204,7 +209,7 @@
         let alert_class;
         let library = new Library()
         library.detectMobileDevice()
-        library.createWebsocketSession([`metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`occupants`, `metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
             dashboard_class = new Dashboard(library, true)
             cfg_class = new CfgEditor(library)

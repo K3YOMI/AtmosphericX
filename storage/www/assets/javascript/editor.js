@@ -143,7 +143,7 @@ class CfgEditor {
         range.collapse(true);
         while (!found && nodeStack.length) {
             node = nodeStack.pop();
-            if (node.nodeType === 3) {
+            if (node.nodeType == 3) {
                 let nextCharIndex = charIndex + node.length;
                 if (offset <= nextCharIndex) {
                     range.setStart(node, offset - charIndex);
@@ -185,13 +185,13 @@ class CfgEditor {
 
     updateEditor = function(obj, caretOffset) {
         if (!obj) return;
-        if (typeof caretOffset !== "number" && this.codeEl && document.activeElement === this.codeEl) {
+        if (typeof caretOffset !== "number" && this.codeEl && document.activeElement == this.codeEl) {
             caretOffset = this.getCaretCharacterOffsetWithin(this.codeEl);
         }
         let jsonStr = JSON.stringify(obj, null, 10);
         let highlighted = this.syntaxHighlight(jsonStr);
         this.codeEl.innerHTML = highlighted;
-        if (typeof caretOffset === "number") setTimeout(() => this.setCaretPosition(this.codeEl, caretOffset), 0);
+        if (typeof caretOffset == "number") setTimeout(() => this.setCaretPosition(this.codeEl, caretOffset), 0);
         this.currentConfig = obj;
         this.updateLineNumbers();
     };
@@ -204,7 +204,7 @@ class CfgEditor {
       */
 
     handleKeyDown = function(e) {
-        if (e.key === "Tab") {
+        if (e.key == "Tab") {
             e.preventDefault();
             let sel = window.getSelection();
             if (!sel.rangeCount) return;

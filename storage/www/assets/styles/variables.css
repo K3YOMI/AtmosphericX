@@ -1,8 +1,9 @@
-:root, .global {
-    --global-font-family: 'SofiaSansSemiCondensed-Bold', 'Inter', 'Segoe UI', Arial, sans-serif;
+@font-face { font-family: SofiaSansSemiCondensed; src: url('/assets/fonts/SofiaSansSemiCondensed.ttf');}  
+* { font-family: var(--global-font-family); }
 
+:root, .global {
+    --global-font-family: 'SofiaSansSemiCondensed';
     /* Dashboard Notification Widget */
-    --dynamic-bg-notification: rgba(32, 32, 32, 0.831);
     --dynamic-bg-color-notification: rgba(32, 32, 32, 0.831);
     --dynamic-bg-color-notification-border: #ffffff42;
     --dynamic-bg-color-notification-text: #fff;
@@ -21,20 +22,20 @@
     --dynamic-bg-color-notification-animation: fadeInDown 0.4s ease-out
 }
 :root, configuration-editor {
-    --editor-bg: #1e1e1e;
+    --editor-bg: var(--dashboard-desktop-color-bg-popup-description, #1e1e1e);
     --editor-fg: #d4d4d4;
     --editor-padding: 12px;
     --editor-border-radius: 8px;
     --editor-border: 1px solid #3c3c3c;
     --editor-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    --editor-line-bg: #252526;
+    --editor-line-bg: var(--dashboard-desktop-color-bg-popup-description, #1e1e1e);
     --editor-line-fg: #858585;
     --editor-line-padding: 20px 12px 20px 16px;
     --editor-line-border: 1px solid #3c3c3c;
     --editor-font-size: 13px;
     --editor-line-height: 1.6;
-    --editor-min-height: 700px;
-    --editor-max-height: 900px;
+    --editor-min-height: 400px;
+    --editor-max-height: 500px;
     --editor-caret: #d7ba7d;
     --editor-focus-shadow: 0 0 0 1px #007acc;
     --editor-error-fg: #ffffff;
@@ -45,19 +46,17 @@
 }
 :root, .portal {
     /* Backgrounds */
-    --portal-bg-primary: var(--color-bg-primary, #0B0B0B);
-    --portal-bg-blur-layer: rgba(31, 31, 32, 0.404);
+    --portal-bg-primary: #181a20;
+    --portal-bg-blur-layer: rgba(24, 26, 32, 0.85);
     --portal-bg-login-image: url('/assets/media/dashboard/login-bg.png');
-    --portal-bg-input: rgba(204, 84, 84, 0.04);
-    --portal-bg-input-focus: rgba(94, 242, 192, 0.08);
-    --portal-bg-footer: var(--color-bg-sidebar, #1a1a1a6e);
-    --portal-bg-footer-hover: var(--color-bg-data-card, rgba(31, 31, 32, 0.8));
-    --portal-bg-button: linear-gradient(90deg, #156865 0%, #156865 100%);
-    --portal-bg-button-hover: linear-gradient(90deg, #1e918d 0%, #1e918d 100%);
+    --portal-bg-input: rgba(40, 40, 48, 0.98);
+    --portal-bg-input-focus: rgb(44, 44, 54);
+    --portal-bg-footer: rgba(24, 26, 32, 0.329);
+    --portal-bg-button: rgb(75, 75, 92);
 
     /* Text */
-    --portal-text-primary: #f4f4f5;
-    --portal-text-secondary: #f5f5f7;
+    --portal-text-primary: #C0C0C0;
+    --portal-text-secondary: #FFFFFF;
     --portal-text-muted: #a1a1b0;
     --portal-text-footer: #d4d4d8;
     --portal-text-footer-hover: #e4e4e7;
@@ -67,30 +66,30 @@
     --portal-text-link-hover: #a78bfa;
 
     /* Borders */
-    --portal-border-box: rgba(255, 255, 255, 0.10);
-    --portal-border-input: rgba(255, 255, 255, 0.12);
+    --portal-border-box: rgba(200, 200, 200, 0.15);
+    --portal-border-input: rgba(200, 200, 200, 0.15);
     --portal-border-footer: rgba(255, 255, 255, 0.05);
-    --portal-border-input-focus: #5ef2c0;
+    --portal-border-input-focus: #5ecff2;
 
     /* Shadows */
-    --portal-shadow-box: 0 8px 32px rgba(94, 242, 192, 0.06), 0 1.5px 6px rgba(0, 0, 0, 0.10);
-    --portal-shadow-button: 0 2px 12px rgba(63, 60, 187, 0.2);
-    --portal-shadow-logo: 0 2px 5px rgba(0, 0, 0, 0.10);
+    --portal-shadow-box: 0 4px 20px rgba(15, 15, 15, 0.85);
+    --portal-shadow-button: 0 2px 12px rgba(0, 0, 0, 0.87);
+    --portal-shadow-logo: 0 2px 5px rgba(0, 0, 0, 0);
     --portal-shadow-footer: 0 -4px 24px rgba(0, 0, 0, 0.35);
-    --portal-shadow-input-focus: 0 0 0 2.5px rgba(94, 242, 192, 0.3);
+    --portal-shadow-input-focus: 0 0 0 2.5px rgba(94, 170, 242, 0.3);
 }
 
 
 :root, .dashboard-desktop, .dashboard-mobile {
     /* Backgrounds */
-    --dashboard-desktop-color-bg-primary: rgb(26, 24, 24);
-    --dashboard-desktop-color-bg-sidebar: #1A1A1A;
-    --dashboard-desktop-color-bg-data-card: #1F1F1F;
-    --dashboard-desktop-color-bg-data-card-hover: #333333;
-    --dashboard-desktop-color-bg-data-card-parent: rgba(50, 50, 50, 0.35);
-    --dashboard-desktop-color-bg-grid-area: rgba(0, 0, 0, 0);
-    --dashboard-desktop-color-bg-popup: #1A1A1A;
-    --dashboard-desktop-color-bg-popup-description: rgba(50, 50, 50, 0.35);
+    --dashboard-desktop-color-bg-primary: #181a20;
+    --dashboard-desktop-color-bg-sidebar: rgba(24, 26, 32, 0.98);
+    --dashboard-desktop-color-bg-data-card: rgba(40, 40, 48, 0.98);
+    --dashboard-desktop-color-bg-data-card-hover: rgb(75, 75, 92);
+    --dashboard-desktop-color-bg-data-card-parent: rgba(40, 40, 48, 0.45);
+    --dashboard-desktop-color-bg-grid-area: rgba(20, 20, 24, 0);
+    --dashboard-desktop-color-bg-popup: rgba(24, 26, 32, 0.98);
+    --dashboard-desktop-color-bg-popup-description: rgb(44, 44, 54);
 
     /* Text */
     --dashboard-desktop-color-text-primary: #C0C0C0;
@@ -99,6 +98,7 @@
 
     /* Borders */
     --dashboard-desktop-color-border-sidebar: rgba(200, 200, 200, 0.4);
+    --dashboard-desktop-color-border-sidebar-alternate: rgba(255, 255, 255, 0.603);
     --dashboard-desktop-color-border-data-card: rgba(200, 200, 200, 0.15);
     --dashboard-desktop-color-border-popup: rgba(200, 200, 200, 0.4);
 
@@ -134,7 +134,7 @@
     --dashboard-desktop-font-size-sidebar-title: 2em;
     --dashboard-desktop-font-size-title-dashboard: 2.5em;
     --dashboard-desktop-font-size-subtitle-dashboard: 1.5em;
-    --dashboard-desktop-font-size-data-card-title: 1.8em;
+    --dashboard-desktop-font-size-data-card-title: 1.9em;
     --dashboard-desktop-font-size-data-card-description: 1.5em;
     --dashboard-desktop-font-size-popup-title: 1.4em;
     --dashboard-desktop-font-size-popup-description: 1em;
@@ -176,7 +176,7 @@
     --dashboard-mobile-data-card-video-height: 100%;
     --dashboard-mobile-notification-font-size: 0.7em;
     --dashboard-mobile-notification-width: 400px;
-    --dashboard-mobile-notification-margin-left: -175px;
+    --dashboard-mobile-notification-margin-left: -25px;
     --dashboard-mobile-ul-font-size: 0.7em;
 }
 
@@ -234,6 +234,32 @@
     --mapbox-popup-widget-box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
     --mapbox-popup-widget-link-color: #dcdcdc;
 }
+
+:root, .notice-box {
+    --notice-box-border-color: #ffffff;
+    --notice-box-text-color: #ffffff;
+    --notice-box-shadow-color: rgba(0, 0, 0, 0.973);
+    --notice-box-width: 23%;
+    --notice-box-bg-light: rgb(241, 143, 38);
+    --notice-box-bg-dark: rgb(255, 90, 0);
+    --notice-header-bg: rgb(255, 140, 0);
+    --notice-header-font-size: 20px;
+    --notice-header-font-weight: bold;
+}
+
+
+:root, .location-widget {
+    --location-header-bg: #ff4500;
+    --location-header-font-size: 24px;
+    --location-header-font-weight: bold;
+    --location-box-border-color: #ffffff;
+    --location-box-text-color: #ffffff;
+    --location-box-shadow-color: rgba(0, 0, 0, 0.8);
+    --location-box-width: 80%;
+    --location-box-bg-light: #ffa07a;
+    --location-box-bg-dark: #ff6347;
+}
+
 :root, .notification-widget {
     --notification-widget-font-size-main: 35px;
     --notification-widget-font-size-secondary: 15px;
@@ -314,16 +340,11 @@
 }
 
 
-
-
-
-
-
-@font-face { font-family: SofiaSansSemiCondensed-Bold; src: url('/assets/fonts/SofiaSansSemiCondensed-Bold.ttf');}  
-* { font-family: var(--global-font-family); }
 .p_boxdark { background-color: var(--dynamic-bg-color-dark); display: block; width: 100%; transition-duration: 1s; overflow: hidden; }
 .p_boxlight { background-color: var(--dynamic-bg-color-light); display: block; width: 100%; transition-duration: 1s; overflow: hidden; }
-.notification { position: fixed; top: 20px; left: 38%; transform: var(--dynamic-bg-color-notification-transform); background-color: var(--dynamic-bg-color-notification); color: var(--dynamic-bg-color-notification-text); padding: var(--dynamic-bg-color-notification-padding); border-radius: var(--dynamic-bg-color-notification-radius); box-shadow: var(--dynamic-bg-color-notification-shadow); transition: var(--dynamic-bg-color-notification-transition); opacity: var(--dynamic-bg-color-notification-opacity); z-index: var(--dynamic-bg-color-notification-z-index); width: var(--dynamic-bg-color-notification-width); text-align: var(--dynamic-bg-color-notification-text-align); font-size: var(--dynamic-bg-color-notification-font-size); border-color: var(--dynamic-bg-color-notification-border); border-style: var(--dynamic-bg-color-notification-border-style); border-width: var(--dynamic-bg-color-notification-border-width); }
+.notification-container { position: fixed; top: 32px; left: 51%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 9999; gap: 0; pointer-events: none; width: auto; width: 45%; }
+.notification { position: relative; background: var(--dynamic-bg-color-notification); color: var(--dynamic-bg-color-notification-text, #fff); padding: var(--dynamic-bg-color-notification-padding, 18px 32px); border-radius: var(--dynamic-bg-color-notification-radius, 12px); box-shadow: var(--dynamic-bg-color-notification-shadow, 0 4px 16px rgba(0,0,0,0.18)); margin-bottom: 16px; font-size: var(--dynamic-bg-color-notification-font-size, 18px); font-weight: 600; font-family: var(--global-font-family, inherit); letter-spacing: 0.5px; opacity: var(--dynamic-bg-color-notification-opacity, 0); transform: var(--dynamic-bg-color-notification-transform, translateY(-30px)); transition: var(--dynamic-bg-color-notification-transition, opacity 0.4s, transform 0.4s); z-index: var(--dynamic-bg-color-notification-z-index, 10000); display: flex; align-items: center; gap: 14px; justify-content: center; max-width: 600px; width: 100%; border: var(--dynamic-bg-color-notification-border-width, 1px) var(--dynamic-bg-color-notification-border-style, solid) var(--dynamic-bg-color-notification-border, #ffffff42); text-align: var(--dynamic-bg-color-notification-text-align, center); pointer-events: auto; animation: var(--dynamic-bg-color-notification-animation, fadeInDown 0.4s ease-out); user-select: text; word-break: break-word; }
+
 
 @keyframes fade { 0% {opacity: 0;} 40% {opacity: 1;} 75% {opacity: 1;} 100% {opacity: 0;} }
 @keyframes fadeOutUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-10px); opacity: 0; } }
@@ -341,5 +362,5 @@
 @keyframes button-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 @keyframes shimmer { 0% { text-shadow: 0 0 2px #c4b5fd; } 50% { text-shadow: 0 0 6px #a78bfa; } 100% { text-shadow: 0 0 2px #c4b5fd; } }
 @keyframes footer-slide-in { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes pulse-glow { 0% { box-shadow: 0 0 0px rgba(94, 242, 192, 0.12); } 100% { box-shadow: 0 0 12px rgba(94, 242, 192, 0.25); } }
+@keyframes pulse-glow { 0% { box-shadow: 0 0 0px rgba(121, 94, 242, 0.12); } 100% { box-shadow: 0 0 12px rgba(94, 141, 242, 0.25); } }
 @keyframes chatbot-float {0% { transform: translateY(0) scale(1); }20% { transform: translateY(-2px) scale(1.01); }40% { transform: translateY(1.5px) scale(0.99); }60% { transform: translateY(-2.5px) scale(1.01); }80% { transform: translateY(1px) scale(0.99); }100% { transform: translateY(0) scale(1); }}

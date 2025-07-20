@@ -19,7 +19,7 @@
             let globalAdded = []
             let isPlaying = false;
             function playNextAudio() {
-                if (isPlaying || audioQueue.length === 0) return;
+                if (isPlaying || audioQueue.length == 0) return;
                 isPlaying = true;
                 const audioSrc = audioQueue.shift();
                 if (!audioSrc) {

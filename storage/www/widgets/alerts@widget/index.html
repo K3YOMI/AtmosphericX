@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <title>AtmosphericX</title>
+    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    <link rel="stylesheet" href="../widgets/alerts@widget/index.css">
+    <link rel="stylesheet" href="../../assets/styles/variables.css">
+    <script src="../../assets/javascript/alerts.js"></script>
+    <script src="../../assets/javascript/library.js"></script>
+    <body>
+        <div class="alert-box">
+            <div class="alert-header"><span id="alert-event-name"></span></div>
+            <div class="alert-body">
+            <div class="alert-row-dark">
+                <div class="alert-left">
+                <div>LOCATIONS INCLUDE: <span id="alert-event-locations"></span></div>
+                </div>
+                <div class="alert-right">
+                <div>ISSUED: <span id="alert-event-issued-time"></span></div>
+                </div>
+            </div>
+            <div class="alert-row-light">
+                <div class="alert-left">
+                <div>HAIL: <span id="alert-event-max-hail"></span></div>
+                </div>
+                <div class="alert-left">
+                <div>WIND: <span id="alert-event-max-wind"></span></div>
+                </div>
+                <div class="alert-left">
+                <div>TOR: <span id="alert-event-tornado"></span></div>
+                </div>
+                <div class="alert-right">
+                <div>DMG: <span id="alert-event-damage"></span></div>
+                </div>
+                <div class="alert-right">
+                <div>EXPIRES: <span id="alert-event-expires-time"></span></div>
+                </div>
+            </div>
+            <div class="alert-row-dark">
+                <div class="alert-left">
+                <div>OFFICE: <span id="alert-event-sender"></span></div>
+                </div>
+            </div>
+            <div class="alert-row-light">
+                <div class="alert-left">
+                <div>TAGS: <span id="alert-event-tags"></span></div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="notice-box" id="notice-box">
+            <div class="notice-row-light" id="notice-alert-header"><span id="notice-event-name"></span></div>
+            <div id="notice-alert-body">
+                <div class="notice-row-dark">
+                    <div><strong>LOCATIONS</strong></div>
+                    <div id="notice-event-locations"></div>
+                </div>
+                <div class="notice-row-light">
+                    <div><strong>ISSUED</strong></div>
+                    <div id="notice-event-issued-time"></div>
+                </div>
+                <div class="notice-row-dark">
+                    <div><strong>HAIL</strong></div>
+                    <div id="notice-event-max-hail"></div>
+                </div>
+                <div class="notice-row-light">
+                    <div><strong>WIND</strong></div>
+                    <div id="notice-event-max-wind"></div>
+                </div>
+                <div class="notice-row-dark">
+                    <div><strong>TOR</strong></div>
+                    <div id="notice-event-tornado"></div>
+                </div>
+                <div class="notice-row-light">
+                    <div><strong>DMG</strong></div>
+                    <div id="notice-event-damage"></div>
+                </div>
+                <div class="notice-row-dark">
+                    <div><strong>EXPIRES</strong></div>
+                    <div id="notice-event-expires-time"></div>
+                </div>
+                <div class="notice-row-light">
+                    <div><strong>OFFICE</strong></div>
+                    <div id="notice-event-sender"></div>
+                </div>
+                <div class="notice-row-dark">
+                    <div><strong>TAGS</strong></div>
+                    <div id="notice-event-tags"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        let library = new Library()
+        let urlParamters = new URLSearchParams(window.location.search);
+        library.createWebsocketSession([`public`, `active`, `manual`]).then(() => {
+            let alert_class = new Alerts(library, true)
+            library.detectMobileDevice() 
+            document.addEventListener('onCacheUpdate', async (event) => {
+                let storage = alert_class.syncAlerts()
+                if (urlParamters.has(`alert`)) {
+                    await alert_class.triggerAlertQueue()
+                } else if (urlParamters.has(`top`)) {
+                    let trackingId = undefined;
+                    if (urlParamters.get(`trackingID`)) { trackingId = urlParamters.get(`trackingID`); }
+                    await alert_class.triggerNotice(`notice-box`, urlParamters.get(`colorTop`), trackingId)
+                } else {
+                    await alert_class.triggerAlertQueue()
+                }
+            })
+        })
+    </script>
+</html>

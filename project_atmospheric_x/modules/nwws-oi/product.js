@@ -32,48 +32,46 @@ class Products {
       * @param {object} metadata - The metadata object to pass to the function. This is used for debugging purposes.
       */
 
-    compileMessage = function(stanza, debugMode=false, metadata={}) {
+    compileMessage = function(stanza, debugMode = false, metadata = {}) {
         try {
             if (debugMode) {
-                let isXml = metadata.xml 
-                let attributes = metadata.attributes
-                let message = stanza
-                let hasVtec = message.match(loader.definitions.RegExp_VTEC)
-                let areaDesc = message.includes(`<areaDesc>`)
-                let getType = this.getCallType(attributes)
-                return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec, type: getType, ignore: false}
+                let { xml: isXml, attributes } = metadata;
+                let message = stanza;
+                let hasVtec = message.match(loader.definitions.RegExp_VTEC);
+                let areaDesc = message.includes(`<areaDesc>`);
+                let type = this.getCallType(attributes);
+                return { message, attributes, isXml, hasXmlDescription: areaDesc, hasVtec, type, ignore: false };
             }
             if (stanza.is(`message`)) {
-                let cb = stanza.getChild(`x`)
-                if (cb && cb.children) {
-                    let message = unescape(cb.children[0])
-                    let attributes = cb.attrs
-                    let isXml = message.includes(`<?xml version="1.0"`)
-                    let areaDesc = message.includes(`<areaDesc>`)
-                    let hasVtec = message.match(loader.definitions.RegExp_VTEC)
-                    let getType = this.getCallType(attributes)
-                    if (loader.cache.wire == undefined) { loader.cache.wire = [] }
-                    if (loader.cache.wire.length >= 20) { loader.cache.wire.shift() }
-                    loader.cache.wire.push({message: message, issued: new Date().toISOString()})
-                    loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-category-${getType}s.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}`, `utf8`)
-                    if (!hasVtec) { loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-global-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`); }
+                let cb = stanza.getChild(`x`);
+                if (cb?.children) {
+                    let message = unescape(cb.children[0]);
+                    let attributes = cb.attrs;
+                    let isXml = message.includes(`<?xml version="1.0"`);
+                    let areaDesc = message.includes(`<areaDesc>`);
+                    let hasVtec = message.match(loader.definitions.RegExp_VTEC);
+                    let type = this.getCallType(attributes);
+                    loader.cache.wire ??= [];
+                    if (loader.cache.wire.length >= 20) loader.cache.wire.shift();
+                    loader.cache.wire.push({ message, issued: new Date().toISOString() });
+                    let basePath = loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`);
+                    loader.packages.fs.appendFileSync(`${basePath}/nwws-raw-category-${type}s.bin`, `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}`, `utf8`);
+                    if (!hasVtec) loader.packages.fs.appendFileSync(`${basePath}/nwws-raw-global-feed.bin`, `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`);
                     if (attributes.awipsid) {
-                        if (isXml && areaDesc) {
-                            loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-xml-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`);
-                        }
+                        if (isXml && areaDesc) loader.packages.fs.appendFileSync(`${basePath}/nwws-xml-valid-feed.bin`, `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`);
                         if (!isXml && hasVtec) {
-                            loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-raw-valid-feed.bin`), `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`);
-                            loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../../storage/nwws-oi`, `feed`, `nwws-cache.bin`), `\n\n${message}\n\n`, `utf8`);
-
+                            loader.packages.fs.appendFileSync(`${basePath}/nwws-raw-valid-feed.bin`, `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${message}\n${JSON.stringify(attributes, null, 4)}\n`, `utf8`);
+                            loader.packages.fs.appendFileSync(`${basePath}/nwws-cache.bin`, `\n\n${message}\n\n`, `utf8`);
                         }
-                        return {message: message, attributes: attributes, isXml: isXml, hasXmlDescription: areaDesc, hasVtec: hasVtec,type: getType,ignore: false}
+                        loader.modules.hooks.sendWebhook(`New Stanza Type: ${type.toUpperCase()}`, `\`\`\`${message.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\`\`\``, loader.cache.configurations.webhook_settings.misc_alerts);
+                        return { message, attributes, isXml, hasXmlDescription: areaDesc, hasVtec, type, ignore: false };
                     }
                 }
             }
-            return { message: null, attributes: null, isXml: null, hasXmlDescription: null, hasVtec: null, type: null, ignore: true }
+            return { message: null, attributes: null, isXml: null, hasXmlDescription: null, hasVtec: null, type: null, ignore: true };
         } catch (error) {
-            loader.modules.hooks.createLog(`${this.name}.compileMessage`, `Error: ${error}`)
-            return { message: null,  attributes: null, isXml: null, hasXmlDescription: null, hasVtec: null, type: null, ignore: true }
+            loader.modules.hooks.createLog(`${this.name}.compileMessage`, `Error: ${error}`);
+            return { message: null, attributes: null, isXml: null, hasXmlDescription: null, hasVtec: null, type: null, ignore: true };
         }
     }
 
@@ -85,18 +83,14 @@ class Products {
       */
 
     getCallType = function(attributes) {
-        if (attributes == null) { return `Unknown`}
-        if (attributes.awipsid == "") { return `Test Message`}
         let awipsDefinitions = {
-            SWOMCD: `md`, LSR: `local storm report`,
-            SPS: `special weather statement`, TAF: `terminal aerodrome forecast`,
-            RVS: `river statement`, RWR: `regional weather roundup`,
-            SFT: `tabular state forecast`, REC: `recreational report`,
-            PFM: `point forecast matrices`
+            SWOMCD: `md`, LSR: `local storm report`, SPS: `special weather statement`,
+            TAF: `terminal aerodrome forecast`, RVS: `river statement`,
+            RWR: `regional weather roundup`, SFT: `tabular state forecast`,
+            REC: `recreational report`, PFM: `point forecast matrices`
         };
-        for (let [prefix, type] of Object.entries(awipsDefinitions)) {
-            if (attributes.awipsid.startsWith(prefix)) { return type }
-        }
+        if (!attributes || !attributes.awipsid) return `Unknown`;
+        for (let [prefix, type] of Object.entries(awipsDefinitions)) { if (attributes.awipsid.startsWith(prefix)) return type; }
         return `alert`;
     }
 
@@ -108,19 +102,20 @@ class Products {
       */
 
     processMessage = function(metadata) {
-        if (metadata.type == `alert`) { loader.modules.alertbuilder.process(metadata) }
-        if (metadata.type == `local storm report`) { } // TODO: Add LSR support
-        if (metadata.type == `md`) { } // TODO: Add MD support
-        if (metadata.type == `outlook`) { } // TODO: Add Outlook support
-        if (metadata.type == `special weather statement`) { loader.modules.statementbuilder.process(metadata) }
-        if (metadata.type == `test message`) { } // TODO: Add Test Message support
-        if (metadata.type == `tabular state forecast`) { } // TODO: Add Tabular State Forecast support
-        if (metadata.type == `recreational report`) { } // TODO: Add Recreational Report support
-        if (metadata.type == `point forecast matrices`) { } // TODO: Add Point Forecast Matrices support
-        if (metadata.type == `terminal aerodrome forecast`) { } // TODO: Add Terminal Aerodrome Forecast support
-        if (metadata.type == `river statement`) { } // TODO: Add River Statement support
-        if (metadata.type == `regional weather roundup`) { } // TODO: Add Regional Weather Roundup support
-        return {success: true, message: `Successfully processed the message`}
+        let type = metadata.type;
+        if (type == `alert`) loader.modules.alertbuilder.process(metadata);
+        if (type == `local storm report`) return {success: false, message: `LSR support not implemented`};
+        if (type == `md`) return {success: false, message: `MD support not implemented`};
+        if (type == `outlook`) return {success: false, message: `Outlook support not implemented`};
+        if (type == `special weather statement`) loader.modules.statementbuilder.process(metadata);
+        if (type == `test message`) return {success: false, message: `Test Message support not implemented`};
+        if (type == `tabular state forecast`) return {success: false, message: `Tabular State Forecast support not implemented`};
+        if (type == `recreational report`) return {success: false, message: `Recreational Report support not implemented`};
+        if (type == `point forecast matrices`) return {success: false, message: `Point Forecast Matrices support not implemented`};
+        if (type == `terminal aerodrome forecast`) return {success: false, message: `Terminal Aerodrome Forecast support not implemented`};
+        if (type == `river statement`) return {success: false, message: `River Statement support not implemented`};
+        if (type == `regional weather roundup`) return {success: false, message: `Regional Weather Roundup support not implemented`};
+        return {success: true, message: `Successfully processed the message`};
     }
 }
 

@@ -32,22 +32,20 @@ class VTECParsing {
       * @param {string} message - The message to search in
       */
 
-    getVTEC = async function(message) {
-        let match = message.match(loader.definitions.RegExp_VTEC)
-        let vtec = {}
-        if (match != null) {
-            let splitVTEC = match[0].split(`.`)
-            let vtecDates = splitVTEC[6].split(`-`)
-            vtec.trackingId = this.getTrackingId(splitVTEC)
-            vtec.eventName = this.getEventName(splitVTEC)
-            vtec.eventSignificance = this.getEventSignificance(splitVTEC)
-            vtec.eventStatus = this.getEventStatus(splitVTEC)
-            vtec.expires = this.getEventExpiration(vtecDates)
-            vtec.wmo = message.match(new RegExp(loader.definitions.RegExp_WMO, "gimu"));
-            return vtec
-        } 
-        return null
-    }
+	getVTEC = async function(message) {
+		let match = message.match(loader.definitions.RegExp_VTEC); if (!match) return null;
+		let splitVTEC = match[0].split(`.`);
+		let vtecDates = splitVTEC[6].split(`-`);
+		let vtec = {
+			trackingId: this.getTrackingId(splitVTEC),
+			eventName: this.getEventName(splitVTEC),
+			eventSignificance: this.getEventSignificance(splitVTEC),
+			eventStatus: this.getEventStatus(splitVTEC),
+			expires: this.getEventExpiration(vtecDates),
+			wmo: message.match(new RegExp(loader.definitions.RegExp_WMO, "gimu"))
+		};
+		return vtec;
+	}
 
     /**
       * @function getTrackingId
@@ -56,9 +54,9 @@ class VTECParsing {
       * @param {array} vtec - The VTEC to search in
       */
 
-    getTrackingId = function(vtec) {
-        return `${vtec[2]}-${vtec[3]}-${vtec[4]}-${vtec[5]}`
-    }
+	getTrackingId = function(vtec) {
+		let trackingId = `${vtec[2]}-${vtec[3]}-${vtec[4]}-${vtec[5]}`; return trackingId;
+	}
 
     /**
       * @function getEventName
@@ -100,13 +98,13 @@ class VTECParsing {
       * @param {array} vtecDates - The VTEC dates
       */  
 
-    getEventExpiration = function(vtecDates) {
-        if (vtecDates[1] == `000000T0000Z`) { return `Invalid Date Format`; }
-        let expires = `${new Date().getFullYear().toString().substring(0, 2)}${vtecDates[1].substring(0, 2)}-${vtecDates[1].substring(2, 4)}-${vtecDates[1].substring(4, 6)}T${vtecDates[1].substring(7, 9)}:${vtecDates[1].substring(9, 11)}:00`;
-        let local = new Date(new Date(expires).getTime() - 4 * 60 * 60000);
-        let pad = n => String(n).padStart(2, '0');
-        return `${local.getFullYear()}-${pad(local.getMonth()+1)}-${pad(local.getDate())}T${pad(local.getHours())}:${pad(local.getMinutes())}:00.000-04:00`
-    }
+	getEventExpiration = function(vtecDates) {
+		if (vtecDates[1] == `000000T0000Z`) return `Invalid Date Format`;
+		let expires = `${new Date().getFullYear().toString().substring(0, 2)}${vtecDates[1].substring(0, 2)}-${vtecDates[1].substring(2, 4)}-${vtecDates[1].substring(4, 6)}T${vtecDates[1].substring(7, 9)}:${vtecDates[1].substring(9, 11)}:00`;
+		let local = new Date(new Date(expires).getTime() - 4 * 60 * 60000);
+		let pad = n => n.toString().padStart(2, '0');
+		return `${local.getFullYear()}-${pad(local.getMonth() + 1)}-${pad(local.getDate())}T${pad(local.getHours())}:${pad(local.getMinutes())}:00.000-04:00`;
+	}
 }
 
 

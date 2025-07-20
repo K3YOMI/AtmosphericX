@@ -14,13 +14,15 @@
     <script src="../../assets/javascript/static.js"></script>
     <body>
         <div id="mapbox-container" class="mapbox-container"></div>
+        <div id="mapbox-alert" class="mapbox-alert"></div>
+        <div id="mapbox-locations" class="mapbox-locations"></div>
     </body>
     <script>
-        let parameter = window.location.href.split('?')[1] || false
         let library = new Library()
-        library.createWebsocketSession([`realtime`, `public`, `active`, `manual`, `spotters`, `reports`]).then(() => {
+        let urlParamters = new URLSearchParams(window.location.search);
+        library.createWebsocketSession([`location`, `public`, `active`, `manual`, `spotters`, `reports`]).then(() => {
             let alert_class = new Alerts(library)
-            let mapbox_class = new Mapbox(library, parameter == `true` ? true : false)
+            let mapbox_class = new Mapbox(library, urlParamters.has(`random`), urlParamters.get(`showAlert`), urlParamters.get(`showLocation`));
             mapbox_class.updateThread()
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts()

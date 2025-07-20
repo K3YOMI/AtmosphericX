@@ -1,2 +1,0 @@
-body, html { display: flex; justify-content: center; align-items: center; background-color: var(--gps-widget-background); margin: 0; overflow: hidden; }
-.text { font-size: var(--gps-widget-font-size); line-height: var(--gps-widget-line-height); width: 100%; text-align: left; overflow: hidden; color: var(--gps-widget-color); word-wrap: break-word; margin-bottom: 0; position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); padding: var(--gps-widget-padding); text-shadow: var(--gps-widget-text-shadow); }

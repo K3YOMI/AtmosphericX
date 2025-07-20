@@ -144,7 +144,69 @@ class Alerts {
         })
         this.storage.isPriorityAlertPlaying = true;
         setTimeout(() => { this.storage.isPriorityAlertPlaying = false; }, 10 * 1000);
-    }  
+    }
+
+    triggerLocation = function() {
+        if (Object.keys(this.storage.location).length > 2) {
+            document.getElementById('location-box').style.display = 'block';
+            let totalChasersNearby = this.storage.spotters.filter(spotter => spotter.distance < 25).length;
+            let closestAlert = this.storage.active.reduce((closest, alert) => {
+                let distance = alert.details.distance && alert.details.distance !== 'N/A' ? parseFloat(alert.details.distance.replace('mi', '').trim()) : Infinity;
+                return (!closest || distance < (closest.details.distance && closest.details.distance !== 'N/A' ? parseFloat(closest.details.distance.replace('mi', '').trim()) : Infinity)) ? alert : closest;
+            }, null);  
+            document.getElementById('closest-warning').textContent = closestAlert ? `${closestAlert.details.name} (${closestAlert.details.distance})` : `No Active Warnings`;
+            document.getElementById('location').textContent = this.storage.location && this.storage.location.county && this.storage.location.state ? `${this.storage.location.county}, ${this.storage.location.state}` : `No Location Found`;
+            document.getElementById('current-cape').textContent = this.storage.location.cape || `Not Available`;
+            document.getElementById('chasers-nearby').textContent = `${totalChasersNearby}`;
+            document.getElementById('cloud-description').textContent = this.storage.location.cloudDescription || `Not Available`;
+            document.getElementById('temperature').textContent = this.storage.location.temperature || `Not Available`;
+            document.getElementById('humidity').textContent = this.storage.location.humidity || `Not Available`;
+            document.getElementById('wind-speed').textContent = this.storage.location.windSpeed || `Not Available`;
+            document.getElementById('wind-direction').textContent = this.storage.location.windDirection  || `Not Available`;
+            document.getElementById('wind-gust').textContent = this.storage.location.windGust || `Not Available`;
+        }
+
+        this.triggerDynamicColors('location-row-light', 'location-row-dark');
+    }
+
+    /**
+      * @function triggerNotice
+      * @description This function triggers a notice alert at the top of the page. It will display the most relevant alert based on the warnings array.
+      * If no relevant alert is found, it will hide the notice element. The notice will display information such as the event name, type,
+      * 
+      * @param {string} id - The ID of the notice element to display.
+      * @param {boolean} useAlertColor - If true, the notice will use the color of the alert; otherwise, it will use the default color scheme.
+      */
+
+    triggerNotice = function(id, useAlertColor=undefined, trackingId=undefined) {
+        let warnings = this.storage.configurations.widget_settings.notice.alert_types;
+        let alert = warnings.map(w => this.storage.active.find(a => a.details.name == w)).filter(a => a !== undefined)[0];
+        if (trackingId != undefined) { 
+            alert = this.storage.active.find(a => a.raw.tracking == trackingId || (a.raw.properties.parameters.WMOidentifier && a.raw.properties.parameters.WMOidentifier[0] == trackingId));
+        }
+        if (alert == undefined ) return document.getElementById(id).style.display = 'none';
+        let { name, type, locations, issued, expires, wind, hail, damage, tornado, sender, tag } = alert.details;
+        let issuedTime = this.library.getTimeInformation(issued);
+        let expiresTime = this.library.getTimeInformation(expires);
+
+        let fields = { 
+            'notice-event-name': `${name}`, 
+            'notice-event-expires-time': expiresTime.expires || "N/A",
+            'notice-event-locations': locations.substring(0, 50) + (locations.length > 50 ? '...' : ''), 
+            'notice-event-max-hail': hail || "N/A", 
+            'notice-event-max-wind': wind || "N/A", 
+            'notice-event-tornado': tornado || "N/A", 
+            'notice-event-damage': damage || "N/A", 
+            'notice-event-issued-time': `${issuedTime.date || "N/A"}, ${issuedTime.time || "N/A"} ${issuedTime.timezone || "N/A"}`,
+            'notice-event-sender': sender || "N/A", 
+            'notice-event-tags': JSON.stringify(tag || []).replace(/[\[\]"]/g, '').replace(/,/g, ', ').substring(0, 50) + (JSON.stringify(tag || []).length > 50 ? '...' : '')
+        };  
+        let noticeElement = document.getElementById(id);
+        noticeElement.style.display = 'block';
+        noticeElement.style.animation = 'fadeIn 0.8s ease-in-out'; // Add fade-in animation
+        for (let key in fields) document.getElementById(key).innerHTML = fields[key];
+        this.triggerDynamicColors(`notice-row-light`, `notice-row-dark`, useAlertColor != undefined ? alert.details.name : undefined);
+    }
 
 
     /**
@@ -157,77 +219,44 @@ class Alerts {
       */
 
     createAnimatedAlert = function(alert) {
+        let config = this.storage.configurations.widget_settings.alert;
         if (this.storage.isStreaming) {
-            let timeExpiresString = `Invalid Time`
-            let timeIssuedString = `Invalid Time`
-            let configuration = this.storage.configurations.widget_settings.alert;
-            let maxDescriptionLength = configuration.max_text_length;
-            let eventName = alert.details.name 
-            let eventStatus = alert.details.type
-            let locationsImpacted = alert.details.locations
-            let eventIssued = alert.details.issued == undefined ? `No date found` : alert.details.issued
-            let eventExpires = alert.details.expires
-            let maxWindGust = alert.details.wind
-            let maxHailSize = alert.details.hail
-            let damageThreat = alert.details.damage
-            let tornadoIndicator = alert.details.tornado
-            let fullSendName = alert.details.sender
-            let eventTags = alert.details.tag == undefined ? `No tags found` : alert.details.tag
-            let eventExpiresTime = library.getTimeInformation(eventExpires)
-            let eventIssuedTime = library.getTimeInformation(eventIssued)
-            timeExpiresString = `${eventExpiresTime.date}, ${eventExpiresTime.time}`
-            timeIssuedString = `${eventIssuedTime.date}, ${eventIssuedTime.time}`
-            if (isNaN(eventExpiresTime.unix)) { timeExpiresString = `Invalid Time` }
-            if (isNaN(eventIssuedTime.unix)) { timeIssuedString = `Invalid Time` }
+            let maxDescLength = config.max_text_length;
+            let { name, type, locations, issued, expires, wind, hail, damage, tornado, sender, tag } = alert.details;
+            let issuedTime = library.getTimeInformation(issued);
+            let expiresTime = library.getTimeInformation(expires);
+        
 
-            let expiresHours = Math.floor((new Date(eventExpiresTime.unix * 1000) - new Date()) / 3600000);  
-            if (expiresHours < 0) { timeExpiresString = `Now...`}
-            if (expiresHours > 9999) { timeExpiresString = `Until further notice...`}
+            let color = this.storage.configurations.scheme.find(c => name.includes(c.type)) || this.storage.configurations.scheme.find(c => c.type == `Default`);
+            let dom = document.querySelector('.alert-box');
+            Object.assign(dom.style, {
+                display: 'block',
+                animation: 'fadeInDown 0.9s ease-in-out',
+                boxShadow: `0 0 20px ${color.color.dark}`,
+                background: `linear-gradient(to bottom, ${color.color.light}, ${color.color.dark})`
+            });
+            document.querySelector('.alert-header').style.backgroundColor = color.color.dark;
 
+            let fields = { 
+                'alert-event-name': `${name} (${type})`, 
+                'alert-event-locations': locations.substring(0, maxDescLength) || 'N/A',
+                'alert-event-max-hail': hail || 'N/A', 
+                'alert-event-max-wind': wind || 'N/A', 
+                'alert-event-tornado': tornado || 'N/A', 
+                'alert-event-damage': damage || 'N/A', 
+                'alert-event-sender': sender || 'N/A', 
+                'alert-event-expires-time': expiresTime.expires || 'N/A', 
+                'alert-event-issued-time': issuedTime.date ? `${issuedTime.date}, ${issuedTime.time}` : 'N/A',
+                'alert-event-tags': JSON.stringify(tag || []).replace(/[\[\]"]/g, '').replace(/,/g, ', ')
+            };
+            for (let id in fields) document.getElementById(id).textContent = fields[id];
 
-            eventTags = JSON.stringify(eventTags).replace(/\"/g, ``).replace(/,/g, `, `).replace(/\[/g, ``).replace(/\]/g, ``)
-            if (locationsImpacted.length > maxDescriptionLength) {locationsImpacted = locationsImpacted.substring(0, maxDescriptionLength) + `...`;}
-
-            let colorScheme = this.storage.configurations.scheme;
-            let getColor = colorScheme.find(type => eventName.includes(type.type)) || colorScheme.find(type => type.type == `Default`);
-            let colorLight = getColor.color.light;
-            let colorDark = getColor.color.dark;
-
-            let domNotification = document.querySelector('.alert-box');
-            let domHeader = document.querySelector('.alert-header');
-            let domTitle = document.getElementById('event-name');
-            let domLocations = document.getElementById('event-locations');
-            let domMaxHail = document.getElementById('event-max-hail');
-            let domMaxGusts = document.getElementById('event-max-wind');
-            let domTornado = document.getElementById('event-tornado');
-            let domDmg = document.getElementById('event-damage');
-            let domExpires = document.getElementById('event-expires-time');
-            let domIssued = document.getElementById('event-issued-time');
-            let domSender = document.getElementById('event-sender');
-            let domTags = document.getElementById('event-tags');
-  
-            domNotification.style.display = 'block';
-            domNotification.style.animation = 'fadeInDown 0.9s ease-in-out';
-            domNotification.style.boxShadow = `0 0 20px ${colorDark}`;
-            domNotification.style.background = `linear-gradient(to bottom, ${colorLight}, ${colorDark})`; 
-            domHeader.style.backgroundColor = colorDark;
-            
-            domTitle.textContent = `${eventName} (${eventStatus})`;
-            domLocations.innerHTML = `${locationsImpacted || 'N/A'}`;
-            domMaxHail.textContent = `${maxHailSize || 'N/A'}`;
-            domMaxGusts.textContent = `${maxWindGust || 'N/A'}`;
-            domTornado.textContent = `${tornadoIndicator || 'N/A'}`;
-            domDmg.textContent = `${damageThreat || 'N/A'}`;
-            domSender.textContent = `${fullSendName || 'N/A'}`;
-            domExpires.innerHTML = `${timeExpiresString || 'N/A'}`;
-            domIssued.innerHTML = `${timeIssuedString || 'N/A'}`;
-            domTags.innerHTML = `${eventTags || 'N/A'}`;
             setTimeout(() => {
-                domNotification.style.animation = 'fadeOut 1s ease-in-out';
-                setTimeout(() => { domNotification.style.display = 'none'; domNotification.style.backgroundColor = ''; domNotification.style.animation = ''; }, 900);
-            }, (this.storage.configurations.widget_settings.alert.duration - 0.8) * 1000);
-        }  
-        setTimeout(() => { this.storage.isQueryRunning = false; }, this.storage.configurations.widget_settings.alert.duration * 1000);
+                dom.style.animation = 'fadeOut 1s ease-in-out';
+                setTimeout(() => dom.style.display = 'none', 900);
+            }, (config.duration - 0.8) * 1000);
+        }
+        setTimeout(() => this.storage.isQueryRunning = false, config.duration * 1000);
     }
 
 
@@ -254,10 +283,11 @@ class Alerts {
             } else {
                 this.library.playAudio(currentAlert.metadata.audio, false)
             }
-            if (currentAlert.metadata.eas || currentAlert.metadata.siren) {
-                await this.library.createTimeout(3800)
-                this.library.playAudio(currentAlert.metadata.eas ? this.storage.configurations.tone_sounds.eas : this.storage.configurations.tone_sounds.siren, false) 
-            }
+            if (currentAlert.metadata.eas || currentAlert.metadata.siren || currentAlert.metadata.amber) {
+                await this.library.createTimeout(currentAlert.metadata.eas || currentAlert.metadata.siren ? 3800 : 500);  
+                console.log(currentAlert.metadata.eas, currentAlert.metadata.siren, currentAlert.metadata.amber)
+                this.library.playAudio( currentAlert.metadata.eas  ? this.storage.configurations.tone_sounds.eas  : currentAlert.metadata.siren  ? this.storage.configurations.tone_sounds.siren  : this.storage.configurations.tone_sounds.amber,  false );
+            }  
         } else {
             this.library.playAudio(this.storage.configurations.tone_sounds.beep, false)
         }
@@ -272,9 +302,9 @@ class Alerts {
       * You can simply change the colors in the configuration file if you'd like.
       */
 
-    triggerDynamicColors = function() {
-        let light = document.getElementsByClassName(`p_boxlight`)
-        let dark = document.getElementsByClassName(`p_boxdark`)
+    triggerDynamicColors = function(targetedClassLightName=`p_boxlight`, targetdClassDarkName=`p_boxdark`, targetAlert=undefined) {
+        let light = document.getElementsByClassName(targetedClassLightName)
+        let dark = document.getElementsByClassName(targetdClassDarkName)
         let colorScheme = this.storage.configurations.scheme;
         let alertsScheme = colorScheme.filter(type => { return this.storage.active.some(alert => alert.details.name.includes(type.type));});    
         if (this.storage.active.length == 0 || alertsScheme.length == 0) {
@@ -285,7 +315,12 @@ class Alerts {
         }
         colorScheme.forEach((color) => { color.count = this.storage.active.filter(x => x.details.name.includes(color.type)).length});
         colorScheme.find(type => {return type.count > 0; }) || types[types.length - 1];
-        let highest = colorScheme.find(type => {return type.count > 0; }) || colorScheme[colorScheme.length - 1];  
+        let highest = colorScheme.find(type => {return type.count > 0; }) || colorScheme[colorScheme.length - 1]; 
+        if (targetAlert != undefined) {
+            let targetColor = colorScheme.find(type => { return targetAlert.includes(type.type); });
+            highest = colorScheme.find(type => type.type == `Default`);
+            if (targetColor != undefined) { highest = targetColor; }
+        }
         for (let x = 0; x < light.length; x++){
             light[x].style.backgroundColor = highest.color.light
         }
@@ -308,7 +343,7 @@ class Alerts {
         docTable.innerHTML = `<tr><th>Type<hr></th><th>Location<hr></th></tr>`
         let sortByIssued = this.storage.active.sort((a, b) => new Date(b.details.issued) - new Date(a.details.issued))
         for (let i = 0; i < sortByIssued.length; i++) {
-            if (i === this.storage.configurations.widget_settings.table.max_alerts_shown) break;
+            if (i == this.storage.configurations.widget_settings.table.max_alerts_shown) break;
             let currentAlert = sortByIssued[i];
             let insertRow = docTable.insertRow(-1);
             let eventName = insertRow.insertCell(0);

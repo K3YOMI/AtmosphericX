@@ -1,5 +1,5 @@
 body, html { display: flex; justify-content: center; align-items: center; background-color: var(--notification-widget-background); margin: 0; overflow: hidden; }
-#notification_base { height: 235px; width: 956px; background-color: rgb(42, 81, 224); border-style: solid; border-width: 5px; border-color: var(--notification-widget-border-color); padding: 10px; opacity: 0.95; display: none; }
+#notification_base { border-radius: 8px; height: 235px; width: 956px; background-color: rgb(42, 81, 224); border-style: solid; border-width: 5px; border-color: var(--notification-widget-border-color); padding: 10px; opacity: 0.95; display: none; }
 .text1 { font-size: var(--notification-widget-font-size-main); font-weight: var(--notification-widget-font-weight); overflow: hidden; text-align: center; color: var(--notification-widget-color); padding: 0px 5px 0 5px; text-shadow: var(--notification-widget-text-shadow); }
 .divider { border-color: var(--notification-widget-border-color); width: 90%; }
 .text2 { font-size: var(--notification-widget-font-size-secondary); overflow: hidden; color: var(--notification-widget-color); text-align: center; word-wrap: break-word; padding: 0px 5px 0 5px; text-shadow: var(--notification-widget-text-shadow); }

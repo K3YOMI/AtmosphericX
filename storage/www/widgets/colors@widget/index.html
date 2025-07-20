@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="../../assets/styles/variables.css">
     <script src="../../assets/javascript/alerts.js"></script>
     <script src="../../assets/javascript/library.js"></script>
-    <body> <div class="p_boxdark" style="height: 1920px; width: 1080px;"></div></body>
+    <body> <div id="dynamic-color-id" style="height: 1920px; width: 1080px;"></div></body>
     <script>
         let library = new Library()
+        let urlParamters = new URLSearchParams(window.location.search);
+        document.getElementById('dynamic-color-id').classList.add(urlParamters.has('dark') ? 'p_boxdark' : 'p_boxlight');
         library.createWebsocketSession([`public`, `active`, `manual`]).then(() => {
             let alert_class = new Alerts(library)
             document.addEventListener('onCacheUpdate', async (event) => {

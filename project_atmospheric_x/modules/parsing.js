@@ -24,29 +24,70 @@ class Parsing {
     }
 
     /**
+     * @function rawCape
+     * @description Read the raw cape data and parse it into a placefile.
+     * 
+     * @param {number} lat - The latitude to read the cape data for
+     * @param {number} lon - The longitude to read the cape data for
+     */
+
+    rawCape = async function(lat, lon) {
+        if (!lat || !lon) return { success: false, message: "Latitude and Longitude are required" };
+        loader.cache.cape = loader.cache.cape?.filter(c => new Date(c.expires) > new Date()) || [];
+        let places = [];
+        let sideLength = 10.666, gridSize = 4, step = sideLength / (gridSize - 1);
+        let promises = [];
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                let gridLat = lat - sideLength / 2 + i * step;
+                let gridLon = lon - sideLength / 2 + j * step;
+                let cachedCape = loader.cache.cape.find(c => c.lat == gridLat && c.lon == gridLon);
+                if (cachedCape && new Date(cachedCape.expires) > new Date()) {
+                    places.push({ title: `Expires: ${cachedCape.expires}\nTime: ${cachedCape.time}`, description: `${cachedCape.cape} J/kg`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
+                } else {
+                    promises.push(loader.modules.hooks.convertCoordinatesToRequest(loader.definitions.static_apis.cape_coordinates, gridLat, gridLon).then(toData => {
+                        if (toData !== "err") {
+                            let index = toData.hourly.time.findIndex(t => new Date(t).getTime() >= new Date().getTime());
+                            if (index !== -1 && toData.hourly.cape[index] !== undefined) {
+                                let expires = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+                                places.push({ title: `Expires: ${expires}\nTime: ${toData.hourly.time[index]}`, description: `${toData.hourly.cape[index]} J/kg`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
+                                loader.cache.cape.push({ lat: gridLat, lon: gridLon, cape: toData.hourly.cape[index], expires: expires, time: toData.hourly.time[index] });
+                            }
+                        } else {
+                            places.push({ title: `Expires: ${new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString()}\nTime: N/A`, description: "N/A", point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
+                        }
+                    }));
+                }
+            }
+        }
+        await Promise.all(promises);
+        loader.modules.placefiles.createPlacefilePoint(1, 999, `AtmosphericX Cape - ${new Date().toUTCString()}`, places, "cape");
+        return { success: true, message: "Cape data processed and placefile created" };
+    }
+
+    /**
       * @function rawIemReports
       * @description Read the raw IEM reports and parse them into an array of objects.
       * 
       * @param {string} messageBody - The raw IEM reports to read
       */
 
-    rawIemReports = function(messageBody=``) {
-        let reports = [];
-        for (let i = 0; i < messageBody.length; i++) {
-            let properties = messageBody[i].properties;
-            if (!properties.remark) { properties.remark = 'No Description'; }
-            if (!properties.magf) { properties.magf = 'N/A'; properties.unit = ''; }
-            reports.push({
+    rawIemReports = function(messageBody = ``) {
+        let reports = messageBody.map(({ properties }) => {
+            let remark = properties.remark || 'No Description';
+            let magf = properties.magf || 'N/A';
+            let unit = properties.unit || '';
+            return {
                 location: `${properties.county}, ${properties.state}`,
                 expires: properties.valid.replace('T', ' ').replace('Z', ''),
                 issued: new Date().toISOString(),
                 event: properties.typetext,
-                sender: `Iowa Environmental Mesonet (API)`,
-                description: `${properties.remark} - ${properties.city} | ${properties.magf} ${properties.unit}`,
+                sender: 'Iowa Environmental Mesonet (API)',
+                description: `${remark} - ${properties.city} | ${magf} ${unit}`,
                 latitude: parseFloat(properties.lat),
                 longitude: parseFloat(properties.lon),
-            })
-        }
+            };
+        });
         return { success: true, message: reports };
     }
 
@@ -57,27 +98,22 @@ class Parsing {
       * @param {string} messageBody - The raw mPing reports to read
       */
 
-    rawRawMpingReports = function(messageBody=``) {
+    rawRawMpingReports = function(messageBody = ``) {
         let regex = /Icon:.*?([\d.-]+),([\d.-]+),\d+,\d+,\d+, "Report Type: (.*?)\\nTime of Report: (.*?)"/g;
         let matches = [...messageBody.matchAll(regex)];
-        let reports = [];
-        for (let i = 0; i < matches.length; i++) {
-            let match = matches[i];
-            let latitude = parseFloat(match[1]);
-            let longitude = parseFloat(match[2]);
-            let eventType = match[3];
-            let reportTime = match[4];
-            reports.push({
-                location: `${latitude}, ${longitude}`,
-                expires: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),
-                issued: reportTime,
-                event: eventType,
+        let reports = matches.map(match => {
+            if (match[3] == `NULL`) return;
+            return {
+                location: `${match[1]}, ${match[2]}`,
+                expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+                issued: match[4],
+                event: match[3],
                 sender: `mPing`,
                 description: `No Description`,
-                latitude: latitude,
-                longitude: longitude,
-            })
-        }
+                latitude: parseFloat(match[1]),
+                longitude: parseFloat(match[2]),
+            };
+        }).filter(Boolean);
         return { success: true, message: reports };
     }
 
@@ -91,31 +127,28 @@ class Parsing {
     rawSpotterNetworkReports = function(messageBody = ``) {
         let regex = /Icon:\s*([\d.-]+),([\d.-]+),\d+,\d+,\d+,"Reported By: ([^\n]*)\\n([^\n]*)\\nTime: ([^\n]*) UTC(?:\\nSize: ([^\\n]*))?\\nNotes:([\s\S]*?)"/g;
         let matches = [...messageBody.matchAll(regex)];
-        let reports = [];
-        for (let i = 0; i < matches.length; i++) {
-            let match = matches[i];
-            let latitude = parseFloat(match[1]);
-            let longitude = parseFloat(match[2]);
+        let reports = matches.map(match => {
+            let [latitude, longitude] = [parseFloat(match[1]), parseFloat(match[2])];
             let reporter = match[3].trim();
             let eventType = match[4].trim();
             let reportTime = match[5].trim();
-            let size = match[6] ? match[6].replace(/"/g, '').trim() : '';
-            let notes = match[7] ? match[7].replace(/\\n/g, ' ').replace(/"/g, '').trim() : '';
+            let size = match[6]?.replace(/"/g, '').trim() || '';
+            let notes = match[7]?.replace(/\\n/g, ' ').replace(/"/g, '').trim() || '';
             let description = `Reported By: ${reporter} | ${eventType}` + (size ? ` | Size: ${size}` : '') + (notes ? ` | Notes: ${notes}` : '');
-                reports.push({
+            return {
                 location: `${latitude}, ${longitude}`,
-                latitude: latitude,
-                longitude: longitude,
+                latitude,
+                longitude,
                 issued: reportTime,
                 expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
                 event: eventType,
-                reporter: reporter,
-                size: size,
-                notes: notes,
+                reporter,
+                size,
+                notes,
                 sender: "Spotter Network",
-                description: description
-            });
-        }
+                description
+            };
+        });
         return { success: true, message: reports };
     };
 
@@ -126,34 +159,23 @@ class Parsing {
       * @param {string} messageBody - The raw GrlevelX reports to read
       */
 
-    readRawGrlevelXReports = function(messageBody=``) {
+    readRawGrlevelXReports = function(messageBody = ``) {
         let regex = /(\w+)\|(\d{4}\/\d{2}\/\d{2})\|(\d{2}:\d{2})\|([\d.-]+)\|([\d.-]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)/g;
         let matches = [...messageBody.matchAll(regex)];
-        let reports = [];
-        for (let i = 0; i < matches.length; i++) {
-            let match = matches[i];
-            let date = match[2];
-            let time = match[3];
-            let latitude = parseFloat(match[4]);
-            let longitude = parseFloat(match[5]);
-            let eventType = match[6];
-            let magnitude = match[7];
-            let state = match[8];
-            let county = match[9];
-            let location = match[10];
-            let source = match[11];
-            reports.push({
+        let reports = matches.map(match => {
+            let [_, eventType, date, time, latitude, longitude, magnitude, state, county, location, source] = match;
+            return {
                 location: `${location}, ${county}, ${state}`,
-                expires: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),
+                expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
                 issued: `${date} ${time}`,
                 event: eventType,
                 sender: source,
                 description: `${eventType} reported with magnitude ${magnitude} at ${location}, ${county}, ${state}`,
-                magnitude: magnitude,
-                latitude: latitude,
-                longitude: longitude,
-            })
-        }
+                magnitude,
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+            };
+        });
         return { success: true, message: reports };
     }
 
@@ -164,21 +186,13 @@ class Parsing {
       * @param {string} messageBody - The raw mesoscale discussions to read
       */
 
-    readRawMesoscaleDicussions = function(messageBody=``) {
+    readRawMesoscaleDicussions = function(messageBody = ``) {
         let discussions = messageBody.split('#################################################################################################################');
         let parsedDiscussions = discussions.map(discussion => {
-            let regex = /Icon:.*?1, 1, "(.*?)"/g;
-            let matches = [...discussion.matchAll(regex)];
-            let discussionText = '';
-            for (let i = 0; i < matches.length; i++) {
-                let match = matches[i];
-                let text = match[1];
-                discussionText += text;
-            }
-            discussionText = discussionText.replace(/<a href=/g, '');
-            return discussionText.trim();
-        });
-        parsedDiscussions = parsedDiscussions.filter(discussion => discussion !== '');
+            let matches = [...discussion.matchAll(/Icon:.*?1, 1, "(.*?)"/g)];
+            let discussionText = matches.map(match => match[1]).join('').replace(/<a href=/g, '').trim();
+            return discussionText;
+        }).filter(discussion => discussion !== '');
         return { success: true, message: parsedDiscussions };
     }
 
@@ -193,48 +207,35 @@ class Parsing {
       * @param {string} messageBody - The placefile data to read
       */
 
-    readSpotterNetwork = function(messageBody=``) { 
-        let locationServices = loader.cache.configurations.sources.miscellaneous_sources.location_services
+    readSpotterNetwork = function(messageBody = ``) {
+        let { spotter_network, rtlirl } = loader.cache.configurations.sources.miscellaneous_sources.location_services;
         let r1 = /Object:\s*([\d.-]+),([\d.-]+)\s*Icon:.*?"(.*?)\n.*?Text:.*?"(.*?)"/g;
         let r2 = /Object:\s*([\d.-]+),([\d.-]+)\s*Icon:.*?"(.*?)\n.*?Icon:.*?"(.*?)\n.*?Text:.*?"(.*?)"/g;
         let r3 = /Object:\s*([\d.-]+),([\d.-]+)\s*$/g;
         let regExpression = new RegExp(r1.source + '|' + r2.source + '|' + r3.source, 'gs');
-        let spotters = []
-        let matches = [... messageBody.matchAll(regExpression)]
-        for (let i = 0; i < matches.length; i++) {
-            let match = matches[i]
-            let lat = match[1]
-            let lon = match[2]
-            let meta = match[0]
-            let description = match[3] == undefined ? "N/A" : match[3];
-
-            let isActive = meta.includes('Icon: 0,0,000,6,2') && locationServices.spotter_network.show_active ? 1 : 0;
-            let isStreaming = meta.includes('Icon: 0,0,000,1,19') && locationServices.spotter_network.show_streaming ? 1 : 0;
-            let isIdle = meta.includes('Icon: 0,0,000,6,6') && locationServices.spotter_network.show_idle ? 1 : 0;
-
-            if (locationServices.realtimeirl.enabled == false) {
-                if (locationServices.spotter_network.tracking_name != `SPOTTER_ATTRIBUTE_HERE` && locationServices.spotter_network.tracking_name != ``) {
-                    if (description.toLowerCase().includes(locationServices.spotter_network.tracking_name.toLowerCase())) {
-                        if (typeof loader.cache.realtime != `object`) { loader.cache.realtime = {} }
-                        loader.cache.realtime.lat = lat;
-                        loader.cache.realtime.lon = lon;
-                        if (loader.cache.realtime.location == undefined) {
-                            loader.cache.realtime.address = `N/A`;
-                            loader.cache.realtime.location = `N/A`;
-                            loader.cache.realtime.county = `N/A`;
-                            loader.cache.realtime.state = `N/A`;
-                        }
-                    }
-                }
+        let matches = [...messageBody.matchAll(regExpression)];
+        let spotters = matches.map(match => {
+            let lat = match[1] || match[5] || match[9];
+            let lon = match[2] || match[6] || match[10];
+            let description = match[3] || match[7] || "N/A";
+            let meta = match[0];
+            let isActive = meta.includes('Icon: 0,0,000,6,2,') && spotter_network.show_active ? 1 : 0;
+            let isStreaming = meta.includes('Icon: 0,0,000,1,19,') && spotter_network.show_streaming ? 1 : 0;
+            let isIdle = meta.includes('Icon: 0,0,000,6,6,') && spotter_network.show_idle ? 1 : 0;
+            let distance = 99999;
+            if (loader.cache.location) {
+                distance = loader.modules.hooks.getMilesAway(lat, lon, loader.cache.location.lat, loader.cache.location.lon)
             }
-            if (isActive == 1 && locationServices.spotter_network.show_active == false) { continue; }
-            if (isStreaming == 1 && locationServices.spotter_network.show_streaming == false) { continue; }
-            if (isIdle == 1 && locationServices.spotter_network.show_idle == false) { continue; }
-            if (isActive == 0 && isStreaming == 0 && isIdle == 0 && locationServices.spotter_network.show_offline == false) { continue; }
-            spotters.push({ lat: lat, lon: lon, description: description, active: isActive, streaming: isStreaming, idle: isIdle })
-        }
-        let uniqueFilter = spotters.filter((thing, index, self) => index === self.findIndex((t) => (t.description === thing.description && t.lat === thing.lat && t.lon === thing.lon)));
-        return {success: true, message: uniqueFilter}
+            if (!rtlirl.enabled && spotter_network.tracking_name && description.toLowerCase().includes(spotter_network.tracking_name.toLowerCase())) {
+                loader.modules.hooks.gpsTracking(lat, lon, `SpotterNetwork`);
+            }
+            if ( (isActive && !spotter_network.show_active) || (isStreaming && !spotter_network.show_streaming) || (isIdle && !spotter_network.show_idle) || (!isActive && !isStreaming && !isIdle && !spotter_network.show_offline) ) return null;
+            return { lat, lon, description, active: isActive, streaming: isStreaming, idle: isIdle, distance };
+        }).filter(Boolean);
+        let uniqueSpotters = spotters.filter((spotter, index, self) =>
+            index == self.findIndex(s => s.description == spotter.description && s.lat == spotter.lat && s.lon == spotter.lon)
+        );
+        return { success: true, message: uniqueSpotters };
     }
 
     /**
@@ -245,12 +246,9 @@ class Parsing {
      * @param {string} type - The type of probability report to read (severe or tornado)
      */
     
-    rawProbabilityReports = function(messageBody=``, type=`tornado`) {
-        let typeMap = { severe: { key: "PSv3", label: "Severe" }, tornado: { key: "ProbTor", label: "Tornado" }};
-        let objects = [];
-        let lines = messageBody.split('\n');
-        let seenIds = new Set();
-        let i = 0;
+    rawProbabilityReports = function(messageBody = ``, type = `tornado`) {
+        let typeMap = { severe: { key: "PSv3", label: "Severe" }, tornado: { key: "ProbTor", label: "Tornado" } };
+        let objects = [], lines = messageBody.split('\n'), seenIds = new Set(), i = 0;
         while (i < lines.length) {
             let line = lines[i];
             if (line.startsWith("Color:")) {
@@ -259,47 +257,39 @@ class Parsing {
                 let objectIdMatch = infoLine.match(/Object ID: (\d+)/);
                 let objectId = objectIdMatch ? objectIdMatch[1] : "";
                 let meta = { 
-                    objectId: objectId, 
+                    objectId, 
                     info: infoLine.replace(/Line: \d+, \d+,\s*/, '').trim(),
-                    PSv3: details && details[1] ? parseFloat(details[1]) : null, 
-                    PHv3: details && details[2] ? parseFloat(details[2]) : null, 
-                    PWv3: details && details[3] ? parseFloat(details[3]) : null, 
-                    PTv3: details && details[4] ? parseFloat(details[4]) : null,
-                    ProbTor: details && details[5] ? parseFloat(details[5]) : null
+                    PSv3: details?.[1] ? parseFloat(details[1]) : null, 
+                    PHv3: details?.[2] ? parseFloat(details[2]) : null, 
+                    PWv3: details?.[3] ? parseFloat(details[3]) : null, 
+                    PTv3: details?.[4] ? parseFloat(details[4]) : null,
+                    ProbTor: details?.[5] ? parseFloat(details[5]) : null
                 };
-                // Skip storing coordinates to save memory
                 let j = i + 2;
-                while (j < lines.length && !lines[j].startsWith("End:") && !lines[j].startsWith("Color:")) {
-                    j++;
-                }
-                let key = typeMap[type] ? typeMap[type].key : "PSv3";
+                while (j < lines.length && !lines[j].startsWith("End:") && !lines[j].startsWith("Color:")) j++;
+                let key = typeMap[type]?.key || "PSv3";
                 if (meta[key] !== null && !seenIds.has(meta.objectId)) {
-                    objects.push({ id: meta.objectId, type: type, probability: meta[key], description: meta.info});
+                    objects.push({ id: meta.objectId, type, probability: meta[key], description: meta.info });
                     seenIds.add(meta.objectId);
                 }
                 i = j;
-            } else {
-                i++;
-            }
+            } else i++;
         }
-        let typeThreshold = type === `tornado` ? loader.cache.configurations.sources.miscellaneous_sources.tornado_probability.threshold : loader.cache.configurations.sources.miscellaneous_sources.severe_probability.threshold;
+        let typeThreshold = type == `tornado` ? loader.cache.configurations.sources.miscellaneous_sources.tornado_probability.threshold : loader.cache.configurations.sources.miscellaneous_sources.severe_probability.threshold;
         objects = objects.filter(object => object.probability >= typeThreshold);
         return { success: true, message: objects };
     }
 
-    readWxRadio = function(messageBody=``) {
-        let feeds = []
-        for (let i = 0; i < messageBody.sources.length; i++) {
-            let feed = messageBody.sources[i];
-            let location = feed.location || `N/A`
-            let lat = feed.lat || `N/A`
-            let lon = feed.lon || `N/A`
-            let callsign = feed.callsign || `N/A`
-            let frequency = feed.freq || `N/A`
-            let stream = feed.listen_url || `No stream available`
-            feeds.push({location: location,lat: lat,lon: lon, callsign: callsign,frequency: frequency,stream: stream})
-        }
-        return { success: true, message: feeds }
+    readWxRadio = function(messageBody = ``) {
+        let feeds = messageBody.sources.map(feed => ({
+            location: feed.location || `N/A`,
+            lat: feed.lat || `N/A`,
+            lon: feed.lon || `N/A`,
+            callsign: feed.callsign || `N/A`,
+            frequency: feed.freq || `N/A`,
+            stream: feed.listen_url || `No stream available`
+        }));
+        return { success: true, message: feeds };
     }
 
     /**
@@ -312,28 +302,16 @@ class Parsing {
      */
 
     coordsToMiles = function(alerts) {
-        if (loader.cache.realtime == undefined || loader.cache.configurations.sources.miscellaneous_sources.location_services.alert_filtering == false) { return alerts; }
+        if (!loader.cache.location || !loader.cache.configurations.sources.miscellaneous_sources.location_services.alert_filtering) return alerts;
         let maxMiles = loader.cache.configurations.sources.miscellaneous_sources.location_services.max_miles;
-        alerts = alerts.filter(alert => {
-            if (!alert.geometry || !alert.geometry.coordinates || !alert.geometry.coordinates[0]) { return false; }
-            let warningCoords = alert.geometry.coordinates[0];
-            if (!Array.isArray(warningCoords) || warningCoords.length === 0) { return false; }
-            let centerPolygon = warningCoords.reduce((acc, coord) => { acc[0] += coord[0]; acc[1] += coord[1]; return acc; }, [0, 0]).map(sum => sum / warningCoords.length);
-            if (!loader.cache.realtime || !loader.cache.realtime.lat || !loader.cache.realtime.lon) { return false; }
-            let lat1 = parseFloat(loader.cache.realtime.lat);
-            let lon1 = parseFloat(loader.cache.realtime.lon);
-            let lat2 = parseFloat(centerPolygon[1]);
-            let lon2 = parseFloat(centerPolygon[0]);
-            let R = 3959;
-            let dLat = (lat2 - lat1) * Math.PI / 180;
-            let dLon = (lon2 - lon1) * Math.PI / 180;
-            let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            let distance = R * c;
-            return distance <= maxMiles;
+        return alerts.filter(alert => {
+            let warningCoords = alert.geometry?.coordinates?.[0];
+            if (!Array.isArray(warningCoords) || warningCoords.length == 0) return false;
+            let [lat1, lon1] = [parseFloat(loader.cache.location.lat), parseFloat(loader.cache.location.lon)];
+            let [lat2, lon2] = warningCoords.reduce((acc, [lon, lat]) => [acc[0] + lon, acc[1] + lat], [0, 0]).map(sum => sum / warningCoords.length);
+            return loader.modules.hooks.getMilesAway(lat1, lon1, lat2, lon2) <= maxMiles;
         });
-        return alerts;
-    }
+    };
 
     /**
       * @function isAlreadyCancelled
@@ -343,12 +321,12 @@ class Parsing {
       */
 
     isAlreadyCancelled = function(alert) {
-        let signatures = loader.definitions.cancelSignatures
-        let description = alert.properties.description
-        let type = alert.properties.messageType
-        let isCancelledDescirption = signatures.filter(signature => description.toLowerCase().includes(signature.toLowerCase()))
-        if (isCancelledDescirption.length != 0 || type == `Cancel`) { return true; }
-    }
+        let signatures = loader.definitions.cancelSignatures;
+        let description = alert.properties.description || '';
+        let type = alert.properties.messageType || '';
+        let isCancelled = signatures.some(signature => description.toLowerCase().includes(signature.toLowerCase()));
+        return isCancelled || type == 'Cancel';
+    };
 
     /**
       * @function doesAlertExist
@@ -359,9 +337,8 @@ class Parsing {
       */
 
     doesAlertExist = function(array, id) {
-        let exists = array.filter(item => item.id == id)
-        if (exists == undefined || exists.length == 0) { return false; }
-        return true 
+        let exists = array.some(item => item.id == id);
+        return exists;
     }
 
     /**
@@ -372,21 +349,16 @@ class Parsing {
       */
 
     filterAlerts = function(alerts) {
-        let priortityAlerts = loader.cache.configurations.project_settings.priority_alerts 
-        let allowedEvents = loader.cache.configurations.project_settings.priority
-        let forecastOffices = loader.cache.configurations.sources.filter.nws_office_filter;
-        let exludedForecaseOffices = loader.cache.configurations.sources.filter.nws_office_exclude_filter;
-        let ugcCodes = loader.cache.configurations.sources.filter.ugc_filter;
-        let abbreviatedStatesFilter = loader.cache.configurations.sources.filter.abbreviated_states_filter;
-        if (priortityAlerts == true) { alerts = alerts.filter(alert => allowedEvents.includes(alert.properties.event)) }
-        alerts.forEach(alert => { if (!alert.properties?.parameters?.WMOidentifier?.length) alert.properties.parameters = { WMOidentifier: [`No WMO Found`] }; });
-        if (abbreviatedStatesFilter.length != 0) { alerts = alerts.filter(alert => { let ugcCodes = alert.properties.geocode.UGC; if (!Array.isArray(ugcCodes) || ugcCodes.length === 0) { return false; } return ugcCodes.some(code => abbreviatedStatesFilter.includes(code.substring(0, 2))); }); }
-        if (exludedForecaseOffices.length != 0) { alerts = alerts.filter(alert => !exludedForecaseOffices.includes(alert.properties.parameters.WMOidentifier[0].split(' ')[1])); }
-        if (forecastOffices.length != 0) { alerts = alerts.filter(alert => forecastOffices.includes(alert.properties.parameters.WMOidentifier[0].split(' ')[1])); }
-        if (ugcCodes.length != 0) { alerts = alerts.filter(alert => alert.properties.geocode.UGC.some(code => ugcCodes.includes(code))); }
-        alerts = alerts.filter(alert => new Date(alert.properties.expires).getTime() > new Date().getTime()); 
-        return alerts
-    }
+        let { priority_alerts, priority } = loader.cache.configurations.project_settings;
+        let { nws_office_filter, nws_office_exclude_filter, ugc_filter, abbreviated_states_filter } = loader.cache.configurations.sources.filter;
+        if (priority_alerts) alerts = alerts.filter(alert => priority.includes(alert.properties.event));
+        alerts.forEach(alert => alert.properties.parameters = alert.properties.parameters || { WMOidentifier: [`No WMO Found`] });
+        if (abbreviated_states_filter.length) alerts = alerts.filter(alert =>  alert.properties.geocode.UGC?.some(code => abbreviated_states_filter.includes(code.substring(0, 2))) );
+        if (nws_office_exclude_filter.length) alerts = alerts.filter(alert => !nws_office_exclude_filter.includes(alert.properties.parameters.WMOidentifier[0]?.split(' ')[1]));
+        if (nws_office_filter.length) alerts = alerts.filter(alert => nws_office_filter.includes(alert.properties.parameters.WMOidentifier[0]?.split(' ')[1]));
+        if (ugc_filter.length) alerts = alerts.filter(alert => alert.properties.geocode.UGC?.some(code => ugc_filter.includes(code)));
+        return alerts.filter(alert => new Date(alert.properties.expires).getTime() > Date.now());
+    };
 
     /**
       * @function readAlerts
@@ -395,36 +367,51 @@ class Parsing {
       * @param {object} alerts - The data object to read the alerts from
       */
 
-    readAlerts = function(alerts) {
-        let tAlerts = []
-        let features = alerts.features.filter(feature => feature !== undefined);   
-        let filtering = this.filterAlerts(features)
-        let coordFilter = this.coordsToMiles(filtering)
-        for (let i = 0; i < coordFilter.length; i++) {
-            let index = coordFilter[i]
-            if (index.properties.description != null) { if (this.isAlreadyCancelled(index)) { continue; } }
-            if (this.doesAlertExist(tAlerts, index.id)) { continue; }
-            index = JSON.parse(JSON.stringify(index));
-            let registration = loader.modules.building.registerEvent(index);
-            let alertHash = loader.packages.crypto.createHash('sha1').update(JSON.stringify(registration)).digest('hex');
-            if (loader.cache.logging.findIndex(log => log.id == alertHash) == -1) {
-                loader.modules.hooks.createOutput(`${this.name}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)})`)
-                loader.cache.logging.push({ id: alertHash, expires: registration.details.expires});
-                loader.modules.hooks.youveGotMail(`${registration.details.name} (${registration.details.type})`, `Locations: ${registration.details.locations}\nIssued: ${new Date(registration.details.issued).toLocaleString()}\nExpires: ${new Date(registration.details.expires).toLocaleString()}\nWind Gusts: ${registration.details.wind}\nHail Size: ${registration.details.hail}\nDamage Threat: ${registration.details.damage}\nTornado ${registration.details.tornado}\nTags: ${registration.details.tag.join(', ')}\nSender: ${registration.details.sender}\nTracking ID: ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}`)
-                loader.modules.hooks.sendWebhook(`${registration.details.name} (${registration.details.type})`,`**Locations:** ${registration.details.locations}\n**Issued:** ${new Date(registration.details.issued).toLocaleString()}\n**Expires:** ${new Date(registration.details.expires).toLocaleString()}\n**Wind Gusts:** ${registration.details.wind}\n**Hail Size:** ${registration.details.hail}\n**Damage Threat:** ${registration.details.damage}\n**Tornado** ${registration.details.tornado}\n**Tags:** ${registration.details.tag.join(', ')}\n**Sender:** ${registration.details.sender}\n**Tracking ID:** ${(registration.raw.tracking === undefined? (registration.raw.properties.parameters.WMOidentifier && registration.raw.properties.parameters.WMOidentifier[0] !== undefined? registration.raw.properties.parameters.WMOidentifier[0]: `No ID found`): registration.raw.tracking)}\n\n\`\`\`\n${registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\n\`\`\`\n`);
+    readAlerts = function(isWire, alerts) {
+        let tAlerts = [];
+        let features = alerts.features.filter(feature => feature !== undefined);
+        let filteredAlerts = this.coordsToMiles(this.filterAlerts(features));
+        for (let alert of filteredAlerts) {
+            if (alert.properties.description == null || alert.properties.description == undefined) continue;
+            if (this.isAlreadyCancelled(alert)) { continue; } 
+            if (this.doesAlertExist(tAlerts, alert.id)) continue;
+            alert = JSON.parse(JSON.stringify(alert));
+            let registration = loader.modules.building.registerEvent(alert);
+
+            let alertHash = loader.packages.crypto.createHash('sha1').update(JSON.stringify({ ...registration, details: { ...registration.details, distance: undefined } })).digest('hex');
+            if (!loader.cache.logging.some(log => log.id == alertHash)) {
+                let { general_alerts: generalWebhook, critical_alerts: criticalWebhook } = loader.cache.configurations.webhook_settings;
+                let trackingId = registration.raw.tracking ?? (registration.raw.properties.parameters.WMOidentifier?.[0] ?? `No ID found`);
+                loader.modules.hooks.createOutput(`${this.name}.${isWire ? "WIRE" : "API"}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${trackingId}) (${registration.details.distance})`);
+                loader.cache.logging.push({ id: alertHash, expires: registration.details.expires });
+                let alertTitle = `${registration.details.name} (${registration.details.type})`;
+                let alertBody = [
+                    `**Locations:** ${registration.details.locations}`,
+                    `**Issued:** ${new Date(registration.details.issued).toLocaleString()}`,
+                    `**Expires:** ${new Date(registration.details.expires).toLocaleString()}`,
+                    `**Wind Gusts:** ${registration.details.wind}`,
+                    `**Hail Size:** ${registration.details.hail}`,
+                    `**Damage Threat:** ${registration.details.damage}`,
+                    `**Tornado:** ${registration.details.tornado}`,
+                    `**Tags:** ${registration.details.tag.join(', ')}`,
+                    `**Sender:** ${registration.details.sender}`,
+                    `**Miles Away:** ${registration.details.distance}`,
+                    `**Tracking ID:** ${trackingId}`,
+                    '```',
+                    registration.details.description.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n'),
+                    '```'
+                ].join('\n');
+                loader.modules.hooks.sendWebhook(alertTitle, alertBody, generalWebhook);
+                if (Array.isArray(criticalWebhook.events) && criticalWebhook.events.includes(alert.properties.native)) { loader.modules.hooks.sendWebhook(alertTitle, alertBody, criticalWebhook); }
                 if (loader.cache.configurations.sources.miscellaneous_sources.character_ai.auto_alert) {
-                    loader.modules.character.commitChat(`${loader.cache.configurations.sources.miscellaneous_sources.character_ai.prefix} ${registration.details.description}`).then((response) => {
-                        if (response.success == true) { loader.cache.chatbot = {message: response.message, image: loader.cache.configurations.sources.miscellaneous_sources.character_ai.image} }
-                    })
+                    loader.modules.character.commitChat(`${loader.cache.configurations.sources.miscellaneous_sources.character_ai.prefix} ${registration.details.description}`).then(response => {
+                        if (response.success) { loader.cache.chatbot = { message: response.message, image: loader.cache.configurations.sources.miscellaneous_sources.character_ai.image }; }
+                    });
                 }
-            
             }
-            if (Object.keys(registration).length != 0) {
-                if (registration.details.ignored == true) { continue; }
-                tAlerts.push(registration);
-            }
+            if (Object.keys(registration).length && !registration.details.ignored) tAlerts.push(registration);
         }
-        return {success: true, message: tAlerts}
+        return { success: true, message: tAlerts };
     }
 }
 

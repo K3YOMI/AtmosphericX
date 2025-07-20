@@ -18,6 +18,7 @@ let loader = require(`./loader.js`)
 
 loader.static.accounts = []
 loader.static.webSocketClients = []
+loader.static.lastGpsUpdate = 0
 loader.static.webSocketClientLimits = [] 
 loader.static.httpTimer = [] 
 loader.static.wiresession = undefined 
@@ -25,6 +26,7 @@ loader.static.webhookTimestamps = []
 
 
 loader.cache.twire = {features: []}
+loader.cache.placefiles = {}
 loader.cache.timeSinceLastStanza = new Date().getTime()
 loader.cache.attemptingToConnect = false 
 loader.cache.hasConnectedBefore = false
@@ -45,6 +47,10 @@ loader.packages.xml2js = require('xml2js');
 loader.packages.shapefile = require('shapefile');
 loader.packages.ws = require('ws');
 loader.packages.nodemailer = require('nodemailer');
+loader.packages.firebaseApp = require('firebase/app');
+loader.packages.firebaseDatabase = require('firebase/database');
+
+
 
 loader.modules.hooks = new (require(`./modules/hooks.js`))()
 loader.modules.character = new (require(`./modules/character.js`))()
@@ -57,6 +63,8 @@ loader.modules.building = new (require(`./modules/building.js`))()
 loader.modules.parsing = new (require(`./modules/parsing.js`))()
 loader.modules.shapefiles = new (require(`./modules/shapefiles.js`))()
 loader.modules.commands = new (require(`./modules/commands.js`))()
+loader.modules.placefiles = new (require(`./modules/placefiles.js`))()
+loader.modules.rtlirl = new (require(`./modules/rtlirl.js`))()
 
 loader.modules.listener = new (require(`./modules/nwws-oi/listener.js`))()
 loader.modules.product = new (require(`./modules/nwws-oi/product.js`))()
@@ -78,5 +86,8 @@ loader.definitions.eventTypes = { "W": "Warning", "F": "Forecast", "A": "Watch",
 
 
 loader.definitions.static_apis = { 
-    ['open_stree_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}"
+    ['open_street_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}",
+    ['cape_coordinates']: "https://api.open-meteo.com/v1/gfs?latitude=${X}&longitude=${Y}&hourly=cape",
+    ['temperature_coordinates']: "https://api.openweathermap.org/data/2.5/weather?lat=${X}&lon=${Y}&appid=64fb789b4ab267d578a5b1c24fd4b5ba"
 }
+loader.definitions.allowed_websockets = [`occupants`, `metrics`, `chatbot`, `wxRadio`, `updates`, `svrprob`, `torprob`, `public`, `active`, `location`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]

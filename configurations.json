@@ -10,6 +10,47 @@
             "cert": "../storage/cert/cert.crt"
         }
     },
+    "project_settings": {
+        "http_useragent": "AtmosphericX/v7.1.2",
+        "http_timeout": 5,
+        "global_update": 10,
+        "priority_alerts": true,
+        "default_alert_text": "No Active Alerts",
+        "priority": [
+            "Tornado Emergency",
+            "Particularly Dangerous Situation (TOR WARNING)",
+            "Particularly Dangerous Situation (TOR WATCH)",
+            "Considerable Severe Thunderstorm Warning",
+            "Destructive Severe Thunderstorm Warning",
+            "Confirmed Tornado Warning",
+            "Radar Indicated Tornado Warning",
+            "Flash Flood Emergency",
+            "Flash Flood Watch",
+            "Severe Thunderstorm Watch",
+            "Tornado Watch",
+            "Special Marine Warning",
+            "Flash Flood Warning",
+            "Severe Thunderstorm Warning",
+            "Tornado Warning",
+            "Snow Squall Warning",
+            "Earthquake Warning",
+            "Hurricane Warning",
+            "Hurricane Watch",
+            "Special Weather Statement"
+        ],
+        "beep_only": false,
+        "show_updates": true,
+        "ignore_restrictions": [
+            "Radar Indicated Tornado Warning",
+            "Confirmed Tornado Warning",
+            "Flash Flood Emergency",
+            "Particularly Dangerous Situation (TOR WARNING)",
+            "Particularly Dangerous Situation (TOR WATCH)",
+            "Tornado Emergency",
+            "Considerable Severe Thunderstorm Warning",
+            "Destructive Severe Thunderstorm Warning"
+        ]
+    },
     "sources": {
         "filter": {
             "nws_office_exclude_filter": [
@@ -44,10 +85,10 @@
             "location_services": {
                 "alert_filtering": false,
                 "max_miles": 50,
-                "realtimeirl": {
+                "gps_refresh": 10,
+                "display_name": "My Live AtmosphericX Instance",
+                "rtlirl": {
                     "enabled": false,
-                    "cache_time": 119,
-                    "endpoint": "https://rtirl.com/api/pull?key=${X}",
                     "pull_key": "PULL_KEY_HERE"
                 },
                 "spotter_network": {
@@ -62,21 +103,10 @@
                 },
                 "note": "Realtimeirl and spotter network tracking can NOT be used at the same time for tracking. You must choose one or the other."
             },
-            "character_ai": {
-                "enabled": false,
-                "auto_alert": false,
-                "prefix": "Describe the warning like a weather radio guy would, make it short and simple...  ",
-                "image": "YOUR_CHARACTER_IMAGE_URL_HERE",
-                "auth_token": "Token YOUR_CHARACTER_AI_TOKEN_HERE",
-                "character_id": "CHARACTER_ID_HERE",
-                "character_voice_id": "VOICE_ID_HERE",
-                "chromium_path": "/usr/bin/chromium-browser",
-                "note": "If you are using linux, you must install chromium for this to work. This npm package uses puppeteer to run the character ai. If you are using windows, you can use the default chromium path."
-            },
             "iem_local_storm_reports": {
                 "enabled": false,
-                "abbreviated_state": "",
-                "data_retention_hours": 24,
+                "abbreviated_state": "ALL",
+                "data_retention_hours": 4,
                 "cache_time": 1799,
                 "endpoint": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
             },
@@ -103,11 +133,11 @@
             "tornado_probability": {
                 "enabled": true,
                 "cache_time": 119,
-                "threshold": 50,
+                "threshold": 2,
                 "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PTv3_LOOP"
             },
             "severe_probability": {
-                "enabled": true,
+                "enabled": false,
                 "cache_time": 119,
                 "threshold": 50,
                 "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PSv3_LOOP"
@@ -116,97 +146,94 @@
                 "enabled": true,
                 "cache_time": 3600,
                 "endpoint": "https://api.weatherusa.net/v1/wxradio"
+            },
+            "character_ai": {
+                "enabled": false,
+                "auto_alert": false,
+                "prefix": "Describe the warning like a weather radio guy would, make it short and simple...  ",
+                "image": "YOUR_CHARACTER_IMAGE_URL_HERE",
+                "auth_token": "Token YOUR_CHARACTER_AI_TOKEN_HERE",
+                "character_id": "CHARACTER_ID_HERE",
+                "character_voice_id": "VOICE_ID_HERE",
+                "chromium_path": "/usr/bin/chromium-browser",
+                "note": "This feature does not work at the moment. It is currently being worked on and will be back soon."
             }
         }
     },
-    "project_settings": {
-        "http_useragent": "AtmosphericX/v7.1.2",
-        "http_timeout": 5,
-        "global_update": 10,
-        "priority_alerts": true,
-        "default_alert_text": "No active alerts at this time",
-        "priority": [
-            "Tornado Emergency",
-            "Particularly Dangerous Situation",
-            "Considerable Severe Thunderstorm Warning",
-            "Destructive Severe Thunderstorm Warning",
-            "Confirmed Tornado Warning",
-            "Radar Indicated Tornado Warning",
-            "Flash Flood Emergency",
-            "Flash Flood Watch",
-            "Severe Thunderstorm Watch",
-            "Tornado Watch",
-            "Special Marine Warning",
-            "Flash Flood Warning",
-            "Severe Thunderstorm Warning",
-            "Tornado Warning",
-            "Snow Squall Warning",
-            "Earthquake Warning",
-            "Hurricane Warning",
-            "Hurricane Watch",
-            "Special Weather Statement"
-        ],
-        "beep_only": false,
-        "show_updates": true,
-        "ignore_restrictions": [
-            "Radar Indicated Tornado Warning",
-            "Confirmed Tornado Warning",
-            "Flash Flood Emergency",
-            "Particularly Dangerous Situation",
-            "Tornado Emergency",
-            "Considerable Severe Thunderstorm Warning",
-            "Destructive Severe Thunderstorm Warning"
-        ],
-        "websocket_settings": {
-            "priority_websockets": {
-                "timeout": 1,
-                "types": [
-                    "notification",
-                    "header",
-                    "random",
-                    "active",
-                    "manual",
-                    "chatbot",
-                    "realtime"
-                ]
-            },
-            "general_websockets": {
-                "timeout": 30,
-                "types": [
-                    "metrics",
-                    "public",
-                    "wire",
-                    "reports",
-                    "spotters",
-                    "discussions",
-                    "severeProbability",
-                    "tornadoProbability",
-                    "wxRadio"
-                ]
-            }
-        },
-        "webhook_settings": {
+    "webhook_settings": {
+        "general_alerts": {
             "enabled": false,
             "discord_webhook": "DISCORD_WEBHOOK_HERE",
             "webhook_display": "AtmosphericX (Webhook Integration)",
             "content": "<@&ROLE_ID_HERE>",
-            "webhook_cooldown": 5
+            "webhook_cooldown": 1
         },
-        "mail_settings": {
+        "critical_alerts": {
             "enabled": false,
-            "provider": "smtp.gmail.com",
-            "port": 465,
-            "secure": true,
-            "credentials": {
-                "username": "SMTP_USERNAME_HERE",
-                "password": "SMTP_PASSWORD_HERE"
-            },
-            "sender": {
-                "name": "AtmosphericX",
-                "email": "AtmosphericX@EmailServiceExample"
-            },
-            "recipient": "EMAIL_ADDRESS_HERE",
-            "note": "This isn't recommended as you will reach your rate limit realitively quickly. This was made just for fun so feel free to use your own server if you wish."
+            "discord_webhook": "DISCORD_WEBHOOK_HERE",
+            "webhook_display": "AtmosphericX (Webhook Integration)",
+            "content": "<@&ROLE_ID_HERE>",
+            "webhook_cooldown": 1,
+            "events": [
+                "Tornado Emergency",
+                "Particularly Dangerous Situation (TOR WARNING)",
+                "Particularly Dangerous Situation (TOR WATCH)",
+                "Confirmed Tornado Warning",
+                "Destructive Severe Thunderstorm Warning",
+                "Flash Flood Emergency"
+            ]
+        },
+        "misc_alerts": {
+            "enabled": false,
+            "discord_webhook": "DISCORD_WEBHOOK_HERE",
+            "webhook_display": "AtmosphericX (Webhook Integration)",
+            "content": "<@&ROLE_ID_HERE>",
+            "webhook_cooldown": 10
+        }
+    },
+    "mail_settings": {
+        "enabled": false,
+        "provider": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "credentials": {
+            "username": "SMTP_USERNAME_HERE",
+            "password": "SMTP_PASSWORD_HERE"
+        },
+        "sender": {
+            "name": "AtmosphericX",
+            "email": "AtmosphericX@EmailServiceExample"
+        },
+        "recipient": "EMAIL_ADDRESS_HERE",
+        "note": "This isn't recommended as you will reach your rate limit realitively quickly. This was made just for fun so feel free to use your own server if you wish."
+    },
+    "websocket_settings": {
+        "priority_websockets": {
+            "timeout": 1,
+            "types": [
+                "notification",
+                "header",
+                "random",
+                "active",
+                "manual",
+                "chatbot",
+                "location",
+                "occupants"
+            ]
+        },
+        "general_websockets": {
+            "timeout": 30,
+            "types": [
+                "metrics",
+                "public",
+                "wire",
+                "reports",
+                "spotters",
+                "discussions",
+                "severeProbability",
+                "tornadoProbability",
+                "wxRadio"
+            ]
         }
     },
     "tags": {
@@ -409,7 +436,7 @@
                 "enabled": false,
                 "cycled_types": [
                     "Tornado Emergency",
-                    "Particularly Dangerous Situation",
+                    "Particularly Dangerous Situation (TOR WARNING)",
                     "Confirmed Tornado Warning",
                     "Destructive Severe Thunderstorm Warning",
                     "Considerable Severe Thunderstorm Warning",
@@ -463,6 +490,18 @@
             "duration": 8,
             "max_text_length": 70,
             "animation_style": "animation: fade 6.0s ease-in-out; animation-fill-mode: forwards; animation-delay: 0s; transition: all 0.3s ease-in-out; opacity: 1;"
+        },
+        "notice": {
+            "alert_types": [
+                "Tornado Emergency",
+                "Particularly Dangerous Situation (TOR WARNING)",
+                "Confirmed Tornado Warning",
+                "Destructive Severe Thunderstorm Warning",
+                "Considerable Severe Thunderstorm Warning",
+                "Radar Indicated Tornado Warning",
+                "Flash Flood Emergency",
+                "Special Marine Warning"
+            ]
         }
     },
     "tone_sounds": {
@@ -481,16 +520,29 @@
             "card": "Tornado Emergency",
             "siren": true,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
-        "Particularly Dangerous Situation": {
-            "triggered": "Particularly Dangerous Situation",
+        "Particularly Dangerous Situation (TOR WARNING)": {
+            "triggered": "Particularly Dangerous Situation (TOR WARNING)",
             "new": "/assets/media/audio/tor/tor-upgraded.mp3",
             "update": "/assets/media/audio/tor/tor-updated.mp3",
             "cancel": "/assets/media/audio/tones/beep-tone.mp3",
-            "card": "Particularly Dangerous Situation",
+            "card": "Particularly Dangerous Situation (TOR WARNING)",
             "siren": false,
             "eas": true,
+            "amber": false,
+            "autobeep": true
+        },
+        "Particularly Dangerous Situation (TOR WATCH)": {
+            "triggered": "Particularly Dangerous Situation (TOR WATCH)",
+            "new": "/assets/media/audio/tor/beep-tone.mp3",
+            "update": "/assets/media/audio/tor/beep-tone.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Particularly Dangerous Situation (TOR WATCH)",
+            "siren": false,
+            "eas": false,
+            "amber": true,
             "autobeep": true
         },
         "Flash Flood Emergency": {
@@ -501,6 +553,7 @@
             "card": "Flash Flood Emergency",
             "siren": false,
             "eas": true,
+            "amber": false,
             "autobeep": true
         },
         "Confirmed Tornado Warning": {
@@ -511,6 +564,7 @@
             "card": "Confirmed Tornado Warning",
             "siren": true,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Destructive Severe Thunderstorm Warning": {
@@ -521,6 +575,7 @@
             "card": "Severe Thunderstorm Warning (Destructive)",
             "siren": false,
             "eas": true,
+            "amber": false,
             "autobeep": true
         },
         "Considerable Severe Thunderstorm Warning": {
@@ -531,6 +586,7 @@
             "card": "Severe Thunderstorm Warning (Considerable)",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Severe Thunderstorm Warning": {
@@ -541,6 +597,7 @@
             "card": "Severe Thunderstorm Warning",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Tornado Warning": {
@@ -551,6 +608,7 @@
             "card": "Radar Indicated Tornado Warning",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Radar Indicated Tornado Warning": {
@@ -561,6 +619,7 @@
             "card": "Radar Indicated Tornado Warning",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Flash Flood Warning": {
@@ -571,6 +630,7 @@
             "card": "Flash Flood Warning",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Special Marine Warning": {
@@ -581,6 +641,7 @@
             "card": "Special Marine Warning",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Snow Squall Warning": {
@@ -591,6 +652,7 @@
             "card": "Snow Squall Warning",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": true
         },
         "Flash Flood Watch": {
@@ -601,6 +663,7 @@
             "card": "Flash Flood Watch",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": false
         },
         "Severe Thunderstorm Watch": {
@@ -611,6 +674,7 @@
             "card": "Severe Thunderstorm Watch",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": false
         },
         "Tornado Watch": {
@@ -621,6 +685,7 @@
             "card": "Tornado Watch",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": false
         },
         "UNK": {
@@ -631,6 +696,7 @@
             "card": "Unknown Event",
             "siren": false,
             "eas": false,
+            "amber": false,
             "autobeep": false
         }
     },
@@ -643,7 +709,14 @@
             }
         },
         {
-            "type": "Particularly Dangerous Situation",
+            "type": "Particularly Dangerous Situation (TOR WARNING)",
+            "color": {
+                "light": "rgb(214,56,54)",
+                "dark": "rgb(163,25,25)"
+            }
+        },
+        {
+            "type": "Particularly Dangerous Situation (TOR WATCH)",
             "color": {
                 "light": "rgb(214,56,54)",
                 "dark": "rgb(163,25,25)"
@@ -659,8 +732,8 @@
         {
             "type": "Tornado Warning",
             "color": {
-                "light": "rgb(249,56,54)",
-                "dark": "rgb(203,25,25)"
+                "light": "rgb(214,56,54)",
+                "dark": "rgb(163,25,25)"
             }
         },
         {

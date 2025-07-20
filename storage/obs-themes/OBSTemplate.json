@@ -2532,7 +2532,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/description",
+                "url": "http://localhost:80/widgets/random?description",
                 "width": 2500,
                 "height": 1500,
                 "fps": 30
@@ -2597,7 +2597,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/expires",
+                "url": "http://localhost:80/widgets/random?expires",
                 "fps": 30
             },
             "mixers": 255,
@@ -2661,7 +2661,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/location",
+                "url": "http://localhost:80/widgets/random?locations",
                 "width": 4000,
                 "fps": 30
             },
@@ -2725,7 +2725,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/alert",
+                "url": "http://localhost:80/widgets/random?alert",
                 "width": 2100,
                 "height": 1080,
                 "fps": 30,
@@ -3872,7 +3872,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/date",
+                "url": "http://localhost:80/widgets/clock?date",
                 "width": 200,
                 "height": 75,
                 "fps": 30
@@ -3936,7 +3936,7 @@
             "versioned_id": "browser_source",
             "settings": {
                 "undo_uuid": "64801bbf-1400-407e-98ac-2374a3b6bee5",
-                "url": "http://localhost:80/widgets/dark",
+                "url": "http://localhost:80/widgets/colors?dark",
                 "width": 20,
                 "height": 20,
                 "fps": 30
@@ -3971,7 +3971,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/light",
+                "url": "http://localhost:80/widgets/colors?light",
                 "width": 20,
                 "height": 20,
                 "fps": 30
@@ -4006,7 +4006,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/gps"
+                "url": "http://localhost:80/widgets/location"
             },
             "mixers": 255,
             "sync": 0,
@@ -4205,7 +4205,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/alert_bar",
+                "url": "http://localhost:80/widgets/alerts",
                 "width": 1920,
                 "height": 1080,
                 "fps": 30,
@@ -4308,7 +4308,7 @@
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "url": "http://localhost:80/widgets/time",
+                "url": "http://localhost:80/widgets/clock?time",
                 "width": 200,
                 "height": 50,
                 "fps": 30

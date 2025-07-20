@@ -35,26 +35,20 @@ class Hooks {
       */
 
     youveGotMail = async function(title, message) {
-        let settings = loader.cache.configurations.project_settings.mail_settings
-        let isEnabled = settings.enabled 
-        if (!isEnabled) { return }
-        if (loader.static.mailclient == undefined) {
-            loader.static.mailclient = loader.packages.nodemailer.createTransport({
-                host: settings.provider,
-                port: settings.port,
-                secure: settings.secure,
-                auth: { user: settings.credentials.username, pass: settings.credentials.password }
-            })
-            this.createLog(`${this.name}.onMailServer`, `Mail server created`)
-            this.createOutput(`${this.name}.onMailServer`, `Mail server created`)
+        let settings = loader.cache.configurations.mail_settings;
+        if (!settings.enabled) return { success: false, message: "Mail functionality is disabled in the configuration." };
+        if (!loader.static.mailclient) {
+            loader.static.mailclient = loader.packages.nodemailer.createTransport({ host: settings.provider, port: settings.port, secure: settings.secure, auth: { user: settings.credentials.username, pass: settings.credentials.password } });
+            this.createLog(`${this.name}.MailServerInitialization`, "Mail server successfully initialized.");
+            this.createOutput(`${this.name}.MailServerInitialization`, "Mail server successfully initialized.");
         }
-        await loader.static.mailclient.sendMail({ 
-            from: `${settings.sender.name} <${settings.sender.email}>`, 
-            to: settings.recipient, 
-            subject: title, 
-            text: message, 
-        })
-        return { success: true, message: `Successfully sent email to ${settings.recipient}` }
+        try {
+            await loader.static.mailclient.sendMail({ from: `${settings.sender.name} <${settings.sender.email}>`, to: settings.recipient, subject: title, text: message });
+            return { success: true, message: `Email successfully sent to ${settings.recipient}.` };
+        } catch (error) {
+            this.createLog(`${this.name}.MailSendError`, `Error sending email: ${error.message}`);
+            return { success: false, message: `Failed to send email: ${error.message}` };
+        }
     }
 
     /**
@@ -63,41 +57,130 @@ class Hooks {
       * 
       * @param {string} title - The title of the webhook message.
       * @param {string} message - The message of the webhook.
+      * @param {Object} settings - The settings for the webhook, including the endpoint, content, display name, and cooldown time.
       */
 
-    sendWebhook = async function(title, message) {
-        let settings = loader.cache.configurations.project_settings.webhook_settings;
-        let endpoint = settings.discord_webhook;
-        let content = settings.content;
-        let displayName = settings.webhook_display;
-        let cooldownTime = settings.webhook_cooldown
-        if (!settings.enabled) { return; }
-        let currentTime = new Date().getTime();
-        loader.static.webhookTimestamps.push({ time: currentTime, title: title });
-        loader.static.webhookTimestamps = loader.static.webhookTimestamps.filter(timestamp => timestamp.time > currentTime - cooldownTime * 1000);
-        if (loader.static.webhookTimestamps.length > 3) { return; }
-        let embed = { title: title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: { text: displayName } };
-        try { await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] }); } catch (error) { return { success: false, message: `Failed to send webhook message.` } }
-        return { success: true, message: `Successfully sent webhook message.` }
+    sendWebhook = async function(title, message, settings) {
+        if (!settings.enabled) return { success: false, message: "Webhook functionality is disabled." };
+        let { discord_webhook: endpoint, content, webhook_display: displayName, webhook_cooldown: cooldownTime } = settings;
+        let currentTime = Date.now();
+        loader.static.webhookTimestamps = loader.static.webhookTimestamps.filter(ts => ts.time > currentTime - cooldownTime * 1000);
+        if (loader.static.webhookTimestamps.filter(ts => ts.type == displayName).length >= 3) {
+            return { success: false, message: `Rate limit exceeded for ${displayName}.` };
+        }
+        let embed = { title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: { text: displayName } };
+        try {
+            await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] });
+            loader.static.webhookTimestamps.push({ time: currentTime, title, type: displayName });
+            return { success: true, message: "Successfully sent webhook message." };
+        } catch (error) {
+            return { success: false, message: `Failed to send webhook message: ${error.message}` };
+        }
+    }
+    
+    /**
+      * @function getMilesAway
+      * @description Calculates the distance in miles between two geographical coordinates using the Haversine formula
+      * 
+      * @param {number} lat1 - The latitude of the first coordinate.
+      * @param {number} lon1 - The longitude of the first coordinate.
+      * @param {number} lat2 - The latitude of the second coordinate.
+      * @param {number} lon2 - The longitude of the second coordinate.
+      */
+
+    getMilesAway = function(lat1, lon1, lat2, lon2) {
+        let R = 3959, 
+            dLat = (lat2 - lat1) * Math.PI / 180, 
+            dLon = (lon2 - lon1) * Math.PI / 180, 
+            a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2, 
+            c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)), 
+            distance = R * c;
+        return isNaN(distance) ? undefined : distance.toFixed(2);
+    };
+
+    /**
+      * @function getCardinalDirection
+      * @description Converts degrees to a cardinal direction (N, NE, E, SE, S, SW, W, NW).
+      * 
+      * @param {number} degrees - The angle in degrees.
+      */
+    
+    getCardinalDirection = function(degrees) {
+        if (degrees < 0 || degrees > 360) return 'Invalid degrees';
+        let directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        let index = Math.round(degrees / 45) % 8;
+        return directions[index];
     }
 
     /**
-      * @function converCoordinated
+      * @function gpsTracking
+      * @description Tracks GPS coordinates and creates a placefile point for the given latitude and longitude. This can be
+      * used for various purposes including placefiles, alert filtering, and general widget functionality.
+      * 
+      * @param {number} lat - The latitude coordinate.
+      * @param {number} lon - The longitude coordinate.
+      * @param {string} type - The type of GPS tracking, default is `SpotterNetwork`.
+      */
+
+    gpsTracking = async function(lat, lon, type = 'SpotterNetwork') {
+        let locationServices = loader.cache.configurations.sources.miscellaneous_sources.location_services;
+        if (loader.static.lastGpsUpdate  + (locationServices.gps_refresh * 1000) > Date.now()) {
+            return { success: false, message: "GPS tracking is currently on cooldown. Please wait before trying again." };
+        }
+        loader.static.lastGpsUpdate  = Date.now()
+        if (typeof loader.cache.location != `object`) { loader.cache.location = {} }
+        loader.cache.location.lat = lat;
+        loader.cache.location.lon = lon;
+        let toLocation = await this.convertCoordinatesToRequest(loader.definitions.static_apis.open_street_map_coordinates, lat, lon);
+        let toCape = await this.convertCoordinatesToRequest(loader.definitions.static_apis.cape_coordinates, lat, lon);
+        let toWeather = await this.convertCoordinatesToRequest(loader.definitions.static_apis.temperature_coordinates, lat, lon);
+        if (toCape !== 'err') {
+            let index = toCape.hourly.time.findIndex(t => new Date(t).getTime() >= Date.now());
+            if (index !== -1 && toCape.hourly.cape[index] !== undefined) loader.cache.location.cape = toCape.hourly.cape[index]?.toString() + ' J/kg';
+        }
+        if (toWeather !== 'err') {
+            let conditions = toWeather.weather[0];
+            let baseTemps = toWeather.main
+            let baseObservation = toWeather.wind
+            loader.cache.location.cloudDescription = conditions.description ? conditions.description.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'N/A';
+            loader.cache.location.temperature = baseTemps.temp ? `${((baseTemps.temp - 273.15) * 9/5 + 32).toFixed(0)}°F` : 'N/A';
+            loader.cache.location.humidity = baseTemps.humidity ? `${baseTemps.humidity}%` : 'N/A';
+            loader.cache.location.windSpeed = baseObservation.speed ? `${(baseObservation.speed * 2.23694).toFixed(0)} mph` : 'N/A';
+            loader.cache.location.windDirection = baseObservation.deg ? `${baseObservation.deg}° (${this.getCardinalDirection(baseObservation.deg)})` : 'N/A';
+            loader.cache.location.windGust = baseObservation.gust ? `${(baseObservation.gust * 2.23694).toFixed(0)} mph` : 'N/A';
+        }
+        if (toLocation !== 'err') {
+            let { house_number = '', road = '', city = toLocation.address?.municipality || '----', municipality = '', state = '', postcode = '', county = 'Unknown County' } = toLocation.address || {};
+            loader.cache.location.address = `${house_number || ''} ${road || ''}, ${city || municipality || '----'}, ${state || ''}, ${postcode || ''}`.trim();
+            loader.cache.location.location = `${city || municipality || '----'}, ${state || ''}`.trim();
+            loader.cache.location.county = county || 'Unknown County';
+            loader.cache.location.state = state || 'Unknown State';
+        }
+        let description = [`Address: ${loader.cache.location.address || 'N/A'}`,`Location: ${loader.cache.location.location || 'N/A'}`,`County: ${loader.cache.location.county || 'N/A'}`,`State: ${loader.cache.location.state || 'N/A'}`,`Temperature: ${loader.cache.location.temperature || 'N/A'}`,`Humidity: ${loader.cache.location.humidity || 'N/A'}`,`Wind Speed: ${loader.cache.location.windSpeed || 'N/A'}`,`Wind Direction: ${loader.cache.location.windDirection || 'N/A'}`,`Wind Gust: ${loader.cache.location.windGust || 'N/A'}`,`Cloud Description: ${loader.cache.location.cloudDescription || 'N/A'}`,`CAPE: ${loader.cache.location.cape || 'N/A'}`]
+        let places = [{ title: description.join('\\n').replace(/;/g, ' -').replace(/,/g, ""), description: `${locationServices.display_name} (${loader.cache.location.cape || 'N/A'})`, point: [parseFloat(loader.cache.location.lon), parseFloat(loader.cache.location.lat)], rgb: '255,0,0,255' }]
+        loader.modules.placefiles.createPlacefilePoint(1, 999, `AtmosphericX GPS (${type}) - ${new Date().toUTCString()}`, places, 'gps');
+        this.createOutput(`${this.name}.gpsTracking`, `Updated GPS coordinates for ${type}: ${loader.cache.location.county || 'Unknown County'}, ${loader.cache.location.state || 'Unknown State'} (${loader.cache.location.lat}, ${loader.cache.location.lon})`);
+        return { success: true, message: `Successfully tracked GPS coordinates for ${type}.`, location: loader.cache.location };
+    }
+
+    /**
+      * @function convertCoordinatesToRequest
       * @description Converts latitude and longitude coordinates to a human-readable address using the OpenStreetMap Nominatim API.
       *
+      * @param {string} pointer - The URL pointer found in loader.definitions.static_apis, this will replace ${X} and ${Y} with the latitude and longitude coordinates.
       * @param {number} lat - The latitude coordinate.
       * @param {number} lon - The longitude coordinate.
       */
 
-    converCoordinated = async function(lat, lon) {
-        return new Promise((resolve, reject) => {
-            let url = loader.definitions.static_apis.open_stree_map_coordinates.replace("${X}", lat).replace("${Y}", lon);
-            return this.createHttpRequest(url).then(response => {
-                if (response.success === false) { resolve('err') } resolve(response.message);
-            }).catch(error => { resolve('err'); });
-        })
+    convertCoordinatesToRequest = async function(pointer, lat, lon) {
+        let url = pointer.replace("${X}", lat).replace("${Y}", lon);
+        try {
+            let response = await this.createHttpRequest(url, 3);
+            return response.success ? response.message : 'err';
+        } catch {
+            return 'err';
+        }
     }
-
 
     /**
       * @function getRandomAlert
@@ -106,20 +189,15 @@ class Hooks {
       */
 
     getRandomAlert = function() {
-        if (loader.cache.active == undefined) { loader.cache.active = [] }
-        if (loader.cache.manual == undefined) { loader.cache.manual = [] }
-        let alertsTable = [...loader.cache.active, ...[loader.cache.manual]].filter(alert => alert && Object.keys(alert).length > 0);
-        if (alertsTable.length > 0) {
-            if (loader.cache.randomIndex == undefined || loader.cache.randomIndex >= alertsTable.length) {
-                loader.cache.randomIndex = 0
-            }
-            loader.cache.random = alertsTable[loader.cache.randomIndex]
-            loader.cache.randomIndex++
-        } else { 
-            loader.cache.random = null
-            loader.cache.randomIndex = undefined
+        let alerts = [...(Array.isArray(loader.cache.active) ? loader.cache.active : []), ...(Array.isArray(loader.cache.manual) ? loader.cache.manual : [])].filter(alert => alert && Object.keys(alert).length > 0);
+        if (alerts.length == 0) {
+            loader.cache.random = null;
+            loader.cache.randomIndex = undefined;
+            return { success: false, message: "No alerts available." };
         }
-        return {success: true, message: `Successfully got random alert.`}
+        loader.cache.randomIndex = (loader.cache.randomIndex || 0) % alerts.length;
+        loader.cache.random = alerts[loader.cache.randomIndex++];
+        return { success: true, message: "Successfully retrieved random alert." };
     }
 
     /**
@@ -130,43 +208,31 @@ class Hooks {
      * @return {Promise<Object>} - A promise that resolves to an object containing the success status and the response message.
      */
 
-    createHttpRequest = async function(url) {
-        return new Promise(async (resolve, reject) => {
-            try { 
-                let details = { 
-                    url: url,
-                    maxRedirects: 0,
-                    timeout: loader.cache.configurations.project_settings.http_timeout * 1000,
-                    headers: { 
-                        'User-Agent': loader.cache.configurations.project_settings.http_useragent,
-                        'Accept': 'application/geo+json, text/plain, */*; q=0.9',
-                        'Accept-Language': 'en-US,en;q=0.9',
-                    },
-                    httpsAgent: new loader.packages.https.Agent({ rejectUnauthorized: false })
+    createHttpRequest = async function(url, timeoutOverride=undefined) {
+        return new Promise(async (resolve) => {
+            try {
+                let defaultTimeout = loader.cache.configurations.project_settings.http_timeout * 1000;
+                defaultTimeout = timeoutOverride !== undefined ? timeoutOverride : defaultTimeout;
+                let details = { url, maxRedirects: 0, timeout: defaultTimeout * 1000, headers: { 'User-Agent': loader.cache.configurations.project_settings.http_useragent, 'Accept': 'application/geo+json, text/plain, */*; q=0.9', 'Accept-Language': 'en-US,en;q=0.9', }, httpsAgent: new loader.packages.https.Agent({ rejectUnauthorized: false }) };
+                let response = await loader.packages.axios.get(details.url, {
+                    headers: details.headers,
+                    maxRedirects: details.maxRedirects,
+                    timeout: details.timeout,
+                    httpsAgent: details.httpsAgent,
+                    validateStatus: (status) => status == 200 || status == 500
+                });
+                let { data: responseMessage, status: statusCode } = response;
+                if (statusCode == 500) this.createLog(`${this.name}.onStatusCode500`, `Warning: Received status code 500`);
+                if (!responseMessage) {
+                    this.createLog(`${this.name}.onResponseMessageFail`, `Error: Response message is undefined`);
+                    return resolve({ success: false, message: undefined });
                 }
-                await loader.packages.axios.get(details.url, {headers: details.headers, maxRedirects: details.maxRedirects, timeout: details.timeout, httpsAgent: details.httpsAgent}).then((response) => {
-                    let responseMessage = response.data 
-                    let errorMessage = response.error
-                    let statusCode = response.status
-                    if (errorMessage != undefined) { 
-                        this.createLog(`${this.name}.onHttpErrMessage`, `Error: ${errorMessage}`)
-                        resolve({success: false, message: undefined})
-                    }
-                    if (statusCode != 200) { 
-                        this.createLog(`${this.name}.onStatusCodeFail`, `Error: ${statusCode}`)
-                        resolve({success: false, message: undefined})
-                    }
-                    if (responseMessage == undefined) {
-                        this.createLog(`${this.name}.onResponseMessageFail`, `Error: ${responseMessage}`)
-                        resolve({success: false, message: undefined})
-                    }
-                    resolve({success: true, message: responseMessage})
-                })
-            } catch (error) { 
-                this.createLog(`${this.name}.onAxiosError`, `Error: ${error}`)
-                resolve({success: false, message: undefined})
+                resolve({ success: true, message: responseMessage });
+            } catch (error) {
+                this.createLog(`${this.name}.onAxiosError`, `Error: ${error.message}`);
+                resolve({ success: false, message: undefined });
             }
-        })
+        });
     }
 
     /**
@@ -175,28 +241,19 @@ class Hooks {
       */
 
     cleanTemp = function() {
-        let maxBytes = 20000000; // 10MB
-        let directory = loader.packages.path.join(__dirname, `../../storage/nwws-oi`);
-        let stackFiles = [directory];
-        let files = [];
-        while (stackFiles.length > 0) {
+        let maxBytes = 20000000, directory = loader.packages.path.join(__dirname, `../../storage/nwws-oi`);
+        let stackFiles = [directory], files = [], cleanedFiles = 0;
+        while (stackFiles.length) {
             let currentDirectory = stackFiles.pop();
             loader.packages.fs.readdirSync(currentDirectory).forEach(file => {
                 let filePath = loader.packages.path.join(currentDirectory, file);
-                if (loader.packages.fs.statSync(filePath).isDirectory()) {
-                    stackFiles.push(filePath);
-                } else {
-                    files.push({ file: filePath, size: loader.packages.fs.statSync(filePath).size });
-                }
+                loader.packages.fs.statSync(filePath).isDirectory() ? stackFiles.push(filePath) : files.push({ file: filePath, size: loader.packages.fs.statSync(filePath).size });
             });
         }
-        if (files.length === 0) {
-            return { success: false, message: `No files found in the directory.` };
-        }
-        let cleanedFiles = 0;
-        files.forEach(file => {
-            if (file.size > maxBytes) {
-                loader.packages.fs.unlinkSync(file.file);
+        if (!files.length) return { success: false, message: `No files found in the directory.` };
+        files.forEach(({ file, size }) => {
+            if (size > maxBytes) {
+                loader.packages.fs.unlinkSync(file);
                 cleanedFiles++;
             }
         });
@@ -209,9 +266,10 @@ class Hooks {
       */
 
     reloadConfigurations = function() {
-        loader.cache.configurations = JSON.parse(loader.packages.fs.readFileSync(loader.packages.path.join(__dirname, `../../configurations.json`), `utf-8`));
+        let configPath = loader.packages.path.join(__dirname, `../../configurations.json`);
+        loader.cache.configurations = JSON.parse(loader.packages.fs.readFileSync(configPath, `utf-8`));
         loader.cache.public = {
-            warning: "This is a public configuration, this prevents the user from being able to view private information.",
+            warning: "This is a public configuration, preventing access to private information.",
             tone_sounds: loader.cache.configurations.tone_sounds,
             default_text: loader.cache.configurations.project_settings.default_alert_text,
             scheme: loader.cache.configurations.scheme,
@@ -220,21 +278,21 @@ class Hooks {
             widget_settings: loader.cache.configurations.widget_settings,
             realtime_irl: loader.cache.configurations.sources.miscellaneous_sources.realtime_irl,
             version: this.getCurrentVersion(),
-        }
-        const memoryUsage = process.memoryUsage();
+        };
+        let memoryUsage = process.memoryUsage();
         loader.cache.metrics = {
-            memory: (memoryUsage.rss / 1024 / 1024).toFixed(2) + ' MB', 
-            cpu: loader.packages.os.cpus().length + ' cores',
+            memory: `${(memoryUsage.rss / 1024 / 1024).toFixed(2)} MB`,
+            cpu: `${loader.packages.os.cpus().length} cores`,
             platform: process.platform,
             arch: process.arch,
-            uptime: (process.uptime() / 60).toFixed(2) + ' min',
+            uptime: `${(process.uptime() / 60).toFixed(2)} min`,
             node_version: process.version,
             hostname: loader.packages.os.hostname(),
-            free_memory: (loader.packages.os.freemem() / 1024 / 1024).toFixed(2) + ' MB',
-            total_memory: (loader.packages.os.totalmem() / 1024 / 1024).toFixed(2) + ' MB',
+            free_memory: `${(loader.packages.os.freemem() / 1024 / 1024).toFixed(2)} MB`,
+            total_memory: `${(loader.packages.os.totalmem() / 1024 / 1024).toFixed(2)} MB`,
             loadavg: loader.packages.os.loadavg(),
-        }
-        return {success: true, message: `Successfully reloaded configurations.`}
+        };
+        return { success: true, message: "Configurations reloaded successfully." };
     }
 
     /**
@@ -246,26 +304,19 @@ class Hooks {
       */
 
     filteringHtml = function(rawBody) {
-        if (typeof rawBody === 'string') {
+        if (typeof rawBody == 'string') {
             try {
-                let parsed = JSON.parse(rawBody);
-                rawBody = parsed;
-            } catch (e) {
-                rawBody = rawBody.replace(/<[^>]*>/g, ``);
-                return rawBody;
+                rawBody = JSON.parse(rawBody);
+            } catch {
+                return rawBody.replace(/<[^>]*>/g, '');
             }
         }
-        if (Array.isArray(rawBody)) {
-            return rawBody.map(item => this.filteringHtml(item));
-        } else if (typeof rawBody === 'object' && rawBody !== null) {
+        if (Array.isArray(rawBody)) return rawBody.map(item => this.filteringHtml(item));
+        if (typeof rawBody == 'object' && rawBody !== null) {
             for (let key in rawBody) {
-                if (typeof rawBody[key] === 'string') {
-                    rawBody[key] = rawBody[key].replace(/<[^>]*>/g, ``);
-                } else if (typeof rawBody[key] === 'object') {
-                    rawBody[key] = this.filteringHtml(rawBody[key]);
-                }
+                let value = rawBody[key];
+                rawBody[key] = typeof value == 'string' ? value.replace(/<[^>]*>/g, '') : this.filteringHtml(value);
             }
-            return rawBody;
         }
         return rawBody;
     }
@@ -287,17 +338,19 @@ class Hooks {
       */
 
     checkUpdates = async function() {
-        let changelogs = "https://k3yomi.github.io/update/atmosx_header.json"
-        let currentVersion = "https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version"
-        let thisVersion = this.getCurrentVersion()
-        let latestVersion = await this.createHttpRequest(currentVersion)
-        let changelogsData = await this.createHttpRequest(changelogs)
-        if (latestVersion.success === false) { return {success: false, message: `Failed to get latest version.`} }
-        if (changelogsData.success === false) { return {success: false, message: `Failed to get changelogs.`} }
-        loader.cache.updates = changelogsData.message[thisVersion] ? changelogsData.message[thisVersion] : []
-        loader.cache.latestupdates = changelogsData.message[latestVersion.message] ? changelogsData.message[latestVersion.message] : []
-        if (latestVersion.message > thisVersion) {
-            this.createOutput(this.name, `\n\n[NOTICE] New version available: ${latestVersion.message} (Current version: ${thisVersion})\n\t You can update to the latest version by running update.sh.\n\t If you wish to replace manually, you can download the latest version from the GitHub repository.\n\t ==================== CHANGE LOGS ======================== \n\t ${loader.cache.latestupdates.changelogs.join(`\n\t `)}\n\n`);
+        let changelogsUrl = "https://k3yomi.github.io/update/atmosx_header.json";
+        let versionUrl = "https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version";
+        let currentVersion = this.getCurrentVersion();
+        let latestVersionResponse = await this.createHttpRequest(versionUrl);
+        let changelogsResponse = await this.createHttpRequest(changelogsUrl);
+        if (!latestVersionResponse.success) return { success: false, message: "Failed to fetch the latest version." };
+        if (!changelogsResponse.success) return { success: false, message: "Failed to fetch changelogs." };
+        let latestVersion = latestVersionResponse.message;
+        loader.cache.updates = changelogsResponse.message[currentVersion] || currentVersion;
+        loader.cache.latestupdates = changelogsResponse.message[latestVersion] || [];
+        if (latestVersion > currentVersion) {
+            let changelogs = loader.cache.latestupdates.changelogs.join("\n\t ");
+            this.createOutput(this.name, `\n\n[NOTICE] New version available: ${latestVersion} (Current version: ${currentVersion})\n\t Update by running update.sh or download the latest version from GitHub.\n\t =================== CHANGE LOGS ======================= \n\t ${changelogs}\n\n`);
         }
     }
 
@@ -307,9 +360,11 @@ class Hooks {
       */
 
     displayLogo = function() {
-        console.clear()
-        console.log(loader.packages.fs.readFileSync(loader.packages.path.join(__dirname, `../../storage/logo`), `utf-8`).replace(`{VERSION}`, this.getCurrentVersion()))
-        return {success: true, message: `Successfully displayed logo.`}
+        let logoPath = loader.packages.path.join(__dirname, `../../storage/logo`);
+        let logoContent = loader.packages.fs.readFileSync(logoPath, `utf-8`).replace(`{VERSION}`, this.getCurrentVersion());
+        console.clear();
+        console.log(logoContent);
+        return { success: true, message: `Logo displayed successfully.` };
     }
 
     /**
@@ -320,12 +375,11 @@ class Hooks {
       * @param {string} inputMessage - The message for the log entry.
       */
 
-    createLog = function(inputHeader=this.name, inputMessage=`No Message Specified`) { 
-        if (loader.packages.fs.existsSync(loader.packages.path.join(__dirname, `../../storage/logs`)) === false) { 
-            loader.packages.fs.writeFileSync(loader.packages.path.join(__dirname, `../../storage/logs`), ``);
-        }
-        loader.packages.fs.appendFileSync(loader.packages.path.join(__dirname, `../../storage/logs`), `[${new Date().toLocaleString()}] [${inputHeader}] ${inputMessage}\n`);
-        return {success: true, message: `Successfully created log entry.`}
+    createLog = function(inputHeader = this.name, inputMessage = `No Message Specified`) {
+        let logDir = loader.packages.path.join(__dirname, `../../storage/logs`);
+        if (!loader.packages.fs.existsSync(logDir)) loader.packages.fs.writeFileSync(logDir, ``);
+        loader.packages.fs.appendFileSync(logDir, `[${new Date().toLocaleString()}] [${inputHeader}] ${inputMessage}\n`);
+        return { success: true, message: `Log entry created successfully.` };
     }
 
     /**

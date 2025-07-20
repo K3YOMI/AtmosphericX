@@ -32,14 +32,14 @@ class Websockets {
       */
 
     createWebsocketServer = function() {
-        loader.static.socket = new loader.packages.ws.Server({ server: loader.static.websocket, path: '/ws' })
-        loader.static.socket.on(`connection`, (client) => { 
-            this.onConnection(client) 
-            client.on(`message`, (message) => { this.onMessage(client, message) })
-            client.on(`close`, () => { this.onClose(client) })
-        })
-        loader.static.socket.on(`close`, (client) => { this.onClose(client) })
-        return {status: true, message: `Websocket server created`}
+        let socket = loader.static.socket = new loader.packages.ws.Server({ server: loader.static.websocket, path: '/ws' });
+        socket.on('connection', client => {
+            this.onConnection(client);
+            client.on('message', message => this.onMessage(client, message));
+            client.on('close', () => this.onClose(client));
+        });
+        socket.on('close', client => this.onClose(client));
+        return { status: true, message: 'Websocket server created' };
     }
 
     /**
@@ -49,10 +49,10 @@ class Websockets {
       */
 
     onClose = function(client) {
-        let index = loader.static.webSocketClients.indexOf(client)
-        if (index > -1) { 
-            loader.static.webSocketClients.splice(index, 1) 
-            loader.static.webSocketClientLimits.splice(index, 1)
+        let index = loader.static.webSocketClients.indexOf(client);
+        if (index > -1) {
+            loader.static.webSocketClients.splice(index, 1);
+            loader.static.webSocketClientLimits.splice(index, 1);
         }
     }
 
@@ -63,8 +63,9 @@ class Websockets {
       */
 
     onConnection = function(client) {
-        loader.static.webSocketClients.push(client)
-        return client.send(JSON.stringify({messageType: `onConnection`, message: `Websocket connection established`}))
+        let clients = loader.static.webSocketClients;
+        clients.push(client);
+        client.send(JSON.stringify({ messageType: 'onConnection', message: 'Websocket connection established' }));
     }
 
     /**
@@ -75,17 +76,19 @@ class Websockets {
       */
 
     onMessage = function(client, message) {
-        let isJson = typeof message === `string` && message.startsWith(`{`) && message.endsWith(`}`)
-        if (!isJson) { return client.send(JSON.stringify({messageType: `onNewMessage`, message: `[201 ERR] Message is not JSON`})) }
-        let data = JSON.parse(message)
-        let messageType = data.messageType
-        let messageValue = data.message
-        if (messageType == undefined || messageValue == undefined) { return client.send(JSON.stringify({messageType: `onNewMessage`, message: `[201 ERR] Missing messageType or messageValue`})) }
-        if (messageType == `onRequestValues`) { 
-            this.requestValues(client, messageValue)
-            return client.send(JSON.stringify({messageType: `onNewMessage`, message: `[200 OK] Recieved values`})) 
+        if (typeof message !== 'string' || !message.startsWith('{') || !message.endsWith('}')) {
+            return client.send(JSON.stringify({ messageType: 'onNewMessage', message: '[201 ERR] Message is not JSON' }));
         }
-        return client.send(JSON.stringify({messageType: `onNewMessage`, message: `[201 ERR] Unknown messageType`}))
+        let data = JSON.parse(message);
+        let { messageType, message: messageValue } = data;
+        if (!messageType || !messageValue) {
+            return client.send(JSON.stringify({ messageType: 'onNewMessage', message: '[201 ERR] Missing messageType or messageValue' }));
+        }
+        if (messageType == 'onRequestValues') {
+            this.requestValues(client, messageValue);
+            return client.send(JSON.stringify({ messageType: 'onNewMessage', message: '[200 OK] Received values' }));
+        }
+        return client.send(JSON.stringify({ messageType: 'onNewMessage', message: '[201 ERR] Unknown messageType' }));
     }
 
     /** 
@@ -96,39 +99,30 @@ class Websockets {
       */
 
     requestValues = function(client, values) {
-        let canSend = false
-        let allowedValues = [`metrics`, `chatbot`, `wxRadio`, `updates`, `svrprob`, `torprob`, `public`, `active`, `realtime`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
-        values = values.filter((value) => { return allowedValues.includes(value) })
-        if (client.readyState === loader.packages.ws.OPEN) { 
-            let index = loader.static.webSocketClients.indexOf(client)
-            if (index == -1) { return client.send(JSON.stringify({messageType: `onNewMessage`, message: `[201 ERR] Client not found`})) }
-            for (let i = 0; i < values.length; i++) { 
-                let value = values[i]
-                if (loader.static.webSocketClientLimits[index] == undefined) { loader.static.webSocketClientLimits[index] = {} }
-                if (loader.static.webSocketClientLimits[index][value] == undefined) {
-                    loader.static.webSocketClientLimits[index][value] = {time: 0, hasCalled: false}
-                }
-                let lastTime = loader.static.webSocketClientLimits[index][value].time
-                let currentTime = new Date().getTime()
-                let websocketCfg = loader.cache.configurations.project_settings.websocket_settings
-                let inPriority = websocketCfg.priority_websockets.types.includes(value)
-                let inGeneral = websocketCfg.general_websockets.types.includes(value)
-                let defaultTimer = 1
-                if (inPriority) { defaultTimer = websocketCfg.priority_websockets.timeout }
-                if (inGeneral) { defaultTimer = websocketCfg.general_websockets.timeout }
-                if (currentTime - lastTime > defaultTimer * 1000 || loader.static.webSocketClientLimits[index][value].hasCalled == false) {
-                    canSend = true
-                    loader.static.webSocketClientLimits[index][value].hasCalled = true
-                    loader.static.webSocketClientLimits[index][value].time = currentTime
-                    let tmp = undefined
-                    if (loader.cache[value] == undefined) { tmp = [] } else { tmp = loader.cache[value] }
-                    client.send(JSON.stringify({messageType: `onCacheUpdate`, value: value, message: tmp}))
-                }
+        let allowedValues = loader.definitions.allowed_websockets;
+        values = values.filter(value => allowedValues.includes(value));
+        if (client.readyState !== loader.packages.ws.OPEN) return { status: false, message: '[201 ERR] Client not ready' };
+        let index = loader.static.webSocketClients.indexOf(client);
+        if (index == -1) return client.send(JSON.stringify({ messageType: 'onNewMessage', message: '[201 ERR] Client not found' }));
+        let canSend = false;
+        values.forEach(value => {
+            loader.static.webSocketClientLimits[index] = loader.static.webSocketClientLimits[index] || {};
+            loader.static.webSocketClientLimits[index][value] = loader.static.webSocketClientLimits[index][value] || { time: 0, hasCalled: false };
+            let { time: lastTime, hasCalled } = loader.static.webSocketClientLimits[index][value];
+            let currentTime = Date.now();
+            let websocketCfg = loader.cache.configurations.websocket_settings;
+            let timeout = websocketCfg.priority_websockets.types.includes(value) ? websocketCfg.priority_websockets.timeout : websocketCfg.general_websockets.types.includes(value) 
+                ? websocketCfg.general_websockets.timeout : 1;
+            if (currentTime - lastTime > timeout * 1000 || !hasCalled) {
+                canSend = true;
+                loader.static.webSocketClientLimits[index][value] = { time: currentTime, hasCalled: true };
+                let cacheData = loader.cache[value] || [];
+                client.send(JSON.stringify({ messageType: 'onCacheUpdate', value, message: cacheData }));
             }
-        }
-        if (!canSend) { return {status: false, message: `[201 ERR] No values to send` } }
-        client.send(JSON.stringify({messageType: `onCacheFinished`, message: `[200 OK] Cache has been fully sent to your client!`}))
-        return {status: true, message: `[200 OK] Cache has been fully sent to your client!`}
+        });
+        if (!canSend) return { status: false, message: '[201 ERR] No values to send' };
+        client.send(JSON.stringify({ messageType: 'onCacheFinished', message: '[200 OK] Cache has been fully sent to your client!' }));
+        return { status: true, message: '[200 OK] Cache has been fully sent to your client!' };
     }
 
     /**
@@ -137,16 +131,15 @@ class Websockets {
       */
 
     onCacheReady = function() {
-        loader.modules.hooks.getRandomAlert()
-        for (let i = 0; i < loader.static.webSocketClients.length; i++) {
-            let client = loader.static.webSocketClients[i]
-            if (client.readyState === loader.packages.ws.OPEN) { 
-                client.send(JSON.stringify({messageType: `onCacheReady`, message: `[200 OK] Cache just updated, want to request?`})) 
-            } else { 
-                this.onClose(client) 
+        loader.modules.hooks.getRandomAlert();
+        loader.static.webSocketClients.forEach(client => {
+            if (client.readyState == loader.packages.ws.OPEN) {
+                client.send(JSON.stringify({ messageType: 'onCacheReady', message: '[200 OK] Cache just updated, want to request?' }));
+            } else {
+                this.onClose(client);
             }
-        }
-        return {status: true, message: `[200 OK] Cache request has been sent to all clients!`}
+        });
+        return { status: true, message: '[200 OK] Cache request has been sent to all clients!' };
     }
 }
 

@@ -233,31 +233,45 @@ class Library {
         }
     }
 
-   /**
-     * @function createNotification
-     * @description Creates a notification element and appends it to the body. The notification slides in, stays for a while, and then slides out before being removed from the DOM.
-     * 
-     * @param {string} title - The title of the notification to be displayed.
-     */
+/**
+    * @function createNotification
+    * @description Creates a notification element and appends it to the body. The notification slides in, stays for a while, and then slides out before being removed from the DOM.
+    * 
+    * @param {string} title - The title of the notification to be displayed.
+    */
 
     createNotification = function(title) {
-        let existingNotification = document.querySelector('.notification');
-        if (existingNotification) { return  }
+        let container = document.getElementById('notification-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'notification-container';
+            container.className = 'notification-container';
+            document.body.appendChild(container);
+        }
         let notification = document.createElement('div');
-        notification.className = `notification`;
-        notification.innerHTML = `<h2>${title}</h2>`;  
-        document.body.appendChild(notification);
-        notification.classList.add('notification-slide-in');
-        setTimeout(() => {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateY(1%)';
-        }, 100);
+        notification.className = 'notification';
+        notification.innerHTML = `<h2 style="margin:0;font-size:inherit;font-weight:inherit;">${title}</h2>`;
+        container.appendChild(notification);
+
+        // Force reflow to enable transition
+        void notification.offsetWidth;
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+
         setTimeout(() => {
             notification.style.opacity = '0';
-            notification.style.transform = 'translateY(-50%)';
-            setTimeout(() => {notification.remove()}, 500);
-        }, 2500);  
-    }
+            notification.style.transform = 'translateY(-30px)';
+            setTimeout(() => {
+                notification.remove();
+                if (container.children.length == 0) {
+                    container.remove();
+                }
+            }, 250);
+        }, 2250);
+    }  
+        
+
+
 
     /**
       * @function createTimeout
@@ -287,10 +301,11 @@ class Library {
         let timeWidgetSettings = this.storage.configurations.widget_settings.time_date
         let standardTime = timeWidgetSettings.standard_time 
         let timeZone = timeWidgetSettings.timezone
-        if (setTime == 0) { noTime = new Date() } else { noTime = setTime }
+        let configTime = new Date(timeWidgetSettings.config_time || Date.now())
+        if (setTime == 0) { noTime = configTime } else { noTime = new Date(setTime) }
         let formal = new Date(noTime.toLocaleString('en-US', { timeZone: timeZone }))
         let formalShort = new Date(noTime.toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' }))
-        let timeZoneFormal = formalShort.toString().split(' ')[3]
+        let timeZoneFormal = formalShort.toString().includes('(') ? formalShort.toString().split('(')[1].split(')')[0] : 'Unknown Timezone';
         let second = formal.getSeconds()
         let minute = formal.getMinutes()
         let hour = formal.getHours()
@@ -305,11 +320,23 @@ class Library {
         if (minute < 10) { minute = `0${minute}` }
         if (hour < 10) { hour = `0${hour}` }
         month = monthDict[month]
-        return { // Half of these wont be used but oh fucking well...
+        
+        let now = configTime
+        let nowInTimeZone = new Date(now.toLocaleString('en-US', { timeZone: timeZone }))
+        let seconds = Math.floor((formal.getTime() - nowInTimeZone.getTime()) / 1000);
+        let minutes = Math.floor(seconds / 60)
+        let hours = Math.floor(minutes / 60);
+        let timeString = `${hours} hours ${minutes % 60} minutes ${seconds % 60} seconds`
+        if (isNaN(hours)) { timeString = `No expiration date found` }
+        if (hours < 0) { timeString = `Now...`}
+        if (hours > 9999) { timeString = `Until further notice...`}
+
+        return {
             time: `${hour}:${minute}:${second} ${standardTime ? extension : ''}`,
             date : `${month} ${day}`,
             timezone: timeZoneFormal, 
-            unix: formal.getTime() / 1000
+            unix: formal.getTime() / 1000,
+            expires: timeString
         }
     }
 }
