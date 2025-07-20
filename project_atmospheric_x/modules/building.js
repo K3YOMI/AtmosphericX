@@ -109,7 +109,6 @@ class Building {
         let defaultAudio = loader.cache.configurations.tone_sounds.beep;
         let eventDictionary = loader.cache.configurations.alert_dictionary[event.properties.properEventName] || loader.cache.configurations.alert_dictionary.UNK;
         let { new: newAlertAudio, update: updateAlertAudio, cancel: cancelAlertAudio, eas: easAudio, siren: sirenAudio, amber: amberAudio, autobeep: autobeepAudio } = eventDictionary;
-        let editedEventName = eventDictionary.properEventName || event.properties.properEventName;
         let messageState = [
             { event: `Update`, message: `Updated`, audio: updateAlertAudio },
             { event: `Cancel`, message: `Expired`, audio: cancelAlertAudio },
@@ -132,7 +131,6 @@ class Building {
         });
         return {
             message: event.properties.messageType,
-            name: editedEventName,
             audiopresets: { new: newAlertAudio, update: updateAlertAudio, cancel: cancelAlertAudio },
             audio: defaultAudio,
             eas: easAudio,
@@ -177,7 +175,6 @@ class Building {
             let centerPolygon = warningCoords.reduce((acc, [lon, lat]) => ([acc[0] + lon, acc[1] + lat]), [0, 0]).map(sum => sum / warningCoords.length);
             distanceAway = loader.modules.hooks.getMilesAway(loader.cache.location.lat, loader.cache.location.lon, centerPolygon[1], centerPolygon[0]);
         }
-        event.properties.properEventName = eventActions.name;
         return {
             raw: event,
             details: {
