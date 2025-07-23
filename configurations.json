@@ -347,51 +347,73 @@
             "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody8_PROB.png"
         }
     ],
+    "forecasting_models": [
+        {
+            "title": "Composite Reflectivity (HRRR)",
+            "url": "https://www.pivotalweather.com/model.php?m=hrrr&p=refcmp_uh001h&fh=loop&r=conus&dpdt=&mc=",
+            "image": "/assets/media/dashboard/forecasting/composite-reflectivity.png"
+        },
+        {
+            "title": "Bulk Shear (0-1km) (HRRR)",
+            "url": "https://www.pivotalweather.com/model.php?m=hrrr&p=bs01&fh=loop&r=conus&dpdt=&mc=",
+            "image": "/assets/media/dashboard/forecasting/bulk-shear.png"
+        },
+        {
+            "title": "Surface Based Cape (HRRR)",
+            "url": "https://www.pivotalweather.com/model.php?m=hrrr&p=sbcape&fh=loop&r=conus&dpdt=&mc=",
+            "image": "/assets/media/dashboard/forecasting/surface-based-cape.png"
+        },
+        {
+            "title": "SIGTOR Paramters (HRRR)",
+            "url": "https://www.pivotalweather.com/model.php?m=hrrr&p=stp&fh=loop&r=conus&dpdt=&mc=",
+            "image": "/assets/media/dashboard/forecasting/default-pivotal.png"
+        },
+        {
+            "title": "SPC Mesoscale Analysis",
+            "url": "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl",
+            "image": "/assets/media/dashboard/forecasting/mesoscale-logo.png"
+        },
+        {
+            "title": "Nexlab Clean LWIR",
+            "url": "https://weather.cod.edu/satrad/?parms=continental-conus-13-24-0-100-1&checked=map&colorbar=undefined",
+            "image": "/assets/media/dashboard/forecasting/nexlab-lwir-clean.png"
+        },
+        {
+            "title": "Nexlab True Color Satellite",
+            "url": "https://weather.cod.edu/satrad/?parms=continental-conus-truecolor-24-0-100-1&checked=map&colorbar=undefined",
+            "image": "/assets/media/dashboard/forecasting/nexlab-true-color.png"
+        },
+        {
+            "title": "Tropical Tidbits (GFS)",
+            "url": "https://www.tropicaltidbits.com/analysis/models/",
+            "image": "/assets/media/dashboard/forecasting/tropical-logo.png"
+        },
+        {
+            "title": "Tropical Tidbits (RGEM)",
+            "url": "https://www.tropicaltidbits.com/analysis/models/?model=rgem&region=us",
+            "image": "/assets/media/dashboard/forecasting/tropical-logo.png"
+        }
+    ],
     "third_party_services": [
         {
             "title": "Live Storm Chasing",
             "url": "https://livestormchasing.com/",
-            "image": "/assets/media/dashboard/storm-live-logo.png"
-        },
-        {
-            "title": "Mesoscale Analysis",
-            "url": "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl",
-            "image": "/assets/media/dashboard/mesoscale-logo.png"
-        },
-        {
-            "title": "Nexlab",
-            "url": "https://weather.cod.edu/#",
-            "image": "/assets/media/dashboard/nexlab-logo.png"
+            "image": "/assets/media/dashboard/services/storm-live-logo.png"
         },
         {
             "title": "WeatherWise",
             "url": "https://web.weatherwise.app/",
-            "image": "/assets/media/dashboard/weather-wise.png"
+            "image": "/assets/media/dashboard/services/weather-wise.png"
         },
         {
             "title": "OpenMhz",
             "url": "https://openmhz.com/systems",
-            "image": "/assets/media/dashboard/open-mhz.png"
+            "image": "/assets/media/dashboard/services/open-mhz.png"
         },
         {
-            "title": "GFS Model",
-            "url": "https://www.tropicaltidbits.com/analysis/models/",
-            "image": "/assets/media/dashboard/tropical-logo.png"
-        },
-        {
-            "title": "HRRR Model",
-            "url": "https://www.tropicaltidbits.com/analysis/models/?model=hrrr",
-            "image": "/assets/media/dashboard/tropical-logov2.png"
-        },
-        {
-            "title": "RGEM Model",
-            "url": "https://www.tropicaltidbits.com/analysis/models/?model=rgem&region=us",
-            "image": "/assets/media/dashboard/tropical-logo.png"
-        },
-        {
-            "title": "Hodographs",
-            "url": "https://www.pivotalweather.com/model.php?p=sbcape_hodo&fh=3",
-            "image": "/assets/media/dashboard/pivotal-weather.png"
+            "title": "Global EAS",
+            "url": "https://alerts.globaleas.org/",
+            "image": "/assets/media/dashboard/services/global-eas.png"
         }
     ],
     "widget_settings": {

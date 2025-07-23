@@ -606,9 +606,10 @@ class Dashboard {
       * @param {string} [domDirectory=`child_atmosx_spotternetwork.general`] - The ID of the DOM element where the external services will be injected. Defaults to `child_atmosx_spotternetwork.general`.
       */
     
-    spawnExternalServices = function(domDirectory=`hub_external.services`) {
+    spawnExternalServices = function(domDirectory=`hub_external.services`, domDirectory2=`hub.forecasts`) {
         document.getElementById(domDirectory).innerHTML = ``
         let services = this.storage.configurations.third_party_services
+        let forecasting = this.storage.configurations.forecasting_models
         for (let i = 0; i < services.length; i++) {
             let service = services[i]
             let title = service.title
@@ -618,6 +619,20 @@ class Dashboard {
                 title: `${title}`,
                 content: `<img src="${img}" class="spcial-image" alt="${title}" style="width: 100%; height: auto;">`,
                 parent: domDirectory,
+                onclick: () => {
+                    window.open(url, '_blank', 'width=1000,height=1000')
+                }
+            });
+        }
+        for (let i = 0; i < forecasting.length; i++) {
+            let service = forecasting[i]
+            let title = service.title
+            let img = service.image
+            let url = service.url
+            this.injectCardData({
+                title: `${title}`,
+                content: `<img src="${img}" class="spcial-image" alt="${title}" style="width: 100%; height: auto;">`,
+                parent: domDirectory2,
                 onclick: () => {
                     window.open(url, '_blank', 'width=1000,height=1000')
                 }

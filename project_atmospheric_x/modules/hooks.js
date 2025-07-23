@@ -275,6 +275,7 @@ class Hooks {
             scheme: loader.cache.configurations.scheme,
             spc_outlooks: loader.cache.configurations.spc_outlooks,
             third_party_services: loader.cache.configurations.third_party_services,
+            forecasting_models: loader.cache.configurations.forecasting_models,
             widget_settings: loader.cache.configurations.widget_settings,
             realtime_irl: loader.cache.configurations.sources.miscellaneous_sources.realtime_irl,
             version: this.getCurrentVersion(),

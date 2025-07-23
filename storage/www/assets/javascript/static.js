@@ -26,7 +26,7 @@ const static_dashboard_directs = [
             { icon: "fas fa-cloud-sun", label: "Mesoscale Discussions", nav: "_navigation.dicussions", permission: 0 },
             { icon: "fas fa-comments", label: "NOAA Weather Wire", nav: "_navigation.nwws", permission: 0 },
             { icon: "fas fa-thermometer-half", label: "Current Map", nav: null, permission: 0 , action: () => window.open('/widgets/mapbox', '_blank', 'width=1200,height=900') },
-            { icon: "fas fa-sun", label: "Forecasts", nav: "_navigation.forecasts", permission: 0, disabled: true },
+            { icon: "fas fa-sun", label: "Forecasting", nav: "_navigation.forecasts", permission: 0 },
             { icon: "fas fa-map-marked-alt", label: "Satellite", nav: "_navigation.radar", permission: 0, disabled: true },
             { icon: "fas fa-chart-line", label: "Climate Data", nav: "_navigation.climate", permission: 0, disabled: true },
         ]
