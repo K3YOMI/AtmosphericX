@@ -73,8 +73,8 @@ class NOAAWeatherWireService {
                 nwsCfg.enabled = true;
                 wireCfg.enabled = false;
                 setTimeout(() => { loader.modules.webcalling.nextRun(undefined, true) }, 2000);
+                loader.modules.hooks.createOutput(`${this.name}.Error`, `${err.error}`);
             }
-            loader.modules.hooks.createOutput(`${this.name}.Error`, `${err.error}`);
         });
         loader.static.nwws.onEvent(`onReconnect`, (service) => { loader.static.nwws.setDisplayName(`AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime}) (x${service.reconnects})`) })
     }
