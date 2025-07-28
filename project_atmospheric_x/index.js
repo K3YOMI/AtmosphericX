@@ -20,7 +20,6 @@ let promise = new Promise(async (resolve, reject) => {
     let modules = loader.modules;
     hooks.createOutput(`AtmosphericX`, `Atmospheric X is starting...`);
     hooks.createLog(`AtmosphericX`, `Atmospheric X is starting...`);
-    hooks.cleanTemp();
     hooks.checkUpdates();
     await modules.rtlirl.listener();
     await modules.webcalling.nextRun();
@@ -32,7 +31,6 @@ let promise = new Promise(async (resolve, reject) => {
             if (loader.cache.isRequestingData) return;
             loader.cache.isRequestingData = true;
             hooks.reloadConfigurations();
-            hooks.cleanTemp();
             setTimeout(() => {
                 loader.cache.twire = {
                     features: loader.cache.twire.features.filter(feature => 

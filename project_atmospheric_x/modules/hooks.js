@@ -235,36 +235,6 @@ class Hooks {
         });
     }
 
-    /**
-      * @function cleanTemp
-      * @description Cleans the temporary files in the storage directory.
-      */
-
-    cleanTemp = function() {
-        let maxBytes = 20000000, directory = loader.packages.path.join(__dirname, `../../storage/nwws-oi`);
-        let stackFiles = [directory], files = [], cleanedFiles = 0;
-        while (stackFiles.length) {
-            let currentDirectory = stackFiles.pop();
-            loader.packages.fs.readdirSync(currentDirectory).forEach(file => {
-                let filePath = loader.packages.path.join(currentDirectory, file);
-                loader.packages.fs.statSync(filePath).isDirectory() ? stackFiles.push(filePath) : files.push({ file: filePath, size: loader.packages.fs.statSync(filePath).size });
-            });
-        }
-        if (!files.length) return { success: false, message: `No files found in the directory.` };
-        files.forEach(({ file, size }) => {
-            if (size > maxBytes) {
-                loader.packages.fs.unlinkSync(file);
-                cleanedFiles++;
-            }
-        });
-        return { success: true, message: `Successfully cleaned ${cleanedFiles} file(s) exceeding the size limit.` };
-    }
-
-    /**
-      * @function reloadConfigurations
-      * @description Reloads the configurations from the configurations.json file.
-      */
-
     reloadConfigurations = function() {
         let configPath = loader.packages.path.join(__dirname, `../../configurations.json`);
         loader.cache.configurations = JSON.parse(loader.packages.fs.readFileSync(configPath, `utf-8`));
