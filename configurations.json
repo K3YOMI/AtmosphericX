@@ -72,7 +72,7 @@
                 "reconnect_after": 60,
                 "endpoint": "xmpp://nwws-oi.weather.gov",
                 "domain": "nwws-oi.weather.gov",
-                "xml_alerts": false,
+                "cap_alerts": false,
                 "ugc_polygons": false,
                 "credentials": {
                     "username": "NWWS_OI_USERNAME_HERE",

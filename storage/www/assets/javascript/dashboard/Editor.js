@@ -15,7 +15,7 @@
 
 
 class CfgEditor {
-    letructor(library) {
+    constructor(library) {
         this.library = library;
         this.storage = this.library.storage;
         this.name = `CfgEditor`;

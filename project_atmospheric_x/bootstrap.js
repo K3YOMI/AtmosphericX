@@ -44,6 +44,7 @@ loader.packages.axios = require(`axios`)
 loader.packages.xmpp = require(`@xmpp/client`)
 loader.packages.os = require(`os`)
 loader.packages.xml2js = require('xml2js');
+loader.packages.nwws = require('@k3y0mi/nwws-parser');
 loader.packages.shapefile = require('shapefile');
 loader.packages.ws = require('ws');
 loader.packages.nodemailer = require('nodemailer');
@@ -65,14 +66,7 @@ loader.modules.shapefiles = new (require(`./modules/shapefiles.js`))()
 loader.modules.commands = new (require(`./modules/commands.js`))()
 loader.modules.placefiles = new (require(`./modules/placefiles.js`))()
 loader.modules.rtlirl = new (require(`./modules/rtlirl.js`))()
-
-loader.modules.listener = new (require(`./modules/nwws-oi/listener.js`))()
-loader.modules.product = new (require(`./modules/nwws-oi/product.js`))()
-loader.modules.vtec = new (require(`./modules/nwws-oi/parsers/vtec.js`))()
-loader.modules.ugc = new (require(`./modules/nwws-oi/parsers/ugc.js`))()
-loader.modules.raw = new (require(`./modules/nwws-oi/parsers/raw.js`))()
-loader.modules.alertbuilder = new (require(`./modules/nwws-oi/event/alert.js`))()
-loader.modules.statementbuilder = new (require(`./modules/nwws-oi/event/special-statement.js`))()
+loader.modules.wire = new (require(`./modules/wire.js`))()
 
 
 loader.definitions.RegExp_VTEC = "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z"

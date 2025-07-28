@@ -25,7 +25,6 @@ let promise = new Promise(async (resolve, reject) => {
     await modules.rtlirl.listener();
     await modules.webcalling.nextRun();
     await modules.character.initCharacterAI();
-    modules.listener.createSession();
     setInterval(async () => {
         let currentSeconds = new Date().getSeconds();
         let currentMinutes = new Date().getMinutes();
@@ -47,8 +46,6 @@ let promise = new Promise(async (resolve, reject) => {
                 modules.webcalling.nextRun();
                 loader.cache.isRequestingData = false;
             }, 1000);
-
-            if (loader.static.wiresession !== undefined) { modules.listener.reconnectSessionCheck(); }
         }
         if (currentMinutes % 30 === 0 && currentSeconds === 0) { hooks.checkUpdates(); }
     }, 100);

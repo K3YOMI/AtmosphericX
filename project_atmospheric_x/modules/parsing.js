@@ -79,8 +79,6 @@ class Parsing {
             let unit = properties.unit || '';
             return {
                 location: `${properties.county}, ${properties.state}`,
-                expires: properties.valid.replace('T', ' ').replace('Z', ''),
-                issued: new Date().toISOString(),
                 event: properties.typetext,
                 sender: 'Iowa Environmental Mesonet (API)',
                 description: `${remark} - ${properties.city} | ${magf} ${unit}`,
@@ -105,8 +103,6 @@ class Parsing {
             if (match[3] == `NULL`) return;
             return {
                 location: `${match[1]}, ${match[2]}`,
-                expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-                issued: match[4],
                 event: match[3],
                 sender: `mPing`,
                 description: `No Description`,
@@ -139,8 +135,6 @@ class Parsing {
                 location: `${latitude}, ${longitude}`,
                 latitude,
                 longitude,
-                issued: reportTime,
-                expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
                 event: eventType,
                 reporter,
                 size,
@@ -166,8 +160,6 @@ class Parsing {
             let [_, eventType, date, time, latitude, longitude, magnitude, state, county, location, source] = match;
             return {
                 location: `${location}, ${county}, ${state}`,
-                expires: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-                issued: `${date} ${time}`,
                 event: eventType,
                 sender: source,
                 description: `${eventType} reported with magnitude ${magnitude} at ${location}, ${county}, ${state}`,

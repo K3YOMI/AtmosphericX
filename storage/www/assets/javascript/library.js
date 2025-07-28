@@ -333,10 +333,11 @@ class Library {
 
         return {
             time: `${hour}:${minute}:${second} ${standardTime ? extension : ''}`,
-            date : `${month} ${day}`,
-            timezone: timeZoneFormal, 
-            unix: formal.getTime() / 1000,
+            date: `${month} ${day}`,
+            formal: new Date(noTime).toLocaleString('en-US', { timeZone: timeZone, timeZoneName: 'short' }),
+            timezone: timeZoneFormal,
+            unix: Math.floor(formal.getTime() / 1000),
             expires: timeString
-        }
+        };  
     }
 }
