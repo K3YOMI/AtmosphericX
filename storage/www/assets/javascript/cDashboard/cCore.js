@@ -936,7 +936,6 @@ class Dashboard {
                 item.graphs.forEach((graph) => {
                     let graphId = `${graph.type}-${graph.name.replace(/\s+/g, '-').toLowerCase()}`;
                     if (typeof graphics_class[graph.type] === 'function') {
-                        console.log(graph.data)
                         graphics_class[graph.type](graph.min || 0, graph.data || 0, graph.max || 125, graph.name, graph.subprefix || ``, graph.size || 1.0, graphId);
                     }
                 });
