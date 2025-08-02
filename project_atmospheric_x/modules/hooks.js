@@ -27,6 +27,80 @@ class Hooks {
     }
 
     /**
+      * @function onMesonetUpdate
+      * @description Updates the mesonet cache with the latest data from the tmesonet module. (Not all values may be available)
+      */
+
+    onMesonetUpdate = function()  {
+        loader.cache.mesonet = {
+            lightning: {
+                observations: {
+                    totalCount: loader.cache.tmesonet.observations?.data.obs?.lightningStrikeCount?? null,
+                    avgDistance: loader.cache.tmesonet.observations?.data.obs?.lightningStrikeAvgDistance?? null,
+                    latestTime: loader.cache.tmesonet.observations?.data.latest?.lastLightningStrike?? null,
+                    latestDistance: loader.cache.tmesonet.observations?.data.latest?.lastLightningStrikeDistance?? null,
+                    latestEnergy: loader.cache.tmesonet.lightning?.data?.energy?? null,
+                    trihourly: loader.cache.tmesonet.observations?.data.trihourly?.lightningStrikes?? null,
+                    hourly: loader.cache.tmesonet.observations?.data.hourly?.lightningStrikes?? null,
+                }
+
+            },
+            precipitation: {
+                observations: {
+                    hourly: loader.cache.tmesonet.observations?.data.hourly?.precipitation?? null,
+                    todayTime: loader.cache.tmesonet.observations?.data.latest?.precipitationTime?? null,
+                    yesterdayTime: loader.cache.tmesonet.observations?.data.yesterday?.precipitationTime?? null, 
+                    dailyAccumulation: loader.cache.tmesonet.observations?.data.obs?.localDailyRainAccumulation?? null, 
+                }    
+            },
+            wind: {
+                latest: {
+                    latestTime: loader.cache.tmesonet.wind?.data?.time ?? null,
+                    latest: loader.cache.tmesonet.wind?.data?.speed?? null,
+                    latestDirection: loader.cache.tmesonet.wind?.data?.direction ?? null,
+                },
+                observations: {
+                    windAverage: loader.cache.tmesonet.observations?.data.obs?.windAvg?? null,
+                    windGusts: loader.cache.tmesonet.observations?.data.obs?.windGusts?? null,
+                    windLull: loader.cache.tmesonet.observations?.data.obs?.windLull?? null,
+                    windDirection: loader.cache.tmesonet.observations?.data.obs?.windDirection ?? null,
+                    windSampleTime: loader.cache.tmesonet.observations?.data.obs?.windSampleTime?? null,
+                },
+                forecast: {
+                    windAverage: loader.cache.tmesonet.forecast?.data?.conditions?.windAvg?? null,
+                    windDirection: loader.cache.tmesonet.forecast?.data?.conditions?.windDirection?? null,
+                    windGusts: loader.cache.tmesonet.forecast?.data?.conditions?.windGust?? null,
+                }
+            },
+            temperature: {
+                observations: {
+                    airTemperature: loader.cache.tmesonet.observations?.data.obs?.airTemperature?? null,
+                    relativeHumidity: loader.cache.tmesonet.observations?.data.obs?.relativeHumidity?? null,
+                },   
+                forecast: {
+                    feelsLike: loader.cache.tmesonet.forecast?.data?.conditions?.feelsLike?? null,
+                    airDensity: loader.cache.tmesonet.forecast?.data?.conditions?.airDensity?? null,
+                    dewPoint: loader.cache.tmesonet.forecast?.data?.conditions?.dewPoint?? null,
+                    humidity: loader.cache.tmesonet.forecast?.data?.conditions?.humidity?? null,
+                }  
+            },
+            misc: {
+                forecast: {
+                    condition: loader.cache.tmesonet.forecast?.data?.conditions?.conditions?? null,
+                    uvIndex: loader.cache.tmesonet.forecast?.data?.conditions?.uvIndex?? null,
+                    pressureTrend: loader.cache.tmesonet.forecast?.data?.conditions?.pressureTrend?? null,
+                    brightness: loader.cache.tmesonet.forecast?.data?.conditions?.brightness?? null,
+                    solarRadiation: loader.cache.tmesonet.forecast?.data?.conditions?.solarRadiation?? null,
+                },
+                observations: {
+                    illiumination: loader.cache.tmesonet.observations?.data.obs?.illuminance?? null,
+                }
+            }
+        }
+        loader.modules.websocket.onCacheReady();
+    }
+
+    /**
       * @function youveGotMail
       * @description Sends an email using the nodemailer package. (Mostly for alerts...)
       *
@@ -124,7 +198,8 @@ class Hooks {
 
     gpsTracking = async function(lat, lon, type = 'SpotterNetwork') {
         let locationServices = loader.cache.configurations.sources.miscellaneous_sources.location_services;
-        if (loader.static.lastGpsUpdate  + (locationServices.gps_refresh * 1000) > Date.now()) {
+        let mesonetServices = loader.cache.configurations.sources.miscellaneous_sources.mesonet_services;
+        if (loader.static.lastGpsUpdate  + (locationServices.gps_refresh * 1000) > Date.now() || loader.cache.location?.lat == lat && loader.cache.location?.lon == lon) {
             return { success: false, message: "GPS tracking is currently on cooldown. Please wait before trying again." };
         }
         loader.static.lastGpsUpdate  = Date.now()
@@ -133,21 +208,22 @@ class Hooks {
         loader.cache.location.lon = lon;
         let toLocation = await this.convertCoordinatesToRequest(loader.definitions.static_apis.open_street_map_coordinates, lat, lon);
         let toCape = await this.convertCoordinatesToRequest(loader.definitions.static_apis.cape_coordinates, lat, lon);
-        let toWeather = await this.convertCoordinatesToRequest(loader.definitions.static_apis.temperature_coordinates, lat, lon);
         if (toCape !== 'err') {
             let index = toCape.hourly.time.findIndex(t => new Date(t).getTime() >= Date.now());
             if (index !== -1 && toCape.hourly.cape[index] !== undefined) loader.cache.location.cape = toCape.hourly.cape[index]?.toString() + ' J/kg';
         }
-        if (toWeather !== 'err') {
-            let conditions = toWeather.weather[0];
-            let baseTemps = toWeather.main
-            let baseObservation = toWeather.wind
-            loader.cache.location.cloudDescription = conditions.description ? conditions.description.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : 'N/A';
-            loader.cache.location.temperature = baseTemps.temp ? `${((baseTemps.temp - 273.15) * 9/5 + 32).toFixed(0)}°F` : 'N/A';
-            loader.cache.location.humidity = baseTemps.humidity ? `${baseTemps.humidity}%` : 'N/A';
-            loader.cache.location.windSpeed = baseObservation.speed ? `${(baseObservation.speed * 2.23694).toFixed(0)} mph` : 'N/A';
-            loader.cache.location.windDirection = baseObservation.deg ? `${baseObservation.deg}° (${this.getCardinalDirection(baseObservation.deg)})` : 'N/A';
-            loader.cache.location.windGust = baseObservation.gust ? `${(baseObservation.gust * 2.23694).toFixed(0)} mph` : 'N/A';
+        if (!locationServices.use_mesonet) {
+            let toWeather = await this.convertCoordinatesToRequest(loader.definitions.static_apis.temperature_coordinates, lat, lon);
+            if (toWeather !== 'err') {
+                let conditions = toWeather.weather[0];
+                let baseTemps = toWeather.main
+                let baseObservation = toWeather.wind     
+                loader.cache.tmesonet = {
+                    observations: { data: { obs: { airTemperature: baseTemps.temp ? ((baseTemps.temp - 273.15) * 9/5 + 32).toFixed(0).toString() + '°F' : null,relativeHumidity: baseTemps.humidity ? baseTemps.humidity.toString() + '%' : null,windAvg: baseObservation.speed ? `${(baseObservation.speed * 2.23694).toFixed(0)}mph` : null,windDirection: baseObservation.deg ? `${baseObservation.deg}° - ${this.getCardinalDirection(baseObservation.deg)}` : null, windGusts: baseObservation.gust ? `${(baseObservation.gust * 2.23694).toFixed(0)}mph` : null,} } },
+                    forecast: { data: { conditions: { conditions: conditions.main ? conditions.main.toString() : 'N/A', } } }
+                }
+                this.onMesonetUpdate()
+            }
         }
         if (toLocation !== 'err') {
             let { house_number = '', road = '', city = toLocation.address?.municipality || '----', municipality = '', state = '', postcode = '', county = 'Unknown County' } = toLocation.address || {};
@@ -156,8 +232,13 @@ class Hooks {
             loader.cache.location.county = county || 'Unknown County';
             loader.cache.location.state = state || 'Unknown State';
         }
+
+        if (loader.cache.tmesonet && locationServices.use_mesonet && mesonetServices.gps_enabled && !mesonetServices.radar_enabled) {
+            await tloader.cache.tmesonet.setter.setClosest(lat, lon);
+        }
+
         let description = [`Address: ${loader.cache.location.address || 'N/A'}`,`Location: ${loader.cache.location.location || 'N/A'}`,`County: ${loader.cache.location.county || 'N/A'}`,`State: ${loader.cache.location.state || 'N/A'}`,`Temperature: ${loader.cache.location.temperature || 'N/A'}`,`Humidity: ${loader.cache.location.humidity || 'N/A'}`,`Wind Speed: ${loader.cache.location.windSpeed || 'N/A'}`,`Wind Direction: ${loader.cache.location.windDirection || 'N/A'}`,`Wind Gust: ${loader.cache.location.windGust || 'N/A'}`,`Cloud Description: ${loader.cache.location.cloudDescription || 'N/A'}`,`CAPE: ${loader.cache.location.cape || 'N/A'}`]
-        let places = [{ title: description.join('\\n').replace(/;/g, ' -').replace(/,/g, ""), description: `${locationServices.display_name} (${loader.cache.location.cape || 'N/A'})`, point: [parseFloat(loader.cache.location.lon), parseFloat(loader.cache.location.lat)], rgb: '255,0,0,255' }]
+        let places = [{ title: `${locationServices.display_name} (${loader.cache.location.cape || 'N/A'})`, description: description.join('\\n').replace(/;/g, ' -').replace(/,/g, ""), point: [parseFloat(loader.cache.location.lon), parseFloat(loader.cache.location.lat)], rgb: '255,0,0,255' }]
         loader.modules.placefiles.createPlacefilePoint(1, 999, `AtmosphericX GPS (${type}) - ${new Date().toUTCString()}`, places, 'gps');
         this.createOutput(`${this.name}.gpsTracking`, `Updated GPS coordinates for ${type}: ${loader.cache.location.county || 'Unknown County'}, ${loader.cache.location.state || 'Unknown State'} (${loader.cache.location.lat}, ${loader.cache.location.lon})`);
         return { success: true, message: `Successfully tracked GPS coordinates for ${type}.`, location: loader.cache.location };
@@ -291,6 +372,29 @@ class Hooks {
         }
         return rawBody;
     }
+
+    /**
+      * @function stringifyObject
+      * @description Converts an object to a string representation with proper indentation.
+      * @param {object} val - The object to stringify.
+      * @param {number} indent
+      */
+
+    stringifyObject = function(val, indent = 0) {
+        if (typeof val === 'object' && val !== null) {
+            return Object.entries(val).map(([k, v]) => {
+                if (k.includes(':')) {
+                    k = k.split(':').slice(1).join(':').trim();
+                }
+                const keyValue = `${' '.repeat(indent)}${k}:`;
+                if (typeof v === 'object' && v !== null) {
+                    return `${keyValue}\n${this.stringifyObject(v, indent + 2)}`;
+                }
+                return `${keyValue} ${v}`;
+            }).join('\n');
+        }
+        return `${' '.repeat(indent)}${val.toString()}`;
+    };
 
     /**
       * @function getCurrentVersion

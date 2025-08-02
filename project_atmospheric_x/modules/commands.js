@@ -105,12 +105,17 @@ class Commands {
 			case '/debug-xml': loader.modules.wire.createDebugAlert(`XML`); break;
 			case '/debug-raw': loader.modules.wire.createDebugAlert(`RAW`); break;
 			case '/debug-ugc': {
-				let start = Date.now(), ugc = args[0];
-				if (ugc) {
-					let zones = loader.static.nwws.packages.mUGC.getZones(ugc), locations = await loader.static.nwws.packages.mUGC.getLocations(zones);
-					loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${Date.now() - start}ms)`);
+				try {
+					let start = Date.now(), ugc = args[0];
+					if (ugc) {
+						let zones = loader.static.nwws.packages.mUGC.getZones(ugc), locations = await loader.static.nwws.packages.mUGC.getLocations(zones);
+						loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${Date.now() - start}ms)`);
+					}
+					break;
+				} catch (error) {
+					loader.modules.hooks.createOutput(this.name, `Error in UGC debug: Did you enable NWWS?`);
+					break;
 				}
-				break;
 			}
 			case '/clear': loader.modules.hooks.displayLogo(); break;
 			case '/memory-dump': require('v8').writeHeapSnapshot(); loader.modules.hooks.createOutput(this.name, `Memory dump created`); loader.modules.hooks.createLog(this.name, `Memory dump created`); break;

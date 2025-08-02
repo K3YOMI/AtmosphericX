@@ -154,16 +154,17 @@ class Alerts {
                 let distance = alert.details.distance && alert.details.distance !== 'N/A' ? parseFloat(alert.details.distance.replace('mi', '').trim()) : Infinity;
                 return (!closest || distance < (closest.details.distance && closest.details.distance !== 'N/A' ? parseFloat(closest.details.distance.replace('mi', '').trim()) : Infinity)) ? alert : closest;
             }, null);  
+
             document.getElementById('closest-warning').textContent = closestAlert ? `${closestAlert.details.name} (${closestAlert.details.distance})` : `No Active Warnings`;
             document.getElementById('location').textContent = this.storage.location && this.storage.location.county && this.storage.location.state ? `${this.storage.location.county}, ${this.storage.location.state}` : `No Location Found`;
             document.getElementById('current-cape').textContent = this.storage.location.cape || `Not Available`;
             document.getElementById('chasers-nearby').textContent = `${totalChasersNearby}`;
-            document.getElementById('cloud-description').textContent = this.storage.location.cloudDescription || `Not Available`;
-            document.getElementById('temperature').textContent = this.storage.location.temperature || `Not Available`;
-            document.getElementById('humidity').textContent = this.storage.location.humidity || `Not Available`;
-            document.getElementById('wind-speed').textContent = this.storage.location.windSpeed || `Not Available`;
-            document.getElementById('wind-direction').textContent = this.storage.location.windDirection  || `Not Available`;
-            document.getElementById('wind-gust').textContent = this.storage.location.windGust || `Not Available`;
+            document.getElementById('cloud-description').textContent = this.storage.mesonet.misc?.forecast?.condition || `Not Available`;
+            document.getElementById('temperature').textContent = this.storage.mesonet.temperature?.observations?.airTemperature || `Not Available`;
+            document.getElementById('humidity').textContent = this.storage.mesonet.temperature?.observations?.relativeHumidity || `Not Available`;
+            document.getElementById('wind-speed').textContent = this.storage.mesonet.wind?.observations?.windAverage || `Not Available`;
+            document.getElementById('wind-direction').textContent = this.storage.mesonet.wind?.observations?.windDirection  || `Not Available`;
+            document.getElementById('wind-gust').textContent = this.storage.mesonet.wind?.observations?.windGusts || `Not Available`;
         }
 
         this.triggerDynamicColors('location-row-light', 'location-row-dark');

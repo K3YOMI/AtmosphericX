@@ -160,6 +160,33 @@ class Dashboard {
     }
 
     /**
+      * @function injectTableStructure
+      * @description Injects a table structure into the DOM based on the provided data.
+      * It formats the observation data into a series of key-value pairs, where each key is displayed in bold and its corresponding value is shown next to it.
+      * This function is useful for displaying structured data in a readable format, particularly for weather or sensor data.
+      * 
+      * @param {Object} data - The observation data object containing key-value pairs to be displayed in the table.
+      */
+
+    injectTableStructure = function(data) {
+        let parseData = (data, prefix = '') => {
+            if (typeof data !== 'object' || data === null) { return [``]; }
+            return Object.entries(data).map(([key, value]) => {
+                if (typeof value === 'object' && value !== null) {
+                    return `<b>${prefix}${key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}:</b><br>` + parseData(value, `${prefix}&nbsp;&nbsp;&nbsp;&nbsp;`).join("<br>");
+                }
+                if (/^\d{10}$/.test(value.toString())) {
+                    let date = new Date(value * 1000);
+                    value = date.toLocaleString();
+                }    
+                return `${prefix}├ <b>${key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())}:</b> ${value ?? "N/A"}`;
+            });
+        };
+
+        return parseData(data).join("<br>");
+    };
+
+    /**
       * @function injectCardData
       * @description Injects a card element into the DOM with the specified metadata. The card includes a title, description, and optional click event.
       * Also, it binds the click event to the current context of the class instance.
@@ -203,6 +230,7 @@ class Dashboard {
         if (cardMetadata.onclick) { domCard.onclick = cardMetadata.onclick.bind(this); }  if (cardMetadata.onclick) { domCard.onclick = cardMetadata.onclick.bind(this); }
         return domCard;
     }
+    
 
     /**
       * @function injectNotification
@@ -276,7 +304,7 @@ class Dashboard {
         if (localStorage.getItem('atmosx.cached.donationprompt') == null) { 
             localStorage.setItem(`atmosx.cached.eas`, false)
             localStorage.setItem(`atmosx.cached.sounds`, false)
-            this.injectNotification({ title: `[Introduction] Welcome to AtmosphericX, ${username}!`, description: `Thank you for using AtmosphericX! Your feedback and ideas are what makes this project go forward.<br><br><b>Support Us:</b> If you find this project helpful, consider donating. Every bit helps keep development going.<br><b>Get Involved:</b> Join our <a href="https://discord.gg/B8nKmhYMfz" target="_blank">Discord community</a> to share feedback, suggest features, or connect with other weather enthusiasts.<br><br>Feel free to select the settings you would like enabled so we can memorize them for yo<br><bMade with ❤️ by KiyomiWx and Starflight. We appreciate your support!`, rows: 2, parent: `_body.base`, buttons: [ { name: `Continue`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups(); } }, { name: `Donate`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups(); } } ], checkboxes: [ { id: `atmosx.cached.eas`, className: `popup-checkbox`, name: `Enable EAS Alerts`, checked: this.storage.eas, onchange: (e) => { localStorage.setItem('atmosx.cached.eas', e.target.checked); this.storage.eas = e.target.checked; } }, { id: `atmosx.cached.sounds`, className: `popup-checkbox`, name: `Enable Alert Sounds`, checked: this.storage.sounds, onchange: (e) => { localStorage.setItem('atmosx.cached.sounds', e.target.checked); this.storage.sounds = e.target.checked; } } ], inputs: [], selects: null }); 
+            this.injectNotification({ title: `[Introduction] Welcome to AtmosphericX, ${username}!`, description: `Thank you for using AtmosphericX! Your feedback and ideas are what makes this project go forward.<br><br><b>Support Us:</b> If you find this project helpful, consider donating. Every bit helps keep development going.<br><b>Get Involved:</b> Join our <a href="https://discord.gg/YAEjtzU3E8" target="_blank">Discord community</a> to share feedback, suggest features, or connect with other weather enthusiasts.<br><br>Feel free to select the settings you would like enabled so we can memorize them for yo<br><bMade with ❤️ by KiyomiWx and Starflight. We appreciate your support!`, rows: 2, parent: `_body.base`, buttons: [ { name: `Continue`, className: `button-danger`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); this.clearAllPopups(); } }, { name: `Donate`, className: `button-ok`, function: () => { localStorage.setItem('atmosx.cached.donationprompt', true); window.open(`https://ko-fi.com/k3yomi`, `_blank`, 'width=1000,height=1000'); this.clearAllPopups(); } } ], checkboxes: [ { id: `atmosx.cached.eas`, className: `popup-checkbox`, name: `Enable EAS Alerts`, checked: this.storage.eas, onchange: (e) => { localStorage.setItem('atmosx.cached.eas', e.target.checked); this.storage.eas = e.target.checked; } }, { id: `atmosx.cached.sounds`, className: `popup-checkbox`, name: `Enable Alert Sounds`, checked: this.storage.sounds, onchange: (e) => { localStorage.setItem('atmosx.cached.sounds', e.target.checked); this.storage.sounds = e.target.checked; } } ], inputs: [], selects: null }); 
         }
     }
 
@@ -752,7 +780,7 @@ class Dashboard {
         });
         this.injectCardData({
             title: `Public Discord Community`,
-            content: `<button class="button-ok" style="width: 100%; margin-top: 5px;" onclick="window.open('https://discord.gg/B8nKmhYMfz', '_blank', 'width=1000,height=1000')">Join Discord</button><br><small>Join our public Discord community to get help, get custom unique themes, discuss weather, and talk with others.</small>`,
+            content: `<button class="button-ok" style="width: 100%; margin-top: 5px;" onclick="window.open('https://discord.gg/YAEjtzU3E8', '_blank', 'width=1000,height=1000')">Join Discord</button><br><small>Join our public Discord community to get help, get custom unique themes, discuss weather, and talk with others.</small>`,
             parent: domDirectory,
             onclick: () => {}
         });
@@ -847,6 +875,76 @@ class Dashboard {
     }
 
     /**
+      * @function spawnMesonetData
+      * @description Displays mesonet data in the user interface. It retrieves the data from the storage and displays it in a series of speedometer graphs.
+      * 
+      * @async
+      * @param {string} [domDirectory=`child_atmosx_mesonet.statistics`] - The ID of the DOM element where the mesonet data will be injected. Defaults to `child_atmosx_mesonet.statistics`.
+      */
+
+    spawnMesonetData = async function (domDirectory = `child_atmosx_mesonet.statistics`) {
+
+        if (this.storage.mesonet.length == 0) {
+            document.getElementById(domDirectory).innerHTML = ``;
+            this.injectCardData({ title: `Awaiting Mesonet Data...`, content: `<center>No Mesonet Data Available</center>`, parent: domDirectory });
+            this.resizeTable(domDirectory, 1);
+            return;
+        }
+
+        let mesonetData = [
+            {
+                wrapper: "mesonet-data-container",
+                graphs: [
+                    { name: 'Device Wind Observation', type: 'speedometer', subprefix: `mph (${this.storage.mesonet.wind?.latest?.latestDirection})`, data: parseFloat(this.storage.mesonet.wind?.latest?.latest?.replace('mph', '')) ?? null },
+                    { name: 'Device Wind Gusts Observation', type: 'speedometer', subprefix: `mph (${this.storage.mesonet.wind?.observations?.windDirection})`, data: parseFloat(this.storage.mesonet.wind?.observations?.windGusts?.replace('mph', '')) ?? null },
+                    { name: 'Device Wind Average Observation', type: 'speedometer', subprefix: `mph (${this.storage.mesonet.wind?.observations?.windDirection})`, data: parseFloat(this.storage.mesonet.wind?.observations?.windAverage?.replace('mph', '')) ?? null },
+                    { name: 'Device Wind Lull Observation', type: 'speedometer', subprefix: `mph (${this.storage.mesonet.wind?.observations?.windDirection})`, data: parseFloat(this.storage.mesonet.wind?.observations?.windLull?.replace('mph', '')) ?? null },
+                    { name: 'Device Temperature Observation', type: 'speedometer', subprefix: `°F`, data: parseFloat(this.storage.mesonet.temperature?.observations?.airTemperature?.replace('°F', '')) ?? null },
+                    { name: 'Device Relative Humidity Observation', type: 'speedometer', subprefix: `%`, data: parseFloat(this.storage.mesonet.temperature?.observations?.relativeHumidity?.replace('%', '')) ?? null },
+                    { name: 'Forecasted Wind Average', type: 'speedometer', subprefix: `mph (${this.storage.mesonet.wind?.forecast?.windDirection})`, data: parseFloat(this.storage.mesonet.wind?.forecast?.windAverage?.replace('mph', '')) ?? null },
+                    { name: 'Forecasted Wind Gusts', type: 'speedometer', subprefix: `mph (${this.storage.mesonet.wind?.forecast?.windDirection})`, data: parseFloat(this.storage.mesonet.wind?.forecast?.windGusts?.replace('mph', '')) ?? null },
+                    { name: 'Forecasted Feels Like Temperature', type: 'speedometer', subprefix: `°F`, data: parseFloat(this.storage.mesonet.temperature?.forecast?.feelsLike?.replace('°F', '')) ?? null, },
+                    { name: 'Forecasted Dew Point', type: 'speedometer', subprefix: `°F`, data: parseFloat(this.storage.mesonet.temperature?.forecast?.dewPoint?.replace('°F', '')) ?? null },
+                    { name: 'Forecasted Humidity', type: 'speedometer', subprefix: `%`, data: parseFloat(this.storage.mesonet.temperature?.forecast?.humidity?.replace('%', '')) ?? null },
+                ],
+            },
+        ];
+    
+        mesonetData.forEach((item) => {
+            let graphWrapper = document.querySelector(`.${item.wrapper}`);
+            if (!graphWrapper) {
+                document.getElementById(domDirectory).innerHTML = ``;
+                graphWrapper = document.createElement('div');
+                graphWrapper.className = item.wrapper;
+                document.getElementById(domDirectory).appendChild(graphWrapper);
+            }
+
+            if (item.graphs && Array.isArray(item.graphs)) {
+                item.graphs.forEach((graph) => {
+                    let graphId = `${graph.type}-${graph.name.replace(/\s+/g, '-').toLowerCase()}`;
+                    if (!document.getElementById(graphId)) {
+                        if (typeof graphics_class[graph.type] === 'function') {
+                            let graphCanvas = document.createElement('div');
+                            graphCanvas.id = graphId;
+                            graphWrapper.appendChild(graphCanvas);
+                        }
+                    }
+                });
+            }
+
+            if (item.graphs && Array.isArray(item.graphs)) {
+                item.graphs.forEach((graph) => {
+                    let graphId = `${graph.type}-${graph.name.replace(/\s+/g, '-').toLowerCase()}`;
+                    if (typeof graphics_class[graph.type] === 'function') {
+                        console.log(graph.data)
+                        graphics_class[graph.type](graph.min || 0, graph.data || 0, graph.max || 125, graph.name, graph.subprefix || ``, graph.size || 1.0, graphId);
+                    }
+                });
+            }
+        });
+    };
+
+    /**
       * @function copyTextToClipboard
       * @description Copies the provided text to the clipboard. If the copy operation is successful, a notification is displayed. If it fails, an error message is shown.
       * 
@@ -885,7 +983,7 @@ class Dashboard {
       */ 
 
     populateSidebar = function(domDirectory = `_sidebar.data`) {
-        let role = +localStorage.getItem('atmosx.cached.role') || 0;
+        let role = +localStorage.getItem('atmosx.cached.role');
         let dom = document.getElementById(domDirectory);
         dom.innerHTML = '';
         dom.style.overflowY = 'auto';
@@ -1074,6 +1172,7 @@ class Dashboard {
         this.spawnTornadoProbabilities()
         this.spawnSevereProbabilities()
         this.spawnSettings()
+        this.spawnMesonetData()
         this.spawnAlertCards(`child_atmosx_alerts.global_alerts`, false, `_alerts.alert_search`, ``)
         this.spawnAlertCards(`child_atmosx_alerts.recent_alerts`, true, ``, ``)
         this.spawnRadioServices(`hub_radio.noaa`, `_noaa_radio_communications.radio_search`, ``)

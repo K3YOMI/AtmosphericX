@@ -32,42 +32,6 @@ loader.cache.attemptingToConnect = false
 loader.cache.hasConnectedBefore = false
 loader.cache.logging = []
 
-loader.packages.fs = require(`fs`)
-loader.packages.path = require(`path`)
-loader.packages.sqlite3 = require(`better-sqlite3`)
-loader.packages.express = require(`express`)
-loader.packages.cookieParser = require(`cookie-parser`)
-loader.packages.crypto = require(`crypto`)
-loader.packages.http = require(`http`)
-loader.packages.https = require(`https`)
-loader.packages.axios = require(`axios`)
-loader.packages.xmpp = require(`@xmpp/client`)
-loader.packages.os = require(`os`)
-loader.packages.xml2js = require('xml2js');
-loader.packages.nwws = require('@k3y0mi/nwws-parser');
-loader.packages.shapefile = require('shapefile');
-loader.packages.ws = require('ws');
-loader.packages.nodemailer = require('nodemailer');
-loader.packages.firebaseApp = require('firebase/app');
-loader.packages.firebaseDatabase = require('firebase/database');
-
-
-
-loader.modules.hooks = new (require(`./modules/hooks.js`))()
-loader.modules.character = new (require(`./modules/character.js`))()
-loader.modules.database = new (require(`./modules/database.js`))()
-loader.modules.routes = new (require(`./modules/routes.js`))()
-loader.modules.dashboard = new (require(`./modules/dashboard.js`))()
-loader.modules.websocket = new (require(`./modules/websocket.js`))()
-loader.modules.webcalling = new (require(`./modules/webcalling.js`))()
-loader.modules.building = new (require(`./modules/building.js`))()
-loader.modules.parsing = new (require(`./modules/parsing.js`))()
-loader.modules.commands = new (require(`./modules/commands.js`))()
-loader.modules.placefiles = new (require(`./modules/placefiles.js`))()
-loader.modules.rtlirl = new (require(`./modules/rtlirl.js`))()
-loader.modules.wire = new (require(`./modules/wire.js`))()
-
-
 loader.definitions.RegExp_VTEC = "[OTEX].(NEW|CON|EXT|EXA|EXB|UPG|CAN|EXP|COR|ROU).[A-Z]{4}.[A-Z]{2}.[WAYSFON].[0-9]{4}.[0-9]{6}T[0-9]{4}Z-[0-9]{6}T[0-9]{4}Z"
 loader.definitions.RegExp_UGCStart = "(\\w{2}[CZ](\\d{3}((-|>)\\s?(\n\n)?))+)"
 loader.definitions.RegExp_UGCEnd = "(\\d{6}(-|>)\\s?(\n\n)?)"
@@ -81,6 +45,42 @@ loader.definitions.eventTypes = { "W": "Warning", "F": "Forecast", "A": "Watch",
 loader.definitions.static_apis = { 
     ['open_street_map_coordinates']: "https://nominatim.openstreetmap.org/reverse?format=json&lat=${X}&lon=${Y}",
     ['cape_coordinates']: "https://api.open-meteo.com/v1/gfs?latitude=${X}&longitude=${Y}&hourly=cape",
-    ['temperature_coordinates']: "https://api.openweathermap.org/data/2.5/weather?lat=${X}&lon=${Y}&appid=64fb789b4ab267d578a5b1c24fd4b5ba"
+    ['temperature_coordinates']: "https://api.openweathermap.org/data/2.5/weather?lat=${X}&lon=${Y}&appid=64fb789b4ab267d578a5b1c24fd4b5ba",
 }
-loader.definitions.allowed_websockets = [`occupants`, `metrics`, `chatbot`, `wxRadio`, `updates`, `svrprob`, `torprob`, `public`, `active`, `location`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
+
+loader.definitions.allowed_websockets = [`mesonet`, `occupants`, `metrics`, `chatbot`, `wxRadio`, `updates`, `svrprob`, `torprob`, `public`, `active`, `location`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
+
+loader.packages.fs = require(`fs`)
+loader.packages.path = require(`path`)
+loader.packages.sqlite3 = require(`better-sqlite3`)
+loader.packages.express = require(`express`)
+loader.packages.cookieParser = require(`cookie-parser`)
+loader.packages.crypto = require(`crypto`)
+loader.packages.http = require(`http`)
+loader.packages.https = require(`https`)
+loader.packages.axios = require(`axios`)
+loader.packages.xmpp = require(`@xmpp/client`)
+loader.packages.os = require(`os`)
+loader.packages.xml2js = require('xml2js');
+loader.packages.nwws = require('atmosx-nwws-parser');
+loader.packages.tempest = require('atmosx-tempest-pulling');
+loader.packages.shapefile = require('shapefile');
+loader.packages.ws = require('ws');
+loader.packages.nodemailer = require('nodemailer');
+loader.packages.firebaseApp = require('firebase/app');
+loader.packages.firebaseDatabase = require('firebase/database');
+
+loader.modules.hooks = new (require(`./modules/Hooks.js`))()
+loader.modules.character = new (require(`./modules/ExtCharacterAI.js`))()
+loader.modules.database = new (require(`./modules/Database.js`))()
+loader.modules.routes = new (require(`./modules/Routes.js`))()
+loader.modules.dashboard = new (require(`./modules/EndpointHandler.js`))()
+loader.modules.websocket = new (require(`./modules/Websockets.js`))()
+loader.modules.webcalling = new (require(`./modules/Webcalls.js`))()
+loader.modules.building = new (require(`./modules/Building.js`))()
+loader.modules.parsing = new (require(`./modules/DataParsing.js`))()
+loader.modules.commands = new (require(`./modules/Commands.js`))()
+loader.modules.placefiles = new (require(`./modules/Placefiles.js`))()
+loader.modules.rtlirl = new (require(`./modules/ExRtIrl.js`))()
+loader.modules.tempest = new (require(`./modules/ExtTempestStation.js`))()
+loader.modules.wire = new (require(`./modules/ExtNoaaWire.js`))()

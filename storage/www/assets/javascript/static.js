@@ -24,7 +24,7 @@ const static_dashboard_directs = [
             { icon: "fas fa-exclamation-triangle", label: "Warnings & Advisories", nav: "_navigation.alerts", permission: 0 },
             { icon: "fas fa-flag", label: "Local Storm Reports", nav: "_navigation.lsr", permission: 0 },
             { icon: "fas fa-cloud-sun", label: "Mesoscale Discussions", nav: "_navigation.dicussions", permission: 0 },
-            { icon: "fas fa-comments", label: "NOAA Weather Wire", nav: "_navigation.nwws", permission: 0 },
+            { icon: "fas fa-satellite", label: "NOAA Weather Wire", nav: "_navigation.nwws", permission: 0 },
             { icon: "fas fa-thermometer-half", label: "Current Map", nav: null, permission: 0 , action: () => window.open('/widgets/mapbox', '_blank', 'width=1200,height=900') },
             { icon: "fas fa-sun", label: "Forecasting", nav: "_navigation.forecasts", permission: 0 },
             { icon: "fas fa-map-marked-alt", label: "Satellite", nav: "_navigation.radar", permission: 0, disabled: true },
@@ -49,6 +49,23 @@ const static_dashboard_directs = [
         ]
     },
     {
+        category: "Hardware Settings",
+        items: [
+            { icon: "fas fa-wind", label: "Mesonet Data", nav: `_navigation.mesonetdata`, permission: 0, },
+            { icon: "fas fa-microchip", label: "Sensor Status", nav: null, permission: 1, action: '', disabled: true },
+            { icon: "fas fa-wifi", label: "Network Interfaces", nav: null, permission: 1, action: '', disabled: true },
+        ]
+    },
+    {
+        category: "Resources ",
+        items: [
+            { icon: "fas fa-external-link-square-alt", label: "Github", nav: null, permission: 0, action: () => window.open('https://github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000') },
+            { icon: "fas fa-external-link-square-alt", label: "Documentation", nav: null, permission: 0, action: () => window.open('https://k3yomi.github.io/blog/posts/atmosphericx/', '_blank', 'width=1000,height=1000') },
+            { icon: "fa fa-hands-helping", label: "General Support", nav: "_navigation.help", permission: 0 },
+            { icon: "fas fa-donate", label: "Donate", nav: null, permission: 0, action: () => window.open('https://ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000') }
+        ]
+    },
+    {
         category: "Server Settings",
         items: [
             { icon: "fa fa-terminal", label: "Configurations", nav: "_navigation.configurations", permission: 1 },
@@ -63,23 +80,6 @@ const static_dashboard_directs = [
             { icon: "fas fa-bell", label: "Toggle Sounds", nav: null, permission: 0, action: 'toggleMute' },
             { icon: "fas fa-bell", label: "Toggle EAS", nav: null, permission: 0, action: 'toggleEAS' },
             { icon: "fas fa-user", label: "My Account", nav: null, permission: 0, action: 'triggerAccountListner' },
-        ]
-    },
-    {
-        category: "Hardware Settings",
-        items: [
-            { icon: "fas fa-wrench", label: "Mesonet Data (Network)", nav: null, permission: 1, action: '', disabled: true },
-            { icon: "fas fa-microchip", label: "Sensor Status", nav: null, permission: 1, action: '', disabled: true },
-            { icon: "fas fa-wifi", label: "Network Interfaces", nav: null, permission: 1, action: '', disabled: true },
-        ]
-    },
-    {
-        category: "Resources ",
-        items: [
-            { icon: "fas fa-external-link-square-alt", label: "Github", nav: null, permission: 0, action: () => window.open('https://github.com/k3yomi/atmosphericx', '_blank', 'width=1000,height=1000') },
-            { icon: "fas fa-external-link-square-alt", label: "Documentation", nav: null, permission: 0, action: () => window.open('https://k3yomi.github.io/blog/posts/atmosphericx/', '_blank', 'width=1000,height=1000') },
-            { icon: "fa fa-hands-helping", label: "General Support", nav: "_navigation.help", permission: 0 },
-            { icon: "fas fa-donate", label: "Donate", nav: null, permission: 0, action: () => window.open('https://ko-fi.com/k3yomi', '_blank', 'width=1000,height=1000') }
         ]
     },
 ];

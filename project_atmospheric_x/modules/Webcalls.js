@@ -149,7 +149,6 @@ class Webcalling {
                 { name: 'ProbSevere', handle: sources.miscellaneous_sources.severe_probability, timer: sources.miscellaneous_sources.severe_probability.cache_time, contradictions: [], pointer: 'genericRequest' },
                 { name: 'wxRadio', handle: sources.miscellaneous_sources.wx_radio, timer: sources.miscellaneous_sources.wx_radio.cache_time, contradictions: [], pointer: 'genericRequest' },
             ];
-
             if (isNWWS == undefined) {
                 handles.forEach(handle => {
                     handle.contradictions.forEach(contradiction => {

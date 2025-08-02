@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@k3y0mi/nwws-parser": "latest",
+    "atmosx-nwws-parser": "latest",
+    "atmosx-tempest-pulling": "latest",
     "@msgpack/msgpack": "^3.1.1",
     "@xmpp/client": "^0.7.3",
     "@xmpp/component": "^0.7.1",

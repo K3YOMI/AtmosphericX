@@ -33,8 +33,8 @@ class NOAAWeatherWireService {
     createSession = async function() {
         let wireCfg = loader.cache.configurations.sources.primary_sources.noaa_weather_wire_service;
         let nwsCfg = loader.cache.configurations.sources.primary_sources.national_weather_service;
-        let wireEnabled = wireCfg.enabled, wireUsername = wireCfg.credentials.username, wirePassword = wireCfg.credentials.password, displayName = wireCfg.credentials.display.replace(`AtmosphericX`, ``), wireService = wireCfg.endpoint, wireXml = wireCfg.xml_alerts, wireDomain = wireCfg.domain;
-        if (!wireEnabled) return;
+        let displayName = wireCfg.credentials.display.replace(`AtmosphericX`, ``);
+        if (!wireCfg.enabled) return;
         let now = new Date();
         let displayTime = `${String(now.getUTCMonth() + 1).padStart(2, '0')}/${String(now.getUTCDate()).padStart(2, '0')} ${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
         loader.static.nwws = new loader.packages.nwws({
@@ -51,13 +51,13 @@ class NOAAWeatherWireService {
                 cacheDir: `../storage/nwws-oi/feed`,
             },
             authentication: {
-                username: wireUsername,
-                password: wirePassword,
+                username: wireCfg.credentials.username,
+                password: wireCfg.credentials.password,
                 display: `AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime})`
             },
             database: `../storage/shapefiles.db`
         });
-        loader.static.nwws.onEvent(`onConnection`, (displayName) => { loader.modules.hooks.createOutput(`${this.name}.Connection`, `Connected to ${wireDomain} as ${displayName}`); });
+        loader.static.nwws.onEvent(`onConnection`, (displayName) => { loader.modules.hooks.createOutput(`${this.name}.Connection`, `Connected as ${displayName}`); });
         loader.static.nwws.onEvent(`onAlert`, (alerts) => { let filter = loader.modules.parsing.filterAlerts(alerts); let coordFilter = loader.modules.parsing.coordsToMiles(filter); if (!coordFilter.length) return; this.createAlerts(coordFilter); });
         loader.static.nwws.onEvent(`onMesoscaleDiscussion`, (discussion) => {});
         loader.static.nwws.onEvent(`onStormReport`, (report) => {});
@@ -126,13 +126,15 @@ class NOAAWeatherWireService {
       */
 
     createDebugAlert = function(alertType = `RAW`) {
-        let alerts = alertType == `RAW` ? [`raw_feed_exmaple.bin`] : [`xml_feed_example.xml`];
-        for (let i = 0; i < alerts.length; i++) {
-            let attributes = { awipsid: `N/A`, issue: new Date(Date.now() - 299 * 1000).toISOString() };
-            let file = loader.packages.path.join(__dirname, `../../storage/nwws-oi/`, `debugging`, alerts[i]);
-            let data = loader.packages.fs.readFileSync(file, `utf8`);
-            loader.static.nwws.forwardCustomStanza(data, attributes);
-        }
+        try {
+            let alerts = alertType == `RAW` ? [`raw_feed_exmaple.bin`] : [`xml_feed_example.xml`];
+            for (let i = 0; i < alerts.length; i++) {
+                let attributes = { awipsid: `N/A`, issue: new Date(Date.now() - 299 * 1000).toISOString() };
+                let file = loader.packages.path.join(__dirname, `../../storage/nwws-oi/`, `debugging`, alerts[i]);
+                let data = loader.packages.fs.readFileSync(file, `utf8`);
+                loader.static.nwws.forwardCustomStanza(data, attributes);
+            }
+        } catch (err) { loader.modules.hooks.createOutput(`${this.name}.DebugAlert`, `Error creating debug alert: Do you have NWWS Enabled?`); return }
     }
 }
 

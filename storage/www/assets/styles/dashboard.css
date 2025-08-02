@@ -8,7 +8,7 @@ a:hover, a:active, a:focus { color: var(--dashboard-desktop-color-text-primary-h
 .interactive-sidebar { background-color: var(--dashboard-desktop-color-bg-sidebar); box-shadow: var(--dashboard-desktop-shadow-default); width: var(--dashboard-desktop-sidebar-width); height: 100vh; position: fixed; z-index: 1; top: 0; left: 0; display: flex; flex-direction: column; justify-content: flex-start; padding: var(--dashboard-desktop-sidebar-padding); text-align: left; overflow-y: hidden; overflow-x: hidden; max-height: 100vh; border-right: 1px solid var(--dashboard-desktop-color-border-sidebar); transform: translateX(-100%); }
 .hamburger-menu { position: fixed; border-radius: 5px; padding: 10px; z-index: 2; font-size: var(--dashboard-desktop-font-size-hamburger); }
 .sidebar-title { color: var(--dashboard-desktop-color-text-primary-hover); font-size: var(--dashboard-desktop-font-size-sidebar-title); margin: 0; padding: 0; padding-top: 10px; text-align: center; }
-.sidebar-logo { width: 120px; height: 120px; align-self: center; animation: rainbow-shadow 1s infinite alternate; }
+.sidebar-logo { width: 120px;  align-self: center; animation: rainbow-shadow 1s infinite alternate; }
 .sidebar-hr { border: 0; height: 1px; background-color: var(--dashboard-desktop-color-text-primary-hover); width: 90%; }
 .sidebar-item { text-align: left; align-self: flex-start; display: flex; width: 70%; align-items: center; gap: var(--dashboard-desktop-sidebar-gap); zoom: var(--dashboard-desktop-zoom-default); transition: 0.4s ease-in-out; }
 .sidebar-subtitle { padding: 1px; text-align: center; font-size: var(--dashboard-desktop-font-size-footer); color: var(--dashboard-desktop-color-text-primary); }
@@ -69,6 +69,14 @@ a:hover, a:active, a:focus { color: var(--dashboard-desktop-color-text-primary-h
 .button-ok:hover { background-color: var(--dashboard-desktop-color-button-ok-bg-hover); color: var(--dashboard-desktop-color-button-text); transition: 0.3s ease-in-out; }
 .button-danger:hover { background-color: var(--dashboard-desktop-color-button-danger-bg-hover); color: var(--dashboard-desktop-color-button-text); transition: 0.3s ease-in-out; }
 .spcial-image:hover { cursor: pointer; filter: grayscale(0%); transition: 0.3s; }
+
+
+
+
+
+
+
+
 
 
 @media (max-width: 1024px) {

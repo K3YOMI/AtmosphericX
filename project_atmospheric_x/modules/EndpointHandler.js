@@ -34,14 +34,28 @@ class Dashboard {
      */
 
     sendCacheData = async function(request, response, pointer, xy = false) {
-        if (xy) {
-            let url = request.url, params = new URLSearchParams(url.split('?')[1]);
-            if (url.includes('cape')) {
-                await loader.modules.parsing.rawCape(params.get('lat'), params.get('lon'));
-                pointer = loader.cache.placefiles.cape;
+        try {
+            if (xy) {
+                let url = request.url, params = new URLSearchParams(url.split('?')[1]);
+                let lon = parseFloat(params.get('lon'))
+                let lat = parseFloat(params.get('lat'))
+                if (url.includes('cape')) {
+                    if (!lat || !lon) { this.giveResponse(request, response, { statusCode: 200, message: `No latitude or longitude provided` }, true); return; }
+                    await loader.modules.parsing.rawCape(lat, lon);
+                    pointer = loader.cache.placefiles.cape;
+                }
+                if (url.includes('mesonet')) {
+                    if (!lat || !lon) { this.giveResponse(request, response, { statusCode: 200, message: `No latitude or longitude provided`}, true); return; }
+                    await loader.modules.parsing.rawMesonet(lat, lon);
+                    pointer = loader.cache.placefiles.mesonet;
+                }
             }
+            this.giveResponse(request, response, { statusCode: 200, message: pointer }, true);
+        } catch (error) {
+            this.giveResponse(request, response, { statusCode: 500, message: `Internal Server Error` }, true);
+            loader.modules.hooks.createOutput(this.name, `Error occurred while sending cache data: ${error}`);
+            loader.modules.hooks.createLog(this.name, `ERROR`, `Error occurred while sending cache data: ${error}`);
         }
-        this.giveResponse(request, response, { statusCode: 200, message: pointer }, true);
     }
 
     /**

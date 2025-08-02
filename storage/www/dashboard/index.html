@@ -3,15 +3,18 @@
     <head>
         <title>AtmosphericX - Dashboard</title>
         <meta name="viewport" content="width=device-width initial-scale=0.5, maximum-scale=0.5, user-scalable=no minimal-ui">
-        <link rel="stylesheet" href="../assets/styles/dashboard.css">
-        <link rel="stylesheet" href="../assets/styles/editor.css">
-        <link rel="stylesheet" href="../../assets/styles/variables.css">
-        <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
-        <script src="../assets/javascript/library.js"></script>
-        <script src="../assets/javascript/dashboard/Core.js"></script>
-        <script src="../assets/javascript/dashboard/Editor.js"></script>
-        <script src="../assets/javascript/alerts.js"></script>
-        <script src="../../assets/javascript/static.js"></script>
+        <link rel="stylesheet" href="../assets/styles/Dashboard.css">
+        <link rel="stylesheet" href="../assets/styles/Editor.css">
+        <link rel="stylesheet" href="../../assets/styles/Variables.css">
+        <link rel="stylesheet" href="../../assets/styles/Graphics.css">
+        <link rel="icon" href="/assets/media/dashboard/atmosx-logo-vector.ico" type="image/x-icon">
+        <script src="../assets/javascript/Library.js"></script>
+        <script src="../assets/javascript/Dashboard/Core.js"></script>
+        <script src="../assets/javascript/Dashboard/Editor.js"></script>
+        <script src="../assets/javascript/Dashboard/Graphics.js"></script>
+        
+        <script src="../assets/javascript/Alerts.js"></script>
+        <script src="../../assets/javascript/Static.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     </head>
@@ -26,7 +29,7 @@
         </div>
         <i class="hamburger-menu fa fa-bars" id="hamburger" onclick="dashboard_class.triggerHamburgerListener()"></i>
         <div class="interactive-sidebar"  data-state="closed">
-            <img src="/assets/media/dashboard/logo.png" alt="Logo" class="sidebar-logo">
+            <img src="/assets/media/dashboard/atmosx-logo-vector.webp" alt="Logo" class="sidebar-logo">
             <footer class="sidebar-subtitle">
                 <small>Made with ❤️ by k3yomi & Starflight</small>
             </footer>
@@ -46,6 +49,7 @@
                         </p>
                     </div>
                 </div>
+
                 <div class="grid-area" id="._nonchild_atmosx_dashboard" data-original-grid-template-columns="2" style="grid-template-columns: repeat(2, 1fr);">
                     <div class="data-card"> 
                         <h1 class="data-card-title">Demo Video</h1>
@@ -183,6 +187,15 @@
                     </div>
                 </div>
             </div>
+            <div id="_navigation.mesonetdata" style="display: none;" type="menu">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">Current Mesonet Data</span></h1>
+                        <hr class="data-card-hr"> 
+                        <div id="child_atmosx_mesonet.statistics" class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
             <div id="_navigation.help" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
@@ -214,13 +227,15 @@
     </body>
     <script>
         let dashboard_class;
+        let graphics_class; 
         let alert_class;
         let library = new Library()
         library.detectMobileDevice()
-        library.createWebsocketSession([`occupants`, `metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`mesonet`, `occupants`, `metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
-            dashboard_class = new Dashboard(library, true)
             cfg_class = new CfgEditor(library)
+            graphics_class = new Graphics(library)
+            dashboard_class = new Dashboard(library, true)
             document.addEventListener('onCacheUpdate', async (event) => {
                 let storage = alert_class.syncAlerts(true)
                 if (storage.length > 0 && library.storage.sounds == true) { await alert_class.triggerAlertQueue() }

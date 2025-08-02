@@ -81,11 +81,11 @@ class Placefiles {
         ].join('\n');
         for (let i = 0; i < data.length; i++) {
             let { description = `No description provided`, point = [], icon = '0,0,000,1,19', text = '0, 15, 1', title = '' } = data[i] || {};
-            if (Array.isArray(point) && point.length == 2 && typeof point[0] == 'number' && typeof point[1] == 'number') {
+            if (Array.isArray(point) && point.length == 2 && typeof point[0] == 'number' && typeof point[1] == 'number')  {
                 placefileText += [
                     `\nObject: ${point[1]},${point[0]}`,
-                    `Icon: ${icon},"${title.replace(/\n/g, '\\n')}"`,
-                    `Text: ${text}, "${description.split('\n')[0]}"`,
+                    `Icon: ${icon},"${description.replace(/\n/g, '\\n')}"`,
+                    `Text: ${text}, "${title.split('\n')[0]}"`,
                     `End:\n`
                 ].join('\n');
             }

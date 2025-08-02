@@ -21,6 +21,23 @@
     --dynamic-bg-color-notification-border-width: 1px;
     --dynamic-bg-color-notification-animation: fadeInDown 0.4s ease-out
 }
+
+:root, .speedometer-graphic {
+    /* Speedometer Graphic Variables */
+    --speedometer-graphic-width: 400px;
+    --speedometer-graphic-height: 200px;
+    --speedometer-graphic-border-width: 25px;
+    --speedometer-graphic-color-low: #626863;
+    --speedometer-graphic-color-mid: #626863;
+    --speedometer-graphic-color-high: #dc3545;
+    --speedometer-graphic-needle-width: 3px;
+    --speedometer-graphic-needle-height: 190px;
+    --speedometer-graphic-needle-color: #ffffff;
+    --speedometer-graphic-label-font-size: 25px;
+    --speedometer-graphic-label-color: rgb(255, 255, 255);
+    --speedometer-graphic-label-font-weight: 500;
+}
+
 :root, configuration-editor {
     --editor-bg: var(--dashboard-desktop-color-bg-popup-description, #1e1e1e);
     --editor-fg: #d4d4d4;

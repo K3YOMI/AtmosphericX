@@ -43,18 +43,18 @@ class Parsing {
                 let gridLon = lon - sideLength / 2 + j * step;
                 let cachedCape = loader.cache.cape.find(c => c.lat == gridLat && c.lon == gridLon);
                 if (cachedCape && new Date(cachedCape.expires) > new Date()) {
-                    places.push({ title: `Expires: ${cachedCape.expires}\nTime: ${cachedCape.time}`, description: `${cachedCape.cape} J/kg`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
+                    places.push({ title: `${cachedCape.cape} J/kg`, description: `Expires: ${cachedCape.expires}\nTime: ${cachedCape.time}`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
                 } else {
                     promises.push(loader.modules.hooks.convertCoordinatesToRequest(loader.definitions.static_apis.cape_coordinates, gridLat, gridLon).then(toData => {
                         if (toData !== "err") {
                             let index = toData.hourly.time.findIndex(t => new Date(t).getTime() >= new Date().getTime());
                             if (index !== -1 && toData.hourly.cape[index] !== undefined) {
                                 let expires = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
-                                places.push({ title: `Expires: ${expires}\nTime: ${toData.hourly.time[index]}`, description: `${toData.hourly.cape[index]} J/kg`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
+                                places.push({ title: `${toData.hourly.cape[index]} J/kg`, description: `Expires: ${expires}\nTime: ${toData.hourly.time[index]}`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
                                 loader.cache.cape.push({ lat: gridLat, lon: gridLon, cape: toData.hourly.cape[index], expires: expires, time: toData.hourly.time[index] });
                             }
                         } else {
-                            places.push({ title: `Expires: ${new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString()}\nTime: N/A`, description: "N/A", point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
+                            places.push({ title: `N/A`, description: `Expires: ${new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString()}\nTime: N/A`, point: [gridLon, gridLat], rgb: "255,0,0,255", icon: "0,0,000,6,4" });
                         }
                     }));
                 }
@@ -64,6 +64,33 @@ class Parsing {
         loader.modules.placefiles.createPlacefilePoint(1, 999, `AtmosphericX Cape - ${new Date().toUTCString()}`, places, "cape");
         return { success: true, message: "Cape data processed and placefile created" };
     }
+
+    /**
+      * @function rawMesonet
+      * @description Read the raw mesonet data and parse it into a placefile.
+      * 
+      * @param {number} lat - The latitude to read the mesonet data for
+      * @param {number} lon - The longitude to read the mesonet data for
+      */
+
+    rawMesonet = async function(lat, lon) {
+        return new Promise(async (resolve, reject) => {
+            if (loader.cache.tmesonet && loader.cache.configurations.sources.miscellaneous_sources.mesonet_services.radar_enabled && !loader.cache.configurations.sources.miscellaneous_sources.mesonet_services.gps_enabled) {
+                await loader.cache.tmesonet.setter.setClosest(lat, lon);
+                let txt = ``
+                for (let key in loader.cache.tmesonet) {
+                    for (let subKey in loader.cache.tmesonet[key]) {
+                        let value = loader.cache.tmesonet[key][subKey]
+                        if (subKey === `data`) { txt += `${loader.modules.hooks.stringifyObject(value)}\\n`;  }
+                    }
+                }
+                let places = [{ title: `!`, description: txt.replace(/;/g, ' -').replace(/,/g, ""), point: [lon, lat + 0.05], rgb: "255,0,0,255", icon: "0,0,000,6,12" }];
+                loader.modules.placefiles.createPlacefilePoint(1, 999, `AtmosphericX Mesonet Values - ${new Date().toUTCString()}`, places, "mesonet");
+                resolve({ success: true, message: `Mesonet data processed and placefile created` });
+            }
+        })
+    }
+
 
     /**
       * @function rawIemReports
@@ -300,8 +327,20 @@ class Parsing {
             let warningCoords = alert.geometry?.coordinates?.[0];
             if (!Array.isArray(warningCoords) || warningCoords.length == 0) return false;
             let [lat1, lon1] = [parseFloat(loader.cache.location.lat), parseFloat(loader.cache.location.lon)];
-            let [lat2, lon2] = warningCoords.reduce((acc, [lon, lat]) => [acc[0] + lon, acc[1] + lat], [0, 0]).map(sum => sum / warningCoords.length);
-            return loader.modules.hooks.getMilesAway(lat1, lon1, lat2, lon2) <= maxMiles;
+            let area = 0, lat2 = 0, lon2 = 0;
+            for (let i = 0; i < warningCoords.length; i++) {
+                let [x1, y1] = warningCoords[i];
+                let [x2, y2] = warningCoords[(i + 1) % warningCoords.length];
+                let cross = x1 * y2 - x2 * y1;
+                area += cross;
+                lat2 += (y1 + y2) * cross;
+                lon2 += (x1 + x2) * cross;
+            }
+            area /= 2;
+            lat2 = lat2 / (6 * area);
+            lon2 = lon2 / (6 * area);
+            let miles = loader.modules.hooks.getMilesAway(lat1, lon1, lat2, lon2);
+            return miles <= maxMiles;
         });
     };
 
@@ -374,7 +413,7 @@ class Parsing {
             if (!loader.cache.logging.some(log => log.id == alertHash)) {
                 let { general_alerts: generalWebhook, critical_alerts: criticalWebhook } = loader.cache.configurations.webhook_settings;
                 let trackingId = registration.raw.tracking ?? (registration.raw.properties.parameters.WMOidentifier?.[0] ?? `No ID found`);
-                loader.modules.hooks.createOutput(`${this.name}.${isWire ? "WIRE" : "API"}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${trackingId}) (${registration.details.distance})`);
+                loader.modules.hooks.createOutput(`${this.name}.${isWire ? "WIRE" : "API"}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${trackingId})` + (registration.details.distance != `N/A` ? ` (${registration.details.distance})` : ``));
                 loader.cache.logging.push({ id: alertHash, expires: registration.details.expires });
                 let alertTitle = `${registration.details.name} (${registration.details.type})`;
                 let alertBody = [

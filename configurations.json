@@ -1,4 +1,5 @@
 {
+    "readme": "DO NOT COPY ALL YOUR OLD CONFIGS OVER!!! PLEASE LOOK BACK AT YOUR BACKUP CONFIG AND COPY OVER YOUR SETTINGS MANUALLY!!!!",
     "hosting": {
         "https": false,
         "portal": true,
@@ -11,7 +12,7 @@
         }
     },
     "project_settings": {
-        "http_useragent": "AtmosphericX/v7.1.2",
+        "http_useragent": "AtmosphericX/v7.1.225",
         "http_timeout": 5,
         "global_update": 10,
         "priority_alerts": true,
@@ -33,6 +34,9 @@
             "Severe Thunderstorm Warning",
             "Tornado Warning",
             "Snow Squall Warning",
+            "Tsunami Warning",
+            "Tsunami Watch",
+            "Tsunami Advisory",
             "Earthquake Warning",
             "Hurricane Warning",
             "Hurricane Watch",
@@ -48,7 +52,11 @@
             "Particularly Dangerous Situation (TOR WATCH)",
             "Tornado Emergency",
             "Considerable Severe Thunderstorm Warning",
-            "Destructive Severe Thunderstorm Warning"
+            "Destructive Severe Thunderstorm Warning",
+            "Tsunami Warning",
+            "Tsunami Watch",
+            "Tsunami Advisory",
+            "Earthquake Warning"
         ]
     },
     "sources": {
@@ -70,8 +78,6 @@
                 "enabled": false,
                 "cache_time": 0,
                 "reconnect_after": 60,
-                "endpoint": "xmpp://nwws-oi.weather.gov",
-                "domain": "nwws-oi.weather.gov",
                 "cap_alerts": false,
                 "ugc_polygons": false,
                 "credentials": {
@@ -86,6 +92,7 @@
                 "alert_filtering": false,
                 "max_miles": 50,
                 "gps_refresh": 10,
+                "use_mesonet": true,
                 "display_name": "My Live AtmosphericX Instance",
                 "rtlirl": {
                     "enabled": false,
@@ -102,6 +109,17 @@
                     "show_streaming": true
                 },
                 "note": "Realtimeirl and spotter network tracking can NOT be used at the same time for tracking. You must choose one or the other."
+            },
+            "mesonet_services": {
+                "gps_enabled": false,
+                "radar_enabled": false,
+                "tempest_weather_station": {
+                    "enabled": false,
+                    "api_key": "YOUR_TEMPEST_API_KEY_HERE",
+                    "device_id": "YOUR_DEVICE",
+                    "station_id": "YOUR_STATION",
+                    "forecasts": true
+                }
             },
             "iem_local_storm_reports": {
                 "enabled": false,
@@ -180,7 +198,11 @@
                 "Particularly Dangerous Situation (TOR WATCH)",
                 "Confirmed Tornado Warning",
                 "Destructive Severe Thunderstorm Warning",
-                "Flash Flood Emergency"
+                "Flash Flood Emergency",
+                "Tsunami Warning",
+                "Tsunami Watch",
+                "Tsunami Advisory",
+                "Earthquake Warning"
             ]
         },
         "misc_alerts": {
@@ -218,7 +240,8 @@
                 "manual",
                 "chatbot",
                 "location",
-                "occupants"
+                "occupants",
+                "mesonet"
             ]
         },
         "general_websockets": {
@@ -273,7 +296,10 @@
         "FLASH FLOODING CAUSED BY THUNDERSTORMS.": "Caused by Thunderstorm",
         "SOURCE...EMERGENCY MANAGEMENT.": "Confirmed by Emergency Management",
         "FLASH FLOODING CAUSED BY HEAVY RAIN.": "Caused by heavy rain",
-        "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement"
+        "SOURCE...LAW ENFORCEMENT REPORTED.": "Confirmed by Law Enforcement",
+        "A TSUNAMI HAS BEEN GENERATED THAT COULD": "Tsunami Confirmed",
+        "EXTREMELY STRONG AND UNUSUAL NEARSHORE": "Strong Nearshore",
+        "INUNDATION IS POSSIBLE OR IS ALREADY OCCURRING": "Inundation Possible or Ongoing"
     },
     "spc_outlooks": [
         {
@@ -465,7 +491,11 @@
                     "Severe Thunderstorm Warning",
                     "Radar Indicated Tornado Warning",
                     "Flash Flood Emergency",
-                    "Special Marine Warning"
+                    "Special Marine Warning",
+                    "Tsunami Warning",
+                    "Tsunami Watch",
+                    "Tsunami Advisory",
+                    "Earthquake Warning"
                 ]
             }
         },
@@ -522,7 +552,11 @@
                 "Considerable Severe Thunderstorm Warning",
                 "Radar Indicated Tornado Warning",
                 "Flash Flood Emergency",
-                "Special Marine Warning"
+                "Special Marine Warning",
+                "Tsunami Warning",
+                "Tsunami Watch",
+                "Tsunami Advisory",
+                "Earthquake Warning"
             ]
         }
     },
@@ -544,6 +578,17 @@
             "eas": false,
             "amber": false,
             "autobeep": true
+        },
+        "Tsunami Warning": {
+            "triggered": "Tsunami Warning",
+            "new": "/assets/media/audio/unk/unk-issued.mp3",
+            "update": "/assets/media/audio/unk/unk-updated.mp3",
+            "cancel": "/assets/media/audio/tones/beep-tone.mp3",
+            "card": "Tsunami Warning",
+            "siren": false,
+            "eas": true,
+            "amber": false,
+            "autobeep": false
         },
         "Particularly Dangerous Situation (TOR WARNING)": {
             "triggered": "Particularly Dangerous Situation (TOR WARNING)",
@@ -725,6 +770,13 @@
     "scheme": [
         {
             "type": "Tornado Emergency",
+            "color": {
+                "light": "rgb(209,38,215)",
+                "dark": "rgb(159,37,163)"
+            }
+        },
+        {
+            "type": "Tsunami Warning",
             "color": {
                 "light": "rgb(209,38,215)",
                 "dark": "rgb(159,37,163)"

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <title>AtmosphericX</title>
-    <link rel="icon" href="/assets/media/dashboard/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/assets/media/dashboard/atmosx-logo-vector.ico" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
     <link rel="stylesheet" href="../widgets/location@widget/index.css">
-    <link rel="stylesheet" href="../../assets/styles/variables.css">
-    <script src="../../assets/javascript/alerts.js"></script>
-    <script src="../../assets/javascript/library.js"></script>
+    <link rel="stylesheet" href="../../assets/styles/Variables.css">
+    <script src="../../assets/javascript/Alerts.js"></script>
+    <script src="../../assets/javascript/Library.js"></script>
     <body>
         <div class="location-box" id="location-box" style="display: none;">
             <div class="location-row-light" id="location-alert-header"><span id="closest-warning"></span></div>
@@ -27,7 +27,7 @@
     <script>
         let library = new Library()
         let urlParamters = new URLSearchParams(window.location.search);
-        library.createWebsocketSession([`public`, `location`, `active`, `manual`, `spotters`]).then(() => {
+        library.createWebsocketSession([`mesonet`, `public`, `location`, `active`, `manual`, `spotters`]).then(() => {
             let alert_class = new Alerts(library, true)
             document.addEventListener('onCacheUpdate', async (event) => {
                 alert_class.syncAlerts()

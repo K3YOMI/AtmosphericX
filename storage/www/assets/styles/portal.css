@@ -9,7 +9,7 @@ footer { position: fixed; bottom: 0; width: 100%; background: var(--portal-bg-fo
 .bg { background: var(--portal-bg-login-image) no-repeat center center fixed; background-blend-mode: overlay; background-size: cover; position: fixed; inset: 0; z-index: -1; filter: saturate(120%) brightness(0.5);  opacity: 0; animation: bg-fade-in 1.2s ease-out forwards; }
 .login-container { flex: 1; width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 32px; padding: 32px 16px; animation: fade-slide-up 1s ease-in-out; }
 .login-box { background: var(--portal-bg-blur-layer); box-shadow: var(--portal-shadow-box); border: 1px solid var(--portal-border-box); backdrop-filter: blur(14px) saturate(130%); padding: 56px 40px; width: 100%; max-width: 480px; min-width: 280px; margin: 0 auto; border-radius: 20px; display: flex; flex-direction: column; gap: 22px; transition: box-shadow 0.3s, border-color 0.3s; animation: pulse-glow 2.8s infinite alternate; }
-.login-logo { width: 154px; height: 154px; margin: 0 auto 16px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: var(--portal-shadow-logo); }
+.login-logo { width: 154px; margin: 0 auto 16px; display: flex; justify-content: center; align-items: center; border-radius: 50%; box-shadow: var(--portal-shadow-logo); }
 .login-box h1 { margin: 0 0 10px; color: var(--portal-text-primary); font-size: 2.2rem; font-weight: 800; letter-spacing: 0.03em; text-align: center; line-height: 1.1; animation: text-flicker 3s infinite; }
 .login-box input[type="text"], .login-box input[type="password"] { width: 100%; padding: 16px 18px; background: var(--portal-bg-input); border: 1.5px solid var(--portal-border-input); border-radius: 8px; color: var(--portal-text-secondary); font-size: 1.05rem; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; outline: none; margin-bottom: 18px; }
 .login-box input[type="text"]:focus, .login-box input[type="password"]:focus { border-color: var(--portal-border-input-focus); background: var(--portal-bg-input-focus); box-shadow: var(--portal-shadow-input-focus); animation: input-pulse 0.6s ease-out; }
@@ -22,7 +22,7 @@ footer { position: fixed; bottom: 0; width: 100%; background: var(--portal-bg-fo
 
 @media (max-width: 1024px) {
     .login-box { zoom: 0.75; }
-    .login-logo { width: 148px; height: 148px; }
+    .login-logo { width: 148px; }
     .login-box h1 { font-size: 1.1rem; }
     .login-box input[type="text"], .login-box input[type="password"] { font-size: 0.95rem; padding: 10px 6px; }
     footer { font-size: 0.92rem; padding: 0px 2px; }

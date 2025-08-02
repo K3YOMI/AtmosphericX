@@ -1,3 +1,5 @@
 project_atmospheric_x/node_modules
 storage/logs
+storage/database.db
+storage/shapefiles.db
 configurations.json
