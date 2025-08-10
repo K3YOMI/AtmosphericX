@@ -64,7 +64,6 @@
                 if (!audioQueue.includes(library.storage.chatbot.message) && !globalAdded.includes(library.storage.chatbot.message)) {
                     audioQueue.push(library.storage.chatbot.message);
                     globalAdded.push(library.storage.chatbot.message);
-                    console.log(`Added audio to queue: ${library.storage.chatbot.message}`);
                     chatbotDiv.style.background = `#ffffff00 url('${library.storage.chatbot.image}') center center no-repeat`;
                     playNextAudio();
                 }

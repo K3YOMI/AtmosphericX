@@ -66,6 +66,7 @@ class Building {
         if (description.includes(`flash flood emergency`) && eventName == `Flash Flood Warning`) eventName = `Flash Flood Emergency`;
         if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Warning` && damage == `CONSIDERABLE`) eventName = `Particularly Dangerous Situation (TOR WARNING)`;
         if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Watch`) eventName = `Particularly Dangerous Situation (TOR WATCH)`;
+        if (description.includes(`extremely dangerous situation`) && eventName == `Severe Thunderstorm Warning`) eventName = `Extremely Dangerous Situation (SVR WARNING)`;
         if (description.includes(`tornado emergency`) && eventName == `Tornado Warning` && damage == `CATASTROPHIC`) eventName = `Tornado Emergency`;
         if (eventName == `Tornado Warning`) {
             eventName = `Radar Indicated Tornado Warning`;
@@ -75,6 +76,9 @@ class Building {
         if (eventName == `Severe Thunderstorm Warning`) {
             if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) eventName = `Considerable Severe Thunderstorm Warning`;
             if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) eventName = `Destructive Severe Thunderstorm Warning`;
+        }
+        if (eventName == `Flash Flood Warning`) {
+            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) eventName = `Considerable Flash Flood Warning`;
         }
         return eventName;
     }
@@ -107,8 +111,8 @@ class Building {
 
     getEventActions = function(event) {
         let defaultAudio = loader.cache.configurations.tone_sounds.beep;
-        let eventDictionary = loader.cache.configurations.alert_dictionary[event.properties.properEventName] || loader.cache.configurations.alert_dictionary.UNK;
-        let { new: newAlertAudio, update: updateAlertAudio, cancel: cancelAlertAudio, eas: easAudio, siren: sirenAudio, amber: amberAudio, autobeep: autobeepAudio } = eventDictionary;
+        let eventDictionary = loader.cache.configurations.alert_dictionary[event.properties.properEventName] || loader.cache.configurations.alert_dictionary['Special Event'];
+        let { new: newAlertAudio, update: updateAlertAudio, cancel: cancelAlertAudio, eas: easAudio, siren: sirenAudio, amber: amberAudio } = eventDictionary;
         let messageState = [
             { event: `Update`, message: `Updated`, audio: updateAlertAudio },
             { event: `Cancel`, message: `Expired`, audio: cancelAlertAudio },
@@ -136,7 +140,6 @@ class Building {
             eas: easAudio,
             siren: sirenAudio,
             amber: amberAudio,
-            autobeep: autobeepAudio,
         };
     }
 

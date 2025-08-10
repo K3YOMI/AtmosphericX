@@ -277,16 +277,11 @@ class Alerts {
         let currentAlert = this.storage.alertsQueue[nextAlert]
         this.createAnimatedAlert(currentAlert)
         if (!currentAlert.metadata.onlyBeep) { 
-            if (currentAlert.metadata.autobeep) { 
-                this.library.playAudio(this.storage.configurations.tone_sounds.beep, false)
-                await this.library.createTimeout(1300)
-                this.library.playAudio(currentAlert.metadata.audio, false)
-            } else {
-                this.library.playAudio(currentAlert.metadata.audio, false)
-            }
+            this.library.playAudio(this.storage.configurations.tone_sounds.beep, false)
+            await this.library.createTimeout(1300)
+            this.library.playAudio(currentAlert.metadata.audio, false)
             if (currentAlert.metadata.eas || currentAlert.metadata.siren || currentAlert.metadata.amber) {
-                await this.library.createTimeout(currentAlert.metadata.eas || currentAlert.metadata.siren ? 3800 : 500);  
-                console.log(currentAlert.metadata.eas, currentAlert.metadata.siren, currentAlert.metadata.amber)
+                await this.library.createTimeout(3800);  
                 this.library.playAudio( currentAlert.metadata.eas  ? this.storage.configurations.tone_sounds.eas  : currentAlert.metadata.siren  ? this.storage.configurations.tone_sounds.siren  : this.storage.configurations.tone_sounds.amber,  false );
             }  
         } else {

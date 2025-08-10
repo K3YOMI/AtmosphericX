@@ -270,7 +270,9 @@ class Hooks {
       */
 
     getRandomAlert = function() {
-        let alerts = [...(Array.isArray(loader.cache.active) ? loader.cache.active : []), ...(Array.isArray(loader.cache.manual) ? loader.cache.manual : [])].filter(alert => alert && Object.keys(alert).length > 0);
+        let manualAlerts = [loader.cache.manual] ? [loader.cache.manual] : [];
+        let alerts = Array.isArray(loader.cache.active) ? [...loader.cache.active, ...manualAlerts] : [];
+        alerts = alerts.filter(alert => alert && Object.keys(alert).length > 0);
         if (alerts.length == 0) {
             loader.cache.random = null;
             loader.cache.randomIndex = undefined;

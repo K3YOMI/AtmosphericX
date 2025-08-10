@@ -69,9 +69,7 @@ class TempestService {
         loader.static.tempest.onEvent(`onWind`, (data) => { loader.cache.tmesonet.wind = data; });
         loader.static.tempest.onEvent(`onForecast`, (data) => { loader.cache.tmesonet.forecast = data; loader.modules.hooks.onMesonetUpdate()  });
         loader.static.tempest.onEvent(`onLightning`, (data) => { loader.cache.tmesonet.lightning = data; });
-        loader.static.tempest.onEvent(`onError`, (data) => { 
-            console.log(data)
-        });
+        loader.static.tempest.onEvent(`onError`, (data) => {});
     }
 }
 
