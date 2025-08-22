@@ -1,5 +1,7 @@
 cd project_atmospheric_x
 npm install .
+npm install atmosx-nwws-parser
+npm install atmosx-tempest-pulling
 echo "AtmosphericX dependencies installed successfully. You can now run the project using 'node index.js'."
 echo
 echo
