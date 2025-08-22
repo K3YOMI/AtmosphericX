@@ -63,22 +63,26 @@ class Building {
     getEventSignificance = function(event, damage) {
         let eventName = event.properties.event || `Unknown Event`;
         let description = event.properties.description?.toLowerCase() || `No description provided`;
+        let dmgThreat = event.properties.parameters.thunderstormDamageThreat || event.properties.parameters.tornadoDamageThreat || `N/A`;
+        let torThreat = event.properties.parameters.tornadoDetection
         if (description.includes(`flash flood emergency`) && eventName == `Flash Flood Warning`) eventName = `Flash Flood Emergency`;
-        if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Warning` && damage == `CONSIDERABLE`) eventName = `Particularly Dangerous Situation (TOR WARNING)`;
-        if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Watch`) eventName = `Particularly Dangerous Situation (TOR WATCH)`;
-        if (description.includes(`extremely dangerous situation`) && eventName == `Severe Thunderstorm Warning`) eventName = `Extremely Dangerous Situation (SVR WARNING)`;
-        if (description.includes(`tornado emergency`) && eventName == `Tornado Warning` && damage == `CATASTROPHIC`) eventName = `Tornado Emergency`;
+        if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Warning` && dmgThreat == `CONSIDERABLE`) eventName = `PDS Tornado Warning`;
+        if (description.includes(`particularly dangerous situation`) && eventName == `Tornado Watch`) eventName = `PDS Tornado Watch`;
+        if (description.includes(`extremely dangerous situation`) && eventName == `Severe Thunderstorm Warning`) eventName = `EDS Severe Thunderstorm Warning`;
+        if (description.includes(`tornado emergency`) && eventName == `Tornado Warning` && dmgThreat == `CATASTROPHIC`) eventName = `Tornado Emergency`;
+        
         if (eventName == `Tornado Warning`) {
             eventName = `Radar Indicated Tornado Warning`;
-            if (event.properties.parameters.tornadoDetection == `RADAR INDICATED`) eventName = `Radar Indicated Tornado Warning`;
-            if (event.properties.parameters.tornadoDetection == `OBSERVED`) eventName = `Confirmed Tornado Warning`;
+            if (dmgThreat == `RADAR INDICATED`) eventName = `Radar Indicated Tornado Warning`;
+            if (dmgThreat == `OBSERVED`) eventName = `Confirmed Tornado Warning`;
         }
         if (eventName == `Severe Thunderstorm Warning`) {
-            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) eventName = `Considerable Severe Thunderstorm Warning`;
-            if (event.properties.parameters.thunderstormDamageThreat == `DESTRUCTIVE`) eventName = `Destructive Severe Thunderstorm Warning`;
+            if (dmgThreat == `CONSIDERABLE`) eventName = `Considerable Severe Thunderstorm Warning`;
+            if (dmgThreat == `DESTRUCTIVE`) eventName = `Destructive Severe Thunderstorm Warning`;
+            if (torThreat == `POSSIBLE`) eventName = `${eventName} (TPROB)`;
         }
         if (eventName == `Flash Flood Warning`) {
-            if (event.properties.parameters.thunderstormDamageThreat == `CONSIDERABLE`) eventName = `Considerable Flash Flood Warning`;
+            if (dmgThreat == `CONSIDERABLE`) eventName = `Considerable Flash Flood Warning`;
         }
         return eventName;
     }
@@ -154,7 +158,8 @@ class Building {
         let ignoreWarning = false, onlyBeep = false, distanceAway;
         let defaultAudio = loader.cache.configurations.tone_sounds.beep;
         let onlyDoBeeps = loader.cache.configurations.project_settings.beep_only;
-        let filteredEvents = loader.cache.configurations.project_settings.ignore_restrictions;
+        let filteredEvents = new Set((loader.cache.configurations.project_settings.ignore_restrictions || []).map(p => String(p).toLowerCase()));
+
         let filteredAllowUpdated = loader.cache.configurations.project_settings.show_updates;
         let { hail, wind, tornado, damage } = this.getEventParameters(event);
         let eventTags = this.getEventTag(event);
@@ -166,11 +171,11 @@ class Building {
         event.properties.parameters.tornadoDetection = tornado;
         event.properties.description ??= `No description provided`;
         event.properties.messageType = eventActions.message;
-        if (onlyDoBeeps && !filteredEvents.includes(event.properties.properEventName)) {
+        if (onlyDoBeeps && !filteredEvents.includes(event.properties.properEventName.toLowerCase())) {
             eventActions.audio = defaultAudio;
             onlyBeep = true;
         }
-        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.includes(event.properties.properEventName)) {
+        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.includes(event.properties.properEventName.toLowerCase())) {
             ignoreWarning = true;
         }
         if (event.geometry?.coordinates?.[0] && loader.cache.location) {
@@ -223,7 +228,7 @@ class Building {
             if (rawData.ProbSevere) { loader.cache.svrprob = loader.modules.parsing.rawProbabilityReports(rawData.ProbSevere, `severe`).message;  }
             if (rawData.wxRadio) { loader.cache.wxRadio = loader.modules.parsing.readWxRadio(rawData.wxRadio).message;  }
             if ((rawData.NoaaWeatherWireService && isUsingWire) || rawData.NationalWeatherService) {
-                let response = loader.modules.parsing.readAlerts(isUsingWire ? true : false, isUsingWire ? rawData.NoaaWeatherWireService : rawData.NationalWeatherService);
+                let response = await loader.modules.parsing.readAlerts(isUsingWire ? true : false, isUsingWire ? rawData.NoaaWeatherWireService : rawData.NationalWeatherService);
                 loader.cache.active = response.message;
                 let places = response.message.map(alert => {
                     let { name, locations, issued, expires, wind, hail, damage, tornado, tag, sender, distance } = alert.details;

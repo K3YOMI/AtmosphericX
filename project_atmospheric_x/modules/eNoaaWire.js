@@ -48,6 +48,7 @@ class NOAAWeatherWireService {
             },
             cacheSettings: {
                 maxMegabytes: 5,
+                readCache: wireCfg.use_cache,
                 cacheDir: `../storage/nwws-oi/feed`,
             },
             authentication: {

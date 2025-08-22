@@ -63,13 +63,13 @@
 }
 :root, .portal {
     /* Backgrounds */
-    --portal-bg-primary: #181a20;
-    --portal-bg-blur-layer: rgba(24, 26, 32, 0.85);
-    --portal-bg-login-image: url('/assets/media/dashboard/login-bg.png');
+    --portal-bg-primary: #181a2000;
+    --portal-bg-blur-layer: rgba(24, 26, 32, 0);
+    --portal-bg-login-image: url('/assets/media/dashboard/login-bg.gif');
     --portal-bg-input: rgba(40, 40, 48, 0.98);
     --portal-bg-input-focus: rgb(44, 44, 54);
     --portal-bg-footer: rgba(24, 26, 32, 0.329);
-    --portal-bg-button: rgb(75, 75, 92);
+    --portal-bg-button: rgba(93, 161, 139, 0.418);
 
     /* Text */
     --portal-text-primary: #C0C0C0;
@@ -89,7 +89,7 @@
     --portal-border-input-focus: #5ecff2;
 
     /* Shadows */
-    --portal-shadow-box: 0 4px 20px rgba(15, 15, 15, 0.85);
+    --portal-shadow-box: 0 4px 20px rgba(15, 15, 15, 0);
     --portal-shadow-button: 0 2px 12px rgba(0, 0, 0, 0.87);
     --portal-shadow-logo: 0 2px 5px rgba(0, 0, 0, 0);
     --portal-shadow-footer: 0 -4px 24px rgba(0, 0, 0, 0.35);

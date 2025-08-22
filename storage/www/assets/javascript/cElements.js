@@ -41,9 +41,9 @@ class Elements {
         let configurations = this.storage.configurations.widget_settings.header
         let maxHeaderLength = configurations.max_header_length
         let rotateAlerts = configurations.rotate_through_alerts
+        let getCycled = this.storage.configurations.alerts
         if (this.storage.header == ``) { 
-            if (rotateAlerts.enabled) { 
-                let getCycled = rotateAlerts.cycled_types
+            if (rotateAlerts) { 
                 let getActiveAlerts = this.storage.active.filter(alert => getCycled.includes(alert.details.name))
                 if (getActiveAlerts.length == 0) {
                     docHeader.innerHTML = `No Active Cycled Alerts`
@@ -128,6 +128,7 @@ class Elements {
       */
 
     randomAlertUpdate = async function(domId, messageText, maxLength, startAnimation, endAnimation) {
+        document.getElementById(domId).lastText = messageText
         if (messageText.length > maxLength) { messageText = messageText.substring(0, maxLength) + `...`}
         if (this.storage.active.length == 0) { document.getElementById(domId).innerHTML = `No active alerts`; return }
         if (this.storage.active.length == 1) { document.getElementById(domId).innerHTML = messageText; return }

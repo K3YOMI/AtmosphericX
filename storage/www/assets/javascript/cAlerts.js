@@ -114,19 +114,7 @@ class Alerts {
                     name: `Listen`,
                     className: `button-ok`,
                     function: () => {
-                        let synth = window.speechSynthesis;
-                        let utter = new SpeechSynthesisUtterance(`${alert.details.description}`);
-                        let preferredVoices = [ "Microsoft Aria Online (Natural) - English (United States)", "Google US English", "Google UK English Female", "Google UK English Male" ];
-                        let voices = synth.getVoices();
-                        utter.lang = `en-US`;
-                        utter.volume = 1;
-                        utter.rate = 1;
-                        utter.pitch = 1;
-                        utter.voice = voices.find(voice => preferredVoices.includes(voice.name)) || voices.find(voice => voice.lang.startsWith("en")) || voices[0];  utter.onend = () => {
-                            this.storage.isPriorityAlertPlaying = false;
-                        };
-                        synth.cancel();
-                        synth.speak(utter);
+                        this.library.speakText(`Information regarding ${alert.details.name}. ${alert.details.description}`)
                         this.library.stopAllSounds();
                         dashboard_class.clearAllPopups();
                     }
@@ -180,8 +168,8 @@ class Alerts {
       */
 
     triggerNotice = function(id, useAlertColor=undefined, trackingId=undefined) {
-        let warnings = this.storage.configurations.widget_settings.notice.alert_types;
-        let alert = warnings.map(w => this.storage.active.find(a => a.details.name == w)).filter(a => a !== undefined)[0];
+        let warnings = new Set((this.storage.configurations.widget_settings.notice.alert_types || []).map(p => String(p).toLowerCase()));
+        let alert = Array.from(warnings).map(w => this.storage.active.find(a => a.details.name.toLowerCase() === w || a.details.type.toLowerCase() === w)).find(a => a !== undefined);
         if (trackingId != undefined) { 
             alert = this.storage.active.find(a => a.raw.tracking == trackingId || (a.raw.properties.parameters.WMOidentifier && a.raw.properties.parameters.WMOidentifier[0] == trackingId));
         }
@@ -224,10 +212,9 @@ class Alerts {
         if (this.storage.isStreaming) {
             let maxDescLength = config.max_text_length;
             let { name, type, locations, issued, expires, wind, hail, damage, tornado, sender, tag } = alert.details;
-            let issuedTime = library.getTimeInformation(issued);
-            let expiresTime = library.getTimeInformation(expires);
+            let issuedTime = this.library.getTimeInformation(issued);
+            let expiresTime = this.library.getTimeInformation(expires);
         
-
             let color = this.storage.configurations.scheme.find(c => name.includes(c.type)) || this.storage.configurations.scheme.find(c => c.type == `Default`);
             let dom = document.querySelector('.alert-box');
             Object.assign(dom.style, {
@@ -310,10 +297,9 @@ class Alerts {
             return
         }
         colorScheme.forEach((color) => { color.count = this.storage.active.filter(x => x.details.name.includes(color.type)).length});
-        colorScheme.find(type => {return type.count > 0; }) || types[types.length - 1];
+        colorScheme.forEach((color) => { color.count = this.storage.active.filter(x => x.details.name.includes(color.type)).length});
         let highest = colorScheme.find(type => {return type.count > 0; }) || colorScheme[colorScheme.length - 1]; 
         if (targetAlert != undefined) {
-            let targetColor = colorScheme.find(type => { return targetAlert.includes(type.type); });
             highest = colorScheme.find(type => type.type == `Default`);
             if (targetColor != undefined) { highest = targetColor; }
         }

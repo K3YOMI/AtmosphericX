@@ -1,0 +1,442 @@
+{
+    "7.1.35": {
+        "version": "7.1.35",
+        "updated": "Thursday, August, 21st",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "add: Random Alert Update Interval (Default: 30 seconds)",
+            "add: TPROB (Tornado Tagged) Severe Thunderstorm Warnings",
+            "add: NoaaWeatherWireService module now supports cache retrieval.",
+            "add: TPROB Audio Sounds (Svr, Considerable, Destructive",
+            "update: New portal background (Credits: CJZiegler)",
+            "update: Portal login box is now transparent.",
+            "update: SpeakText client function in cLibrary.js",
+            "update: Dashboard EAS alerts now have better formatting for audio playback.",
+            "update: Updated NoaaWeatherWireService module to support expiry time checks and cache retrieval. (v1.0.181)",
+            "update: Particularly Dangerous Situation (TOR/WATCH) -> PDS Tornado Warning / PDS Tornado Watch",
+            "update: Configurable alerts now support non case-sensitive matching for event names.",
+            "update: Configurations shortened for alert setup.",
+            "fix: Random alert widgets by text size.",
+            "fix: Manual alerts now show up in the random alert widgets.",
+            "fix: Random alert widget anti spam.",
+            "fix: CharacterAI Chat Integration (Windows Only)"
+        ],
+        "rewrite": true
+    },
+    "7.1.3": {
+        "version": "7.1.3",
+        "updated": "Sunday, August, 10th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.35+",
+        "changelogs": [
+            "add: Additional Custom Sounds (CFFW, SPS, EDS, SVW, TSW, TPDSW, etc)",
+            "update: Better formatting for audio events.",
+            "update: Configurations now supports additional warnings",
+            "update: NoaaWeatherWireService config has a set cache_time of 1 now.",
+            "update: nwws-parser (Now includes EDS Warnings)",
+            "update: cAlerts.js no longer has a secondary timeout for urgent-eas.mp3.",
+            "fix: Fixed storage.random for manual events.",
+            "remove: onOccupant event doesn't display in console."
+        ],
+        "rewrite": true
+    },
+    "7.1.225": {
+        "version": "7.1.225",
+        "updated": "Firday, August, 1st",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.3.",
+        "changelogs": [
+            "add: NPM package `atmosx-nwws-parser` for NWWS data parsing.",
+            "add: NPM package `atmosx-tempest-pulling` for Tempest Weather Station data integration.",
+            "add: Placefile support for mesonet data (requires Tempest Weather Station Pulling enabled).",
+            "add: Mesonet data integration with speedometer graphics for enhanced visualization.",
+            "add: `injectTableStructure` method for structured observation data display.",
+            "add: `spawnMesonetData` method for mesonet data retrieval and visualization.",
+            "add: `Graphics` class for rendering speedometer graphics.",
+            "add: New CSS styles for speedometer graphics and mesonet data layout.",
+            "update: Dashboard now includes mesonet data integration.",
+            "update: Bootstrap order for improved loading performance.",
+            "update: GPS tracking function now supports mesonet data gathering.",
+            "update: Dashboard with a dedicated section for current mesonet data.",
+            "update: Static navigation with links for mesonet data and resources.",
+            "update: Module Names and Paths for consistency.",
+            "update: Configurations and priority warnings now include Tsunami based alerts"
+        ],
+        "rewrite": true
+     },
+     "7.1.22": {
+        "version": "7.1.22",
+        "updated": "Monday, July, 28th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.225.",
+        "changelogs": [
+             "add: NPM package (@k3y0mi/nwws-parser)",
+             "update: Moved client dashboard scripts.",
+             "update: Dashboard now shows proper local time for issued alerts.",
+             "update: Parsing now supports Mesoscale Discussions + Storm Reports",
+             "update: xml_alerts -> cap_alerts.",
+             "remove: Old parsing framework.",
+             "remove: shapefiles.js",
+             "remove: clearCache func()",
+             "fix: NWWS Reconnect Error Emitting"
+        ],
+        "rewrite": true
+    },
+    "7.1.215": {
+        "version": "7.1.215",
+        "updated": "Wednesday, July, 23rd",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.22, this update includes better parsing, better client manegement, etc.",
+        "changelogs": [
+            "add: Forecasting models configuration and display in dashboard.",
+            "add: New forecasting models: Composite Reflectivity, Bulk Shear, Surface Based Cape, SIGTOR Params, and Nexlab Clean LWIR / True Color.",
+            "add: Third party services now includes Global https://alerts.globaleas.org",
+            "update: Added proper directories for the images for the third party services and forecasting models."
+        ],
+        "rewrite": true
+    },
+    "7.1.21": {
+        "version": "7.1.21",
+        "updated": "Sunday, July 20th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.215, this update includes forecasting models!",
+        "changelogs": [
+            "refactor: Modularized integration settings by relocating webhook, SMTP, and other configurations outside of project_settings for improved maintainability and scalability.",
+            "refactor: Optimized backend code to utilize modern ES6+ features, enhancing performance and adhering to industry best practices.",
+            "add: Integrated Rtirl module for HTTP requests using their API, enabling dynamic updates based on latitude and longitude changes to enhance location-based services.",
+            "add: Introduced a new Rtirl/SpotterNetwork widget at /widgets/location, providing real-time tracking and visualization capabilities.",
+            "add: Alerts with attached polygons now display the distance in miles from the user's current location when location tracking is enabled, improving situational awareness.",
+            "add: Parsing module now indicates the primary service used for alerts (API / NWWS), offering better transparency and debugging capabilities.",
+            "add: Added new dashboard sections: Forecasts, Satellite, Climate Data, AI Chatbot, Mesonet Data, Sensor Status, and Network Interfaces, expanding functionality and user engagement.",
+            "add: Introduced new placesfiles and endpoints (/widgets/gps, /widgets/alerts, /widgets/cape) for enhanced data accessibility.",
+            "add: Firebase integration for real-time updates with Rtirl, improving responsiveness and data synchronization.",
+            "add: Placefile module for streamlined data management.",
+            "add: Ability to view who else is using AtmosphericX with NWWS. Including reconnection and disconnection logs.",
+            "add: New dynamic endpoints for longitude and latitude (api.openweathermap, api.open-meteo, /nominatim.openstreetmap) to support advanced location-based services.",
+            "update: Redesigned widgets for a modern look and feel, with customization options available in variables.css for seamless personalization.",
+            "update: OBSTemplate.json",
+            "update: Parameterized widgets to replace hardcoded values; refer to documentation for usage details, ensuring flexibility and adaptability.",
+            "update: Enhanced dashboard CSS with a dropdown menu for improved navigation, accessibility, and user experience.",
+            "update: Restored Mapbox widget to the dashboard under the \"Dashboard\" section, ensuring continuity and usability.",
+            "update: Spotter Network now calculates and displays the distance from the user in miles, supporting \"Spotters in area\" functionality.",
+            "update: Renamed /widgets/alert_bar to /widgets/alerts (?top, ?alerts) for better clarity and consistency.",
+            "update: Renamed /widgets/light & dark to /widgets/colors (?light, ?dark) for better clarity and consistency.",
+            "update: Renamed /widgets/description, alert, expires, and location to /widgets/random (?description, ?alert, ?expires, ?location) for better clarity and consistency.",
+            "update: Renamed /widgets/time & /widgets/date to /widgets/clock (?time, ?date) for better clarity and consistency.",
+            "update: Updated documentation thanks to @StarflightVR for contributions, ensuring clarity and accuracy.",
+            "remove: Fully removed /premade overlays and associated assets, streamlining the project and reducing clutter.",
+            "remove: Removed Rtirl API endpoint from the configurations file and webcalling.js table to simplify integration.",
+            "fix: Resolved a bug preventing account creation and password reset pages from sending POST requests due to client-side errors, ensuring smoother user interactions.",
+            "fix: Addressed performance bottlenecks in the dashboard rendering process, improving load times and responsiveness.",
+            "fix: Corrected inconsistencies in widget naming conventions to align with project standards, enhancing maintainability.",
+            "fix: Fixed a bug causing incorrect parsing of alert expiration times, ensuring accurate display of active alerts.",
+            "fix: Resolved an issue where the dashboard would occasionally fail to load widgets due to missing dependencies.",
+            "fix: Corrected a memory leak in the Rtirl module that caused performance degradation over extended usage periods.",
+            "fix: Addressed a problem with the Mapbox widget where zoom levels were not being applied correctly, improving usability.",
+            "fix: Fixed a bug in the Firebase integration that caused delays in real-time updates under high load conditions.",
+            "fix: Syntax error for properEventName",
+            "fix: Modified Event Names in the configurations"
+        ],
+        "rewrite": true
+    },
+    "7.1.2": {
+        "version": "7.1.2",
+        "updated": "Saturday, July 5th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.21+",
+        "changelogs": [
+            "add: Automated / Semi-Automated Weather Bots (CharacterAI) Windows Only (REQUIRES ACCOUNT + FREE)",
+            "add: character_ai configurations have been implemented to customize your weather bot experience.",
+            "add: Weather bot widget (/widgets/chatbot)",
+            "add: Install script now has an option to include node_characterai npm package if you wish to use the weather bots.",
+            "add: Guest accounts are now available for users if set to true in the configuration file.",
+            "add: NWWS-OI reconnection limit is now configurable in the configuration file.",
+            "add: Add date + time + xReconnections to the NWWS-OI display name.",
+            "fix: Memory leak with probability parsing (TOR/SVR)",
+            "fix: Mapbox reflectivity going in and out when it's the same unixtime for the data",
+            "update: Account page is now at the very bottom of the dashboard hamburger menu",
+            "update: You can now set EAS Alerts via dashboard settings if toggled",
+            "update: Donations prompt now shows with an introduction to the project with configurations",
+            "update: Login background page has been updated to the more modern style",
+            "update: Dashboard + Portal now includes a new color scheme that can be easily changed in variables.css",
+            "update: Updated console commands (See documentation for more information)",
+            "update: Change version to 7.1.2",
+            "update: Enhanced login (portal) user experience",
+            "update: Improve CSS dynamic styling to variables.css",
+            "update: Changed StarflightVR -> Starflight for credits",
+            "update: Improved version checker to ignore versions above current if not released"
+        ],
+        "rewrite": true
+    },
+    "7.1.186": {
+        "version": "7.1.186",
+        "updated": "Saturday, June 28th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.2+",
+        "changelogs": [
+            "add: static_apis.",
+            "add: open_street_map_coordinates.",
+            "fix: memory leak from rawProbabilityReports.",
+            "remove: prior location services."
+        ],
+        "rewrite": true
+    },
+    "7.1.185": {
+        "version": "7.1.185",
+        "updated": "Friday, June 27th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "update: Improve raw description"
+        ],
+        "rewrite": false
+    },
+    "7.1.184": {
+        "version": "7.1.184",
+        "updated": "Wednesday, June 18th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: VTEC raw parsing now includes vtec header.",
+            "fix: Improved nwws msg description for watches / advisories.",
+            "fix: Configurations now show for Default Users."
+        ],
+        "rewrite": false
+    },
+    "7.1.183": {
+        "version": "7.1.183",
+        "updated": "Thursday, June 12th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: EAS Alert Framework - Dashboard Toggle.",
+            "add: Text to speech within dashboard.",
+            "add: UnidenWx Alert Sound (Modified).",
+            "update: NWWS Descriptions are now formal."
+        ],
+        "rewrite": true
+    },
+    "7.1.182": {
+        "version": "7.1.182",
+        "updated": "Tuesday, June 10th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: (NWWS) Special Weather Statements.",
+            "fix: Fixed alerts that had no tracking id.",
+            "fix: cancelSignatures now includes: 'subsided sufficiently for the advisory to be cancelled.'",
+            "fix: Improve raw text parsing",
+            "update: Add simple radar data to mapbox map"
+        ],
+        "rewrite": false
+    },
+    "7.1.181": {
+        "version": "7.1.181",
+        "updated": "Tuesday, June 10th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: Ability to change 'Awaiting Alert...' in the configurations.",
+            "update: Dashboard configuration icon changed to a clipboard icon instead of a cog.",
+            "update: Webhook settings now use a proper limiter"
+        ],
+        "rewrite": true
+    },
+    "7.1.18": {
+        "version": "7.1.18",
+        "updated": "Monday, June 9th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: Configurations manager via dashboard (Permission based and JSON Validation)",
+            "add: editor.js asset and editor.css",
+            "update: Definitions are now within bootstrap.js",
+            "update: Configurations are now properly JSON formatted.",
+            "update: Renamed Tag Definitions -> Tags in configurations.",
+            "update: Renamed Overlay Settings -> Scheme.",
+            "update: Switched NWWS time log to UTC.",
+            "update: NWWS Connections now displays displayName properly.",
+            "update: OBSTemplate.json",
+            "remove: v1 alert bar (We will miss you)",
+            "remove: v1 alert gifs",
+            "remove: Stream premade overlay (Favoring widgets)"
+        ],
+        "rewrite": true
+    },
+    "7.1.17": {
+        "version": "7.1.17",
+        "updated": "Sunday, June 8th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: Mute settings within dashboard.",
+            "add: Alert playback via dashboard.",
+            "add: Additional FontAwesome icons in the dashboard.",
+            "update: Made sidebar dynamic -> static.js",
+            "update: Adjust icon height for icons.",
+            "update: Mapbox no longer has notifications",
+            "update: Credits to StarflightVR for making me continue this project further."
+        ],
+        "rewrite": false
+    },
+    "7.1.165": {
+        "version": "7.1.165",
+        "updated": "Tuesday, June 3rd",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "add: Account roles", 
+            "add: /set-role",
+            "update: HTML sanitization for websocket data."
+        ],
+        "rewrite": false
+    },
+    "7.1.16": {
+        "version": "7.1.16",
+        "updated": "Friday, May 30th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Update available",
+        "changelogs": [
+            "fix: Expire alerts properly (NWWS) if less than two alerts."
+        ],
+        "rewrite": false
+    },
+    "7.1.159": {
+        "version": "7.1.159",
+        "updated": "Wednesday, May 28th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a><br>A new update.sh file has been made, please replace your current one to fix any updating issues.",
+        "changelogs": [
+            "fix: Dashboard now resizes correctly"
+        ],
+        "rewrite": false
+    },
+    "7.1.158": {
+        "version": "7.1.158",
+        "updated": "Wednesday, May 28th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Fix branch update available - Fix dashboard resizing.",
+        "changelogs": [
+            "add: Online NOAA Weather Radio.",
+            "add: Additional OpenMhZ Service (Third-Party).",
+            "fix: Prevent 'AtmosphericX' as a string in display for NWWS.",
+            "fix: Resize/Zoom Events now work properly in the dashboard.",
+            "update: Hamburger menu is now both supported for mobile and base devices.",
+            "update: Update.sh now does npm install."
+        ],
+        "rewrite": true
+    },
+    "7.1.157": {
+        "version": "7.1.157",
+        "updated": "Tuesday, May 27th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a><br>A new update.sh file has been made, please replace your current one to fix any updating issues.",
+        "changelogs": [
+            "fix: undefined WMOs - local area emergency"
+        ],
+        "rewrite": false
+    },
+    "7.1.156": {
+        "version": "7.1.156",
+        "updated": "Monday, May 26th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Fix branch update available - Fix undefined WMOs",
+        "changelogs": [
+            "update: Removed caching to avoid dashboard issues."
+        ],
+        "rewrite": false
+    },
+    "7.1.155": {
+        "version": "7.1.155",
+        "updated": "Monday, May 26th",
+        "headline": "<span style='color:red'>[CRITICAL]</span> A critical patch has been implemented, please update now!",
+        "changelogs": [
+            "update: Changed how sessions work with fallback sessions.",
+            "add: Configurable duration to Alertsv2.",
+            "remove: Express-Sessions NPM Module.",
+            "fix: Logins shouldn't be rejected even successful."
+        ],
+        "rewrite": true
+    },
+    "7.1.15": {
+        "version": "7.1.15",
+        "updated": "Monday, May 26th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a><br>A new update.sh file has been made, please replace your current one to fix any updating issues.",
+        "changelogs": [
+            "add: GPS widget (Coords - > Valid Location)",
+            "add: TOR/SVR Probabilities thresholds.",
+            "add: HTTP timeout configurations within project_settings.",
+            "add: NWS Alert Console Messages.",
+            "add: Included 'Failed login' documentation within login panel.",
+            "update: Minimized Update Message Spam.",
+            "update: LocationNames -> LocationServices.",
+            "update: CSS Style changes.",
+            "update: Dashboard now includes a discord widget.",
+            "update: Dashboard TOR/SVR probabilities string changed",
+            "update: Changed SMTP function to 'youveGotMail'",
+            "update: OBS Template includes widgets/gps.",
+            "update: SMTP / Webhooks are now located in project_settings in configurations.",
+            "update: AtmosphericX is hardcoded as a string for NWWS Displayname.",
+            "update: Webhook default display name changed to 'Webhook Integration' due to Discord policies.",
+            "fix: LocationServices doesn't replace on accident with invalid location names."
+        ],
+        "rewrite": true
+    },
+    "7.1.14": {
+        "version": "7.1.14",
+        "updated": "Sunday, May 25th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available, this will replace your configurations, but a backup will be made!</a>",
+        "changelogs": [
+            "add: Discord webhook integration",
+            "add: nwws-cache.bin for raw text caching"
+        ],
+        "rewrite": true
+    },
+    "7.1.135": {
+        "version": "7.1.135",
+        "updated": "Saturday, May 24th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available, this will replace your configurations, but a backup will be made!</a>",
+        "changelogs": [
+            "add: Version auto check (30 minutes)",
+            "add: Cache now supports the update variable.",
+            "fix: Updater looks for past missed rewrites if a user skipped a version."
+        ],
+        "rewrite": false
+    },
+    "7.1.13": {
+        "version": "7.1.13",
+        "updated": "Saturday, May 24th",
+        "headline": "<span style='color:red'>[UPDATE]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a><br>A new update.sh file has been made, please replace your current one to fix any updating issues.",
+        "changelogs": [
+            "update: Set strict -> lax for sessions.",
+            "update: Increased 32->64 for sessions.",
+            "fix: isNWS Fallover shouldn't trip an error.",
+            "add: Version now shows in NWWS"
+        ],
+        "rewrite": false
+    },
+    "7.1.12": {
+        "version": "7.1.12",
+        "updated": "Friday, May 23rd",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available, this is a critical fix with isNWS and lax domain policies.</a>",
+        "changelogs": [
+            "add: Global state filers for alerts.",
+            "fix: Updater.sh removing untracked files.",
+            "add: Warning message for shapefile premature closing."
+        ],
+        "rewrite": true
+    },
+    "7.1.11": {
+        "version": "7.1.11",
+        "updated": "Wednesday, May 21st",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available, this will replace your configurations, but a backup will be made!</a>",
+        "changelogs": [
+            "update: Version updater actually updates."
+        ],
+        "rewrite": false
+    },
+    "7.1.1": {
+        "version": "7.1.1",
+        "updated": "Tuesday, May 21st",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available, this is optional but for better updates it's recommended to update.</a>",
+        "changelogs": [
+            "update: NWWS Display now appends time connected.",
+            "update: update.sh now has full update support for auto-updating.",
+            "update: Renamed shell scripts to (update.sh, run.sh, and install.sh)"
+        ],
+        "rewrite": false
+    },
+    "7.1.0": {
+        "version": "7.1.0",
+        "updated": "Monday, May 20th",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available, it's recommended to update!</a>",
+        "changelogs": [
+            "add: Begin construction of auto updating for AtmosphericX.",
+            "add: AtmosX header for updating.",
+            "add: Tornado & Severe Probability Data.",
+            "update: Version Manager."
+        ],
+        "rewrite": false
+    }
+}
+

@@ -202,7 +202,7 @@ class Hooks {
         if (loader.static.lastGpsUpdate  + (locationServices.gps_refresh * 1000) > Date.now() || loader.cache.location?.lat == lat && loader.cache.location?.lon == lon) {
             return { success: false, message: "GPS tracking is currently on cooldown. Please wait before trying again." };
         }
-        loader.static.lastGpsUpdate  = Date.now()
+        loader.static.lastGpsUpdate = Date.now()
         if (typeof loader.cache.location != `object`) { loader.cache.location = {} }
         loader.cache.location.lat = lat;
         loader.cache.location.lon = lon;
@@ -270,16 +270,21 @@ class Hooks {
       */
 
     getRandomAlert = function() {
-        let manualAlerts = [loader.cache.manual] ? [loader.cache.manual] : [];
-        let alerts = Array.isArray(loader.cache.active) ? [...loader.cache.active, ...manualAlerts] : [];
-        alerts = alerts.filter(alert => alert && Object.keys(alert).length > 0);
-        if (alerts.length == 0) {
-            loader.cache.random = null;
-            loader.cache.randomIndex = undefined;
-            return { success: false, message: "No alerts available." };
+        if (!loader.static.lastRandomAlertUpdate) { loader.static.lastRandomAlertUpdate = 0; }
+        if (Date.now() - loader.static.lastRandomAlertUpdate > loader.cache.configurations.project_settings.random_update * 1000) {
+            loader.static.lastRandomAlertUpdate = Date.now()
+            let manualAlerts = loader.cache.manual ? (Array.isArray(loader.cache.manual) ? loader.cache.manual : [loader.cache.manual]) : [];
+            let activeAlerts = Array.isArray(loader.cache.active) ? loader.cache.active : [];
+            let alerts = [...activeAlerts, ...manualAlerts];
+            alerts = alerts.filter(alert => alert && Object.keys(alert).length > 0);
+            if (alerts.length == 0) {
+                loader.cache.random = null;
+                loader.cache.randomIndex = undefined;
+                return { success: false, message: "No alerts available." };
+            }
+            loader.cache.randomIndex = (loader.cache.randomIndex || 0) % alerts.length;
+            loader.cache.random = alerts[loader.cache.randomIndex++];
         }
-        loader.cache.randomIndex = (loader.cache.randomIndex || 0) % alerts.length;
-        loader.cache.random = alerts[loader.cache.randomIndex++];
         return { success: true, message: "Successfully retrieved random alert." };
     }
 
@@ -324,6 +329,7 @@ class Hooks {
         loader.cache.public = {
             warning: "This is a public configuration, preventing access to private information.",
             tone_sounds: loader.cache.configurations.tone_sounds,
+            alerts: loader.cache.configurations.project_settings.priority,
             default_text: loader.cache.configurations.project_settings.default_alert_text,
             scheme: loader.cache.configurations.scheme,
             spc_outlooks: loader.cache.configurations.spc_outlooks,

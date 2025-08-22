@@ -15,13 +15,17 @@
         "http_useragent": "AtmosphericX/v7.1.225",
         "http_timeout": 5,
         "global_update": 10,
+        "random_update": 30,
         "priority_alerts": true,
         "default_alert_text": "No Active Alerts",
         "priority": [
             "Tornado Emergency",
-            "Particularly Dangerous Situation (TOR WARNING)",
-            "Particularly Dangerous Situation (TOR WATCH)",
-            "Extremely Dangerous Situation (SVR WARNING)",
+            "PDS Tornado Warning",
+            "PDS Tornado Watch",
+            "EDS Severe Thunderstorm Warning",
+            "Considerable Severe Thunderstorm Warning (TPROB)",
+            "Destructive Severe Thunderstorm Warning (TPROB)",
+            "Severe Thunderstorm Warning (TPROB)",
             "Considerable Severe Thunderstorm Warning",
             "Destructive Severe Thunderstorm Warning",
             "Confirmed Tornado Warning",
@@ -47,11 +51,14 @@
         "show_updates": true,
         "ignore_restrictions": [
             "Tornado Emergency",
-            "Particularly Dangerous Situation (TOR WARNING)",
-            "Particularly Dangerous Situation (TOR WATCH)",
-            "Extremely Dangerous Situation (SVR WARNING)",
+            "PDS Tornado Warning",
+            "PDS Tornado Watch",
+            "EDS Severe Thunderstorm Warning",
             "Considerable Severe Thunderstorm Warning",
             "Destructive Severe Thunderstorm Warning",
+            "Considerable Severe Thunderstorm Warning (TPROB)",
+            "Destructive Severe Thunderstorm Warning (TPROB)",
+            "Severe Thunderstorm Warning (TPROB)",
             "Confirmed Tornado Warning",
             "Radar Indicated Tornado Warning",
             "Flash Flood Emergency",
@@ -80,6 +87,7 @@
             "noaa_weather_wire_service": {
                 "enabled": false,
                 "cache_time": 1,
+                "use_cache": true,
                 "reconnect_after": 60,
                 "cap_alerts": false,
                 "ugc_polygons": false,
@@ -177,7 +185,7 @@
                 "character_id": "CHARACTER_ID_HERE",
                 "character_voice_id": "VOICE_ID_HERE",
                 "chromium_path": "/usr/bin/chromium-browser",
-                "note": "This feature does not work at the moment. It is currently being worked on and will be back soon."
+                "note": "This feature only works on Windows. Not really recommended for production use but rather for fun."
             }
         }
     },
@@ -197,11 +205,14 @@
             "webhook_cooldown": 1,
             "events": [
                 "Tornado Emergency",
-                "Particularly Dangerous Situation (TOR WARNING)",
-                "Particularly Dangerous Situation (TOR WATCH)",
-                "Extremely Dangerous Situation (SVR WARNING)",
+                "PDS Tornado Warning",
+                "PDS Tornado Watch",
+                "EDS Severe Thunderstorm Warning",
                 "Considerable Severe Thunderstorm Warning",
                 "Destructive Severe Thunderstorm Warning",
+                "Considerable Severe Thunderstorm Warning (TPROB)",
+                "Destructive Severe Thunderstorm Warning (TPROB)",
+                "Severe Thunderstorm Warning (TPROB)",
                 "Confirmed Tornado Warning",
                 "Radar Indicated Tornado Warning",
                 "Flash Flood Emergency",
@@ -488,25 +499,7 @@
         },
         "header": {
             "max_header_length": 99,
-            "rotate_through_alerts": {
-                "enabled": false,
-                "cycled_types": [
-                    "Tornado Emergency",
-                    "Particularly Dangerous Situation (TOR WARNING)",
-                    "Particularly Dangerous Situation (TOR WATCH)",
-                    "Extremely Dangerous Situation (SVR WARNING)",
-                    "Considerable Severe Thunderstorm Warning",
-                    "Destructive Severe Thunderstorm Warning",
-                    "Confirmed Tornado Warning",
-                    "Radar Indicated Tornado Warning",
-                    "Flash Flood Emergency",
-                    "Tsunami Warning",
-                    "Tsunami Watch",
-                    "Tsunami Advisory",
-                    "Hurricane Warning",
-                    "Hurricane Watch"
-                ]
-            }
+            "rotate_through_alerts": false
         },
         "time_date": {
             "standard_time": true,
@@ -555,17 +548,17 @@
         "notice": {
             "alert_types": [
                 "Tornado Emergency",
-                "Particularly Dangerous Situation (TOR WARNING)",
-                "Particularly Dangerous Situation (TOR WATCH)",
-                "Extremely Dangerous Situation (SVR WARNING)",
+                "PDS Tornado Warning",
+                "PDS Tornado Watch",
+                "EDS Severe Thunderstorm Warning",
                 "Considerable Severe Thunderstorm Warning",
                 "Destructive Severe Thunderstorm Warning",
+                "Considerable Severe Thunderstorm Warning (TPROB)",
+                "Destructive Severe Thunderstorm Warning (TPROB)",
+                "Severe Thunderstorm Warning (TPROB)",
                 "Confirmed Tornado Warning",
-                "Radar Indicated Tornado Warning",
                 "Flash Flood Emergency",
                 "Tsunami Warning",
-                "Tsunami Watch",
-                "Tsunami Advisory",
                 "Hurricane Warning",
                 "Hurricane Watch"           
             ]
@@ -595,7 +588,7 @@
             "eas": false,
             "amber": false
         },
-        "Particularly Dangerous Situation (TOR WARNING)": {
+        "PDS Tornado Warning": {
             "new": "/assets/media/audio/tornado_sfx/pds-tornado-issued.mp3",
             "update": "/assets/media/audio/tornado_sfx/pds-tornado-updated.mp3",
             "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
@@ -603,7 +596,7 @@
             "eas": true,
             "amber": false
         },
-        "Particularly Dangerous Situation (TOR WATCH)": {
+        "PDS Tornado Watch": {
             "new": "/assets/media/audio/watch_sfx/watch-tornado-pds.mp3",
             "update": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
             "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
@@ -627,7 +620,7 @@
             "eas": false,
             "amber": false
         },
-        "Extremely Dangerous Situation (SVR WARNING)": {
+        "EDS Severe Thunderstorm Warning": {
             "new": "/assets/media/audio/severe_sfx/severe-eds-issued.mp3",
             "update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
             "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
@@ -641,6 +634,30 @@
             "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
             "siren": false,
             "eas": true,
+            "amber": false
+        },
+        "Destructive Severe Thunderstorm Warning (TPROB)": {
+            "new": "/assets/media/audio/severe_sfx/severe-tor-destructive-issued.mp3",
+            "update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "siren": false,
+            "eas": true,
+            "amber": false
+        },
+        "Considerable Severe Thunderstorm Warning (TPROB)": {
+            "new": "/assets/media/audio/severe_sfx/severe-tor-considerable-issued.mp3",
+            "update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "siren": false,
+            "eas": false,
+            "amber": false
+        },
+        "Severe Thunderstorm Warning (TPROB)": {
+            "new": "/assets/media/audio/severe_sfx/severe-tor-issued.mp3",
+            "update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "cancel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "siren": false,
+            "eas": false,
             "amber": false
         },
         "Considerable Severe Thunderstorm Warning": {
@@ -752,21 +769,49 @@
             }
         },
         {
-            "type": "Particularly Dangerous Situation (TOR WARNING)",
+            "type": "PDS Tornado Warning",
             "color": {
                 "light": "rgb(214,56,54)",
                 "dark": "rgb(163,25,25)"
             }
         },
         {
-            "type": "Particularly Dangerous Situation (TOR WATCH)",
+            "type": "PDS Tornado Watch",
             "color": {
                 "light": "rgb(214,56,54)",
                 "dark": "rgb(163,25,25)"
             }
         },
         {
-            "type": "Extremely Dangerous Situation (SVR WARNING)",
+            "type": "EDS Severe Thunderstorm Warning",
+            "color": {
+                "light": "rgb(214,56,54)",
+                "dark": "rgb(163,25,25)"
+            }
+        },
+        {
+            "type": "Destructive Severe Thunderstorm Warning",
+            "color": {
+                "light": "rgb(214,56,54)",
+                "dark": "rgb(163,25,25)"
+            }
+        },
+        {
+            "type": "Destructive Severe Thunderstorm Warning (TPROB)",
+            "color": {
+                "light": "rgb(214,56,54)",
+                "dark": "rgb(163,25,25)"
+            }
+        },
+        {
+            "type": "Considerable Severe Thunderstorm Warning (TPROB)",
+            "color": {
+                "light": "rgb(214,56,54)",
+                "dark": "rgb(163,25,25)"
+            }
+        },
+        {
+            "type": "Severe Thunderstorm Warning (TPROB)",
             "color": {
                 "light": "rgb(214,56,54)",
                 "dark": "rgb(163,25,25)"

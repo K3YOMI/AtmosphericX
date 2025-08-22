@@ -382,7 +382,10 @@ class Parsing {
     filterAlerts = function(alerts) {
         let { priority_alerts, priority } = loader.cache.configurations.project_settings;
         let { nws_office_filter, nws_office_exclude_filter, ugc_filter, abbreviated_states_filter } = loader.cache.configurations.sources.filter;
-        if (priority_alerts) alerts = alerts.filter(alert => priority.includes(alert.properties.event));
+        if (priority_alerts) {
+            let pSet = new Set((priority || []).map(p => String(p).toLowerCase()));
+            alerts = alerts.filter(alert => pSet.has(String(alert.properties?.event || '').toLowerCase()));
+        }
         alerts.forEach(alert => alert.properties.parameters = alert.properties.parameters || { WMOidentifier: [`No WMO Found`] });
         if (abbreviated_states_filter.length) alerts = alerts.filter(alert =>  alert.properties.geocode.UGC?.some(code => abbreviated_states_filter.includes(code.substring(0, 2))) );
         if (nws_office_exclude_filter.length) alerts = alerts.filter(alert => !nws_office_exclude_filter.includes(alert.properties.parameters.WMOidentifier[0]?.split(' ')[1]));
@@ -398,7 +401,7 @@ class Parsing {
       * @param {object} alerts - The data object to read the alerts from
       */
 
-    readAlerts = function(isWire, alerts) {
+    readAlerts = async function(isWire, alerts) {
         let tAlerts = [];
         let features = alerts.features.filter(feature => feature !== undefined);
         let filteredAlerts = this.coordsToMiles(this.filterAlerts(features));
@@ -433,7 +436,8 @@ class Parsing {
                     '```'
                 ].join('\n');
                 loader.modules.hooks.sendWebhook(alertTitle, alertBody, generalWebhook);
-                if (Array.isArray(criticalWebhook.events) && criticalWebhook.events.includes(registration.details.name)) { loader.modules.hooks.sendWebhook(alertTitle, alertBody, criticalWebhook); }
+                let pSet = new Set((criticalWebhook.events || []).map(p => String(p).toLowerCase()));
+                if (Array.isArray(criticalWebhook.events) && pSet.has(registration.details.name.toLowerCase())) { loader.modules.hooks.sendWebhook(alertTitle, alertBody, criticalWebhook); }
                 if (loader.cache.configurations.sources.miscellaneous_sources.character_ai.auto_alert) {
                     loader.modules.character.commitChat(`${loader.cache.configurations.sources.miscellaneous_sources.character_ai.prefix} ${registration.details.description}`).then(response => {
                         if (response.success) { loader.cache.chatbot = { message: response.message, image: loader.cache.configurations.sources.miscellaneous_sources.character_ai.image }; }

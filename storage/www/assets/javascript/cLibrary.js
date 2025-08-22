@@ -287,6 +287,22 @@ class Library {
         })
     }
 
+    speakText = function(text) {
+        let synth = window.speechSynthesis;
+        let utter = new SpeechSynthesisUtterance(`${text}`);
+        let preferredVoices = [ "Microsoft Aria Online (Natural) - English (United States)", "Google US English", "Google UK English Female", "Google UK English Male" ];
+        let voices = synth.getVoices();
+        utter.lang = `en-US`;
+        utter.volume = 1;
+        utter.rate = 1;
+        utter.pitch = 1;
+        utter.voice = voices.find(voice => preferredVoices.includes(voice.name)) || voices.find(voice => voice.lang.startsWith("en")) || voices[0];  utter.onend = () => {
+            this.storage.isPriorityAlertPlaying = false;
+        };
+        synth.cancel();
+        synth.speak(utter);
+    }
+
     /**
       * @function getTimeInformation
       * @description Retrieves the current time information in a configurable format, considering time zone and standard/24-hour time.

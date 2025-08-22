@@ -88,9 +88,9 @@ const static_dashboard_directs = [
 
 const static_alerts = [
     "Tornado Emergency", 
-    "Particularly Dangerous Situation (TOR WARNING)",
-    "Particularly Dangerous Situation (TOR WATCH)",
-    "Extremely Dangerous Situation (SVR WARNING)",
+    "PDS Tornado Warning",
+    "PDS Tornado Watch",
+    "EDS Severe Thunderstorm Warning",
     "Destructive Severe Thunderstorm Warning",
     "Confirmed Tornado Warning", 
     "Radar Indicated Tornado Warning", 
@@ -102,6 +102,9 @@ const static_alerts = [
     "Flash Flood Warning",
     "Considerable Flash Flood Warning",
     "Considerable Severe Thunderstorm Warning",
+    "Considerable Severe Thunderstorm Warning (TPROB)",
+    "Destructive Severe Thunderstorm Warning (TPROB)",
+    "Severe Thunderstorm Warning (TPROB)",
     "Severe Thunderstorm Warning",
     "Tornado Warning",
     "Snow Squall Warning",
