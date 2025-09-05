@@ -313,9 +313,6 @@ class Hooks {
                     validateStatus: (status) => status == 200 || status == 500
                 });
                 let { data: responseMessage, status: statusCode } = response;
-                if (url.includes(`youtube`)) {
-                    console.log(responseMessage);
-                }
                 if (statusCode == 500) this.createLog(`${this.name}.onStatusCode500`, `Warning: Received status code 500`);
                 if (!responseMessage) {
                     this.createLog(`${this.name}.onResponseMessageFail`, `Error: Response message is undefined`);
@@ -323,7 +320,6 @@ class Hooks {
                 }
                 resolve({ success: true, message: responseMessage });
             } catch (error) {
-                console.log(error.message)
                 this.createLog(`${this.name}.onAxiosError`, `Error: ${error.message}`);
                 resolve({ success: false, message: undefined });
             }
