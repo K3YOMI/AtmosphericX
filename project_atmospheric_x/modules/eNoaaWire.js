@@ -77,7 +77,11 @@ class NOAAWeatherWireService {
                 loader.modules.hooks.createOutput(`${this.name}.Error`, `${err.error}`);
             }
         });
-        loader.static.nwws.onEvent(`onReconnect`, (service) => { loader.static.nwws.setDisplayName(`AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime}) (x${service.reconnects})`) })
+        loader.static.nwws.onEvent(`onReconnect`, (service) => { 
+            now = new Date();
+            displayTime = `${String(now.getUTCMonth() + 1).padStart(2, '0')}/${String(now.getUTCDate()).padStart(2, '0')} ${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
+            loader.static.nwws.setDisplayName(`AtmosphericX (${displayName}) (v${loader.modules.hooks.getCurrentVersion()}) (${displayTime}) (x${service.reconnects})`) 
+        })
     }
 
     /**
