@@ -186,6 +186,16 @@
                 "character_voice_id": "VOICE_ID_HERE",
                 "chromium_path": "/usr/bin/chromium-browser",
                 "note": "This feature only works on Windows. Not really recommended for production use but rather for fun."
+            },
+            "streamer_bot": {
+                "enabled": false,
+                "websocket": {
+                    "address": "127.0.0.1",
+                    "port": 8080,
+                    "authentication": "PASSWORD_HERE",
+                    "use_bot": true
+                },
+                "note": "Make sure to setup Streamer.bot and look at https://docs.streamer.bot/get-started/introduction for more information."
             }
         }
     },

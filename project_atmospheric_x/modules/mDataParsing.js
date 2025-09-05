@@ -417,6 +417,7 @@ class Parsing {
                 let { general_alerts: generalWebhook, critical_alerts: criticalWebhook } = loader.cache.configurations.webhook_settings;
                 let trackingId = registration.raw.tracking ?? (registration.raw.properties.parameters.WMOidentifier?.[0] ?? `No ID found`);
                 loader.modules.hooks.createOutput(`${this.name}.${isWire ? "WIRE" : "API"}`, `[!] Alert ${registration.details.type} >> ${registration.details.name} (${trackingId})` + (registration.details.distance != `N/A` ? ` (${registration.details.distance})` : ``));
+                loader.modules.chatInteractions.emitMessage(`${registration.details.name} has been ${registration.details.type} for areas of ${registration.details.locations}.`);
                 loader.cache.logging.push({ id: alertHash, expires: registration.details.expires });
                 let alertTitle = `${registration.details.name} (${registration.details.type})`;
                 let alertBody = [

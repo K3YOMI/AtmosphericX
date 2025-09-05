@@ -296,12 +296,15 @@ class Hooks {
      * @return {Promise<Object>} - A promise that resolves to an object containing the success status and the response message.
      */
 
-    createHttpRequest = async function(url, timeoutOverride=undefined) {
+    createHttpRequest = async function(url, timeoutOverride=undefined, headersOverride=undefined) {
         return new Promise(async (resolve) => {
             try {
                 let defaultTimeout = loader.cache.configurations.project_settings.http_timeout * 1000;
                 defaultTimeout = timeoutOverride !== undefined ? timeoutOverride : defaultTimeout;
                 let details = { url, maxRedirects: 0, timeout: defaultTimeout * 1000, headers: { 'User-Agent': loader.cache.configurations.project_settings.http_useragent, 'Accept': 'application/geo+json, text/plain, */*; q=0.9', 'Accept-Language': 'en-US,en;q=0.9', }, httpsAgent: new loader.packages.https.Agent({ rejectUnauthorized: false }) };
+                if (headersOverride && typeof headersOverride === 'object') {
+                    details.headers = { ...details.headers, ...headersOverride };
+                } 
                 let response = await loader.packages.axios.get(details.url, {
                     headers: details.headers,
                     maxRedirects: details.maxRedirects,
@@ -310,6 +313,9 @@ class Hooks {
                     validateStatus: (status) => status == 200 || status == 500
                 });
                 let { data: responseMessage, status: statusCode } = response;
+                if (url.includes(`youtube`)) {
+                    console.log(responseMessage);
+                }
                 if (statusCode == 500) this.createLog(`${this.name}.onStatusCode500`, `Warning: Received status code 500`);
                 if (!responseMessage) {
                     this.createLog(`${this.name}.onResponseMessageFail`, `Error: Response message is undefined`);
@@ -317,6 +323,7 @@ class Hooks {
                 }
                 resolve({ success: true, message: responseMessage });
             } catch (error) {
+                console.log(error.message)
                 this.createLog(`${this.name}.onAxiosError`, `Error: ${error.message}`);
                 resolve({ success: false, message: undefined });
             }
@@ -421,7 +428,7 @@ class Hooks {
       */
 
     checkUpdates = async function() {
-        let changelogsUrl = "https://k3yomi.github.io/update/atmosx_header.json";
+        let changelogsUrl = "https://raw.githubusercontent.com/K3YOMI/AtmosphericX/refs/heads/main/changelogs-history.json";
         let versionUrl = "https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version";
         let currentVersion = this.getCurrentVersion();
         let latestVersionResponse = await this.createHttpRequest(versionUrl);

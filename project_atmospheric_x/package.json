@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@msgpack/msgpack": "^3.1.1",
+    "@streamerbot/client": "^1.12.2",
     "@xmpp/client": "^0.7.3",
     "@xmpp/component": "^0.7.1",
     "@xmpp/debug": "^0.7.0",

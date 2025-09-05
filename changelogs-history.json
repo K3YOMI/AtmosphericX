@@ -1,8 +1,21 @@
 {
+    "7.1.4": {
+        "version": "7.1.4",
+        "updated": "Friday, September, 5th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "add: Streamer.bot support for streaming chat alerts and interactions. (eChatInteractions.js)",
+            "add: Implement @streamerbot/client for seamless integration with Streamer.bot.",
+            "update: Auto update important atmosx npm packages with updater.sh",
+            "update: HTPP Calling now has a header override functionality.",
+            "update: Changelogs are now fetched from the Github repository instead of the third party site."
+        ],
+        "rewrite": true
+    },
     "7.1.35": {
         "version": "7.1.35",
         "updated": "Thursday, August, 21st",
-        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.4+",
         "changelogs": [
             "add: Random Alert Update Interval (Default: 30 seconds)",
             "add: TPROB (Tornado Tagged) Severe Thunderstorm Warnings",

@@ -69,6 +69,7 @@ loader.packages.ws = require('ws');
 loader.packages.nodemailer = require('nodemailer');
 loader.packages.firebaseApp = require('firebase/app');
 loader.packages.firebaseDatabase = require('firebase/database');
+loader.packages.streamerBot = require('@streamerbot/client');
 
 loader.modules.hooks = new (require(`./modules/mHooks.js`))()
 loader.modules.character = new (require(`./modules/eCharacterAI.js`))()
@@ -82,5 +83,6 @@ loader.modules.parsing = new (require(`./modules/mDataParsing.js`))()
 loader.modules.commands = new (require(`./modules/mCommands.js`))()
 loader.modules.placefiles = new (require(`./modules/mPlacefiles.js`))()
 loader.modules.rtlirl = new (require(`./modules/eRtIrl.js`))()
+loader.modules.chatInteractions = new (require(`./modules/eChatInteractions.js`))()
 loader.modules.tempest = new (require(`./modules/eTempestStation.js`))()
 loader.modules.wire = new (require(`./modules/eNoaaWire.js`))()

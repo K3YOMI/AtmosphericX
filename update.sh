@@ -7,7 +7,7 @@ FULL_REWRITE="false"
 check_skipped_update() {
     local current_version="$1"
     local latest_version="$2"
-    local url="https://k3yomi.github.io/update/atmosx_header.json"
+    local url="https://raw.githubusercontent.com/K3YOMI/AtmosphericX/refs/heads/main/changelogs-history.json"
     changelog_data=$(curl -s -f "$url")
     skipped_rewrites=()
     found_rewrite="false"
@@ -38,7 +38,7 @@ check_skipped_update() {
 
 fetch_changelogs() {
     local version="$1"
-    local url="https://k3yomi.github.io/update/atmosx_header.json"
+    local url="https://raw.githubusercontent.com/K3YOMI/AtmosphericX/refs/heads/main/changelogs-history.json"
     local new_version="https://raw.githubusercontent.com/k3yomi/AtmosphericX/main/version"
     new_version=$(curl -s -f "$new_version")
 
@@ -97,6 +97,8 @@ commit_update() {
             git reset --hard origin/main
             cd project_atmospheric_x
             npm install .
+            npm install atmosx-nwws-parser
+            npm install atmosx-tempest-pulling
         else
             echo "[INFO] Exiting updater..."
             exit 0
@@ -111,6 +113,8 @@ commit_update() {
         done
         cd project_atmospheric_x
         npm install .
+        npm install atmosx-nwws-parser
+        npm install atmosx-tempest-pulling
     fi
     echo "[INFO] Update complete. Please restart the application to apply changes."
 }
