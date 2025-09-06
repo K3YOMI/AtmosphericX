@@ -8,7 +8,8 @@
             "add: Implement @streamerbot/client for seamless integration with Streamer.bot.",
             "update: Auto update important atmosx npm packages with updater.sh",
             "update: HTPP Calling now has a header override functionality.",
-            "update: Changelogs are now fetched from the Github repository instead of the third party site."
+            "update: Changelogs are now fetched from the Github repository instead of the third party site.",
+            "fix: Usernames are now forced alphanumeric + underscores only."
         ],
         "rewrite": true
     },
