@@ -281,8 +281,10 @@ class Dashboard {
             }
             if (action == 2) { // Register
                 let db = await loader.modules.database.runQuery(`SELECT * FROM accounts WHERE username = ?`, [username]);
+                let allowedChars = /^[a-zA-Z0-9_]+$/;
                 if (db.length) return this.logError(response, `Username already exists`, 401, `Attempted registration with existing username ${username}`);
-                if (username.length < 3 || username.length > 20) return this.logError(response, `Username must be between 3 and 20 characters`, 401, `Attempted registration with invalid username ${username}`);
+                if (!username.match(allowedChars)) return this.logError(response, `Username can only contain alphanumeric characters and underscores`, 401, `Attempted registration with invalid username ${username}`);
+                if ((username.length < 3 || username.length > 20)) return this.logError(response, `Username must be between 3 and 20 characters`, 401, `Attempted registration with invalid username ${username}`);
                 let createdAccount = await loader.modules.database.runQuery(`INSERT INTO accounts (username, hash, activated) VALUES (?, ?, ?)`, [username, hash, 0]);
                 if (!createdAccount) return this.logError(response, `Failed to create account`, 401, `Failed to create account for username ${username}`);
                 this.logSuccess(response, `Account created successfully - please wait for the administrator to activate your account`, 200, `Account created for username ${username}, to activate this account, type /activate <username> <true/false> in the console`);
