@@ -5,7 +5,9 @@
         "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
         "changelogs": [
             "update: New login background (Credits: CJZiegler)",
-            "fix: Moved hamburger listener to <script> tag to ensure proper loading."
+            "update: cancelSignatures now include test message checks and removed unused bootstrap definitions.",
+            "fix: Moved hamburger listener to <script> tag to ensure proper loading.",
+            "fix: Webhook messages not being truncated properly to fit character limits."
         ],
         "rewrite": false
     },

@@ -142,6 +142,10 @@ class Hooks {
         if (loader.static.webhookTimestamps.filter(ts => ts.type == displayName).length >= 3) {
             return { success: false, message: `Rate limit exceeded for ${displayName}.` };
         }
+        if (message.length > 1900) {
+            message = message.substring(0, 1900) + "\n\n[Message truncated due to length]";
+            if (message.split("```").length % 2 == 0) { message += "```"; }
+        }
         let embed = { title, description: message, color: 16711680, timestamp: new Date().toISOString(), footer: { text: displayName } };
         try {
             await loader.packages.axios.post(endpoint, { username: displayName, content: content || "", embeds: [embed] });

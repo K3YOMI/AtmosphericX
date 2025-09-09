@@ -421,7 +421,7 @@ class Parsing {
                 loader.cache.logging.push({ id: alertHash, expires: registration.details.expires });
                 let alertTitle = `${registration.details.name} (${registration.details.type})`;
                 let alertBody = [
-                    `**Locations:** ${registration.details.locations}`,
+                    `**Locations:** ${registration.details.locations.slice(0, 250)} ${(registration.details.locations.length > 250) ? '...' : ''}`,
                     `**Issued:** ${new Date(registration.details.issued).toLocaleString()}`,
                     `**Expires:** ${new Date(registration.details.expires).toLocaleString()}`,
                     `**Wind Gusts:** ${registration.details.wind}`,
