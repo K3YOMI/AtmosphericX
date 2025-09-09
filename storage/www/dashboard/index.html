@@ -27,7 +27,7 @@
                 <p>Project AtmosphericX <small><span id='version'></span></small></p>
             </div>
         </div>
-        <i class="hamburger-menu fa fa-bars" id="hamburger" onclick="dashboard_class.triggerHamburgerListener()"></i>
+        <i class="hamburger-menu fa fa-bars" id="hamburger"></i>
         <div class="interactive-sidebar"  data-state="closed">
             <img src="/assets/media/dashboard/atmosx-logo-vector.webp" alt="Logo" class="sidebar-logo">
             <footer class="sidebar-subtitle">
@@ -236,6 +236,7 @@
             cfg_class = new CfgEditor(library)
             graphics_class = new Graphics(library)
             dashboard_class = new Dashboard(library, true)
+            document.getElementById('hamburger').onclick = function() { dashboard_class.triggerHamburgerListener() };
             document.addEventListener('onCacheUpdate', async (event) => {
                 let storage = alert_class.syncAlerts(true)
                 if (storage.length > 0 && library.storage.sounds == true) { await alert_class.triggerAlertQueue() }

@@ -1,4 +1,14 @@
 {
+     "7.1.41": {
+        "version": "7.1.41",
+        "updated": "Tuesday, September, 9th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "update: New login background (Credits: CJZiegler)",
+            "fix: Moved hamburger listener to <script> tag to ensure proper loading."
+        ],
+        "rewrite": false
+    },
     "7.1.4": {
         "version": "7.1.4",
         "updated": "Friday, September, 5th",
