@@ -35,7 +35,7 @@ class Websockets {
         let socket = loader.static.socket = new loader.packages.ws.Server({ server: loader.static.websocket, path: '/ws' });
         socket.on('connection', client => {
             this.onConnection(client);
-            client.on('message', message => this.onMessage(client, message));
+            client.on('message', message => this.onMessage(client, message.toString()));
             client.on('close', () => this.onClose(client));
         });
         socket.on('close', client => this.onClose(client));
@@ -77,6 +77,7 @@ class Websockets {
 
     onMessage = function(client, message) {
         if (typeof message !== 'string' || !message.startsWith('{') || !message.endsWith('}')) {
+            console.log(message.toString());
             return client.send(JSON.stringify({ messageType: 'onNewMessage', message: '[201 ERR] Message is not JSON' }));
         }
         let data = JSON.parse(message);

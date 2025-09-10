@@ -7,7 +7,8 @@
             "update: New login background (Credits: CJZiegler)",
             "update: cancelSignatures now include test message checks and removed unused bootstrap definitions.",
             "fix: Moved hamburger listener to <script> tag to ensure proper loading.",
-            "fix: Webhook messages not being truncated properly to fit character limits."
+            "fix: Webhook messages not being truncated properly to fit character limits.",
+            "fix: Hotfix - double check string for Websocket messages to prevent non valid JSON."
         ],
         "rewrite": false
     },
