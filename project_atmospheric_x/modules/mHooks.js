@@ -438,7 +438,7 @@ class Hooks {
         let latestVersion = latestVersionResponse.message;
         loader.cache.updates = changelogsResponse.message[currentVersion] || currentVersion;
         loader.cache.latestupdates = changelogsResponse.message[latestVersion] || [];
-        if (latestVersion > currentVersion) {
+        if (latestVersion > currentVersion && loader.cache.latestupdates != undefined) {
             let changelogs = loader.cache.latestupdates.changelogs.join("\n\t ");
             this.createOutput(this.name, `\n\n[NOTICE] New version available: ${latestVersion} (Current version: ${currentVersion})\n\t Update by running update.sh or download the latest version from GitHub.\n\t =================== CHANGE LOGS ======================= \n\t ${changelogs}\n\n`);
         }
