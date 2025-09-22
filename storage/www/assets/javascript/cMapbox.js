@@ -345,6 +345,6 @@ class Mapbox {
         this.displaySpotters()
         this.displayAlerts()
         this.displayLocation()
-        this.displayRadar()
+        //this.displayRadar() // This is ratelimting, yum
     }
 }
