@@ -159,7 +159,7 @@ class Building {
         let defaultAudio = loader.cache.configurations.tone_sounds.beep;
         let onlyDoBeeps = loader.cache.configurations.project_settings.beep_only;
         let filteredEvents = new Set((loader.cache.configurations.project_settings.ignore_restrictions || []).map(p => String(p).toLowerCase()));
-
+   
         let filteredAllowUpdated = loader.cache.configurations.project_settings.show_updates;
         let { hail, wind, tornado, damage } = this.getEventParameters(event);
         let eventTags = this.getEventTag(event);
@@ -171,11 +171,11 @@ class Building {
         event.properties.parameters.tornadoDetection = tornado;
         event.properties.description ??= `No description provided`;
         event.properties.messageType = eventActions.message;
-        if (onlyDoBeeps && !filteredEvents.includes(event.properties.properEventName.toLowerCase())) {
+        if (onlyDoBeeps && !filteredEvents.has(event.properties.properEventName.toLowerCase())) {
             eventActions.audio = defaultAudio;
             onlyBeep = true;
         }
-        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.includes(event.properties.properEventName.toLowerCase())) {
+        if (!filteredAllowUpdated && event.properties.messageType == `Updated` && !filteredEvents.has(event.properties.properEventName.toLowerCase())) {
             ignoreWarning = true;
         }
         if (event.geometry?.coordinates?.[0] && loader.cache.location) {
