@@ -28,7 +28,9 @@
                 let lastText = element.lastText || ``;
                 if (library.storage.random.length == 0) { 
                     if (configKey == `alert`) { element.style.top = "35%"; } 
-                    element.innerHTML = library.storage.configurations.default_text; return 
+                    text = library.storage.configurations.default_text;
+                    element_class.randomAlertUpdate(`dynamic-random-id`, text, max_length, aniamtions[0], aniamtions[1])
+                    return;
                 }
                 if (configKey == `alert`) { 
                     element.style.top = (library.storage.random.details.name.length >= 33) ? "29%" : "35%"; 
