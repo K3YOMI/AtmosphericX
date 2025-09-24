@@ -86,7 +86,7 @@ fetch_changelogs() {
 
 run_installer() {
     cd project_atmospheric_x
-    npm run clean
+    rm -rf node_modules package-lock.json
     npm install . --silent
     npm install atmosx-nwws-parser@latest --silent
     npm install atmosx-tempest-pulling@latest --silent
