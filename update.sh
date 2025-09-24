@@ -19,7 +19,6 @@ check_skipped_update() {
             rewrite_flag=$(echo "$changelog_data" | awk -v ver="\"$version\"" '
                 $0 ~ ver {found=1} 
                 found && /"rewrite":/ {print $2; exit}' | tr -d ',')
-            echo "Checking version: $version for rewrite flag: $rewrite_flag"
             if [[ "$rewrite_flag" == "true" ]]; then
                 skipped_rewrites+=("$version")
                 found_rewrite="true"
