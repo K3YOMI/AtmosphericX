@@ -66,7 +66,7 @@ class NOAAWeatherWireService {
             loader.cache.wire ??= [];
             if (loader.cache.wire.length >= 20) loader.cache.wire.shift();
             loader.cache.wire.push({ message: stanza.message, issued: new Date().toISOString() });
-            loader.modules.hooks.sendWebhook(`New Stanza Type: ${stanza.id.toUpperCase()}`, `\`\`\`${stanza.message.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\`\`\``, loader.cache.configurations.webhook_settings.misc_alerts);
+            loader.modules.hooks.sendWebhook(`New Stanza Type: ${stanza.getAwipsType.toUpperCase()}`, `\`\`\`${stanza.message.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n')}\`\`\``, loader.cache.configurations.webhook_settings.misc_alerts);
         });
         loader.static.nwws.onEvent(`onOccupant`, (occupant) => { if (!loader.cache.occupants) loader.cache.occupants = []; if (occupant.occupant.includes(`AtmosphericX`)) { if (occupant.type == `unavailable`) {  loader.cache.occupants = loader.cache.occupants.filter(o => o.nickname !== occupant.occupant); } else {  let alreadyPresent = loader.cache.occupants.some(o => o.nickname == occupant.occupant); if (!alreadyPresent) { loader.cache.occupants.push({ nickname: occupant.occupant }); } } }});
         loader.static.nwws.onEvent(`onError`, (err) => { 
