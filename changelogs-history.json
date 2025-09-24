@@ -1,8 +1,17 @@
 {
-     "7.1.41": {
+    "7.1.415": {
+        "version": "7.1.415",
+        "updated": "Wednesday, September, 24th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "update: NWWS Parser (Now Typescript)"
+        ],
+        "rewrite": false
+    },
+    "7.1.41": {
         "version": "7.1.41",
         "updated": "Tuesday, September, 9th",
-        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.4+",
         "changelogs": [
             "update: New login background (Credits: CJZiegler)",
             "update: cancelSignatures now include test message checks and removed unused bootstrap definitions.",
@@ -15,7 +24,7 @@
     "7.1.4": {
         "version": "7.1.4",
         "updated": "Friday, September, 5th",
-        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.45+",
         "changelogs": [
             "add: Streamer.bot support for streaming chat alerts and interactions. (eChatInteractions.js)",
             "add: Implement @streamerbot/client for seamless integration with Streamer.bot.",
