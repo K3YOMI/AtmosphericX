@@ -83,6 +83,15 @@ fetch_changelogs() {
     echo =============================== END OF LOG ==============================
 }
 
+
+run_installer() {
+    cd project_atmospheric_x
+    npm run clean
+    npm install . --silent
+    npm install atmosx-nwws-parser@latest --silent
+    npm install atmosx-tempest-pulling@latest --silent
+}
+
 commit_update() {
     if [ "$FULL_REWRITE" = "true" ]; then
         echo "[INFO] A backup of your configurations will be created in configurations.bak"
@@ -95,10 +104,7 @@ commit_update() {
             echo "[INFO] Configuration file backed up in configurations.bak"
             git fetch --all
             git reset --hard origin/main
-            cd project_atmospheric_x
-            npm install . --silent
-            npm install atmosx-nwws-parser@latest --silent
-            npm install atmosx-tempest-pulling@latest --silent
+            run_installer
         else
             echo "[INFO] Exiting updater..."
             exit 0
@@ -111,10 +117,7 @@ commit_update() {
             echo "Updating $file..."
             git checkout origin/main -- "$file"
         done
-        cd project_atmospheric_x
-        npm install . --silent
-        npm install atmosx-nwws-parser@latest --silent
-        npm install atmosx-tempest-pulling@latest --silent
+        run_installer
     fi
     echo "[INFO] Update complete. Please restart the application to apply changes."
 }
