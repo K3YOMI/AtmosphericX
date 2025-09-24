@@ -1,9 +1,9 @@
 cd project_atmospheric_x
 rm -rf node_modules package-lock.json
-npm install . --silent
-npm install atmosx-nwws-parser@latest --silent
-npm install atmosx-tempest-pulling@latest --silent
-
+npm install . --silent --no-save
+npm install atmosx-nwws-parser@latest --silent --no-save
+npm install atmosx-tempest-pulling@latest --silent--no-save
+ 
 echo "AtmosphericX dependencies installed successfully. You can now run the project using 'node index.js'."
 echo
 echo
