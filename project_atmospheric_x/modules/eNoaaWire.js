@@ -37,7 +37,7 @@ class NOAAWeatherWireService {
         if (!wireCfg.enabled) return;
         let now = new Date();
         let displayTime = `${String(now.getUTCMonth() + 1).padStart(2, '0')}/${String(now.getUTCDate()).padStart(2, '0')} ${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}`;
-        loader.static.nwws = new loader.packages.nwws.Parser({
+        loader.static.nwws = new loader.packages.nwws({
             alertSettings: { 
                 onlyCap: wireCfg.cap_alerts,
                 ugcPolygons: wireCfg.ugc_polygons,
