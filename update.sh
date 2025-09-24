@@ -96,9 +96,9 @@ commit_update() {
             git fetch --all
             git reset --hard origin/main
             cd project_atmospheric_x
-            npm install .
-            npm install atmosx-nwws-parser@latest
-            npm install atmosx-tempest-pulling@latest
+            npm install . --silent
+            npm install atmosx-nwws-parser@latest --silent
+            npm install atmosx-tempest-pulling@latest --silent
         else
             echo "[INFO] Exiting updater..."
             exit 0
@@ -112,9 +112,9 @@ commit_update() {
             git checkout origin/main -- "$file"
         done
         cd project_atmospheric_x
-        npm install .
-        npm install atmosx-nwws-parser@latest
-        npm install atmosx-tempest-pulling@latest
+        npm install . --silent
+        npm install atmosx-nwws-parser@latest --silent
+        npm install atmosx-tempest-pulling@latest --silent
     fi
     echo "[INFO] Update complete. Please restart the application to apply changes."
 }
