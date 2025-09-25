@@ -139,11 +139,6 @@
                 "cache_time": 1799,
                 "endpoint": "https://mesonet.agron.iastate.edu/geojson/lsr.geojson?"
             },
-            "mping_reports": {
-                "enabled": false,
-                "cache_time": 119,
-                "endpoint": "https://placefilenation.com/Placefiles/mping_60min.php"
-            },
             "spotter_network_reports": {
                 "enabled": true,
                 "cache_time": 119,
@@ -157,7 +152,7 @@
             "spc_mesoscale_discussions": {
                 "enabled": true,
                 "cache_time": 119,
-                "endpoint": "https://placefilenation.com/Placefiles/mcd.php"
+                "endpoint": "https://data2.weatherwise.app/mesoscale-discussions/USA.geojson"
             },
             "tornado_probability": {
                 "enabled": true,

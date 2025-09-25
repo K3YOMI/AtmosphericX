@@ -23,6 +23,129 @@ class Placefiles {
         loader.modules.hooks.createLog(this.name, `Successfully initialized ${this.name} module`);
     }
 
+    
+    parsing = function(body = ``, type = undefined) {
+        let imports = [];
+        switch (type) {
+            case 'tornado_probability':
+                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                    for (let data of parsed) {
+                        let probability = data.line.text.match(/ProbTor: (\d+)%/) ? data.line.text.match(/ProbTor: (\d+)%/)[1] : '0';
+                        if (loader.cache.configurations.sources.miscellaneous_sources.tornado_probability.threshold > parseInt(probability)) continue;
+                        imports.push({
+                            type: 'tornado',
+                            probability: probability,
+                            shear: parseFloat(data.line.text.match(/Max LLAzShear: ([\d.]+)/) ? data.line.text.match(/Max LLAzShear: ([\d.]+)/)[1] : '0'),
+                            description: data.line.text.replace(/\\n/g, '<br>')
+                        });
+                    }
+                });
+            break;
+            case 'severe_probability':
+                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                    for (let data of parsed) {
+                        let probability = data.line.text.match(/PSv3: (\d+)%/) ? data.line.text.match(/PSv3: (\d+)%/)[1] : '0';
+                        if (loader.cache.configurations.sources.miscellaneous_sources.severe_probability.threshold > parseInt(probability)) continue;
+                        imports.push({
+                            type: 'severe',
+                            probability: probability,
+                            shear: parseFloat(data.line.text.match(/Max LLAzShear: ([\d.]+)/) ? data.line.text.match(/Max LLAzShear: ([\d.]+)/)[1] : '0'),
+                            description: data.line.text.replace(/\\n/g, '<br>')
+                        });
+                    }
+                });
+            break;
+            case 'nwr_stations': 
+                for (let data of body.sources) {
+                    imports.push({
+                        location: data.location || `N/A`,
+                        lat: data.lat || `N/A`,
+                        lon: data.lon || `N/A`,
+                        callsign: data.callsign || `N/A`,
+                        frequency: data.freq || `N/A`,
+                        stream: data.listen_url || `No stream available`
+                    })
+                }
+            break;
+            case 'mesoscale_discussions':
+                loader.packages.placefile.parseGeoJSON(body).then(parsed => {
+                    for (let data of parsed) {
+                        imports.push({
+                            id: data.properties.number,
+                            description: `${data.properties.text.replace(/\\n/g, '<br>')}<br><br><b>Areas Affected:</b> ${data.properties.tags.AREAS_AFFECTED.join(', ') || 'N/A'}<br><b>Concerns:</b> ${data.properties.tags.CONCERNING.join(', ') || 'N/A'}<br><b>Population Affected:</b> ${data.properties.population.people.toLocaleString()} people in ${data.properties.population.homes.toLocaleString()} homes.`,
+                        })
+                    }
+                })
+            break
+            case 'spotter_network_members': 
+                let { spotter_network, rtlirl } = loader.cache.configurations.sources.miscellaneous_sources.location_services;
+                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                    for (let data of parsed) {
+                        let isActive = (data.icon.scale == 6 && data.icon.type == '2') && spotter_network.show_active;
+                        let isStreaming = (data.icon.scale == 1 && data.icon.type == '19') && spotter_network.show_streaming;
+                        let isIdle = (data.icon.scale == 6 && data.icon.type == '6') && spotter_network.show_idle;
+                        let distance = 99999;
+                        if (!isActive && !isStreaming && (!isIdle || !spotter_network.show_offline)) continue;
+                        if (loader.cache.location) { distance = loader.modules.hooks.getMilesAway(x[0], y[0], loader.cache.location.lat, loader.cache.location.lon) }
+                        if (!rtlirl.enabled && spotter_network.tracking_name && data.icon.label.toLowerCase().includes(spotter_network.tracking_name.toLowerCase())) {
+                            loader.modules.hooks.gpsTracking(data.object.coordinates[0], data.object.coordinates[1], `SpotterNetwork`);
+                        }
+                        imports.push({ lat: data.object.coordinates[0], lon: data.object.coordinates[1], description: data.icon.label, active: isActive, streaming: isStreaming, idle: isIdle, distance });
+                    }
+                })
+            break;
+            case 'spotter_network_reports':
+                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                    for (let data of parsed) {
+                        imports.push({ 
+                            latitude: parseFloat(data.icon.x),
+                            longitude: parseFloat(data.icon.y),
+                            event: data.icon.label.split('\\n')[1]?.trim() || 'N/A',
+                            reporter: data.icon.label.split('\\n')[0]?.replace('Reported By:', '').trim() || 'N/A',
+                            size: data.icon.label.split('\\n')[2]?.replace('Size:', '').trim() || 'N/A',
+                            notes: data.icon.label.split('\\n')[3]?.replace('Notes:', '').trim() || 'N/A',
+                            sender: "Spotter Network",
+                            description: data.icon.label.replace(/\\n/g, '<br>').trim() || 'N/A'
+                        });
+                    }
+                });
+                break;
+            case 'gr_level_x':
+                loader.packages.placefile.parseTable(body).then(parsed => {
+                    for (let data of parsed) {
+                        imports.push({
+                            latitude: parseFloat(data.lat),
+                            longitude: parseFloat(data.lon),
+                            location: `${data.city}, ${data.county}, ${data.state}`,
+                            event: data.event,
+                            sender: data.source,
+                            description: `${data.event} reported at ${data.city}, ${data.county}, ${data.state}. ${data.comment || 'No additional details.'}`,
+                            magnitude: data.mag,
+                            office: data.office,
+                            date: data.date,
+                            time: data.time
+                        });
+                    }
+                });
+            break;
+            case 'iem':
+                for (let data of body) {
+                    imports.push({
+                        location: `${data.county}, ${data.state}`,
+                        event: data.typetext,
+                        sender: 'Iowa Environmental Mesonet (API)',
+                        description: `${data.remark} - ${data.city} | ${data.magf} ${data.unit}`,
+                        latitude: parseFloat(data.lat),
+                        longitude: parseFloat(data.lon),
+                    });
+                }
+                break;
+            default: return { success: false, message: []}
+        }
+        return { success: true, message: imports }
+    }
+
+
     /**      
       * @function createPlacefilePolygon
       * @description Creates a placefile in a polygon
@@ -35,27 +158,9 @@ class Placefiles {
       */
 
     createPlacefilePolygon = function(placefileRefresh = 10, placefileThreshold = 999, placefileTitle = `Default Placefile Title`, data = [], cachePointer = `template`) {
-        let placefileText = `Refresh: ${placefileRefresh}\nThreshold: ${placefileThreshold}\nTitle: ${placefileTitle}\n`;
-        for (let item of data) {
-            let { title = `No title provided`, description = `No description provided`, polygon = [], rgb = `255,255,255,255` } = item || {};
-            rgb = rgb.replace(/,/g, ' ');
-            let hasCoords = Array.isArray(polygon) && polygon.some(ring => 
-                Array.isArray(ring) && ring.some(pt => Array.isArray(pt) && pt.length == 2 && typeof pt[0] == 'number' && typeof pt[1] == 'number')
-            );
-            if (!hasCoords) continue;
-            placefileText += `\nColor: ${rgb}\n\nLine: 3,0, ${description}\n`;
-            let points = [];
-            for (let ring of polygon) {
-                for (let pt of ring) {
-                    if (Array.isArray(pt) && pt.length == 2) {
-                        placefileText += `${pt[1]},${pt[0]}\n`;
-                        points.push(pt);
-                    }
-                }
-            }
-            placefileText += `End:\n`;
-        }
-        loader.cache.placefiles[cachePointer] = placefileText;
+        loader.packages.placefile.createPlacefile(placefileRefresh, placefileThreshold, placefileTitle, ``, data, `polygon`).then((placefileText) => {
+            loader.cache.placefiles[cachePointer] = placefileText;
+        });
     }
 
     /**      
@@ -70,27 +175,15 @@ class Placefiles {
       */
 
     createPlacefilePoint = function(placefileRefresh = 10, placefileThreshold = 999, placefileTitle = `Default Placefile Title`, data = [], cachePointer = `template`) {
-        let placefileText = [
-            `Refresh: ${placefileRefresh}`,
-            `Threshold: ${placefileThreshold}`,
-            `Title: ${placefileTitle}`,
+         let placefileText = [
             `Font: 1, 11, 0, "Courier New"`,
             `IconFile: 1, 30, 30, 15, 15, "https://www.spotternetwork.org/iconsheets/Spotternet_096.png"`,
             `IconFile: 2, 21, 35, 10, 17, "https://www.spotternetwork.org/iconsheets/Arrows_096.png"`,
             `IconFile: 6, 30, 30, 15, 15, "https://www.spotternetwork.org/iconsheets/Spotternet_New_096.png"`
         ].join('\n');
-        for (let i = 0; i < data.length; i++) {
-            let { description = `No description provided`, point = [], icon = '0,0,000,1,19', text = '0, 15, 1', title = '' } = data[i] || {};
-            if (Array.isArray(point) && point.length == 2 && typeof point[0] == 'number' && typeof point[1] == 'number')  {
-                placefileText += [
-                    `\nObject: ${point[1]},${point[0]}`,
-                    `Icon: ${icon},"${description.replace(/\n/g, '\\n')}"`,
-                    `Text: ${text}, "${title.split('\n')[0]}"`,
-                    `End:\n`
-                ].join('\n');
-            }
-        }
-        loader.cache.placefiles[cachePointer] = placefileText;
+        loader.packages.placefile.createPlacefile(placefileRefresh, placefileThreshold, placefileTitle, placefileText, data, `point`).then((placefileText) => {
+            loader.cache.placefiles[cachePointer] = placefileText;
+        });
     }
 }
 

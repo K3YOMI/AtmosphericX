@@ -89,6 +89,7 @@ run_installer() {
     npm install . --silent --no-save
     npm install atmosx-nwws-parser@latest --silent --no-save
     npm install atmosx-tempest-pulling@latest --silent --no-save
+    npm install atmosx-placefile-parser@latest --silent --no-save
 }
 
 commit_update() {

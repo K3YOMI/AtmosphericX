@@ -39,16 +39,6 @@ class Dashboard {
                 let url = request.url, params = new URLSearchParams(url.split('?')[1]);
                 let lon = parseFloat(params.get('lon'))
                 let lat = parseFloat(params.get('lat'))
-                if (url.includes('cape')) {
-                    if (!lat || !lon) { this.giveResponse(request, response, { statusCode: 200, message: `No latitude or longitude provided` }, true); return; }
-                    await loader.modules.parsing.rawCape(lat, lon);
-                    pointer = loader.cache.placefiles.cape;
-                }
-                if (url.includes('mesonet')) {
-                    if (!lat || !lon) { this.giveResponse(request, response, { statusCode: 200, message: `No latitude or longitude provided`}, true); return; }
-                    await loader.modules.parsing.rawMesonet(lat, lon);
-                    pointer = loader.cache.placefiles.mesonet;
-                }
             }
             this.giveResponse(request, response, { statusCode: 200, message: pointer }, true);
         } catch (error) {

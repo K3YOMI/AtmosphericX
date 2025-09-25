@@ -1,8 +1,21 @@
 {
+    "7.1.42": {
+        "version": "7.1.42",
+        "updated": "Thursday, September, 25th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "add: Atmosx-placefile-parser",
+            "refactor: mDataParsing -> mPlacefiles",
+            "remove: mPing Alerts (DEPRECATED)",
+            "remove: Cape and Tempest Placefiles (Revamping Soon)",
+            "update: Changed Mesoscale Discussions API -> WeatherWise"
+        ],
+        "rewrite": true
+    },
     "7.1.415": {
         "version": "7.1.415",
         "updated": "Wednesday, September, 24th",
-        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.42+",
         "changelogs": [
             "update: NWWS Parser (Now Typescript)",
             "update: Tenpest Weatehr Pulling (Now Typescript)",

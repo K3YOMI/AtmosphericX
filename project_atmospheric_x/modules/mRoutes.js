@@ -65,8 +65,6 @@ class Routes {
         // Placefiles
         loader.static.express.get(`/placefiles/alerts`, (req, res) => loader.modules.dashboard.sendCacheData(req, res, loader.cache.placefiles.alerts));
         loader.static.express.get(`/placefiles/gps`, (req, res) => loader.modules.dashboard.sendCacheData(req, res, loader.cache.placefiles.gps));
-        loader.static.express.get(`/placefiles/cape`, (req, res) => loader.modules.dashboard.sendCacheData(req, res, loader.cache.placefiles.cape, true));
-        loader.static.express.get(`/placefiles/mesonet`, (req, res) => loader.modules.dashboard.sendCacheData(req, res, loader.cache.placefiles.mesonet, true));
 
         // API Endpoints
         loader.static.express.post(`/api/login`, (req, res) => loader.modules.dashboard.processCredentials(req, res, 0));

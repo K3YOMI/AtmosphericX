@@ -6,6 +6,7 @@
     "@xmpp/component": "^0.7.1",
     "@xmpp/debug": "^0.7.0",
     "atmosx-nwws-parser": "latest",
+    "atmosx-placefile-parser": "latest",
     "atmosx-tempest-pulling": "latest",
     "axios": "^1.8.2",
     "better-sqlite3": "^11.10.0",

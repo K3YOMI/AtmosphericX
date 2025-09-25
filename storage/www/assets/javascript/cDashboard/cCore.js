@@ -423,17 +423,20 @@ class Dashboard {
         reports.sort((a, b) => new Date(b.issued) - new Date(a.issued))
         for (let i = 0; i < reports.length; i++) {
             if (reports[i] == undefined) { continue }
-            let details = reports[i].description
-            let locations = reports[i].location
-            let event = reports[i].event 
-            let sender = reports[i].sender
-            if (event.includes(searchTerm) == false && details.includes(searchTerm) == false && locations.includes(searchTerm) == false) { continue }
+            let values = Object.entries(reports[i]).map(([key, value]) => `${key}: ${value}`).map(value => {
+                if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+                    return `<a href="${value}" target="_blank">${value}</a>`;
+                }
+                return value;
+            }).join('<br>');
+                 
+            if (JSON.stringify(reports[i]).toLowerCase().includes(searchTerm.toLowerCase()) == false) { continue }
             this.injectCardData({ 
-                title: `${event}`, 
-                content: `Location: ${locations}<br>Details: ${details}<br>Sender: ${sender}`, 
+                title: `LSR: #${i + 1}`,
+                content: values,
                 parent: domDirectory,
                 onclick: () => {
-                    this.injectNotification({ title: `${event}`, description: `Location: ${locations}<br>Details: ${details}<br>Sender: ${sender}`, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(`Location: ${locations}\nIssued: ${issued}\nExpires: ${expires}\nDetails: ${details}\nSender: ${sender}`); } }] });
+                    this.injectNotification({ title: `LSR: #${i + 1}`, description: values, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(values.replace(/<br>/g, `\n`)); } }]});
                 } 
             });
         }
@@ -456,9 +459,10 @@ class Dashboard {
             return
         }
         for (let i = 0; i < mesoscale.length; i++) {
-            let discussion = mesoscale[i]
+            let discussion = Object.values(mesoscale[i]).join('<br>').replace(/\\n/g, '<br>')
+            discussion = discussion.replace(/id: \d+<br>/, '')
             this.injectCardData({
-                title: `Mesoscale Discussion #${i + 1}`,
+                title: `Mesoscale Discussion #${mesoscale[i].id}`,
                 content: discussion,
                 parent: domDirectory,
                 onclick: () => {
@@ -656,8 +660,8 @@ class Dashboard {
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
             this.injectCardData({
-                title: `Percentage: ${stats[i].probability}% (${stats[i].id})`,
-                content: stats[i].description.replace(/\\n/g, '\n').replace(/\n/g, '<br>').replace(/"/g, "").replace(/'/g, "").substring(0, 500),
+                title: `Percentage: ${stats[i].probability}%`,
+                content: Object.values(stats[i]),
                 parent: domDirectory
             });    
         }
@@ -681,11 +685,11 @@ class Dashboard {
         }
         stats.sort((a, b) => b.probability - a.probability);
         for (let i = 0; i < stats.length; i++) {
-            this.injectCardData({
-                title: `Percentage: ${stats[i].probability}% (${stats[i].id})`,
-                content: stats[i].description.replace(/\\n/g, '\n').replace(/\n/g, '<br>').replace(/"/g, "").replace(/'/g, "").substring(0, 500),
+           this.injectCardData({
+                title: `Percentage: ${stats[i].probability}%`,
+                content: Object.values(stats[i]),
                 parent: domDirectory
-            });    
+            });  
         }
     }
     
