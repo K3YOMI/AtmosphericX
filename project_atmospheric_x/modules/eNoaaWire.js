@@ -100,13 +100,13 @@ class NOAAWeatherWireService {
             if (newArray.includes(action) && find == -1) loader.cache.twire.features.push(data);
             if (updatedArray.includes(action)) {
                 if (find !== -1) {
-                    let newHistory = loader.cache.twire.features[find].history.concat(data.history).sort((a, b) => new Date(b.time) - new Date(a.time));
+                    let newHistory = loader.cache.twire.features[find].history.concat(data.history).sort((a, b) => new Date(b.issued) - new Date(a.issued));
                     let newLocations = loader.cache.twire.features[find].properties.areaDesc;
                     loader.cache.twire.features[find] = data;
                     loader.cache.twire.features[find].history = newHistory;
                     for (let i = 0; i < newHistory.length; i++) {
                         for (let j = 0; j < newHistory.length; j++) {
-                            let vTimeDiff = Math.abs(new Date(newHistory[i].time).getTime() - new Date(newHistory[j].time).getTime());
+                            let vTimeDiff = Math.abs(new Date(newHistory[i].issued).getTime() - new Date(newHistory[j].issued).getTime());
                             if (vTimeDiff < 1000) {
                                 let combinedLocations = newLocations + `; ` + loader.cache.twire.features[find].properties.areaDesc;
                                 let uniqueLocations = [...new Set(combinedLocations.split(';').map(location => location.trim()))];
