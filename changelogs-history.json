@@ -4,7 +4,9 @@
         "updated": "Wednesday, September, 24th",
         "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
         "changelogs": [
-            "update: NWWS Parser (Now Typescript)"
+            "update: NWWS Parser (Now Typescript)",
+            "update: Tenpest Weatehr Pulling (Now Typescript)",
+            "fix: Minor fixes to tempest pulling module."
         ],
         "rewrite": false
     },

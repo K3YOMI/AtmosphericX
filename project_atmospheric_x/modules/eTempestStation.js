@@ -66,7 +66,7 @@ class TempestService {
             enableForecasts: mesonetServices.tempest_weather_station.forecasts,
         });
         loader.static.tempest.onEvent(`onObservation`, (data) => { loader.cache.tmesonet.observations = data; loader.modules.hooks.onMesonetUpdate() });
-        loader.static.tempest.onEvent(`onWind`, (data) => { loader.cache.tmesonet.wind = data; });
+        loader.static.tempest.onEvent(`onRapidWind`, (data) => { loader.cache.tmesonet.wind = data; });
         loader.static.tempest.onEvent(`onForecast`, (data) => { loader.cache.tmesonet.forecast = data; loader.modules.hooks.onMesonetUpdate()  });
         loader.static.tempest.onEvent(`onLightning`, (data) => { loader.cache.tmesonet.lightning = data; });
         loader.static.tempest.onEvent(`onError`, (data) => {});
