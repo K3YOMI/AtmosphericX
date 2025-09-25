@@ -30,9 +30,6 @@ class Commands {
 			{ command: `/delete-account`, description: `Deletes an account`, function: `sendDeleteAccountSignal`, usage: `<username>` },
 			{ command: `/force-update`, description: `Force update all clients`, function: `sendForceSignal` },
 			{ command: `/clients`, description: `Get all clients`, function: `sendClientsSignal` },
-			{ command: `/debug-xml`, description: `Debug XML alerts`, function: `sendDebugXmlSignal` },
-			{ command: `/debug-raw`, description: `Debug raw alerts`, function: `sendDebugRawSignal` },
-			{ command: `/debug-ugc`, description: `Debug ugc codes`, function: `sendDebugUgcSignal` },
 			{ command: `/clear`, description: `Clear console`, function: `sendClearSignal` },
 			{ command: `/memory-dump`, description: `Create a memory dump`, function: `sendMemoryDumpSignal` },
 			{ command: `/hammer-time`, description: `Stress testing`, function: `sendHammerSignal` },
@@ -101,22 +98,7 @@ class Commands {
 				let dbCall = await loader.modules.database.runQuery(`SELECT * FROM accounts`);
 				if (dbCall.length) console.table(dbCall.map((row, idx) => ({ '#': idx + 1, Username: row.username, Activated: row.activated ? 'Yes' : 'No', Role: row.role == 0 ? 'Default User' : 'Administrator', Created: row.created_at })));
 				break;
-			}
-			case '/debug-xml': loader.modules.wire.createDebugAlert(`XML`); break;
-			case '/debug-raw': loader.modules.wire.createDebugAlert(`RAW`); break;
-			case '/debug-ugc': {
-				try {
-					let start = Date.now(), ugc = args[0];
-					if (ugc) {
-						let zones = loader.static.nwws.packages.mUGC.getZones(ugc), locations = await loader.static.nwws.packages.mUGC.getLocations(zones);
-						loader.modules.hooks.createOutput(this.name, `Translated Locations: ${locations} (${locations.length}) (${Date.now() - start}ms)`);
-					}
-					break;
-				} catch (error) {
-					loader.modules.hooks.createOutput(this.name, `Error in UGC debug: Did you enable NWWS?`);
-					break;
-				}
-			}
+			}k;
 			case '/clear': loader.modules.hooks.displayLogo(); break;
 			case '/memory-dump': require('v8').writeHeapSnapshot(); loader.modules.hooks.createOutput(this.name, `Memory dump created`); loader.modules.hooks.createLog(this.name, `Memory dump created`); break;
 			case '/hammer-time': for (let i = 0; i < 25; i++) loader.modules.wire.createDebugAlert(`RAW`); break;

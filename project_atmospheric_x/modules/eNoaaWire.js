@@ -59,7 +59,7 @@ class NOAAWeatherWireService {
             database: `../storage/shapefiles.db`
         });
         loader.static.nwws.onEvent(`onConnection`, (displayName) => { loader.modules.hooks.createOutput(`${this.name}.Connection`, `Connected as ${displayName}`); });
-        loader.static.nwws.onEvent(`onAlert`, (alerts) => { let filter = loader.modules.parsing.filterAlerts(alerts); let coordFilter = loader.modules.parsing.coordsToMiles(filter); if (!coordFilter.length) return; this.createAlerts(coordFilter); });
+        loader.static.nwws.onEvent(`onAlert`, (alerts) => { let filter = loader.modules.building.filterAlerts(alerts); let coordFilter = loader.modules.building.coordsToMiles(filter); if (!coordFilter.length) return; this.createAlerts(coordFilter); });
         loader.static.nwws.onEvent(`onMesoscaleDiscussion`, (discussion) => {});
         loader.static.nwws.onEvent(`onStormReport`, (report) => {});
         loader.static.nwws.onEvent(`onMessage`, (stanza) => {
@@ -121,25 +121,6 @@ class NOAAWeatherWireService {
         let fileContent = `=================================================\n${new Date().toISOString().replace(/[:.]/g, '-')}\n=================================================\n\n${JSON.stringify(alerts, null, 4)}\n\n`;
         loader.packages.fs.appendFileSync(filePath, fileContent, `utf8`);
         loader.modules.webcalling.nextRun(loader.cache.twire);
-    }
-
-    /**
-      * @function createDebugAlert
-      * @description Creates a debug alert for testing purposes. This function will read a file from the storage and send it to the NWWS-OI module.
-      * 
-      * @param {string} alertType - The type of alert to create (RAW or XML)
-      */
-
-    createDebugAlert = function(alertType = `RAW`) {
-        try {
-            let alerts = alertType == `RAW` ? [`raw_feed_exmaple.bin`] : [`xml_feed_example.xml`];
-            for (let i = 0; i < alerts.length; i++) {
-                let attributes = { awipsid: `N/A`, issue: new Date(Date.now() - 299 * 1000).toISOString() };
-                let file = loader.packages.path.join(__dirname, `../../storage/nwws-oi/`, `debugging`, alerts[i]);
-                let data = loader.packages.fs.readFileSync(file, `utf8`);
-                loader.static.nwws.forwardCustomStanza(data, attributes);
-            }
-        } catch (err) { loader.modules.hooks.createOutput(`${this.name}.DebugAlert`, `Error creating debug alert: Do you have NWWS Enabled?`); return }
     }
 }
 
