@@ -63,9 +63,8 @@
 }
 :root, .portal {
     /* Backgrounds */
-    --portal-bg-primary: #181a2000;
+    --portal-bg-primary: #000000e7;
     --portal-bg-blur-layer: rgba(24, 26, 32, 0);
-    --portal-bg-login-image: url('/assets/media/dashboard/login-bg.gif');
     --portal-bg-input: rgba(40, 40, 48, 0.98);
     --portal-bg-input-focus: rgb(44, 44, 54);
     --portal-bg-footer: rgba(24, 26, 32, 0.329);

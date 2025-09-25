@@ -3,3 +3,4 @@ storage/logs
 storage/database.db
 storage/shapefiles.db
 configurations.json
+project_atmospheric_x/package-lock.json

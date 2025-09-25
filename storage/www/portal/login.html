@@ -12,12 +12,19 @@
         <script src="../assets/javascript/cDashboard/cPortal.js"></script>
     </head>
     <body>
-        <div class="bg"></div>
+        <div class="bg" style="position:fixed;inset:0;width:100vw;height:100vh;overflow:hidden;z-index:-1;">
+            <video class="bg-video" autoplay muted loop playsinline
+               style="width:100%;height:100%;object-fit:cover;">
+            <source src="/assets/media/dashboard/portal-background.mp4" type="video/mp4">
+            </video>
+        </div>
         <div class="login-container">
             <div class="login-box">
-                <img src="/assets/media/dashboard/atmosx-logo-vector.webp" alt="Logo" class="login-logo">
-                <div class="error-message"></div>
-                <div class="success-message"></div>
+                <div class="login-box-header">
+                    <img src="/assets/media/dashboard/atmosx-logo-vector.webp" alt="Logo" class="login-logo">
+                    <div class="error-message"></div>
+                    <div class="success-message"></div>
+                </div>
                 <form id="login-form">
                     <input type="text" id="username" autocomplete="off" placeholder="Username" required>
                     <input type="password" id="password" autocomplete="off" placeholder="Password" required>
