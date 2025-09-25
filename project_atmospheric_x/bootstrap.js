@@ -42,7 +42,7 @@ loader.definitions.static_apis = {
     ['temperature_coordinates']: "https://api.openweathermap.org/data/2.5/weather?lat=${X}&lon=${Y}&appid=64fb789b4ab267d578a5b1c24fd4b5ba",
 }
 
-loader.definitions.allowed_websockets = [`mesonet`, `occupants`, `metrics`, `chatbot`, `wxRadio`, `updates`, `svrprob`, `torprob`, `public`, `active`, `location`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
+loader.definitions.allowed_websockets = [`tropical`, `mesonet`, `occupants`, `metrics`, `chatbot`, `wxRadio`, `updates`, `svrprob`, `torprob`, `public`, `active`, `location`, `discussions`, `notification`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]
 
 loader.packages.fs = require(`fs`)
 loader.packages.path = require(`path`)

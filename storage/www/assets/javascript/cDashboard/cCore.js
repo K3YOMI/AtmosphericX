@@ -466,7 +466,39 @@ class Dashboard {
                 content: discussion,
                 parent: domDirectory,
                 onclick: () => {
-                    this.injectNotification({ title: `Mesoscale Discussion #${i + 1}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
+                    this.injectNotification({ title: `Mesoscale Discussion #${mesoscale[i].id}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
+                }
+            });
+        }
+    }
+
+
+
+
+    /**
+      * @function spawnTropicalDiscussions
+      * @description Retrieves and displays tropical discussions from the `storage.stormTracks` array. If there are no discussions, it shows a message indicating that no tropical discussions are available. Each discussion is displayed as a card with its respective content.
+      * 
+      * @param {string} [domDirectory=`child_atmosx_discussions.tropical`] - The ID of the DOM element where the mesoscale discussions will be injected. Defaults to `child_atmosx_discussions.mesoscale`.
+      */
+
+    spawnTropicalDiscussions = function(domDirectory=`child_atmosx_discussions.tropical`) {
+        document.getElementById(domDirectory).innerHTML = ``
+        console.log(this.storage)
+        let tropical = this.storage.tropical
+        if (tropical.length == 0) {
+            this.injectCardData({ title: `Awaiting Tropical Discussions...`, content: `<center>No Tropical Discussion Information Available</center>`, parent: domDirectory})
+            return
+        }
+        for (let i = 0; i < tropical.length; i++) {
+            let discussion = Object.values(tropical[i]).join('<br>').replace(/\\n/g, '<br>')
+            discussion = discussion.replace(/name: \d+<br>/, '')
+            this.injectCardData({
+                title: `Discussion: ${tropical[i].name}`,
+                content: discussion,
+                parent: domDirectory,
+                onclick: () => {
+                    this.injectNotification({ title: `Discussion: ${tropical[i].name}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
                 }
             });
         }
@@ -1170,6 +1202,7 @@ class Dashboard {
         this.updateSize()
         this.spawnStormReports()
         this.spawnMesoscaleDiscussions()
+        this.spawnTropicalDiscussions()
         this.spawnStormSpotterNetwork()
         this.spawnWireOpenInterface()
         this.spawnTornadoProbabilities()

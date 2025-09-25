@@ -109,6 +109,15 @@
                     </div>
                 </div>
             </div>
+            <div id="_navigation.tropical" style="display: none;" type="menu">
+                <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
+                    <div class="data-card-parent"> 
+                        <h1 class="data-card-title">Tropical Discussions</span></h1>
+                        <hr class="data-card-hr"> 
+                        <div id="child_atmosx_discussions.tropical" class="grid-area" data-original-grid-template-columns="1" style="grid-template-columns: repeat(1, 1fr);"></div>
+                    </div>
+                </div>
+            </div>
             <div id="_navigation.spc" style="display: none;" type="menu">
                 <div class="grid-parent" style="grid-template-columns: repeat(1, 1fr);">
                     <div class="data-card-parent"> 
@@ -230,7 +239,7 @@
         let alert_class;
         let library = new Library()
         library.detectMobileDevice()
-        library.createWebsocketSession([`mesonet`, `occupants`, `metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
+        library.createWebsocketSession([`tropical`, `mesonet`, `occupants`, `metrics`, `wxRadio`, `updates`, `torprob`, `svrprob`, `public`, `active`, `discussions`, `notifications`, `header`, `reports`, `spotters`, `manual`, `wire`, `random`]).then(async () => {
             alert_class = new Alerts(library)
             cfg_class = new CfgEditor(library)
             graphics_class = new Graphics(library)

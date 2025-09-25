@@ -4,11 +4,13 @@
         "updated": "Thursday, September, 25th",
         "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
         "changelogs": [
-            "add: Atmosx-placefile-parser",
-            "refactor: mDataParsing -> mPlacefiles",
-            "remove: mPing Alerts (DEPRECATED)",
-            "remove: Cape and Tempest Placefiles (Revamping Soon)",
-            "update: Changed Mesoscale Discussions API -> WeatherWise"
+            "add: Atmosx-placefile-parser.",
+            "add: Weather Wise API Tropical Discussions.",
+            "refactor: mDataParsing -> mPlacefiles.",
+            "fix: Mesoscale Discussion Numbers.",
+            "remove: mPing Alerts (DEPRECATED).",
+            "remove: Cape and Tempest Placefiles (Revamping Soon).",
+            "update: Changed Mesoscale Discussions API -> WeatherWise."
         ],
         "rewrite": true
     },

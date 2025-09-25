@@ -237,7 +237,7 @@ class Hooks {
             loader.cache.location.state = state || 'Unknown State';
         }
 
-        if (loader.cache.tmesonet && locationServices.use_mesonet && mesonetServices.gps_enabled && !mesonetServices.radar_enabled) {
+        if (loader.cache.tmesonet && locationServices.use_mesonet && mesonetServices.gps_enabled) {
             await tloader.cache.tmesonet.setter.setClosest(lat, lon);
         }
 

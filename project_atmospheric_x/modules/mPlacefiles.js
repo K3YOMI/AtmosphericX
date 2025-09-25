@@ -27,6 +27,18 @@ class Placefiles {
     parsing = function(body = ``, type = undefined) {
         let imports = [];
         switch (type) {
+            case 'weatherwise_storm_tracks':
+                for (let data of body) {
+                    imports.push({
+                        name: data.name,
+                        pressure: data.pressure + ` mb`,
+                        wind_mph: data.wind_speed_mph + ` mph`,
+                        ocean: data.ocean + ` Ocean`,
+                        discussion: data.forecast_discussion,
+                        last_updated: data.last_updated_at  
+                    }); 
+                }
+                break 
             case 'tornado_probability':
                 loader.packages.placefile.parsePlacefile(body).then(parsed => {
                     for (let data of parsed) {

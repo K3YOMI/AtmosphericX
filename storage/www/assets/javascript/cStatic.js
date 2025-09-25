@@ -27,8 +27,7 @@ const static_dashboard_directs = [
             { icon: "fas fa-satellite", label: "NOAA Weather Wire", nav: "_navigation.nwws", permission: 0 },
             { icon: "fas fa-thermometer-half", label: "Current Map", nav: null, permission: 0 , action: () => window.open('/widgets/mapbox', '_blank', 'width=1200,height=900') },
             { icon: "fas fa-sun", label: "Forecasting", nav: "_navigation.forecasts", permission: 0 },
-            { icon: "fas fa-map-marked-alt", label: "Satellite", nav: "_navigation.radar", permission: 0, disabled: true },
-            { icon: "fas fa-chart-line", label: "Climate Data", nav: "_navigation.climate", permission: 0, disabled: true },
+            { icon: "fas fa-water", label: "Tropical Storms", nav: "_navigation.tropical", permission: 0 },
         ]
     },
     {
@@ -52,8 +51,6 @@ const static_dashboard_directs = [
         category: "Hardware Settings",
         items: [
             { icon: "fas fa-wind", label: "Mesonet Data", nav: `_navigation.mesonetdata`, permission: 0, },
-            { icon: "fas fa-microchip", label: "Sensor Status", nav: null, permission: 1, action: '', disabled: true },
-            { icon: "fas fa-wifi", label: "Network Interfaces", nav: null, permission: 1, action: '', disabled: true },
         ]
     },
     {
@@ -71,7 +68,6 @@ const static_dashboard_directs = [
             { icon: "fa fa-terminal", label: "Configurations", nav: "_navigation.configurations", permission: 1 },
             { icon: "fas fa-cog", label: "Widget Settings", nav: null, permission: 1, action: () => window.open('/settings', '_blank', 'width=602,height=850') },
             { icon: "fa fa-cogs", label: "System Settings", nav: "_navigation.system", permission: 1 },
-            { icon: "fas fa-robot", label: "AI Chatbot", nav: null, permission: 1, action: '', disabled: true },
         ]
     },
     {

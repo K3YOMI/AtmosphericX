@@ -147,6 +147,7 @@ class Webcalling {
                 { name: 'ProbTornado', handle: sources.miscellaneous_sources.tornado_probability, timer: sources.miscellaneous_sources.tornado_probability.cache_time, contradictions: [], pointer: 'genericRequest' },
                 { name: 'ProbSevere', handle: sources.miscellaneous_sources.severe_probability, timer: sources.miscellaneous_sources.severe_probability.cache_time, contradictions: [], pointer: 'genericRequest' },
                 { name: 'wxRadio', handle: sources.miscellaneous_sources.wx_radio, timer: sources.miscellaneous_sources.wx_radio.cache_time, contradictions: [], pointer: 'genericRequest' },
+                { name: 'tropical', handle: sources.miscellaneous_sources.weatherwise_storm_tracks, timer: sources.miscellaneous_sources.weatherwise_storm_tracks.cache_time, contradictions: [], pointer: 'genericRequest' },
             ];
             if (isNWWS == undefined) {
                 handles.forEach(handle => {

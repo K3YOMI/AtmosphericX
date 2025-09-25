@@ -363,6 +363,7 @@ class Building {
             if (rawData.GRLevelXReports)  { loader.cache.reports = loader.modules.placefiles.parsing(rawData.SpotterNetworkReports, `gr_level_x`).message;  }
             if (rawData.IEMReports) { loader.cache.reports = loader.modules.placefiles.parsing(rawData.SpotterNetworkReports, `iem`).message;  }
             if (rawData.wxRadio) { loader.cache.wxRadio = loader.modules.placefiles.parsing(rawData.wxRadio, `nwr_stations`).message;  }
+            if (rawData.tropical) { loader.cache.tropical = loader.modules.placefiles.parsing(rawData.tropical, `weatherwise_storm_tracks`).message;  }
 
             if (rawData.ProbTornado) { loader.cache.torprob = loader.modules.placefiles.parsing(rawData.ProbTornado, `tornado_probability`).message;  }
             if (rawData.ProbSevere) { loader.cache.svrprob = loader.modules.placefiles.parsing(rawData.ProbSevere, `severe_probability`).message;  }

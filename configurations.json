@@ -123,7 +123,6 @@
             },
             "mesonet_services": {
                 "gps_enabled": false,
-                "radar_enabled": false,
                 "tempest_weather_station": {
                     "enabled": false,
                     "api_key": "YOUR_TEMPEST_API_KEY_HERE",
@@ -153,6 +152,11 @@
                 "enabled": true,
                 "cache_time": 119,
                 "endpoint": "https://data2.weatherwise.app/mesoscale-discussions/USA.geojson"
+            },
+            "weatherwise_storm_tracks": {
+                "enabled": true,
+                "cache_time": 360,
+                "endpoint": "https://data2.weatherwise.app/tropical/USA/NHC/storms.json?"
             },
             "tornado_probability": {
                 "enabled": true,
@@ -278,7 +282,8 @@
                 "discussions",
                 "severeProbability",
                 "tornadoProbability",
-                "wxRadio"
+                "wxRadio",
+                "tropical"
             ]
         }
     },
