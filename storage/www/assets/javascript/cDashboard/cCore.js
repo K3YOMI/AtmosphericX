@@ -466,14 +466,11 @@ class Dashboard {
                 content: discussion,
                 parent: domDirectory,
                 onclick: () => {
-                    this.injectNotification({ title: `Mesoscale Discussion #${mesoscale[i].id}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
+                    this.injectNotification({ title: `Mesoscale Discussion #${mesoscale[i].id}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion.replace(/<br>/g, `\n`).replace(/<b>/g, ``).replace(/<\/b>/g, ``)); } }]});
                 }
             });
         }
     }
-
-
-
 
     /**
       * @function spawnTropicalDiscussions
@@ -498,7 +495,7 @@ class Dashboard {
                 content: discussion,
                 parent: domDirectory,
                 onclick: () => {
-                    this.injectNotification({ title: `Discussion: ${tropical[i].name}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion); } }]}); 
+                    this.injectNotification({ title: `Discussion: ${tropical[i].name}`, description: discussion, rows: 2, parent: `_body.base`, buttons: [{ name: `Close`, className: `button-danger`, function: () => { this.clearAllPopups(); } }, { name: `<ic class="fa fa-copy"></ic> Clipboard`, className: `button-ok`, function: () => { this.copyTextToClipboard(discussion.replace(/<br>/g, `\n`).replace(/<b>/g, ``).replace(/<\/b>/g, ``)); } }]});
                 }
             });
         }
