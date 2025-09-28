@@ -67,7 +67,7 @@ class Placefiles {
                     }
                 });
             break;
-            case 'nwr_stations': 
+            case 'nwr_stations':  
                 for (let data of body.sources) {
                     imports.push({
                         location: data.location || `N/A`,
@@ -82,6 +82,7 @@ class Placefiles {
             case 'mesoscale_discussions':
                 loader.packages.placefile.parseGeoJSON(body).then(parsed => {
                     for (let data of parsed) {
+                        if (data.properties.expires_at_ms < Date.now()) continue;
                         imports.push({
                             id: data.properties.number,
                             description: `${data.properties.text.replace(/\\n/g, '<br>')}<br><br><b>Areas Affected:</b> ${data.properties.tags.AREAS_AFFECTED.join(', ') || 'N/A'}<br><b>Concerns:</b> ${data.properties.tags.CONCERNING.join(', ') || 'N/A'}<br><b>Population Affected:</b> ${data.properties.population.people.toLocaleString()} people in ${data.properties.population.homes.toLocaleString()} homes.`,

@@ -1,8 +1,18 @@
 {
+    "7.1.425": {
+        "version": "7.1.425",
+        "updated": "Sunday, September, 28th",
+        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "changelogs": [
+            "fix: Mesoscale Discussions expiry time.",
+            "fix: NWWS Parser now supports offshore warnings/watches/advisories."
+        ],
+        "rewrite": false
+    },
     "7.1.42": {
         "version": "7.1.42",
         "updated": "Thursday, September, 25th",
-        "headline": "<span style='color:green'>[FEED]</span> Community Discord: <a href='https://discord.gg/YAEjtzU3E8' target='_blank'>discord.gg/YAEjtzU3E8</a>",
+        "headline": "<span style='color:red'>[UPDATE AVAILABLE]</span> An update is available for v7.1.425+",
         "changelogs": [
             "add: Atmosx-placefile-parser.",
             "add: Weather Wise API Tropical Discussions.",
