@@ -40,7 +40,7 @@ class Placefiles {
                 }
                 break 
             case 'tornado_probability':
-                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                loader.packages.placefile.AtmosXPlacefileParser.parsePlacefile(body).then(parsed => {
                     for (let data of parsed) {
                         let probability = data.line.text.match(/ProbTor: (\d+)%/) ? data.line.text.match(/ProbTor: (\d+)%/)[1] : '0';
                         if (loader.cache.configurations.sources.miscellaneous_sources.tornado_probability.threshold > parseInt(probability)) continue;
@@ -54,7 +54,7 @@ class Placefiles {
                 });
             break;
             case 'severe_probability':
-                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                loader.packages.placefile.AtmosXPlacefileParser.parsePlacefile(body).then(parsed => {
                     for (let data of parsed) {
                         let probability = data.line.text.match(/PSv3: (\d+)%/) ? data.line.text.match(/PSv3: (\d+)%/)[1] : '0';
                         if (loader.cache.configurations.sources.miscellaneous_sources.severe_probability.threshold > parseInt(probability)) continue;
@@ -80,7 +80,7 @@ class Placefiles {
                 }
             break;
             case 'mesoscale_discussions':
-                loader.packages.placefile.parseGeoJSON(body).then(parsed => {
+                loader.packages.placefile.AtmosXPlacefileParser.parseGeoJSON(body).then(parsed => {
                     for (let data of parsed) {
                         if (data.properties.expires_at_ms < Date.now()) continue;
                         imports.push({
@@ -92,7 +92,7 @@ class Placefiles {
             break
             case 'spotter_network_members': 
                 let { spotter_network, rtlirl } = loader.cache.configurations.sources.miscellaneous_sources.location_services;
-                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                loader.packages.placefile.AtmosXPlacefileParser.parsePlacefile(body).then(parsed => {
                     for (let data of parsed) {
                         let isActive = (data.icon.scale == 6 && data.icon.type == '2') && spotter_network.show_active;
                         let isStreaming = (data.icon.scale == 1 && data.icon.type == '19') && spotter_network.show_streaming;
@@ -108,7 +108,7 @@ class Placefiles {
                 })
             break;
             case 'spotter_network_reports':
-                loader.packages.placefile.parsePlacefile(body).then(parsed => {
+                loader.packages.placefile.AtmosXPlacefileParser.parsePlacefile(body).then(parsed => {
                     for (let data of parsed) {
                         imports.push({ 
                             latitude: parseFloat(data.icon.x),
@@ -124,7 +124,7 @@ class Placefiles {
                 });
                 break;
             case 'gr_level_x':
-                loader.packages.placefile.parseTable(body).then(parsed => {
+                loader.packages.placefile.AtmosXPlacefileParser.parseTable(body).then(parsed => {
                     for (let data of parsed) {
                         imports.push({
                             latitude: parseFloat(data.lat),
@@ -171,7 +171,7 @@ class Placefiles {
       */
 
     createPlacefilePolygon = function(placefileRefresh = 10, placefileThreshold = 999, placefileTitle = `Default Placefile Title`, data = [], cachePointer = `template`) {
-        loader.packages.placefile.createPlacefile(placefileRefresh, placefileThreshold, placefileTitle, ``, data, `polygon`).then((placefileText) => {
+        loader.packages.placefile.AtmosXPlacefileParser.createPlacefile(placefileRefresh, placefileThreshold, placefileTitle, ``, data, `polygon`).then((placefileText) => {
             loader.cache.placefiles[cachePointer] = placefileText;
         });
     }
@@ -194,7 +194,7 @@ class Placefiles {
             `IconFile: 2, 21, 35, 10, 17, "https://www.spotternetwork.org/iconsheets/Arrows_096.png"`,
             `IconFile: 6, 30, 30, 15, 15, "https://www.spotternetwork.org/iconsheets/Spotternet_New_096.png"`
         ].join('\n');
-        loader.packages.placefile.createPlacefile(placefileRefresh, placefileThreshold, placefileTitle, placefileText, data, `point`).then((placefileText) => {
+        loader.packages.placefile.AtmosXPlacefileParser.createPlacefile(placefileRefresh, placefileThreshold, placefileTitle, placefileText, data, `point`).then((placefileText) => {
             loader.cache.placefiles[cachePointer] = placefileText;
         });
     }

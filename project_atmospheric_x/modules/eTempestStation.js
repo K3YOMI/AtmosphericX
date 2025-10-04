@@ -59,7 +59,7 @@ class TempestService {
         if (!mesonetServices.tempest_weather_station.enabled) return;
         loader.cache.mesonet = {}
         loader.cache.tmesonet = { wind: {}, observations: {}, forecast: {}, lightning: {}, property: {}, setter: this };
-        loader.static.tempest = new loader.packages.tempest({
+        loader.static.tempest = new loader.packages.tempest.AtmosXTempestPulling({
             apiKey: mesonetServices.tempest_weather_station.api_key,
             deviceId: mesonetServices.tempest_weather_station.device_id,
             stationId: mesonetServices.tempest_weather_station.station_id,
