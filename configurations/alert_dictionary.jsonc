@@ -1,0 +1,184 @@
+    /*
+                  _                             _               _     __   __
+             /\  | |                           | |             (_)    \ \ / /
+            /  \ | |_ _ __ ___   ___  ___ _ __ | |__   ___ _ __ _  ___ \ V / 
+           / /\ \| __| '_ ` _ \ / _ \/ __| '_ \| '_ \ / _ \ '__| |/ __| > <  
+          / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
+         /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
+                                         | |                                 
+                                         |_|  
+
+        Written by: KiyoWx (k3yomi) & StarflightWx      
+        
+        Copyright (c) 2025 k3yomi
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to use,
+        copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+        and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+        1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+        2. The author of the software must be credited in all copies or substantial portions of the Software, including but not limited to documentation, README files, and source code comments.
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+
+        PLEASE READ: 
+        SOME UPDATES MAY CHANGE HOW CONFIGURATIONS ARE HANDLED. PLEASE READ CHANGELOGS
+        BEFORE REPLACING YOUR BACKUP CONFIGURATION FILES WITH THE NEWEST VERSIONS.
+        FAILURE TO DO SO MAY RESULT IN LOSS OF YOUR CUSTOM SETTINGS AND BREAKAGE
+        OF THE PROJECT. YOU HAVE BEEN WARNED. 
+
+    */
+{
+    "tones": {
+        "sfx_beep": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+        "sfx_siren": "/assets/media/audio/eas_sfx/siren-eas.mp3",
+        "sfx_wail": "/assets/media/audio/eas_sfx/basic-eas.mp3",
+        "sfx_uniden": "/assets/media/audio/eas_sfx/uniden-eas.mp3"
+    },
+    "alert_dictionary": {
+        "Tornado Emergency": {
+            "sfx_issued": "/assets/media/audio/tornado_sfx/tornado-upgraded.mp3",
+            "sfx_update": "/assets/media/audio/tor/tornado-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": true, "wail": false, "caution": false}
+        },
+        "PDS Tornado Warning": {
+            "sfx_issued": "/assets/media/audio/tornado_sfx/pds-tornado-issued.mp3",
+            "sfx_update": "/assets/media/audio/tor/pds-tornado-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": true, "caution": false}
+        },
+        "Confirmed Tornado Warning": {
+            "sfx_issued": "/assets/media/audio/tornado_sfx/confirmed-tornado-issued.mp3",
+            "sfx_update": "/assets/media/audio/tornado_sfx/tornado-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": true, "wail": false, "caution": false}
+        },
+        "Radar Indicated Tornado Warning": {
+            "sfx_issued": "/assets/media/audio/tornado_sfx/radar-tornado-issued.mp3",
+            "sfx_update": "/assets/media/audio/tornado_sfx/tornado-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "PDS Tornado Watch": {
+            "sfx_issued": "/assets/media/audio/tornado_sfx/watch-tornado-pds.mp3",
+            "sfx_update": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": true}
+        },
+        "EDS Severe Thunderstorm Warning (TPROB)": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-eds-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": true, "wail": false, "caution": false}
+        },
+        "EDS Severe Thunderstorm Warning": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-eds-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": true, "wail": false, "caution": false}
+        },
+        "Destructive Severe Thunderstorm Warning (TPROB)": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-tor-destructive-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": true, "caution": false}
+        },
+        "Destructive Severe Thunderstorm Warning": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-destructive-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": true, "caution": false}
+        },
+        "Considerable Severe Thunderstorm Warning (TPROB)": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-tor-considerable-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Considerable Severe Thunderstorm Warning": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-considerable-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Severe Thunderstorm Warning": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/severe-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/severe-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Severe Thunderstorm Watch": {
+            "sfx_issued": "/assets/media/audio/watch_sfx/watch-svr.mp3",
+            "sfx_update": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Flash Flood Emergency": {
+            "sfx_issued": "/assets/media/audio/flood_sfx/flash-flood-upgraded.mp3",
+            "sfx_update": "/assets/media/audio/flood_sfx/flash-flood-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": true, "caution": false}
+        },
+        "Considerable Flash Flood Warning": {
+            "sfx_issued": "/assets/media/audio/flood_sfx/flash-flood-considerable-issued.mp3",
+            "sfx_update": "/assets/media/audio/flood_sfx/flash-flood-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Flash Flood Warning": {
+            "sfx_issued": "/assets/media/audio/flood_sfx/flash-flood-issued.mp3",
+            "sfx_update": "/assets/media/audio/flood_sfx/flash-flood-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Flash Flood Watch": {
+            "sfx_issued": "/assets/media/audio/watch_sfx/watch-flash-flood.mp3",
+            "sfx_update": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Special Marine Warning": {
+            "sfx_issued": "/assets/media/audio/severe_sfx/special-marine-issued.mp3",
+            "sfx_update": "/assets/media/audio/severe_sfx/special-marine-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Tsunami Warning": {
+            "sfx_issued": "/assets/media/audio/tsunami_sfx/tsunami-issued.mp3",
+            "sfx_update": "/assets/media/audio/tsunami_sfx/tsunami-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        },
+        "Special Event": {
+            "sfx_issued": "/assets/media/audio/misc_sfx/special-event-issued.mp3",
+            "sfx_update": "/assets/media/audio/misc_sfx/special-event-updated.mp3",
+            "sfx_cacnel": "/assets/media/audio/eas_sfx/beep-sfx.mp3",
+            "metadata": { "siren": false, "wail": false, "caution": false}
+        }
+    },
+    "alert_schemes": {
+        "Tornado Emergency": {"primary": "rgb(209,38,215)", "secondary": "rgb(159,37,163)"},
+        "PDS Tornado Warning": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "PDS Tornado Watch": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "EDS Severe Thunderstorm Warning (TPROB)": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "EDS Severe Thunderstorm Warning": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "Destructive Severe Thunderstorm Warning": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "Destructive Severe Thunderstorm Warning (TPROB)": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "Considerable Severe Thunderstorm Warning (TPROB)": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "Severe Thunderstorm Warning (TPROB)": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "Hurricane Warning": {"primary": "rgb(249,56,54)", "secondary": "rgb(203,25,25)"},
+        "Tornado Warning": {"primary": "rgb(214,56,54)", "secondary": "rgb(163,25,25)"},
+        "Flash Flood Emergency": {"primary": "rgb(249,56,54)", "secondary": "rgb(203,25,25)"},
+        "Snow Squall Warning": {"primary": "rgb(249,56,54)", "secondary": "rgb(203,25,25)"},
+        "Severe Thunderstorm Warning": {"primary": "rgb(248,160,42)", "secondary": "rgb(248,106,42)"},
+        "Flash Flood Warning": {"primary": "rgb(102,209,60)", "secondary": "rgb(73,155,40)"},
+        "Special Marine Warning": {"primary": "rgb(42,81,224)", "secondary": "rgb(28,61,181)"},
+        "Tsunami Warning": {"primary": "rgb(209,38,215)", "secondary": "rgb(159,37,163)"},
+        "Default": {"primary": "rgb(42,81,224)", "secondary": "rgb(28,61,181)"}
+    }
+}

@@ -1,0 +1,9 @@
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--404-bg-primary); color: var(--404-text-primary); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.container { text-align: center; max-width: 600px; }
+.error-code { font-size: 120px; font-weight: 700; color: var(--404-accent); line-height: 1; margin-bottom: 20px; }
+.error-title { font-size: 32px; font-weight: 600; margin-bottom: 12px; color: var(--404-text-primary); }
+.error-message { font-size: 16px; color: var(--404-text-secondary); margin-bottom: 32px; line-height: 1.6; }
+.error-image { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 120px; border-radius: 12px; margin-bottom: 20px; }
+.error-link { color: var(--404-accent); text-decoration: none; font-weight: 500; transition: color 0.3s ease; }

@@ -1,6 +1,7 @@
-project_atmospheric_x/node_modules
-storage/logs
-storage/database.db
-storage/shapefiles.db
-configurations.json
-project_atmospheric_x/package-lock.json
+/storage/WireDB.db
+/storage/nwws
+/project/old-src
+/project/node_modules
+/project/package-lock.json
+
+

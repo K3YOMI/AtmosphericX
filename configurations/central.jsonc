@@ -1,0 +1,286 @@
+    /*
+                  _                             _               _     __   __
+             /\  | |                           | |             (_)    \ \ / /
+            /  \ | |_ _ __ ___   ___  ___ _ __ | |__   ___ _ __ _  ___ \ V / 
+           / /\ \| __| '_ ` _ \ / _ \/ __| '_ \| '_ \ / _ \ '__| |/ __| > <  
+          / ____ \ |_| | | | | | (_) \__ \ |_) | | | |  __/ |  | | (__ / . \ 
+         /_/    \_\__|_| |_| |_|\___/|___/ .__/|_| |_|\___|_|  |_|\___/_/ \_\
+                                         | |                                 
+                                         |_|  
+
+        Written by: KiyoWx (k3yomi) & StarflightWx      
+        
+        Copyright (c) 2025 k3yomi
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to use,
+        copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+        and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+        1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+        2. The author of the software must be credited in all copies or substantial portions of the Software, including but not limited to documentation, README files, and source code comments.
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+
+        PLEASE READ: 
+        SOME UPDATES MAY CHANGE HOW CONFIGURATIONS ARE HANDLED. PLEASE READ CHANGELOGS
+        BEFORE REPLACING YOUR BACKUP CONFIGURATION FILES WITH THE NEWEST VERSIONS.
+        FAILURE TO DO SO MAY RESULT IN LOSS OF YOUR CUSTOM SETTINGS AND BREAKAGE
+        OF THE PROJECT. YOU HAVE BEEN WARNED. 
+
+    */
+{
+    "web_hosting_settings": {
+        "is_https": false,
+        "is_login_required": true,
+        "is_guest_access_allowed": false,
+        "settings" : {
+            "is_https": false,
+            "port_number": 80,
+            "certification_paths": {
+                "private_key_path": ".../storage/policy/certificates/key.pem",
+                "certificate_path": ".../storage/policy/certificates/cert.pem"
+            }
+        }
+    },
+    "internal_settings": {
+        "request_timeout": 10,
+        "random_alert_timeout": 30 
+    },
+    "websocket_settings": {
+        "priority_sockets": {
+            "timeout": 1,
+            "sockets": []
+        },
+        "secondary_sockets": {
+            "timeout": 30,
+            "sockets": []
+        }
+    },
+    "webhook_settings": {
+        "general_alerts": {
+            "enabled": false,
+            "discord_webhook": "DISCORD_WEBHOOK_HERE",
+            "webhook_display": "AtmosphericX (Webhook Integration)",
+            "content": "<@&ROLE_ID_HERE>",
+            "webhook_cooldown": 1
+        },
+        "critical_alerts": {
+            "enabled": false,
+            "discord_webhook": "DISCORD_WEBHOOK_HERE",
+            "webhook_display": "AtmosphericX (Webhook Integration)",
+            "content": "<@&ROLE_ID_HERE>",
+            "webhook_cooldown": 1,
+            "events": []
+        },
+        "misc_alerts": {
+            "enabled": false,
+            "discord_webhook": "DISCORD_WEBHOOK_HERE",
+            "webhook_display": "AtmosphericX (Webhook Integration)",
+            "content": "<@&ROLE_ID_HERE>",
+            "webhook_cooldown": 10
+        }
+    },
+    "filters": {
+        "listening_events": [
+            "Tornado Emergency", "PDS Tornado Warning",
+            "PDS Tornado Watch", "EDS Severe Thunderstorm Warning",
+            "Considerable Severe Thunderstorm Warning (TPROB)",
+            "Destructive Severe Thunderstorm Warning (TPROB)",
+            "Severe Thunderstorm Warning (TPROB)",
+            "Considerable Severe Thunderstorm Warning",
+            "Destructive Severe Thunderstorm Warning",
+            "Confirmed Tornado Warning",
+            "Radar Indicated Tornado Warning",
+            "Considerable Flash Flood Warning",
+            "Flash Flood Emergency", "Flash Flood Watch",
+            "Severe Thunderstorm Watch", "Tornado Watch",
+            "Special Marine Warning", "Flash Flood Warning",
+            "Severe Thunderstorm Warning", "Tornado Warning",
+            "Snow Squall Warning", "Tsunami Warning", "Tsunami Watch",
+            "Tsunami Advisory", "Earthquake Warning",
+            "Hurricane Warning", "Hurricane Watch",
+            "Special Weather Statement", "Tropical Storm Warning"
+        ],
+        "all_events": false,
+        "ignored_events": [],
+        "listening_icoa": [],
+        "listening_ugcs": [],
+        "listening_state": [],
+        "ignored_icoa": ["KWNS"],
+        "check_expired": true,
+        "eas_settings": {
+            "listening_eas": [],
+            "eas_directory": "../../storage/nwws/scenarios",
+            "eas_intro": "../../stroage/nwws/scenarios/intro.wav" // .WAV FILES ONLY
+        },
+        "location_settings": {
+            "max_distance_miles": 75
+        }
+    },
+    "sources": {
+        "atmosphericx_alerts_settings": {
+            "noaa_weather_wire_service": false, 
+            "national_weather_service_settings": {
+                "interval": 30,
+                "endpoint": "https://api.weather.gov/alerts/active"
+            },
+            "weather_wire_settings": {
+                "database": "../storage/WireDB.db",
+                "client_credentials": {
+                    "username": "username_here",
+                    "password": "password_here",
+                    "nickname": "display_name_here"
+                },
+                "client_reconnections": {
+                    "attempt_reconnections": true,
+                    "reconnection_attempt_interval": 60
+                },
+                "client_cache": {
+                    "read_cache": true,
+                    "max_size_mb": 5,
+                    "max_db_history": 15000,
+                    "directory": "../storage/nwws/cache"
+                },
+                "alert_preferences": {
+                    "cap_only": false,
+                    "implement_db_ugc": false
+                }
+            },
+            "global_settings": {
+                "parent_events": false,
+                "better_parsing": true
+            }
+        },
+        "location_settings": {
+            "realtime_irl": {
+                "enabled": false,
+                "authentication": "YOUR_PULL_KEY_HERE",
+                "contradictions": []
+            },
+            "spotter_network_feed": {
+                "enabled": true,
+                "pin_by_name": "SN_NAME_HERE_OR_DESCRIPTION",
+                "pins": {
+                    "offline": true,
+                    "idle": true,
+                    "active": true,
+                    "streaming": true
+                },
+                "cache_time": 29,
+                "endpoint": "https://www.spotternetwork.org/feeds/gr.txt",
+                "contradictions": []
+            }
+        },
+        "local_storm_report_settings": {
+            "spotter_reports": {
+                "enabled": true,
+                "cache_time": 119,
+                "endpoint": "https://www.spotternetwork.org/feeds/reports.txt",
+                "contradictions": ["grlevelx"]
+            },
+            "grlevelx_reports": {
+                "enabled": true,
+                "cache_time": 119,
+                "endpoint": "https://www.grlevelx.com/lsr/lsr_latest.txt",
+                "contradictions": ["spotter_network"]
+            }
+        },
+        "dicussion_settings": {
+            "storm_prediction_center_mesoscale": {
+                "enabled": true,
+                "cache_time": 360,
+                "endpoint": "https://data2.weatherwise.app/mesoscale-discussions/USA.geojson",
+                "contradictions": []
+            },
+            "tropical_storm_tracks": {
+                "enabled": true,
+                "cache_time": 360,
+                "endpoint": "https://data2.weatherwise.app/tropical/USA/NHC/storms.json?",
+                "contradictions": []
+            }
+        },
+        "probability_settings": {
+            "tornado": {
+                "enabled": true,
+                "cache_time": 119,
+                "percentage_treshold": 2,
+                "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PTv3_LOOP",
+                "contradictions": []
+            },
+            "severe": {
+                "enabled": true,
+                "cache_time": 119,
+                "percentage_treshold": 50,
+                "endpoint": "https://cimss.ssec.wisc.edu/severe_conv/NOAACIMSS_PSv3_LOOP",
+                "contradictions": []
+            }
+        },
+        "miscellaneous_settings": {
+            "sonde_project_weather_eye": {
+                "enabled": true,
+                "cache_time": 119,
+                "endpoint": "https://sonde.projectweathereye.org/data",
+                "contradictions": []
+            },
+            "wx_radio": {
+                "enabled": true,
+                "cache_time": 3600,
+                "endpoint": "https://api.weatherusa.net/v1/wxradio",
+                "contradictions": []
+            }
+        }
+    },
+    "character_ai": {
+        "enabled": false,
+        "automatic_responses": false,
+        "prefix": "Describe the warning like a weather radio guy would, make it short and simple..",
+        "auth_token": "Token YOUR_CHARACTER_AI_TOKEN_HERE",
+        "character_id": "CHARACTER_ID_HERE",
+        "character_voice_id": "VOICE_ID_HERE",
+        "chromium_path": "PATH_TO_YOUR_CHROMIUM_EXECUTABLE_HERE"
+    },
+    "streamer_bot_settings": {
+        "enabled": false,
+        "address": "127.0.0.1",
+        "port": 8080,
+        "password": "your_password_here"
+    },
+    "forecasting_services": [
+        {"title": "Composite Reflectivity (HRRR)","url": "https://www.pivotalweather.com/model.php?m=hrrr&p=refcmp_uh001h&fh=loop&r=conus&dpdt=&mc=","image": "/assets/media/dashboard/forecasting/composite-reflectivity.png"},
+        {"title": "Bulk Shear (0-1km) (HRRR)","url": "https://www.pivotalweather.com/model.php?m=hrrr&p=bs01&fh=loop&r=conus&dpdt=&mc=","image": "/assets/media/dashboard/forecasting/bulk-shear.png"},
+        {"title": "Surface Based Cape (HRRR)","url": "https://www.pivotalweather.com/model.php?m=hrrr&p=sbcape&fh=loop&r=conus&dpdt=&mc=","image": "/assets/media/dashboard/forecasting/surface-based-cape.png"},
+        {"title": "SIGTOR Paramters (HRRR)","url": "https://www.pivotalweather.com/model.php?m=hrrr&p=stp&fh=loop&r=conus&dpdt=&mc=","image": "/assets/media/dashboard/forecasting/default-pivotal.png"},
+        {"title": "SPC Mesoscale Analysis","url": "https://www.spc.noaa.gov/exper/mesoanalysis/new/viewsector.php?sector=19&parm=pmsl","image": "/assets/media/dashboard/forecasting/mesoscale-logo.png"},
+        {"title": "Nexlab Clean LWIR","url": "https://weather.cod.edu/satrad/?parms=continental-conus-13-24-0-100-1&checked=map&colorbar=undefined","image": "/assets/media/dashboard/forecasting/nexlab-lwir-clean.png"},
+        {"title": "Nexlab True Color Satellite","url": "https://weather.cod.edu/satrad/?parms=continental-conus-truecolor-24-0-100-1&checked=map&colorbar=undefined","image": "/assets/media/dashboard/forecasting/nexlab-true-color.png"},
+        {"title": "Tropical Tidbits (GFS)","url": "https://www.tropicaltidbits.com/analysis/models/","image": "/assets/media/dashboard/forecasting/tropical-logo.png"},
+        {"title": "Tropical Tidbits (RGEM)","url": "https://www.tropicaltidbits.com/analysis/models/?model=rgem&region=us","image": "/assets/media/dashboard/forecasting/tropical-logo.png"}
+    ],
+    "third_party_services": [
+        {"title": "Live Storm Chasing","url": "https://livestormchasing.com/","image": "/assets/media/dashboard/services/storm-live-logo.png"},
+        {"title": "WeatherWise","url": "https://web.weatherwise.app/","image": "/assets/media/dashboard/services/weather-wise.png"},
+        {"title": "OpenMhz","url": "https://openmhz.com/systems","image": "/assets/media/dashboard/services/open-mhz.png"},
+        {"title": "Global EAS","url": "https://alerts.globaleas.org/","image": "/assets/media/dashboard/services/global-eas.png"}
+    ],
+    "spc_outlooks": [
+        { "day": 1, "title": "Severe Weather Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/state/swody1.png"},
+        { "day": 2, "title": "Severe Weather Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/state/swody2.png"},
+        { "day": 3, "title": "Severe Weather Outlook (Day 3)", "source": "https://www.spc.noaa.gov/partners/outlooks/state/swody3.png"},
+        { "day": 1, "title": "Severe Wind Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody1_WIND.png?" }, 
+        { "day": 1, "title": "Severe Hail Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody1_HAIL.png?" }, 
+        { "day": 1, "title": "Tornado Outlook (Day 1)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody1_TORN.png?" }, 
+        { "day": 2, "title": "Severe Wind Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody2_WIND.png?" }, 
+        { "day": 2, "title": "Severe Hail Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody2_HAIL.png?" }, 
+        { "day": 2, "title": "Tornado Outlook (Day 2)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody2_TORN.png?" }, 
+        { "day": 4, "title": "Severe Weather Outlook (Day 4)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody4_PROB.png" }, 
+        { "day": 5, "title": "Severe Weather Outlook (Day 5)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody5_PROB.png" }, 
+        { "day": 6, "title": "Severe Weather Outlook (Day 6)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody6_PROB.png" },
+        { "day": 7, "title": "Severe Weather Outlook (Day 7)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody7_PROB.png" }, 
+        { "day": 8, "title": "Severe Weather Outlook (Day 8)", "source": "https://www.spc.noaa.gov/partners/outlooks/national/swody8_PROB.png" } 
+    ],
+    "widget_settings": {}
+}

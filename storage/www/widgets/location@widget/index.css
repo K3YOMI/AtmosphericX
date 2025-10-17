@@ -1,8 +1,0 @@
-body, html { display: flex; justify-content: center; align-items: center; background-color: var(--gps-widget-background); margin: 0; overflow: hidden; }
-
-#location-alert-header { background: var(--location-header-bg); font-size: var(--location-header-font-size); font-weight: var(--location-header-font-weight); padding: 16px; display: flex; }
-.location-box {  border-radius: 8px; border: 4px solid var(--location-box-border-color); color: var(--location-box-text-color); max-width: 700px; margin: auto; overflow: hidden; box-shadow: 0 0 10px var(--location-box-shadow-color); position: absolute; width: var(--location-box-width); height: auto; top: 15%; left: 30%; position: fixed;}
-.location-row-light, .location-row-dark {  transition-duration: 1s; flex-direction: column; align-items: flex-start; display: flex; justify-content: space-between; width: 100%; padding: 8px 6px; box-sizing: border-box; }
-.location-row-light { background: var(--location-box-bg-light); }
-.location-row-dark { background: var(--location-box-bg-dark); }
-.alert-left, .alert-right { display: grid; grid-auto-flow: column; align-items: center; justify-content: center; gap: 6px; }

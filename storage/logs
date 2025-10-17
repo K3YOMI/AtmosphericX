@@ -1,8 +1,0 @@
-; THIS IS THE START OF YOUR LOG FILE
-; IF YOU HAVE ANY ISSUES WITH ATMOSPHERICX - PLEASE SUBMIT YOUR LOG FILE (FEEL FREE TO REDACT) TO THE ISSUE
-; I WILL NOT TAKE A LOOK AT YOUR ISSUE WITHOUT THE LOG FILE, THANK YOU
-
-[9/25/2025, 9:47:36 AM] [Routes] HEAD : /ftp//warnings_20250925_13.txt : curl/8.12.1 : ::1 : undefined
-[9/25/2025, 9:47:36 AM] [Routes] HEAD : /ftp//warnings_20250925_14.txt : curl/8.12.1 : ::1 : undefined
-[9/25/2025, 9:47:51 AM] [Routes] HEAD : /ftp//warnings_20250925_13.txt : curl/8.12.1 : ::1 : undefined
-[9/25/2025, 9:47:51 AM] [Routes] HEAD : /ftp//warnings_20250925_14.txt : curl/8.12.1 : ::1 : undefined

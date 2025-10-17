@@ -1,2 +1,0 @@
-body,html{display:flex;justify-content:center;align-items:center;background-color:rgba(0,0,0,0);margin:0;float:center;overflow:hidden;}
-.date{font-size:var(--date-widget-font-size);font-weight:var(--date-widget-font-weight);overflow:hidden;text-align:center;color:var(--date-widget-color);padding:0 5px;text-shadow:var(--date-widget-text-shadow);}

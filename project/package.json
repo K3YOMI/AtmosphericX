@@ -1,0 +1,59 @@
+{
+	"name": "project-atmosphericx",
+	"version": "8.0.0",
+	"description": "Project AtmosphericX is a web based platform and widget manager tailored for amateur weather enthusiasts, storm chasers, and anyone passionate about understanding and tracking severe weather events. It provides near real-time alerts and updates, ensuring users stay informed about critical weather conditions as they unfold.",
+	"main": "dist/cjs/index.cjs",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/K3YOMI/AtmosphericX.git",
+		"branch": "beta"
+	},
+	"keywords": [
+		"NWWS",
+		"NOAA Weather Wire Service",
+		"TypeScript",
+		"XMPP",
+		"Weather Data",
+		"Dashboard",
+		"Widgets",
+		"OBS Studio",
+		"Streaming"
+	],
+	"author": "k3yomi, StarflightWx",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/K3YOMI/AtmosphericX/issues"
+	},
+	"homepage": "https://github.com/K3YOMI/AtmosphericX#readme",
+	"dependencies": {
+		"@msgpack/msgpack": "^3.1.1",
+		"@streamerbot/client": "^1.12.2",
+		"@xmpp/client": "^0.7.3",
+		"@xmpp/component": "^0.7.1",
+		"@xmpp/debug": "^0.7.0",
+		"atmosx-nwws-parser": "beta",
+		"atmosx-placefile-parser": "latest",
+		"atmosx-tempest-pulling": "latest",
+		"axios": "^1.8.2",
+		"better-sqlite3": "^11.10.0",
+		"cookie-parser": "^1.4.7",
+		"express": "^4.21.2",
+		"express-session": "^1.18.1",
+		"express-ws": "^5.0.2",
+		"firebase": "^11.10.0",
+		"jsonc-parser": "^3.3.1",
+		"node-cron": "^4.2.1",
+		"shapefile": "^0.6.6",
+		"typescript": "^5.9.3",
+		"xml2js": "^0.6.2"
+	},
+	"scripts": {
+		"start": "node ./dist/cjs/index.cjs",
+		"build:npx": "npx tsc && node ./dist/cjs/index.cjs",
+		"build:tsup": "tsup && node ./dist/cjs/index.cjs"
+	},
+	"devDependencies": {
+		"@types/node": "^24.6.2",
+		"tsup": "^8.5.0"
+	}
+}

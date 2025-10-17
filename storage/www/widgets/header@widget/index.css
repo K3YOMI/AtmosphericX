@@ -1,2 +1,0 @@
-body,html{display:flex;justify-content:center;align-items:center;background-color:var(--header-widget-background);margin:0;overflow:hidden}
-.text{font-size:var(--header-widget-font-size);font-weight:var(--header-widget-font-weight);width:100%;text-align:center;overflow:hidden;color:var(--header-widget-color);word-wrap:break-word;margin-bottom:0;position:absolute;top:25%;left:50%;transform:translate(-50%,-50%);padding:0 5px 0 5px;text-shadow:var(--header-widget-text-shadow);}
